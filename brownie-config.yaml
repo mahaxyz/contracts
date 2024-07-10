@@ -1,0 +1,10 @@
+compiler:
+  solc:
+    evm_version: paris
+    remappings:
+      - "@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.8.0"
+      - "@layerzerolabs/solidity-examples=LayerZero-Labs/solidity-examples@3d3a09f14a1d05479a5a397d5f646fe3a455c00c"
+
+dependencies:
+  - LayerZero-Labs/solidity-examples@3d3a09f14a1d05479a5a397d5f646fe3a455c00c
+  - OpenZeppelin/openzeppelin-contracts@4.8.0
