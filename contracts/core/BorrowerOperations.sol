@@ -24,12 +24,12 @@ import {ZaiOwnable} from "../dependencies/ZaiOwnable.sol";
 import {DelegatedOps} from "../dependencies/DelegatedOps.sol";
 
 /**
-    @title Zai Borrower Operations
-    @notice Based on Liquity's `BorrowerOperations`
-            https://github.com/liquity/dev/blob/main/packages/contracts/contracts/BorrowerOperations.sol
-
-            Zai's implementation is modified to support multiple collaterals. There is a 1:n
-            relationship between `BorrowerOperations` and each `TroveManager` / `SortedTroves` pair.
+ * @title Zai Borrower Operations
+ * @author Maha.xyz
+ * @notice Based on Liquity's `BorrowerOperations`
+ * https://github.com/liquity/dev/blob/main/packages/contracts/contracts/BorrowerOperations.sol
+ * Zai's implementation is modified to support multiple collaterals. There is a 1:n
+ * relationship between `BorrowerOperations` and each `TroveManager` / `SortedTroves` pair.
  */
 contract BorrowerOperations is
     ZaiBase,

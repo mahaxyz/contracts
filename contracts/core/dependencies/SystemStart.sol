@@ -16,8 +16,9 @@ pragma solidity 0.8.19;
 import "../interfaces/IZaiCore.sol";
 
 /**
-    @title Zai System Start Time
-    @dev Provides a unified `startTime` and `getWeek`, used for emissions.
+ * @title Zai System Start Time
+ * @author Maha.xyz
+ * @dev Provides a unified `startTime` and `getWeek`, used for emissions.
  */
 contract SystemStart {
     uint256 immutable startTime;

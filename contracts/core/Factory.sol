@@ -23,9 +23,10 @@ import "../interfaces/IStabilityPool.sol";
 import "../interfaces/ILiquidationManager.sol";
 
 /**
-    @title Zai Trove Factory
-    @notice Deploys cloned pairs of `TroveManager` and `SortedTroves` in order to
-            add new collateral types within the system.
+ * @title Zai Trove Factory
+ * @author Maha.xyz
+ * @notice Deploys cloned pairs of `TroveManager` and `SortedTroves` in order to
+ * add new collateral types within the system.
  */
 contract Factory is ZaiOwnable {
     using Clones for address;
