@@ -1,6 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.0;
+// ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
+// ████╗ ████║██╔══██╗██║  ██║██╔══██╗
+// ██╔████╔██║███████║███████║███████║
+// ██║╚██╔╝██║██╔══██║██╔══██║██╔══██║
+// ██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║
+// ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+
+// Website: https://maha.xyz
+// Discord: https://discord.gg/mahadao
+// Twitter: https://twitter.com/mahaxyz_
+
+pragma solidity 0.8.19;
 
 interface IBorrowerOperations {
     struct Balances {
@@ -9,17 +20,51 @@ interface IBorrowerOperations {
         uint256[] prices;
     }
 
-    event BorrowingFeePaid(address indexed borrower, uint256 amount);
-    event CollateralConfigured(address troveManager, address collateralToken);
-    event TroveCreated(address indexed _borrower, uint256 arrayIndex);
-    event TroveManagerRemoved(address troveManager);
-    event TroveUpdated(
-        address indexed _borrower,
-        uint256 _debt,
-        uint256 _coll,
-        uint256 stake,
-        uint8 operation
-    );
+    struct TroveManagerData {
+        IERC20 collateralToken;
+        uint16 index;
+    }
+
+    struct SystemBalances {
+        uint256[] collaterals;
+        uint256[] debts;
+        uint256[] prices;
+    }
+
+    struct LocalVariables_adjustTrove {
+        uint256 price;
+        uint256 totalPricedCollateral;
+        uint256 totalDebt;
+        uint256 collChange;
+        uint256 netDebtChange;
+        bool isCollIncrease;
+        uint256 debt;
+        uint256 coll;
+        uint256 newDebt;
+        uint256 newColl;
+        uint256 stake;
+        uint256 debtChange;
+        address account;
+        uint256 MCR;
+    }
+
+    struct LocalVariables_openTrove {
+        uint256 price;
+        uint256 totalPricedCollateral;
+        uint256 totalDebt;
+        uint256 netDebt;
+        uint256 compositeDebt;
+        uint256 ICR;
+        uint256 NICR;
+        uint256 stake;
+        uint256 arrayIndex;
+    }
+
+    enum BorrowerOperation {
+        openTrove,
+        closeTrove,
+        adjustTrove
+    }
 
     function addColl(
         address troveManager,

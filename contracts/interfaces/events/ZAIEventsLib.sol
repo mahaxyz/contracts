@@ -13,8 +13,16 @@
 
 pragma solidity 0.8.19;
 
-interface IGaugeController {
-    function vote_for_gauge_weights(address gauge, uint weight) external;
-
-    function get_gauge_weight(address gauge) external view returns (uint256);
+library ZAIEventsLib {
+    event BorrowingFeePaid(address indexed borrower, uint256 amount);
+    event CollateralConfigured(address troveManager, address collateralToken);
+    event TroveCreated(address indexed _borrower, uint256 arrayIndex);
+    event TroveManagerRemoved(address troveManager);
+    event TroveUpdated(
+        address indexed _borrower,
+        uint256 _debt,
+        uint256 _coll,
+        uint256 stake,
+        uint8 operation
+    );
 }

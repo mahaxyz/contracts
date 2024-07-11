@@ -13,14 +13,15 @@
 
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../interfaces/ITroveManager.sol";
-import "../interfaces/IDebtToken.sol";
-import "../dependencies/PrismaBase.sol";
-import "../dependencies/PrismaMath.sol";
-import "../dependencies/PrismaOwnable.sol";
-import "../dependencies/DelegatedOps.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {ITroveManager} from "../interfaces/ITroveManager.sol";
+import {IBorrowerOperations} from "../interfaces/IBorrowerOperations.sol";
+import {IDebtToken} from "../interfaces/IDebtToken.sol";
+import {PrismaBase} from "../dependencies/PrismaBase.sol";
+import {PrismaMath} from "../dependencies/PrismaMath.sol";
+import {PrismaOwnable} from "../dependencies/PrismaOwnable.sol";
+import {DelegatedOps} from "../dependencies/DelegatedOps.sol";
 
 /**
     @title Prisma Borrower Operations
@@ -30,7 +31,12 @@ import "../dependencies/DelegatedOps.sol";
             Prisma's implementation is modified to support multiple collaterals. There is a 1:n
             relationship between `BorrowerOperations` and each `TroveManager` / `SortedTroves` pair.
  */
-contract BorrowerOperations is PrismaBase, PrismaOwnable, DelegatedOps {
+contract BorrowerOperations is
+    PrismaBase,
+    PrismaOwnable,
+    DelegatedOps,
+    IBorrowerOperations
+{
     using SafeERC20 for IERC20;
 
     IDebtToken public immutable debtToken;
@@ -39,63 +45,6 @@ contract BorrowerOperations is PrismaBase, PrismaOwnable, DelegatedOps {
 
     mapping(ITroveManager => TroveManagerData) public troveManagersData;
     ITroveManager[] internal _troveManagers;
-
-    struct TroveManagerData {
-        IERC20 collateralToken;
-        uint16 index;
-    }
-
-    struct SystemBalances {
-        uint256[] collaterals;
-        uint256[] debts;
-        uint256[] prices;
-    }
-
-    struct LocalVariables_adjustTrove {
-        uint256 price;
-        uint256 totalPricedCollateral;
-        uint256 totalDebt;
-        uint256 collChange;
-        uint256 netDebtChange;
-        bool isCollIncrease;
-        uint256 debt;
-        uint256 coll;
-        uint256 newDebt;
-        uint256 newColl;
-        uint256 stake;
-        uint256 debtChange;
-        address account;
-        uint256 MCR;
-    }
-
-    struct LocalVariables_openTrove {
-        uint256 price;
-        uint256 totalPricedCollateral;
-        uint256 totalDebt;
-        uint256 netDebt;
-        uint256 compositeDebt;
-        uint256 ICR;
-        uint256 NICR;
-        uint256 stake;
-        uint256 arrayIndex;
-    }
-
-    enum BorrowerOperation {
-        openTrove,
-        closeTrove,
-        adjustTrove
-    }
-
-    event BorrowingFeePaid(
-        address indexed borrower,
-        IERC20 collateralToken,
-        uint256 amount
-    );
-    event CollateralConfigured(
-        ITroveManager troveManager,
-        IERC20 collateralToken
-    );
-    event TroveManagerRemoved(ITroveManager troveManager);
 
     constructor(
         address _prismaCore,
