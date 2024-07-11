@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: GPL-3.0
 
 // ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
 // ████╗ ████║██╔══██╗██║  ██║██╔══██╗
@@ -20,27 +20,11 @@ import {IZeroLocker} from "../interfaces/IZeroLocker.sol";
 import {IOmnichainStaking} from "../interfaces/IOmnichainStaking.sol";
 
 /**
-  @title Voting Escrow
-  @author Curve Finance
-  @notice Votes have a weight depending on time, so that users are
-  committed to the future of (whatever they are voting for)
-  @dev Vote weight decays linearly over time. Lock time cannot be
-  more than `MAXTIME` (4 years).
-
-  # Voting escrow to have time-weighted votes
-  # Votes have a weight depending on time, so that users are committed
-  # to the future of (whatever they are voting for).
-  # The weight in this implementation is linear, and lock cannot be more than maxtime:
-  # w ^
-  # 1 +        /
-  #   |      /
-  #   |    /
-  #   |  /
-  #   |/c
-  # 0 +--------+------> time
-  # maxtime (4 years?)
-*/
-
+ * @title Voting Escrow
+ * @author Maha.xyz
+ * @notice Votes have a weight depending on time, so that users are
+ * committed to the future of (whatever they are voting for)
+ */
 contract BaseLocker is
     ReentrancyGuardUpgradeable,
     ERC721EnumerableUpgradeable,

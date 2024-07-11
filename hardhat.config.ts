@@ -40,26 +40,10 @@ const config: HardhatUserConfig = {
     outDir: "types",
   },
   solidity: {
-    compilers: [
-      {
-        version: "0.8.10",
-        settings: {
-          optimizer: { enabled: true, runs: 100_000 },
-        },
-      },
-      {
-        version: "0.8.12",
-        settings: {
-          optimizer: { enabled: true, runs: 100_000 },
-        },
-      },
-      {
-        version: "0.8.20",
-        settings: {
-          optimizer: { enabled: true, runs: 100_000 },
-        },
-      },
-    ],
+    version: "0.8.19",
+    settings: {
+      optimizer: { enabled: true, runs: 100_000 },
+    },
   },
   networks: {
     mainnet: {
@@ -73,12 +57,7 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      blast: process.env.BLASTSCAN_KEY || "",
-      linea: process.env.LINEASCAN_KEY || "",
-      xLayer: process.env.XLAYER_KEY || "",
       mainnet: process.env.ETHERSCAN_KEY || "",
-      blastSepolia: process.env.BLAST_SEPOLIA_KEY || "",
-      era: process.env.ZKSYNC_KEY || "",
     },
   },
 };

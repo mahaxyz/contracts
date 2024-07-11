@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: GPL-3.0
 
 // ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
 // ████╗ ████║██╔══██╗██║  ██║██╔══██╗
@@ -23,7 +23,7 @@ import "../interfaces/IZaiCore.sol";
             This contract has a 1:n relationship with multiple deployments of `TroveManager`,
             each of which hold one collateral type which may be used to mint this token.
  */
-contract ZaiToken is OFT {
+contract ZaiToken is IERC20, OFT {
     string public constant version = "1";
 
     // --- ERC 3156 Data ---

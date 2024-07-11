@@ -1,25 +1,23 @@
 {
   "name": "@mahaxyz/contracts",
   "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "scripts": {
     "compile": "hardhat compile"
   },
   "devDependencies": {
-    "@aave/deploy-v3": "1.51.0",
-    "@aave/periphery-v3": "1.21.4",
     "@ethersproject/bignumber": "^5.6.2",
-    "@matterlabs/hardhat-zksync-deploy": "0.6.3",
-    "@matterlabs/hardhat-zksync-solc": "0.4.1",
+    "@layerzerolabs/lz-evm-oapp-v2": "^2.3.29",
     "@nomicfoundation/hardhat-chai-matchers": "1.0.5",
     "@nomicfoundation/hardhat-ethers": "^3.0.6",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@openzeppelin/contracts": "^4.0.0",
+    "@nomiclabs/hardhat-etherscan": "^3.1.8",
+    "@openzeppelin/contracts": "^5.0.2",
     "@openzeppelin/hardhat-upgrades": "^3.2.0",
+    "@pythnetwork/pyth-sdk-solidity": "^2.4.1",
     "@tenderly/hardhat-tenderly": "1.1.0-beta.5",
-    "@typechain/ethers-v5": "^10.2.1",
+    "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^6.1.6",
     "@types/chai": "4.2.11",
     "@types/lowdb": "1.0.9",
@@ -30,14 +28,14 @@
     "dotenv": "^16.4.5",
     "eth-sig-util": "2.5.3",
     "ethereumjs-util": "7.0.2",
-    "ethers": "5.7.2",
-    "hardhat": "2.14.0",
+    "hardhat": "^2.22.6",
     "hardhat-abi-exporter": "^2.10.1",
     "hardhat-contract-sizer": "2.0.3",
     "hardhat-dependency-compiler": "^1.2.1",
     "hardhat-deploy": "^0.12.4",
     "hardhat-gas-reporter": "1.0.8",
     "hardhat-tracer": "^3.0.3",
+    "hardhat-typechain": "^0.3.5",
     "husky": "8.0.3",
     "lint-staged": "13.1.0",
     "prettier": "2.8.4",
@@ -49,13 +47,9 @@
     "tslint-config-prettier": "1.18.0",
     "tslint-plugin-prettier": "2.3.0",
     "typechain": "^8.3.2",
-    "typescript": "^4.5.0"
+    "typescript": "^5.5.3"
   },
-  "dependencies": {
-    "@layerzerolabs/solidity-examples": "git+https://github.com/LayerZero-Labs/solidity-examples.git#3d3a09f14a1d05479a5a397d5f646fe3a455c00c",
-    "@nomiclabs/hardhat-etherscan": "^3.1.8",
-    "@pythnetwork/pyth-sdk-solidity": "^2.4.1",
-    "@zerolendxyz/core-v3": "^2.21.0",
-    "hardhat-typechain": "^0.3.5"
+  "resolutions": {
+    "@openzeppelin/contracts": "^5.0.0"
   }
 }
