@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity ^0.8.0;
 
@@ -9,16 +9,34 @@ interface ILiquidationManager {
         uint256 _collGasCompensation,
         uint256 _debtGasCompensation
     );
-    event TroveLiquidated(address indexed _borrower, uint256 _debt, uint256 _coll, uint8 _operation);
-    event TroveUpdated(address indexed _borrower, uint256 _debt, uint256 _coll, uint256 _stake, uint8 _operation);
+    event TroveLiquidated(
+        address indexed _borrower,
+        uint256 _debt,
+        uint256 _coll,
+        uint8 _operation
+    );
+    event TroveUpdated(
+        address indexed _borrower,
+        uint256 _debt,
+        uint256 _coll,
+        uint256 _stake,
+        uint8 _operation
+    );
 
-    function batchLiquidateTroves(address troveManager, address[] calldata _troveArray) external;
+    function batchLiquidateTroves(
+        address troveManager,
+        address[] calldata _troveArray
+    ) external;
 
     function enableTroveManager(address _troveManager) external;
 
     function liquidate(address troveManager, address borrower) external;
 
-    function liquidateTroves(address troveManager, uint256 maxTrovesToLiquidate, uint256 maxICR) external;
+    function liquidateTroves(
+        address troveManager,
+        uint256 maxTrovesToLiquidate,
+        uint256 maxICR
+    ) external;
 
     function CCR() external view returns (uint256);
 

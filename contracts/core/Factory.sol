@@ -1,4 +1,15 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
+
+// ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
+// ████╗ ████║██╔══██╗██║  ██║██╔══██╗
+// ██╔████╔██║███████║███████║███████║
+// ██║╚██╔╝██║██╔══██║██╔══██║██╔══██║
+// ██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║
+// ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+
+// Website: https://maha.xyz
+// Discord: https://discord.gg/mahadao
+// Twitter: https://twitter.com/mahaxyz_
 
 pragma solidity 0.8.19;
 
@@ -43,7 +54,12 @@ contract Factory is PrismaOwnable {
         uint256 MCR; // 12 * 1e17  (120%)
     }
 
-    event NewDeployment(address collateral, address priceFeed, address troveManager, address sortedTroves);
+    event NewDeployment(
+        address collateral,
+        address priceFeed,
+        address troveManager,
+        address sortedTroves
+    );
 
     constructor(
         address _prismaCore,
@@ -89,14 +105,26 @@ contract Factory is PrismaOwnable {
         address customSortedTrovesImpl,
         DeploymentParams memory params
     ) external onlyOwner {
-        address implementation = customTroveManagerImpl == address(0) ? troveManagerImpl : customTroveManagerImpl;
-        address troveManager = implementation.cloneDeterministic(bytes32(bytes20(collateral)));
+        address implementation = customTroveManagerImpl == address(0)
+            ? troveManagerImpl
+            : customTroveManagerImpl;
+        address troveManager = implementation.cloneDeterministic(
+            bytes32(bytes20(collateral))
+        );
         troveManagers.push(troveManager);
 
-        implementation = customSortedTrovesImpl == address(0) ? sortedTrovesImpl : customSortedTrovesImpl;
-        address sortedTroves = implementation.cloneDeterministic(bytes32(bytes20(troveManager)));
+        implementation = customSortedTrovesImpl == address(0)
+            ? sortedTrovesImpl
+            : customSortedTrovesImpl;
+        address sortedTroves = implementation.cloneDeterministic(
+            bytes32(bytes20(troveManager))
+        );
 
-        ITroveManager(troveManager).setAddresses(priceFeed, sortedTroves, collateral);
+        ITroveManager(troveManager).setAddresses(
+            priceFeed,
+            sortedTroves,
+            collateral
+        );
         ISortedTroves(sortedTroves).setAddresses(troveManager);
 
         // verify that the oracle is correctly working
@@ -121,7 +149,10 @@ contract Factory is PrismaOwnable {
         emit NewDeployment(collateral, priceFeed, troveManager, sortedTroves);
     }
 
-    function setImplementations(address _troveManagerImpl, address _sortedTrovesImpl) external onlyOwner {
+    function setImplementations(
+        address _troveManagerImpl,
+        address _sortedTrovesImpl
+    ) external onlyOwner {
         troveManagerImpl = _troveManagerImpl;
         sortedTrovesImpl = _sortedTrovesImpl;
     }

@@ -1,4 +1,15 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
+
+// ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
+// ████╗ ████║██╔══██╗██║  ██║██╔══██╗
+// ██╔████╔██║███████║███████║███████║
+// ██║╚██╔╝██║██╔══██║██╔══██║██╔══██║
+// ██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║
+// ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+
+// Website: https://maha.xyz
+// Discord: https://discord.gg/mahadao
+// Twitter: https://twitter.com/mahaxyz_
 
 pragma solidity 0.8.19;
 
@@ -32,7 +43,11 @@ contract PrismaCore {
     // Other contracts that require access to this should inherit `SystemStart`.
     uint256 public immutable startTime;
 
-    event NewOwnerCommitted(address owner, address pendingOwner, uint256 deadline);
+    event NewOwnerCommitted(
+        address owner,
+        address pendingOwner,
+        uint256 deadline
+    );
 
     event NewOwnerAccepted(address oldOwner, address owner);
 
@@ -48,7 +63,12 @@ contract PrismaCore {
 
     event Unpaused();
 
-    constructor(address _owner, address _guardian, address _priceFeed, address _feeReceiver) {
+    constructor(
+        address _owner,
+        address _guardian,
+        address _priceFeed,
+        address _feeReceiver
+    ) {
         owner = _owner;
         startTime = (block.timestamp / 1 weeks) * 1 weeks;
         guardian = _guardian;
@@ -102,7 +122,10 @@ contract PrismaCore {
      * @param _paused If true the protocol is paused
      */
     function setPaused(bool _paused) external {
-        require((_paused && msg.sender == guardian) || msg.sender == owner, "Unauthorized");
+        require(
+            (_paused && msg.sender == guardian) || msg.sender == owner,
+            "Unauthorized"
+        );
         paused = _paused;
         if (_paused) {
             emit Paused();
@@ -115,12 +138,19 @@ contract PrismaCore {
         pendingOwner = newOwner;
         ownershipTransferDeadline = block.timestamp + OWNERSHIP_TRANSFER_DELAY;
 
-        emit NewOwnerCommitted(msg.sender, newOwner, block.timestamp + OWNERSHIP_TRANSFER_DELAY);
+        emit NewOwnerCommitted(
+            msg.sender,
+            newOwner,
+            block.timestamp + OWNERSHIP_TRANSFER_DELAY
+        );
     }
 
     function acceptTransferOwnership() external {
         require(msg.sender == pendingOwner, "Only new owner");
-        require(block.timestamp >= ownershipTransferDeadline, "Deadline not passed");
+        require(
+            block.timestamp >= ownershipTransferDeadline,
+            "Deadline not passed"
+        );
 
         emit NewOwnerAccepted(owner, msg.sender);
 

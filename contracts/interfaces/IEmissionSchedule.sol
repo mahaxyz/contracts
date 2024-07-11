@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity ^0.8.0;
 
@@ -17,9 +17,14 @@ interface IEmissionSchedule {
         uint256 unallocatedTotal
     ) external returns (uint256 amount, uint256 lock);
 
-    function setLockParameters(uint64 _lockWeeks, uint64 _lockDecayWeeks) external returns (bool);
+    function setLockParameters(
+        uint64 _lockWeeks,
+        uint64 _lockDecayWeeks
+    ) external returns (bool);
 
-    function setWeeklyPctSchedule(uint64[2][] calldata _schedule) external returns (bool);
+    function setWeeklyPctSchedule(
+        uint64[2][] calldata _schedule
+    ) external returns (bool);
 
     function MAX_LOCK_WEEKS() external view returns (uint256);
 

@@ -1,4 +1,15 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
+
+// ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
+// ████╗ ████║██╔══██╗██║  ██║██╔══██╗
+// ██╔████╔██║███████║███████║███████║
+// ██║╚██╔╝██║██╔══██║██╔══██║██╔══██║
+// ██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║
+// ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+
+// Website: https://maha.xyz
+// Discord: https://discord.gg/mahadao
+// Twitter: https://twitter.com/mahaxyz_
 
 pragma solidity 0.8.19;
 
@@ -48,7 +59,12 @@ contract SortedTroves {
      * @param _nextId Id of next node for the insert position
      */
 
-    function insert(address _id, uint256 _NICR, address _prevId, address _nextId) external {
+    function insert(
+        address _id,
+        uint256 _NICR,
+        address _prevId,
+        address _nextId
+    ) external {
         ITroveManager troveManagerCached = troveManager;
 
         _requireCallerIsTroveManager(troveManagerCached);
@@ -79,7 +95,12 @@ contract SortedTroves {
         if (!_validInsertPosition(_troveManager, _NICR, prevId, nextId)) {
             // Sender's hint was not a valid insert position
             // Use sender's hint to find a valid insert position
-            (prevId, nextId) = _findInsertPosition(_troveManager, _NICR, prevId, nextId);
+            (prevId, nextId) = _findInsertPosition(
+                _troveManager,
+                _NICR,
+                prevId,
+                nextId
+            );
         }
 
         node.exists = true;
@@ -169,7 +190,12 @@ contract SortedTroves {
      * @param _prevId Id of previous node for the new insert position
      * @param _nextId Id of next node for the new insert position
      */
-    function reInsert(address _id, uint256 _newNICR, address _prevId, address _nextId) external {
+    function reInsert(
+        address _id,
+        uint256 _newNICR,
+        address _prevId,
+        address _nextId
+    ) external {
         ITroveManager troveManagerCached = troveManager;
 
         _requireCallerIsTroveManager(troveManagerCached);
@@ -239,7 +265,11 @@ contract SortedTroves {
      * @param _prevId Id of previous node for the insert position
      * @param _nextId Id of next node for the insert position
      */
-    function validInsertPosition(uint256 _NICR, address _prevId, address _nextId) external view returns (bool) {
+    function validInsertPosition(
+        uint256 _NICR,
+        address _prevId,
+        address _nextId
+    ) external view returns (bool) {
         return _validInsertPosition(troveManager, _NICR, _prevId, _nextId);
     }
 
@@ -254,10 +284,14 @@ contract SortedTroves {
             return isEmpty();
         } else if (_prevId == address(0)) {
             // `(null, _nextId)` is a valid insert position if `_nextId` is the head of the list
-            return data.head == _nextId && _NICR >= _troveManager.getNominalICR(_nextId);
+            return
+                data.head == _nextId &&
+                _NICR >= _troveManager.getNominalICR(_nextId);
         } else if (_nextId == address(0)) {
             // `(_prevId, null)` is a valid insert position if `_prevId` is the tail of the list
-            return data.tail == _prevId && _NICR <= _troveManager.getNominalICR(_prevId);
+            return
+                data.tail == _prevId &&
+                _NICR <= _troveManager.getNominalICR(_prevId);
         } else {
             // `(_prevId, _nextId)` is a valid insert position if they are adjacent nodes and `_NICR` falls between the two nodes' NICRs
             return
@@ -279,7 +313,10 @@ contract SortedTroves {
         address _startId
     ) internal view returns (address, address) {
         // If `_startId` is the head, check if the insert position is before the head
-        if (data.head == _startId && _NICR >= _troveManager.getNominalICR(_startId)) {
+        if (
+            data.head == _startId &&
+            _NICR >= _troveManager.getNominalICR(_startId)
+        ) {
             return (address(0), _startId);
         }
 
@@ -287,7 +324,10 @@ contract SortedTroves {
         address nextId = data.nodes[prevId].nextId;
 
         // Descend the list until we reach the end or until we find a valid insert position
-        while (prevId != address(0) && !_validInsertPosition(_troveManager, _NICR, prevId, nextId)) {
+        while (
+            prevId != address(0) &&
+            !_validInsertPosition(_troveManager, _NICR, prevId, nextId)
+        ) {
             prevId = data.nodes[prevId].nextId;
             nextId = data.nodes[prevId].nextId;
         }
@@ -307,7 +347,10 @@ contract SortedTroves {
         address _startId
     ) internal view returns (address, address) {
         // If `_startId` is the tail, check if the insert position is after the tail
-        if (data.tail == _startId && _NICR <= _troveManager.getNominalICR(_startId)) {
+        if (
+            data.tail == _startId &&
+            _NICR <= _troveManager.getNominalICR(_startId)
+        ) {
             return (_startId, address(0));
         }
 
@@ -315,7 +358,10 @@ contract SortedTroves {
         address prevId = data.nodes[nextId].prevId;
 
         // Ascend the list until we reach the end or until we find a valid insertion point
-        while (nextId != address(0) && !_validInsertPosition(_troveManager, _NICR, prevId, nextId)) {
+        while (
+            nextId != address(0) &&
+            !_validInsertPosition(_troveManager, _NICR, prevId, nextId)
+        ) {
             nextId = data.nodes[nextId].prevId;
             prevId = data.nodes[nextId].prevId;
         }
@@ -347,14 +393,18 @@ contract SortedTroves {
         address nextId = _nextId;
 
         if (prevId != address(0)) {
-            if (!contains(prevId) || _NICR > _troveManager.getNominalICR(prevId)) {
+            if (
+                !contains(prevId) || _NICR > _troveManager.getNominalICR(prevId)
+            ) {
                 // `prevId` does not exist anymore or now has a smaller NICR than the given NICR
                 prevId = address(0);
             }
         }
 
         if (nextId != address(0)) {
-            if (!contains(nextId) || _NICR < _troveManager.getNominalICR(nextId)) {
+            if (
+                !contains(nextId) || _NICR < _troveManager.getNominalICR(nextId)
+            ) {
                 // `nextId` does not exist anymore or now has a larger NICR than the given NICR
                 nextId = address(0);
             }
@@ -375,7 +425,12 @@ contract SortedTroves {
         }
     }
 
-    function _requireCallerIsTroveManager(ITroveManager _troveManager) internal view {
-        require(msg.sender == address(_troveManager), "SortedTroves: Caller is not the TroveManager");
+    function _requireCallerIsTroveManager(
+        ITroveManager _troveManager
+    ) internal view {
+        require(
+            msg.sender == address(_troveManager),
+            "SortedTroves: Caller is not the TroveManager"
+        );
     }
 }

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity ^0.8.0;
 
@@ -6,9 +6,19 @@ interface ISortedTroves {
     event NodeAdded(address _id, uint256 _NICR);
     event NodeRemoved(address _id);
 
-    function insert(address _id, uint256 _NICR, address _prevId, address _nextId) external;
+    function insert(
+        address _id,
+        uint256 _NICR,
+        address _prevId,
+        address _nextId
+    ) external;
 
-    function reInsert(address _id, uint256 _newNICR, address _prevId, address _nextId) external;
+    function reInsert(
+        address _id,
+        uint256 _newNICR,
+        address _prevId,
+        address _nextId
+    ) external;
 
     function remove(address _id) external;
 
@@ -16,7 +26,10 @@ interface ISortedTroves {
 
     function contains(address _id) external view returns (bool);
 
-    function data() external view returns (address head, address tail, uint256 size);
+    function data()
+        external
+        view
+        returns (address head, address tail, uint256 size);
 
     function findInsertPosition(
         uint256 _NICR,
@@ -38,5 +51,9 @@ interface ISortedTroves {
 
     function troveManager() external view returns (address);
 
-    function validInsertPosition(uint256 _NICR, address _prevId, address _nextId) external view returns (bool);
+    function validInsertPosition(
+        uint256 _NICR,
+        address _prevId,
+        address _nextId
+    ) external view returns (bool);
 }

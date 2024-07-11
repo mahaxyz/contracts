@@ -1,4 +1,15 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
+
+// ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
+// ████╗ ████║██╔══██╗██║  ██║██╔══██╗
+// ██╔████╔██║███████║███████║███████║
+// ██║╚██╔╝██║██╔══██║██╔══██║██╔══██║
+// ██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║
+// ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+
+// Website: https://maha.xyz
+// Discord: https://discord.gg/mahadao
+// Twitter: https://twitter.com/mahaxyz_
 
 pragma solidity 0.8.19;
 
@@ -48,7 +59,8 @@ contract StabilityPool is PrismaOwnable, SystemStart {
     // index values are mapped against the values within `collateralTokens`
     mapping(address => uint256[256]) public depositSums; // depositor address -> sums
 
-    mapping(address depositor => uint80[256] gains) public collateralGainsByDepositor;
+    mapping(address depositor => uint80[256] gains)
+        public collateralGainsByDepositor;
 
     mapping(address depositor => uint256 rewards) private storedPendingReward;
 
@@ -78,7 +90,8 @@ contract StabilityPool is PrismaOwnable, SystemStart {
      */
 
     // index values are mapped against the values within `collateralTokens`
-    mapping(uint128 => mapping(uint128 => uint256[256])) public epochToScaleToSums;
+    mapping(uint128 => mapping(uint128 => uint256[256]))
+        public epochToScaleToSums;
 
     /*
      * Similarly, the sum 'G' is used to calculate Prisma gains. During it's lifetime, each deposit d_t earns a Prisma gain of
@@ -127,13 +140,24 @@ contract StabilityPool is PrismaOwnable, SystemStart {
     event EpochUpdated(uint128 _currentEpoch);
     event ScaleUpdated(uint128 _currentScale);
 
-    event DepositSnapshotUpdated(address indexed _depositor, uint256 _P, uint256 _G);
+    event DepositSnapshotUpdated(
+        address indexed _depositor,
+        uint256 _P,
+        uint256 _G
+    );
     event UserDepositChanged(address indexed _depositor, uint256 _newDeposit);
 
-    event CollateralGainWithdrawn(address indexed _depositor, uint256[] _collateral);
+    event CollateralGainWithdrawn(
+        address indexed _depositor,
+        uint256[] _collateral
+    );
     event CollateralOverwritten(IERC20 oldCollateral, IERC20 newCollateral);
 
-    event RewardClaimed(address indexed account, address indexed recipient, uint256 claimed);
+    event RewardClaimed(
+        address indexed account,
+        address indexed recipient,
+        uint256 claimed
+    );
 
     constructor(
         address _prismaCore,
@@ -161,8 +185,12 @@ contract StabilityPool is PrismaOwnable, SystemStart {
         }
         if (!collateralEnabled) {
             Queue memory queueCached = queue;
-            if (queueCached.nextSunsetIndexKey > queueCached.firstSunsetIndexKey) {
-                SunsetIndex memory sIdx = _sunsetIndexes[queueCached.firstSunsetIndexKey];
+            if (
+                queueCached.nextSunsetIndexKey > queueCached.firstSunsetIndexKey
+            ) {
+                SunsetIndex memory sIdx = _sunsetIndexes[
+                    queueCached.firstSunsetIndexKey
+                ];
                 if (sIdx.expiry < block.timestamp) {
                     delete _sunsetIndexes[queue.firstSunsetIndexKey++];
                     _overwriteCollateral(_collateral, sIdx.idx);
@@ -173,12 +201,18 @@ contract StabilityPool is PrismaOwnable, SystemStart {
             indexByCollateral[_collateral] = collateralTokens.length;
         } else {
             // revert if the factory is trying to deploy a new TM with a sunset collateral
-            require(indexByCollateral[_collateral] > 0, "Collateral is sunsetting");
+            require(
+                indexByCollateral[_collateral] > 0,
+                "Collateral is sunsetting"
+            );
         }
     }
 
     function _overwriteCollateral(IERC20 _newCollateral, uint256 idx) internal {
-        require(indexByCollateral[_newCollateral] == 0, "Collateral must be sunset");
+        require(
+            indexByCollateral[_newCollateral] == 0,
+            "Collateral must be sunset"
+        );
         uint256 length = collateralTokens.length;
         require(idx < length, "Index too large");
         uint256 externalLoopEnd = currentEpoch;
@@ -208,7 +242,10 @@ contract StabilityPool is PrismaOwnable, SystemStart {
 
      */
     function startCollateralSunset(IERC20 collateral) external onlyOwner {
-        require(indexByCollateral[collateral] > 0, "Collateral already sunsetting");
+        require(
+            indexByCollateral[collateral] > 0,
+            "Collateral already sunsetting"
+        );
         _sunsetIndexes[queue.nextSunsetIndexKey++] = SunsetIndex(
             uint128(indexByCollateral[collateral] - 1),
             uint128(block.timestamp + SUNSET_DURATION)
@@ -270,15 +307,24 @@ contract StabilityPool is PrismaOwnable, SystemStart {
     function withdrawFromSP(uint256 _amount) external {
         uint256 initialDeposit = accountDeposits[msg.sender].amount;
         uint128 depositTimestamp = accountDeposits[msg.sender].timestamp;
-        require(initialDeposit > 0, "StabilityPool: User must have a non-zero deposit");
-        require(depositTimestamp < block.timestamp, "!Deposit and withdraw same block");
+        require(
+            initialDeposit > 0,
+            "StabilityPool: User must have a non-zero deposit"
+        );
+        require(
+            depositTimestamp < block.timestamp,
+            "!Deposit and withdraw same block"
+        );
 
         _triggerRewardIssuance();
 
         _accrueDepositorCollateralGain(msg.sender);
 
         uint256 compoundedDebtDeposit = getCompoundedDebtDeposit(msg.sender);
-        uint256 debtToWithdraw = PrismaMath._min(_amount, compoundedDebtDeposit);
+        uint256 debtToWithdraw = PrismaMath._min(
+            _amount,
+            compoundedDebtDeposit
+        );
 
         _accrueRewards(msg.sender);
 
@@ -289,7 +335,10 @@ contract StabilityPool is PrismaOwnable, SystemStart {
 
         // Update deposit
         uint256 newDeposit = compoundedDebtDeposit - debtToWithdraw;
-        accountDeposits[msg.sender] = AccountDeposit({ amount: uint128(newDeposit), timestamp: depositTimestamp });
+        accountDeposits[msg.sender] = AccountDeposit({
+            amount: uint128(newDeposit),
+            timestamp: depositTimestamp
+        });
 
         _updateSnapshots(msg.sender, newDeposit);
         emit UserDepositChanged(msg.sender, newDeposit);
@@ -341,11 +390,15 @@ contract StabilityPool is PrismaOwnable, SystemStart {
         }
 
         uint256 prismaPerUnitStaked;
-        prismaPerUnitStaked = _computePrismaPerUnitStaked(_prismaIssuance, totalDebt);
+        prismaPerUnitStaked = _computePrismaPerUnitStaked(
+            _prismaIssuance,
+            totalDebt
+        );
         uint128 currentEpochCached = currentEpoch;
         uint128 currentScaleCached = currentScale;
         uint256 marginalPrismaGain = prismaPerUnitStaked * P;
-        uint256 newG = epochToScaleToG[currentEpochCached][currentScaleCached] + marginalPrismaGain;
+        uint256 newG = epochToScaleToG[currentEpochCached][currentScaleCached] +
+            marginalPrismaGain;
         epochToScaleToG[currentEpochCached][currentScaleCached] = newG;
 
         emit G_Updated(newG, currentEpochCached, currentScaleCached);
@@ -366,10 +419,13 @@ contract StabilityPool is PrismaOwnable, SystemStart {
          * 4) Store this error for use in the next correction when this function is called.
          * 5) Note: static analysis tools complain about this "division before multiplication", however, it is intended.
          */
-        uint256 prismaNumerator = (_prismaIssuance * DECIMAL_PRECISION) + lastPrismaError;
+        uint256 prismaNumerator = (_prismaIssuance * DECIMAL_PRECISION) +
+            lastPrismaError;
 
         uint256 prismaPerUnitStaked = prismaNumerator / _totalDebtTokenDeposits;
-        lastPrismaError = prismaNumerator - (prismaPerUnitStaked * _totalDebtTokenDeposits);
+        lastPrismaError =
+            prismaNumerator -
+            (prismaPerUnitStaked * _totalDebtTokenDeposits);
 
         return prismaPerUnitStaked;
     }
@@ -379,12 +435,23 @@ contract StabilityPool is PrismaOwnable, SystemStart {
     /*
      * Cancels out the specified debt against the Debt contained in the Stability Pool (as far as possible)
      */
-    function offset(IERC20 collateral, uint256 _debtToOffset, uint256 _collToAdd) external virtual {
+    function offset(
+        IERC20 collateral,
+        uint256 _debtToOffset,
+        uint256 _collToAdd
+    ) external virtual {
         _offset(collateral, _debtToOffset, _collToAdd);
     }
 
-    function _offset(IERC20 collateral, uint256 _debtToOffset, uint256 _collToAdd) internal {
-        require(msg.sender == liquidationManager, "StabilityPool: Caller is not Liquidation Manager");
+    function _offset(
+        IERC20 collateral,
+        uint256 _debtToOffset,
+        uint256 _collToAdd
+    ) internal {
+        require(
+            msg.sender == liquidationManager,
+            "StabilityPool: Caller is not Liquidation Manager"
+        );
         uint256 idx = indexByCollateral[collateral];
         idx -= 1;
 
@@ -395,14 +462,21 @@ contract StabilityPool is PrismaOwnable, SystemStart {
 
         _triggerRewardIssuance();
 
-        (uint256 collateralGainPerUnitStaked, uint256 debtLossPerUnitStaked) = _computeRewardsPerUnitStaked(
-            _collToAdd,
-            _debtToOffset,
-            totalDebt,
-            idx
-        );
+        (
+            uint256 collateralGainPerUnitStaked,
+            uint256 debtLossPerUnitStaked
+        ) = _computeRewardsPerUnitStaked(
+                _collToAdd,
+                _debtToOffset,
+                totalDebt,
+                idx
+            );
 
-        _updateRewardSumAndProduct(collateralGainPerUnitStaked, debtLossPerUnitStaked, idx); // updates S and P
+        _updateRewardSumAndProduct(
+            collateralGainPerUnitStaked,
+            debtLossPerUnitStaked,
+            idx
+        ); // updates S and P
 
         // Cancel the liquidated Debt debt with the Debt in the stability pool
         _decreaseDebt(_debtToOffset);
@@ -415,7 +489,13 @@ contract StabilityPool is PrismaOwnable, SystemStart {
         uint256 _debtToOffset,
         uint256 _totalDebtTokenDeposits,
         uint256 idx
-    ) internal returns (uint256 collateralGainPerUnitStaked, uint256 debtLossPerUnitStaked) {
+    )
+        internal
+        returns (
+            uint256 collateralGainPerUnitStaked,
+            uint256 debtLossPerUnitStaked
+        )
+    {
         /*
          * Compute the Debt and collateral rewards. Uses a "feedback" error correction, to keep
          * the cumulative error in the P and S state variables low:
@@ -427,23 +507,33 @@ contract StabilityPool is PrismaOwnable, SystemStart {
          * 4) Store these errors for use in the next correction when this function is called.
          * 5) Note: static analysis tools complain about this "division before multiplication", however, it is intended.
          */
-        uint256 collateralNumerator = (_collToAdd * DECIMAL_PRECISION) + lastCollateralError_Offset[idx];
+        uint256 collateralNumerator = (_collToAdd * DECIMAL_PRECISION) +
+            lastCollateralError_Offset[idx];
 
         if (_debtToOffset == _totalDebtTokenDeposits) {
             debtLossPerUnitStaked = DECIMAL_PRECISION; // When the Pool depletes to 0, so does each deposit
             lastDebtLossError_Offset = 0;
         } else {
-            uint256 debtLossNumerator = (_debtToOffset * DECIMAL_PRECISION) - lastDebtLossError_Offset;
+            uint256 debtLossNumerator = (_debtToOffset * DECIMAL_PRECISION) -
+                lastDebtLossError_Offset;
             /*
              * Add 1 to make error in quotient positive. We want "slightly too much" Debt loss,
              * which ensures the error in any given compoundedDebtDeposit favors the Stability Pool.
              */
-            debtLossPerUnitStaked = (debtLossNumerator / _totalDebtTokenDeposits) + 1;
-            lastDebtLossError_Offset = (debtLossPerUnitStaked * _totalDebtTokenDeposits) - debtLossNumerator;
+            debtLossPerUnitStaked =
+                (debtLossNumerator / _totalDebtTokenDeposits) +
+                1;
+            lastDebtLossError_Offset =
+                (debtLossPerUnitStaked * _totalDebtTokenDeposits) -
+                debtLossNumerator;
         }
 
-        collateralGainPerUnitStaked = collateralNumerator / _totalDebtTokenDeposits;
-        lastCollateralError_Offset[idx] = collateralNumerator - (collateralGainPerUnitStaked * _totalDebtTokenDeposits);
+        collateralGainPerUnitStaked =
+            collateralNumerator /
+            _totalDebtTokenDeposits;
+        lastCollateralError_Offset[idx] =
+            collateralNumerator -
+            (collateralGainPerUnitStaked * _totalDebtTokenDeposits);
 
         return (collateralGainPerUnitStaked, debtLossPerUnitStaked);
     }
@@ -461,11 +551,14 @@ contract StabilityPool is PrismaOwnable, SystemStart {
          * The newProductFactor is the factor by which to change all deposits, due to the depletion of Stability Pool Debt in the liquidation.
          * We make the product factor 0 if there was a pool-emptying. Otherwise, it is (1 - DebtLossPerUnitStaked)
          */
-        uint256 newProductFactor = uint256(DECIMAL_PRECISION) - _debtLossPerUnitStaked;
+        uint256 newProductFactor = uint256(DECIMAL_PRECISION) -
+            _debtLossPerUnitStaked;
 
         uint128 currentScaleCached = currentScale;
         uint128 currentEpochCached = currentEpoch;
-        uint256 currentS = epochToScaleToSums[currentEpochCached][currentScaleCached][idx];
+        uint256 currentS = epochToScaleToSums[currentEpochCached][
+            currentScaleCached
+        ][idx];
 
         /*
          * Calculate the new S first, before we update P.
@@ -474,7 +567,8 @@ contract StabilityPool is PrismaOwnable, SystemStart {
          *
          * Since S corresponds to collateral gain, and P to deposit loss, we update S first.
          */
-        uint256 marginalCollateralGain = _collateralGainPerUnitStaked * currentP;
+        uint256 marginalCollateralGain = _collateralGainPerUnitStaked *
+            currentP;
         uint256 newS = currentS + marginalCollateralGain;
         epochToScaleToSums[currentEpochCached][currentScaleCached][idx] = newS;
         emit S_Updated(idx, newS, currentEpochCached, currentScaleCached);
@@ -488,8 +582,12 @@ contract StabilityPool is PrismaOwnable, SystemStart {
             newP = DECIMAL_PRECISION;
 
             // If multiplying P by a non-zero product factor would reduce P below the scale boundary, increment the scale
-        } else if ((currentP * newProductFactor) / DECIMAL_PRECISION < SCALE_FACTOR) {
-            newP = (currentP * newProductFactor * SCALE_FACTOR) / DECIMAL_PRECISION;
+        } else if (
+            (currentP * newProductFactor) / DECIMAL_PRECISION < SCALE_FACTOR
+        ) {
+            newP =
+                (currentP * newProductFactor * SCALE_FACTOR) /
+                DECIMAL_PRECISION;
             currentScale = currentScaleCached + 1;
             emit ScaleUpdated(currentScale);
         } else {
@@ -514,17 +612,25 @@ contract StabilityPool is PrismaOwnable, SystemStart {
      * where S(0) and P(0) are the depositor's snapshots of the sum S and product P, respectively.
      * d0 is the last recorded deposit value.
      */
-    function getDepositorCollateralGain(address _depositor) external view returns (uint256[] memory collateralGains) {
+    function getDepositorCollateralGain(
+        address _depositor
+    ) external view returns (uint256[] memory collateralGains) {
         collateralGains = new uint256[](collateralTokens.length);
 
         uint256 P_Snapshot = depositSnapshots[_depositor].P;
         if (P_Snapshot == 0) return collateralGains;
-        uint80[256] storage depositorGains = collateralGainsByDepositor[_depositor];
+        uint80[256] storage depositorGains = collateralGainsByDepositor[
+            _depositor
+        ];
         uint256 initialDeposit = accountDeposits[_depositor].amount;
         uint128 epochSnapshot = depositSnapshots[_depositor].epoch;
         uint128 scaleSnapshot = depositSnapshots[_depositor].scale;
-        uint256[256] storage sums = epochToScaleToSums[epochSnapshot][scaleSnapshot];
-        uint256[256] storage nextSums = epochToScaleToSums[epochSnapshot][scaleSnapshot + 1];
+        uint256[256] storage sums = epochToScaleToSums[epochSnapshot][
+            scaleSnapshot
+        ];
+        uint256[256] storage nextSums = epochToScaleToSums[epochSnapshot][
+            scaleSnapshot + 1
+        ];
         uint256[256] storage depSums = depositSums[_depositor];
 
         for (uint256 i = 0; i < collateralGains.length; i++) {
@@ -532,13 +638,20 @@ contract StabilityPool is PrismaOwnable, SystemStart {
             if (sums[i] == 0) continue; // Collateral was overwritten or not gains
             uint256 firstPortion = sums[i] - depSums[i];
             uint256 secondPortion = nextSums[i] / SCALE_FACTOR;
-            collateralGains[i] += (initialDeposit * (firstPortion + secondPortion)) / P_Snapshot / DECIMAL_PRECISION;
+            collateralGains[i] +=
+                (initialDeposit * (firstPortion + secondPortion)) /
+                P_Snapshot /
+                DECIMAL_PRECISION;
         }
         return collateralGains;
     }
 
-    function _accrueDepositorCollateralGain(address _depositor) private returns (bool hasGains) {
-        uint80[256] storage depositorGains = collateralGainsByDepositor[_depositor];
+    function _accrueDepositorCollateralGain(
+        address _depositor
+    ) private returns (bool hasGains) {
+        uint80[256] storage depositorGains = collateralGainsByDepositor[
+            _depositor
+        ];
         uint256 collaterals = collateralTokens.length;
         uint256 initialDeposit = accountDeposits[_depositor].amount;
         hasGains = false;
@@ -550,8 +663,12 @@ contract StabilityPool is PrismaOwnable, SystemStart {
         uint128 scaleSnapshot = depositSnapshots[_depositor].scale;
         uint256 P_Snapshot = depositSnapshots[_depositor].P;
 
-        uint256[256] storage sums = epochToScaleToSums[epochSnapshot][scaleSnapshot];
-        uint256[256] storage nextSums = epochToScaleToSums[epochSnapshot][scaleSnapshot + 1];
+        uint256[256] storage sums = epochToScaleToSums[epochSnapshot][
+            scaleSnapshot
+        ];
+        uint256[256] storage nextSums = epochToScaleToSums[epochSnapshot][
+            scaleSnapshot + 1
+        ];
         uint256[256] storage depSums = depositSums[_depositor];
 
         for (uint256 i = 0; i < collaterals; i++) {
@@ -560,7 +677,9 @@ contract StabilityPool is PrismaOwnable, SystemStart {
             uint256 firstPortion = sums[i] - depSums[i];
             uint256 secondPortion = nextSums[i] / SCALE_FACTOR;
             depositorGains[i] += uint80(
-                (initialDeposit * (firstPortion + secondPortion)) / P_Snapshot / DECIMAL_PRECISION
+                (initialDeposit * (firstPortion + secondPortion)) /
+                    P_Snapshot /
+                    DECIMAL_PRECISION
             );
         }
         return (hasGains);
@@ -572,14 +691,17 @@ contract StabilityPool is PrismaOwnable, SystemStart {
      * where G(0) and P(0) are the depositor's snapshots of the sum G and product P, respectively.
      * d0 is the last recorded deposit value.
      */
-    function claimableReward(address _depositor) external view returns (uint256) {
+    function claimableReward(
+        address _depositor
+    ) external view returns (uint256) {
         uint256 totalDebt = totalDebtTokenDeposits;
         uint256 initialDeposit = accountDeposits[_depositor].amount;
 
         if (totalDebt == 0 || initialDeposit == 0) {
             return storedPendingReward[_depositor];
         }
-        uint256 prismaNumerator = (_vestedEmissions() * DECIMAL_PRECISION) + lastPrismaError;
+        uint256 prismaNumerator = (_vestedEmissions() * DECIMAL_PRECISION) +
+            lastPrismaError;
         uint256 prismaPerUnitStaked = prismaNumerator / totalDebt;
         uint256 marginalPrismaGain = prismaPerUnitStaked * P;
 
@@ -589,11 +711,21 @@ contract StabilityPool is PrismaOwnable, SystemStart {
         uint256 firstPortion;
         uint256 secondPortion;
         if (scaleSnapshot == currentScale) {
-            firstPortion = epochToScaleToG[epochSnapshot][scaleSnapshot] - snapshots.G + marginalPrismaGain;
-            secondPortion = epochToScaleToG[epochSnapshot][scaleSnapshot + 1] / SCALE_FACTOR;
+            firstPortion =
+                epochToScaleToG[epochSnapshot][scaleSnapshot] -
+                snapshots.G +
+                marginalPrismaGain;
+            secondPortion =
+                epochToScaleToG[epochSnapshot][scaleSnapshot + 1] /
+                SCALE_FACTOR;
         } else {
-            firstPortion = epochToScaleToG[epochSnapshot][scaleSnapshot] - snapshots.G;
-            secondPortion = (epochToScaleToG[epochSnapshot][scaleSnapshot + 1] + marginalPrismaGain) / SCALE_FACTOR;
+            firstPortion =
+                epochToScaleToG[epochSnapshot][scaleSnapshot] -
+                snapshots.G;
+            secondPortion =
+                (epochToScaleToG[epochSnapshot][scaleSnapshot + 1] +
+                    marginalPrismaGain) /
+                SCALE_FACTOR;
         }
 
         return
@@ -603,7 +735,9 @@ contract StabilityPool is PrismaOwnable, SystemStart {
             DECIMAL_PRECISION;
     }
 
-    function _claimableReward(address _depositor) private view returns (uint256) {
+    function _claimableReward(
+        address _depositor
+    ) private view returns (uint256) {
         uint256 initialDeposit = accountDeposits[_depositor].amount;
         if (initialDeposit == 0) {
             return 0;
@@ -628,10 +762,15 @@ contract StabilityPool is PrismaOwnable, SystemStart {
         uint256 G_Snapshot = snapshots.G;
         uint256 P_Snapshot = snapshots.P;
 
-        uint256 firstPortion = epochToScaleToG[epochSnapshot][scaleSnapshot] - G_Snapshot;
-        uint256 secondPortion = epochToScaleToG[epochSnapshot][scaleSnapshot + 1] / SCALE_FACTOR;
+        uint256 firstPortion = epochToScaleToG[epochSnapshot][scaleSnapshot] -
+            G_Snapshot;
+        uint256 secondPortion = epochToScaleToG[epochSnapshot][
+            scaleSnapshot + 1
+        ] / SCALE_FACTOR;
 
-        uint256 prismaGain = (initialStake * (firstPortion + secondPortion)) / P_Snapshot / DECIMAL_PRECISION;
+        uint256 prismaGain = (initialStake * (firstPortion + secondPortion)) /
+            P_Snapshot /
+            DECIMAL_PRECISION;
 
         return prismaGain;
     }
@@ -642,7 +781,9 @@ contract StabilityPool is PrismaOwnable, SystemStart {
      * Return the user's compounded deposit. Given by the formula:  d = d0 * P/P(0)
      * where P(0) is the depositor's snapshot of the product P, taken when they last updated their deposit.
      */
-    function getCompoundedDebtDeposit(address _depositor) public view returns (uint256) {
+    function getCompoundedDebtDeposit(
+        address _depositor
+    ) public view returns (uint256) {
         uint256 initialDeposit = accountDeposits[_depositor].amount;
         if (initialDeposit == 0) {
             return 0;
@@ -650,7 +791,10 @@ contract StabilityPool is PrismaOwnable, SystemStart {
 
         Snapshots memory snapshots = depositSnapshots[_depositor];
 
-        uint256 compoundedDeposit = _getCompoundedStakeFromSnapshots(initialDeposit, snapshots);
+        uint256 compoundedDeposit = _getCompoundedStakeFromSnapshots(
+            initialDeposit,
+            snapshots
+        );
         return compoundedDeposit;
     }
 
@@ -701,20 +845,30 @@ contract StabilityPool is PrismaOwnable, SystemStart {
     }
 
     // --- Sender functions for Debt deposit, collateral gains and Prisma gains ---
-    function claimCollateralGains(address recipient, uint256[] calldata collateralIndexes) public virtual {
+    function claimCollateralGains(
+        address recipient,
+        uint256[] calldata collateralIndexes
+    ) public virtual {
         _accrueDepositorCollateralGain(msg.sender);
 
         uint256 loopEnd = collateralIndexes.length;
-        uint256[] memory collateralGains = new uint256[](collateralTokens.length);
+        uint256[] memory collateralGains = new uint256[](
+            collateralTokens.length
+        );
 
-        uint80[256] storage depositorGains = collateralGainsByDepositor[msg.sender];
+        uint80[256] storage depositorGains = collateralGainsByDepositor[
+            msg.sender
+        ];
         for (uint256 i; i < loopEnd; ) {
             uint256 collateralIndex = collateralIndexes[i];
             uint256 gains = depositorGains[collateralIndex];
             if (gains > 0) {
                 collateralGains[collateralIndex] = gains;
                 depositorGains[collateralIndex] = 0;
-                collateralTokens[collateralIndex].safeTransfer(recipient, gains);
+                collateralTokens[collateralIndex].safeTransfer(
+                    recipient,
+                    gains
+                );
             }
             unchecked {
                 ++i;
@@ -742,8 +896,12 @@ contract StabilityPool is PrismaOwnable, SystemStart {
         uint256 currentP = P;
 
         // Get S and G for the current epoch and current scale
-        uint256[256] storage currentS = epochToScaleToSums[currentEpochCached][currentScaleCached];
-        uint256 currentG = epochToScaleToG[currentEpochCached][currentScaleCached];
+        uint256[256] storage currentS = epochToScaleToSums[currentEpochCached][
+            currentScaleCached
+        ];
+        uint256 currentG = epochToScaleToG[currentEpochCached][
+            currentScaleCached
+        ];
 
         // Record new snapshots of the latest running product P, sum S, and sum G, for the depositor
         depositSnapshots[_depositor].P = currentP;
@@ -762,7 +920,9 @@ contract StabilityPool is PrismaOwnable, SystemStart {
     //This assumes the snapshot gets updated in the caller
     function _accrueRewards(address _depositor) internal {
         uint256 amount = _claimableReward(_depositor);
-        storedPendingReward[_depositor] = storedPendingReward[_depositor] + amount;
+        storedPendingReward[_depositor] =
+            storedPendingReward[_depositor] +
+            amount;
     }
 
     function claimReward(address recipient) external returns (uint256 amount) {
@@ -774,7 +934,10 @@ contract StabilityPool is PrismaOwnable, SystemStart {
         return amount;
     }
 
-    function vaultClaimReward(address claimant, address) external returns (uint256 amount) {
+    function vaultClaimReward(
+        address claimant,
+        address
+    ) external returns (uint256 amount) {
         require(msg.sender == address(vault));
 
         return _claimReward(claimant);
@@ -795,7 +958,10 @@ contract StabilityPool is PrismaOwnable, SystemStart {
             // we update only if the snapshot has changed
             if (debtLoss > 0 || hasGains || amount > 0) {
                 // Update deposit
-                accountDeposits[account] = AccountDeposit({ amount: uint128(compoundedDebtDeposit), timestamp: depositTimestamp });
+                accountDeposits[account] = AccountDeposit({
+                    amount: uint128(compoundedDebtDeposit),
+                    timestamp: depositTimestamp
+                });
                 _updateSnapshots(account, compoundedDebtDeposit);
             }
         }

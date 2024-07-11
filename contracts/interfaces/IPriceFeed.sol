@@ -1,9 +1,13 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity ^0.8.0;
 
 interface IPriceFeed {
-    event NewOracleRegistered(address token, address chainlinkAggregator, bool isEthIndexed);
+    event NewOracleRegistered(
+        address token,
+        address chainlinkAggregator,
+        bool isEthIndexed
+    );
     event PriceFeedStatusUpdated(address token, address oracle, bool isWorking);
     event PriceRecordUpdated(address indexed token, uint256 _price);
 
@@ -17,7 +21,10 @@ interface IPriceFeed {
         bool _isEthIndexed
     ) external;
 
-    function MAX_PRICE_DEVIATION_FROM_PREVIOUS_ROUND() external view returns (uint256);
+    function MAX_PRICE_DEVIATION_FROM_PREVIOUS_ROUND()
+        external
+        view
+        returns (uint256);
 
     function PRISMA_CORE() external view returns (address);
 
@@ -45,5 +52,13 @@ interface IPriceFeed {
 
     function priceRecords(
         address
-    ) external view returns (uint96 scaledPrice, uint32 timestamp, uint32 lastUpdated, uint80 roundId);
+    )
+        external
+        view
+        returns (
+            uint96 scaledPrice,
+            uint32 timestamp,
+            uint32 lastUpdated,
+            uint80 roundId
+        );
 }

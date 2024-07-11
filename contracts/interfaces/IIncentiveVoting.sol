@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity ^0.8.0;
 
@@ -20,13 +20,21 @@ interface IIncentiveVoting {
         LockData[] registeredLockData
     );
     event ClearedVotes(address indexed account, uint256 indexed week);
-    event NewVotes(address indexed account, uint256 indexed week, Vote[] newVotes, uint256 totalPointsUsed);
+    event NewVotes(
+        address indexed account,
+        uint256 indexed week,
+        Vote[] newVotes,
+        uint256 totalPointsUsed
+    );
 
     function clearRegisteredWeight(address account) external returns (bool);
 
     function clearVote(address account) external;
 
-    function getReceiverVotePct(uint256 id, uint256 week) external returns (uint256);
+    function getReceiverVotePct(
+        uint256 id,
+        uint256 week
+    ) external returns (uint256);
 
     function getReceiverWeightWrite(uint256 idx) external returns (uint256);
 
@@ -34,7 +42,11 @@ interface IIncentiveVoting {
 
     function registerAccountWeight(address account, uint256 minWeeks) external;
 
-    function registerAccountWeightAndVote(address account, uint256 minWeeks, Vote[] calldata votes) external;
+    function registerAccountWeightAndVote(
+        address account,
+        uint256 minWeeks,
+        Vote[] calldata votes
+    ) external;
 
     function registerNewReceiver() external returns (uint256);
 
@@ -42,13 +54,19 @@ interface IIncentiveVoting {
 
     function unfreeze(address account, bool keepVote) external returns (bool);
 
-    function vote(address account, Vote[] calldata votes, bool clearPrevious) external;
+    function vote(
+        address account,
+        Vote[] calldata votes,
+        bool clearPrevious
+    ) external;
 
     function MAX_LOCK_WEEKS() external view returns (uint256);
 
     function MAX_POINTS() external view returns (uint256);
 
-    function getAccountCurrentVotes(address account) external view returns (Vote[] memory votes);
+    function getAccountCurrentVotes(
+        address account
+    ) external view returns (Vote[] memory votes);
 
     function getAccountRegisteredLocks(
         address account
@@ -56,7 +74,10 @@ interface IIncentiveVoting {
 
     function getReceiverWeight(uint256 idx) external view returns (uint256);
 
-    function getReceiverWeightAt(uint256 idx, uint256 week) external view returns (uint256);
+    function getReceiverWeightAt(
+        uint256 idx,
+        uint256 week
+    ) external view returns (uint256);
 
     function getTotalWeight() external view returns (uint256);
 
@@ -64,7 +85,10 @@ interface IIncentiveVoting {
 
     function getWeek() external view returns (uint256 week);
 
-    function isApprovedDelegate(address owner, address caller) external view returns (bool isApproved);
+    function isApprovedDelegate(
+        address owner,
+        address caller
+    ) external view returns (bool isApproved);
 
     function receiverCount() external view returns (uint256);
 
@@ -72,7 +96,10 @@ interface IIncentiveVoting {
 
     function receiverUpdatedWeek(uint256) external view returns (uint16);
 
-    function receiverWeeklyUnlocks(uint256, uint256) external view returns (uint32);
+    function receiverWeeklyUnlocks(
+        uint256,
+        uint256
+    ) external view returns (uint32);
 
     function tokenLocker() external view returns (address);
 

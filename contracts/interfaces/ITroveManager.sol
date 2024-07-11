@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity ^0.8.0;
 
@@ -13,30 +13,59 @@ interface ITroveManager {
         uint256 _collateralSent,
         uint256 _collateralFee
     );
-    event RewardClaimed(address indexed account, address indexed recipient, uint256 claimed);
-    event SystemSnapshotsUpdated(uint256 _totalStakesSnapshot, uint256 _totalCollateralSnapshot);
+    event RewardClaimed(
+        address indexed account,
+        address indexed recipient,
+        uint256 claimed
+    );
+    event SystemSnapshotsUpdated(
+        uint256 _totalStakesSnapshot,
+        uint256 _totalCollateralSnapshot
+    );
     event TotalStakesUpdated(uint256 _newTotalStakes);
     event TroveIndexUpdated(address _borrower, uint256 _newIndex);
     event TroveSnapshotsUpdated(uint256 _L_collateral, uint256 _L_debt);
-    event TroveUpdated(address indexed _borrower, uint256 _debt, uint256 _coll, uint256 _stake, uint8 _operation);
+    event TroveUpdated(
+        address indexed _borrower,
+        uint256 _debt,
+        uint256 _coll,
+        uint256 _stake,
+        uint8 _operation
+    );
 
-    function addCollateralSurplus(address borrower, uint256 collSurplus) external;
+    function addCollateralSurplus(
+        address borrower,
+        uint256 collSurplus
+    ) external;
 
-    function applyPendingRewards(address _borrower) external returns (uint256 coll, uint256 debt);
+    function applyPendingRewards(
+        address _borrower
+    ) external returns (uint256 coll, uint256 debt);
 
     function claimCollateral(address _receiver) external;
 
     function claimReward(address receiver) external returns (uint256);
 
-    function closeTrove(address _borrower, address _receiver, uint256 collAmount, uint256 debtAmount) external;
+    function closeTrove(
+        address _borrower,
+        address _receiver,
+        uint256 collAmount,
+        uint256 debtAmount
+    ) external;
 
     function closeTroveByLiquidation(address _borrower) external;
 
     function collectInterests() external;
 
-    function decayBaseRateAndGetBorrowingFee(uint256 _debt) external returns (uint256);
+    function decayBaseRateAndGetBorrowingFee(
+        uint256 _debt
+    ) external returns (uint256);
 
-    function decreaseDebtAndSendCollateral(address account, uint256 debt, uint256 coll) external;
+    function decreaseDebtAndSendCollateral(
+        address account,
+        uint256 debt,
+        uint256 coll
+    ) external;
 
     function fetchPrice() external returns (uint256);
 
@@ -49,11 +78,18 @@ interface ITroveManager {
         uint256 _collGasComp
     ) external;
 
-    function getEntireSystemBalances() external returns (uint256, uint256, uint256);
+    function getEntireSystemBalances()
+        external
+        returns (uint256, uint256, uint256);
 
-    function movePendingTroveRewardsToActiveBalances(uint256 _debt, uint256 _collateral) external;
+    function movePendingTroveRewardsToActiveBalances(
+        uint256 _debt,
+        uint256 _collateral
+    ) external;
 
-    function notifyRegisteredId(uint256[] calldata _assignedIds) external returns (bool);
+    function notifyRegisteredId(
+        uint256[] calldata _assignedIds
+    ) external returns (bool);
 
     function openTrove(
         address _borrower,
@@ -75,7 +111,11 @@ interface ITroveManager {
         uint256 _maxFeePercentage
     ) external;
 
-    function setAddresses(address _priceFeedAddress, address _sortedTrovesAddress, address _collateralToken) external;
+    function setAddresses(
+        address _priceFeedAddress,
+        address _sortedTrovesAddress,
+        address _collateralToken
+    ) external;
 
     function setParameters(
         uint256 _minuteDecayFactor,
@@ -109,7 +149,10 @@ interface ITroveManager {
         address _receiver
     ) external returns (uint256, uint256, uint256);
 
-    function vaultClaimReward(address claimant, address) external returns (uint256);
+    function vaultClaimReward(
+        address claimant,
+        address
+    ) external returns (uint256);
 
     function BOOTSTRAP_PERIOD() external view returns (uint256);
 
@@ -147,7 +190,9 @@ interface ITroveManager {
             uint256 activeInterestIndex
         );
 
-    function accountLatestMint(address) external view returns (uint32 amount, uint32 week, uint32 day);
+    function accountLatestMint(
+        address
+    ) external view returns (uint32 amount, uint32 week, uint32 day);
 
     function activeInterestIndex() external view returns (uint256);
 
@@ -173,17 +218,30 @@ interface ITroveManager {
 
     function getBorrowingFee(uint256 _debt) external view returns (uint256);
 
-    function getBorrowingFeeWithDecay(uint256 _debt) external view returns (uint256);
+    function getBorrowingFeeWithDecay(
+        uint256 _debt
+    ) external view returns (uint256);
 
     function getBorrowingRate() external view returns (uint256);
 
     function getBorrowingRateWithDecay() external view returns (uint256);
 
-    function getCurrentICR(address _borrower, uint256 _price) external view returns (uint256);
+    function getCurrentICR(
+        address _borrower,
+        uint256 _price
+    ) external view returns (uint256);
 
     function getEntireDebtAndColl(
         address _borrower
-    ) external view returns (uint256 debt, uint256 coll, uint256 pendingDebtReward, uint256 pendingCollateralReward);
+    )
+        external
+        view
+        returns (
+            uint256 debt,
+            uint256 coll,
+            uint256 pendingDebtReward,
+            uint256 pendingCollateralReward
+        );
 
     function getEntireSystemColl() external view returns (uint256);
 
@@ -191,9 +249,13 @@ interface ITroveManager {
 
     function getNominalICR(address _borrower) external view returns (uint256);
 
-    function getPendingCollAndDebtRewards(address _borrower) external view returns (uint256, uint256);
+    function getPendingCollAndDebtRewards(
+        address _borrower
+    ) external view returns (uint256, uint256);
 
-    function getRedemptionFeeWithDecay(uint256 _collateralDrawn) external view returns (uint256);
+    function getRedemptionFeeWithDecay(
+        uint256 _collateralDrawn
+    ) external view returns (uint256);
 
     function getRedemptionRate() external view returns (uint256);
 
@@ -203,11 +265,17 @@ interface ITroveManager {
 
     function getTotalActiveDebt() external view returns (uint256);
 
-    function getTotalMints(uint256 week) external view returns (uint32[7] memory);
+    function getTotalMints(
+        uint256 week
+    ) external view returns (uint32[7] memory);
 
-    function getTroveCollAndDebt(address _borrower) external view returns (uint256 coll, uint256 debt);
+    function getTroveCollAndDebt(
+        address _borrower
+    ) external view returns (uint256 coll, uint256 debt);
 
-    function getTroveFromTroveOwnersArray(uint256 _index) external view returns (address);
+    function getTroveFromTroveOwnersArray(
+        uint256 _index
+    ) external view returns (address);
 
     function getTroveOwnersCount() external view returns (uint256);
 
@@ -229,7 +297,10 @@ interface ITroveManager {
 
     function lastActiveIndexUpdate() external view returns (uint256);
 
-    function lastCollateralError_Redistribution() external view returns (uint256);
+    function lastCollateralError_Redistribution()
+        external
+        view
+        returns (uint256);
 
     function lastDebtError_Redistribution() external view returns (uint256);
 
@@ -263,7 +334,9 @@ interface ITroveManager {
 
     function rewardRate() external view returns (uint128);
 
-    function rewardSnapshots(address) external view returns (uint256 collateral, uint256 debt);
+    function rewardSnapshots(
+        address
+    ) external view returns (uint256 collateral, uint256 debt);
 
     function sortedTroves() external view returns (address);
 

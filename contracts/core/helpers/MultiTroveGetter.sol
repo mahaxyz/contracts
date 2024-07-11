@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity 0.8.19;
 
@@ -48,9 +48,19 @@ contract MultiTroveGetter {
             }
 
             if (descend) {
-                _troves = _getMultipleSortedTrovesFromHead(troveManager, sortedTroves, startIdx, _count);
+                _troves = _getMultipleSortedTrovesFromHead(
+                    troveManager,
+                    sortedTroves,
+                    startIdx,
+                    _count
+                );
             } else {
-                _troves = _getMultipleSortedTrovesFromTail(troveManager, sortedTroves, startIdx, _count);
+                _troves = _getMultipleSortedTrovesFromTail(
+                    troveManager,
+                    sortedTroves,
+                    startIdx,
+                    _count
+                );
             }
         }
     }
@@ -82,9 +92,10 @@ contract MultiTroveGetter {
                 ,
 
             ) = troveManager.Troves(currentTroveowner);
-            (_troves[idx].snapshotCollateral, _troves[idx].snapshotDebt) = troveManager.rewardSnapshots(
-                currentTroveowner
-            );
+            (
+                _troves[idx].snapshotCollateral,
+                _troves[idx].snapshotDebt
+            ) = troveManager.rewardSnapshots(currentTroveowner);
 
             currentTroveowner = sortedTroves.getNext(currentTroveowner);
         }
@@ -117,9 +128,10 @@ contract MultiTroveGetter {
                 ,
 
             ) = troveManager.Troves(currentTroveowner);
-            (_troves[idx].snapshotCollateral, _troves[idx].snapshotDebt) = troveManager.rewardSnapshots(
-                currentTroveowner
-            );
+            (
+                _troves[idx].snapshotCollateral,
+                _troves[idx].snapshotDebt
+            ) = troveManager.rewardSnapshots(currentTroveowner);
 
             currentTroveowner = sortedTroves.getPrev(currentTroveowner);
         }

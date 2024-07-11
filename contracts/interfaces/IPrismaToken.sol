@@ -1,14 +1,41 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity ^0.8.0;
 
 interface IPrismaToken {
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-    event MessageFailed(uint16 _srcChainId, bytes _srcAddress, uint64 _nonce, bytes _payload, bytes _reason);
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-    event ReceiveFromChain(uint16 indexed _srcChainId, address indexed _to, uint256 _amount);
-    event RetryMessageSuccess(uint16 _srcChainId, bytes _srcAddress, uint64 _nonce, bytes32 _payloadHash);
-    event SendToChain(uint16 indexed _dstChainId, address indexed _from, bytes _toAddress, uint256 _amount);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
+    event MessageFailed(
+        uint16 _srcChainId,
+        bytes _srcAddress,
+        uint64 _nonce,
+        bytes _payload,
+        bytes _reason
+    );
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
+    event ReceiveFromChain(
+        uint16 indexed _srcChainId,
+        address indexed _to,
+        uint256 _amount
+    );
+    event RetryMessageSuccess(
+        uint16 _srcChainId,
+        bytes _srcAddress,
+        uint64 _nonce,
+        bytes32 _payloadHash
+    );
+    event SendToChain(
+        uint16 indexed _dstChainId,
+        address indexed _from,
+        bytes _toAddress,
+        uint256 _amount
+    );
     event SetMinDstGas(uint16 _dstChainId, uint16 _type, uint256 _minDstGas);
     event SetPrecrime(address precrime);
     event SetTrustedRemote(uint16 _remoteChainId, bytes _path);
@@ -18,13 +45,27 @@ interface IPrismaToken {
 
     function approve(address spender, uint256 amount) external returns (bool);
 
-    function decreaseAllowance(address spender, uint256 subtractedValue) external returns (bool);
+    function decreaseAllowance(
+        address spender,
+        uint256 subtractedValue
+    ) external returns (bool);
 
-    function forceResumeReceive(uint16 _srcChainId, bytes calldata _srcAddress) external;
+    function forceResumeReceive(
+        uint16 _srcChainId,
+        bytes calldata _srcAddress
+    ) external;
 
-    function increaseAllowance(address spender, uint256 addedValue) external returns (bool);
+    function increaseAllowance(
+        address spender,
+        uint256 addedValue
+    ) external returns (bool);
 
-    function lzReceive(uint16 _srcChainId, bytes calldata _srcAddress, uint64 _nonce, bytes calldata _payload) external;
+    function lzReceive(
+        uint16 _srcChainId,
+        bytes calldata _srcAddress,
+        uint64 _nonce,
+        bytes calldata _payload
+    ) external;
 
     function mintToVault(uint256 _totalSupply) external returns (bool);
 
@@ -47,9 +88,18 @@ interface IPrismaToken {
 
     function renounceOwnership() external;
 
-    function setConfig(uint16 _version, uint16 _chainId, uint256 _configType, bytes calldata _config) external;
+    function setConfig(
+        uint16 _version,
+        uint16 _chainId,
+        uint256 _configType,
+        bytes calldata _config
+    ) external;
 
-    function setMinDstGas(uint16 _dstChainId, uint16 _packetType, uint256 _minGas) external;
+    function setMinDstGas(
+        uint16 _dstChainId,
+        uint16 _packetType,
+        uint256 _minGas
+    ) external;
 
     function setPayloadSizeLimit(uint16 _dstChainId, uint256 _size) external;
 
@@ -59,19 +109,32 @@ interface IPrismaToken {
 
     function setSendVersion(uint16 _version) external;
 
-    function setTrustedRemote(uint16 _srcChainId, bytes calldata _path) external;
+    function setTrustedRemote(
+        uint16 _srcChainId,
+        bytes calldata _path
+    ) external;
 
-    function setTrustedRemoteAddress(uint16 _remoteChainId, bytes calldata _remoteAddress) external;
+    function setTrustedRemoteAddress(
+        uint16 _remoteChainId,
+        bytes calldata _remoteAddress
+    ) external;
 
     function setUseCustomAdapterParams(bool _useCustomAdapterParams) external;
 
     function transfer(address to, uint256 amount) external returns (bool);
 
-    function transferFrom(address from, address to, uint256 amount) external returns (bool);
+    function transferFrom(
+        address from,
+        address to,
+        uint256 amount
+    ) external returns (bool);
 
     function transferOwnership(address newOwner) external;
 
-    function transferToLocker(address sender, uint256 amount) external returns (bool);
+    function transferToLocker(
+        address sender,
+        uint256 amount
+    ) external returns (bool);
 
     function retryMessage(
         uint16 _srcChainId,
@@ -96,7 +159,10 @@ interface IPrismaToken {
 
     function PT_SEND() external view returns (uint16);
 
-    function allowance(address owner, address spender) external view returns (uint256);
+    function allowance(
+        address owner,
+        address spender
+    ) external view returns (uint256);
 
     function balanceOf(address account) external view returns (uint256);
 
@@ -114,7 +180,11 @@ interface IPrismaToken {
         bytes calldata _adapterParams
     ) external view returns (uint256 nativeFee, uint256 zroFee);
 
-    function failedMessages(uint16, bytes calldata, uint64) external view returns (bytes32);
+    function failedMessages(
+        uint16,
+        bytes calldata,
+        uint64
+    ) external view returns (bytes32);
 
     function getConfig(
         uint16 _version,
@@ -123,9 +193,14 @@ interface IPrismaToken {
         uint256 _configType
     ) external view returns (bytes memory);
 
-    function getTrustedRemoteAddress(uint16 _remoteChainId) external view returns (bytes memory);
+    function getTrustedRemoteAddress(
+        uint16 _remoteChainId
+    ) external view returns (bytes memory);
 
-    function isTrustedRemote(uint16 _srcChainId, bytes calldata _srcAddress) external view returns (bool);
+    function isTrustedRemote(
+        uint16 _srcChainId,
+        bytes calldata _srcAddress
+    ) external view returns (bool);
 
     function locker() external view returns (address);
 

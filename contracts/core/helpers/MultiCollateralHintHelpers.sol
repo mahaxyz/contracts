@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity 0.8.19;
 
@@ -12,7 +12,10 @@ import "../../dependencies/PrismaMath.sol";
 contract MultiCollateralHintHelpers is PrismaBase {
     IBorrowerOperations public immutable borrowerOperations;
 
-    constructor(address _borrowerOperationsAddress, uint256 _gasCompensation) PrismaBase(_gasCompensation) {
+    constructor(
+        address _borrowerOperationsAddress,
+        uint256 _gasCompensation
+    ) PrismaBase(_gasCompensation) {
         borrowerOperations = IBorrowerOperations(_borrowerOperationsAddress);
     }
 
@@ -43,15 +46,24 @@ contract MultiCollateralHintHelpers is PrismaBase {
     )
         external
         view
-        returns (address firstRedemptionHint, uint256 partialRedemptionHintNICR, uint256 truncatedDebtAmount)
+        returns (
+            address firstRedemptionHint,
+            uint256 partialRedemptionHintNICR,
+            uint256 truncatedDebtAmount
+        )
     {
-        ISortedTroves sortedTrovesCached = ISortedTroves(troveManager.sortedTroves());
+        ISortedTroves sortedTrovesCached = ISortedTroves(
+            troveManager.sortedTroves()
+        );
 
         uint256 remainingDebt = _debtAmount;
         address currentTroveuser = sortedTrovesCached.getLast();
         uint256 MCR = troveManager.MCR();
 
-        while (currentTroveuser != address(0) && troveManager.getCurrentICR(currentTroveuser, _price) < MCR) {
+        while (
+            currentTroveuser != address(0) &&
+            troveManager.getCurrentICR(currentTroveuser, _price) < MCR
+        ) {
             currentTroveuser = sortedTrovesCached.getPrev(currentTroveuser);
         }
 
@@ -62,19 +74,31 @@ contract MultiCollateralHintHelpers is PrismaBase {
         }
 
         uint256 minNetDebt = borrowerOperations.minNetDebt();
-        while (currentTroveuser != address(0) && remainingDebt > 0 && _maxIterations-- > 0) {
-            (uint256 debt, uint256 coll, , ) = troveManager.getEntireDebtAndColl(currentTroveuser);
+        while (
+            currentTroveuser != address(0) &&
+            remainingDebt > 0 &&
+            _maxIterations-- > 0
+        ) {
+            (uint256 debt, uint256 coll, , ) = troveManager
+                .getEntireDebtAndColl(currentTroveuser);
             uint256 netDebt = _getNetDebt(debt);
 
             if (netDebt > remainingDebt) {
                 if (netDebt > minNetDebt) {
-                    uint256 maxRedeemableDebt = PrismaMath._min(remainingDebt, netDebt - minNetDebt);
+                    uint256 maxRedeemableDebt = PrismaMath._min(
+                        remainingDebt,
+                        netDebt - minNetDebt
+                    );
 
-                    uint256 newColl = coll - ((maxRedeemableDebt * DECIMAL_PRECISION) / _price);
+                    uint256 newColl = coll -
+                        ((maxRedeemableDebt * DECIMAL_PRECISION) / _price);
                     uint256 newDebt = netDebt - maxRedeemableDebt;
 
                     uint256 compositeDebt = _getCompositeDebt(newDebt);
-                    partialRedemptionHintNICR = PrismaMath._computeNominalCR(newColl, compositeDebt);
+                    partialRedemptionHintNICR = PrismaMath._computeNominalCR(
+                        newColl,
+                        compositeDebt
+                    );
 
                     remainingDebt = remainingDebt - maxRedeemableDebt;
                 }
@@ -103,7 +127,11 @@ contract MultiCollateralHintHelpers is PrismaBase {
         uint256 _CR,
         uint256 _numTrials,
         uint256 _inputRandomSeed
-    ) external view returns (address hintAddress, uint256 diff, uint256 latestRandomSeed) {
+    )
+        external
+        view
+        returns (address hintAddress, uint256 diff, uint256 latestRandomSeed)
+    {
         ISortedTroves sortedTroves = ISortedTroves(troveManager.sortedTroves());
         uint256 arrayLength = troveManager.getTroveOwnersCount();
 
@@ -112,20 +140,30 @@ contract MultiCollateralHintHelpers is PrismaBase {
         }
 
         hintAddress = sortedTroves.getLast();
-        diff = PrismaMath._getAbsoluteDifference(_CR, troveManager.getNominalICR(hintAddress));
+        diff = PrismaMath._getAbsoluteDifference(
+            _CR,
+            troveManager.getNominalICR(hintAddress)
+        );
         latestRandomSeed = _inputRandomSeed;
 
         uint256 i = 1;
 
         while (i < _numTrials) {
-            latestRandomSeed = uint256(keccak256(abi.encodePacked(latestRandomSeed)));
+            latestRandomSeed = uint256(
+                keccak256(abi.encodePacked(latestRandomSeed))
+            );
 
             uint256 arrayIndex = latestRandomSeed % arrayLength;
-            address currentAddress = troveManager.getTroveFromTroveOwnersArray(arrayIndex);
+            address currentAddress = troveManager.getTroveFromTroveOwnersArray(
+                arrayIndex
+            );
             uint256 currentNICR = troveManager.getNominalICR(currentAddress);
 
             // check if abs(current - CR) > abs(closest - CR), and update closest if current is closer
-            uint256 currentDiff = PrismaMath._getAbsoluteDifference(currentNICR, _CR);
+            uint256 currentDiff = PrismaMath._getAbsoluteDifference(
+                currentNICR,
+                _CR
+            );
 
             if (currentDiff < diff) {
                 diff = currentDiff;
@@ -135,11 +173,18 @@ contract MultiCollateralHintHelpers is PrismaBase {
         }
     }
 
-    function computeNominalCR(uint256 _coll, uint256 _debt) external pure returns (uint256) {
+    function computeNominalCR(
+        uint256 _coll,
+        uint256 _debt
+    ) external pure returns (uint256) {
         return PrismaMath._computeNominalCR(_coll, _debt);
     }
 
-    function computeCR(uint256 _coll, uint256 _debt, uint256 _price) external pure returns (uint256) {
+    function computeCR(
+        uint256 _coll,
+        uint256 _debt,
+        uint256 _price
+    ) external pure returns (uint256) {
         return PrismaMath._computeCR(_coll, _debt, _price);
     }
 }

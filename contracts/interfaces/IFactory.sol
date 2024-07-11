@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity 0.8.19;
 
@@ -15,7 +15,12 @@ interface IFactory {
         uint256 MCR; // 12 * 1e17  (120%)
     }
 
-    event NewDeployment(address collateral, address priceFeed, address troveManager, address sortedTroves);
+    event NewDeployment(
+        address collateral,
+        address priceFeed,
+        address troveManager,
+        address sortedTroves
+    );
 
     function deployNewInstance(
         address collateral,
@@ -25,7 +30,10 @@ interface IFactory {
         DeploymentParams calldata params
     ) external;
 
-    function setImplementations(address _troveManagerImpl, address _sortedTrovesImpl) external;
+    function setImplementations(
+        address _troveManagerImpl,
+        address _sortedTrovesImpl
+    ) external;
 
     function PRISMA_CORE() external view returns (address);
 
