@@ -13,18 +13,19 @@
 
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/Math.sol";
-import "../interfaces/IBorrowerOperations.sol";
-import "../interfaces/IDebtToken.sol";
-import "../interfaces/ISortedTroves.sol";
-import "../interfaces/IVault.sol";
-import "../interfaces/IPriceFeed.sol";
-import "../dependencies/SystemStart.sol";
-import "../dependencies/PrismaBase.sol";
-import "../dependencies/PrismaMath.sol";
-import "../dependencies/PrismaOwnable.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
+import {IBorrowerOperations} from "../interfaces/IBorrowerOperations.sol";
+import {IDebtToken} from "../interfaces/IDebtToken.sol";
+import {ISortedTroves} from "../interfaces/ISortedTroves.sol";
+import {IVault} from "../interfaces/IVault.sol";
+import {IPriceFeed} from "../interfaces/IPriceFeed.sol";
+import {SystemStart} from "../dependencies/SystemStart.sol";
+import {PrismaBase} from "../dependencies/PrismaBase.sol";
+import {PrismaMath} from "../dependencies/PrismaMath.sol";
+import {ITroveManager} from "../interfaces/ITroveManager.sol";
+import {PrismaOwnable} from "../dependencies/PrismaOwnable.sol";
 
 /**
     @title Prisma Trove Manager
@@ -38,7 +39,7 @@ import "../dependencies/PrismaOwnable.sol";
             Functionality related to liquidations has been moved to `LiquidationManager`. This was
             necessary to avoid the restriction on deployed bytecode size.
  */
-contract TroveManager is PrismaBase, PrismaOwnable, SystemStart {
+contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
     using SafeERC20 for IERC20;
 
     // --- Connected contract declarations ---
@@ -158,97 +159,6 @@ contract TroveManager is PrismaBase, PrismaOwnable, SystemStart {
 
     // Array of all active trove addresses - used to to compute an approximate hint off-chain, for the sorted list insertion
     address[] TroveOwners;
-
-    struct VolumeData {
-        uint32 amount;
-        uint32 week;
-        uint32 day;
-    }
-
-    struct EmissionId {
-        uint16 debt;
-        uint16 minting;
-    }
-
-    // Store the necessary data for a trove
-    struct Trove {
-        uint256 debt;
-        uint256 coll;
-        uint256 stake;
-        Status status;
-        uint128 arrayIndex;
-        uint256 activeInterestIndex;
-    }
-
-    struct RedemptionTotals {
-        uint256 remainingDebt;
-        uint256 totalDebtToRedeem;
-        uint256 totalCollateralDrawn;
-        uint256 collateralFee;
-        uint256 collateralToSendToRedeemer;
-        uint256 decayedBaseRate;
-        uint256 price;
-        uint256 totalDebtSupplyAtStart;
-    }
-
-    struct SingleRedemptionValues {
-        uint256 debtLot;
-        uint256 collateralLot;
-        bool cancelledPartial;
-    }
-
-    // Object containing the collateral and debt snapshots for a given active trove
-    struct RewardSnapshot {
-        uint256 collateral;
-        uint256 debt;
-    }
-
-    enum TroveManagerOperation {
-        open,
-        close,
-        adjust,
-        liquidate,
-        redeemCollateral
-    }
-
-    enum Status {
-        nonExistent,
-        active,
-        closedByOwner,
-        closedByLiquidation,
-        closedByRedemption
-    }
-
-    event TroveUpdated(
-        address indexed _borrower,
-        uint256 _debt,
-        uint256 _coll,
-        uint256 _stake,
-        TroveManagerOperation _operation
-    );
-
-    event Redemption(
-        uint256 _attemptedDebtAmount,
-        uint256 _actualDebtAmount,
-        uint256 _collateralSent,
-        uint256 _collateralFee
-    );
-    event BaseRateUpdated(uint256 _baseRate);
-    event LastFeeOpTimeUpdated(uint256 _lastFeeOpTime);
-    event TotalStakesUpdated(uint256 _newTotalStakes);
-    event SystemSnapshotsUpdated(
-        uint256 _totalStakesSnapshot,
-        uint256 _totalCollateralSnapshot
-    );
-    event LTermsUpdated(uint256 _L_collateral, uint256 _L_debt);
-    event TroveSnapshotsUpdated(uint256 _L_collateral, uint256 _L_debt);
-    event TroveIndexUpdated(address _borrower, uint256 _newIndex);
-    event CollateralSent(address _to, uint256 _amount);
-    event RewardClaimed(
-        address indexed account,
-        address indexed recipient,
-        uint256 claimed
-    );
 
     modifier whenNotPaused() {
         require(!paused, "Collateral Paused");

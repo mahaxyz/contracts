@@ -108,7 +108,6 @@ contract ZaiToken is OFT {
         require(msg.sender == borrowerOperationsAddress);
         _mint(_account, _amount);
         _mint(gasPool, DEBT_GAS_COMPENSATION);
-
         return true;
     }
 
@@ -119,7 +118,6 @@ contract ZaiToken is OFT {
         require(msg.sender == borrowerOperationsAddress);
         _burn(_account, _amount);
         _burn(gasPool, DEBT_GAS_COMPENSATION);
-
         return true;
     }
 

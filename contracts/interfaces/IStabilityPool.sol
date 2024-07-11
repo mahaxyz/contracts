@@ -14,28 +14,26 @@
 pragma solidity 0.8.19;
 
 interface IStabilityPool {
-    event CollateralGainWithdrawn(
-        address indexed _depositor,
-        uint256[] _collateral
-    );
-    event CollateralOverwritten(address oldCollateral, address newCollateral);
-    event DepositSnapshotUpdated(
-        address indexed _depositor,
-        uint256 _P,
-        uint256 _G
-    );
-    event EpochUpdated(uint128 _currentEpoch);
-    event G_Updated(uint256 _G, uint128 _epoch, uint128 _scale);
-    event P_Updated(uint256 _P);
-    event RewardClaimed(
-        address indexed account,
-        address indexed recipient,
-        uint256 claimed
-    );
-    event S_Updated(uint256 idx, uint256 _S, uint128 _epoch, uint128 _scale);
-    event ScaleUpdated(uint128 _currentScale);
-    event StabilityPoolDebtBalanceUpdated(uint256 _newBalance);
-    event UserDepositChanged(address indexed _depositor, uint256 _newDeposit);
+    struct AccountDeposit {
+        uint128 amount;
+        uint128 timestamp; // timestamp of the last deposit
+    }
+
+    struct Snapshots {
+        uint256 P;
+        uint256 G;
+        uint128 scale;
+        uint128 epoch;
+    }
+
+    struct SunsetIndex {
+        uint128 idx;
+        uint128 expiry;
+    }
+    struct Queue {
+        uint16 firstSunsetIndexKey;
+        uint16 nextSunsetIndexKey;
+    }
 
     function claimCollateralGains(
         address recipient,

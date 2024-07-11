@@ -13,13 +13,14 @@
 
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../dependencies/PrismaOwnable.sol";
-import "../dependencies/SystemStart.sol";
-import "../dependencies/PrismaMath.sol";
-import "../interfaces/IDebtToken.sol";
-import "../interfaces/IVault.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {PrismaOwnable} from "../dependencies/PrismaOwnable.sol";
+import {SystemStart} from "../dependencies/SystemStart.sol";
+import {PrismaMath} from "../dependencies/PrismaMath.sol";
+import {IDebtToken} from "../interfaces/IDebtToken.sol";
+import {IStabilityPool} from "../interfaces/IStabilityPool.sol";
+import {IVault} from "../interfaces/IVault.sol";
 
 /**
     @title Prisma Stability Pool
@@ -29,7 +30,7 @@ import "../interfaces/IVault.sol";
             Prisma's implementation is modified to support multiple collaterals. Deposits into
             the stability pool may be used to liquidate any supported collateral type.
  */
-contract StabilityPool is PrismaOwnable, SystemStart {
+contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
     using SafeERC20 for IERC20;
 
     uint256 public constant DECIMAL_PRECISION = 1e18;
@@ -110,54 +111,6 @@ contract StabilityPool is PrismaOwnable, SystemStart {
 
     mapping(uint16 => SunsetIndex) _sunsetIndexes;
     Queue queue;
-
-    struct AccountDeposit {
-        uint128 amount;
-        uint128 timestamp; // timestamp of the last deposit
-    }
-
-    struct Snapshots {
-        uint256 P;
-        uint256 G;
-        uint128 scale;
-        uint128 epoch;
-    }
-
-    struct SunsetIndex {
-        uint128 idx;
-        uint128 expiry;
-    }
-    struct Queue {
-        uint16 firstSunsetIndexKey;
-        uint16 nextSunsetIndexKey;
-    }
-
-    event StabilityPoolDebtBalanceUpdated(uint256 _newBalance);
-
-    event P_Updated(uint256 _P);
-    event S_Updated(uint256 idx, uint256 _S, uint128 _epoch, uint128 _scale);
-    event G_Updated(uint256 _G, uint128 _epoch, uint128 _scale);
-    event EpochUpdated(uint128 _currentEpoch);
-    event ScaleUpdated(uint128 _currentScale);
-
-    event DepositSnapshotUpdated(
-        address indexed _depositor,
-        uint256 _P,
-        uint256 _G
-    );
-    event UserDepositChanged(address indexed _depositor, uint256 _newDeposit);
-
-    event CollateralGainWithdrawn(
-        address indexed _depositor,
-        uint256[] _collateral
-    );
-    event CollateralOverwritten(IERC20 oldCollateral, IERC20 newCollateral);
-
-    event RewardClaimed(
-        address indexed account,
-        address indexed recipient,
-        uint256 claimed
-    );
 
     constructor(
         address _prismaCore,

@@ -13,10 +13,10 @@
 
 pragma solidity 0.8.19;
 
-import "../interfaces/IAggregatorV3Interface.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
-import "../dependencies/PrismaMath.sol";
-import "../dependencies/PrismaOwnable.sol";
+import {IAggregatorV3Interface} from "../interfaces/IAggregatorV3Interface.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {PrismaMath} from "../dependencies/PrismaMath.sol";
+import {PrismaOwnable} from "../dependencies/PrismaOwnable.sol";
 
 /**
     @title Prisma Multi Token Price Feed

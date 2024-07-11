@@ -16,15 +16,13 @@ pragma solidity 0.8.19;
 /**
     @title Prisma Core
     @notice Single source of truth for system-wide values and contract ownership.
-
-            Ownership of this contract should be the Prisma DAO via `AdminVoting`.
-            Other ownable Prisma contracts inherit their ownership from this contract
-            using `PrismaOwnable`.
+    Ownership of this contract should be the Prisma DAO via `AdminVoting`.
+    Other ownable Prisma contracts inherit their ownership from this contract
+    using `PrismaOwnable`.
  */
 contract PrismaCore {
     address public feeReceiver;
     address public priceFeed;
-
     address public owner;
     address public pendingOwner;
     uint256 public ownershipTransferDeadline;
@@ -48,20 +46,6 @@ contract PrismaCore {
         address pendingOwner,
         uint256 deadline
     );
-
-    event NewOwnerAccepted(address oldOwner, address owner);
-
-    event NewOwnerRevoked(address owner, address revokedOwner);
-
-    event FeeReceiverSet(address feeReceiver);
-
-    event PriceFeedSet(address priceFeed);
-
-    event GuardianSet(address guardian);
-
-    event Paused();
-
-    event Unpaused();
 
     constructor(
         address _owner,

@@ -14,35 +14,65 @@
 pragma solidity 0.8.19;
 
 interface ITroveManager {
-    event BaseRateUpdated(uint256 _baseRate);
-    event CollateralSent(address _to, uint256 _amount);
-    event LTermsUpdated(uint256 _L_collateral, uint256 _L_debt);
-    event LastFeeOpTimeUpdated(uint256 _lastFeeOpTime);
-    event Redemption(
-        uint256 _attemptedDebtAmount,
-        uint256 _actualDebtAmount,
-        uint256 _collateralSent,
-        uint256 _collateralFee
-    );
-    event RewardClaimed(
-        address indexed account,
-        address indexed recipient,
-        uint256 claimed
-    );
-    event SystemSnapshotsUpdated(
-        uint256 _totalStakesSnapshot,
-        uint256 _totalCollateralSnapshot
-    );
-    event TotalStakesUpdated(uint256 _newTotalStakes);
-    event TroveIndexUpdated(address _borrower, uint256 _newIndex);
-    event TroveSnapshotsUpdated(uint256 _L_collateral, uint256 _L_debt);
-    event TroveUpdated(
-        address indexed _borrower,
-        uint256 _debt,
-        uint256 _coll,
-        uint256 _stake,
-        uint8 _operation
-    );
+    struct VolumeData {
+        uint32 amount;
+        uint32 week;
+        uint32 day;
+    }
+
+    struct EmissionId {
+        uint16 debt;
+        uint16 minting;
+    }
+
+    // Store the necessary data for a trove
+    struct Trove {
+        uint256 debt;
+        uint256 coll;
+        uint256 stake;
+        Status status;
+        uint128 arrayIndex;
+        uint256 activeInterestIndex;
+    }
+
+    struct RedemptionTotals {
+        uint256 remainingDebt;
+        uint256 totalDebtToRedeem;
+        uint256 totalCollateralDrawn;
+        uint256 collateralFee;
+        uint256 collateralToSendToRedeemer;
+        uint256 decayedBaseRate;
+        uint256 price;
+        uint256 totalDebtSupplyAtStart;
+    }
+
+    struct SingleRedemptionValues {
+        uint256 debtLot;
+        uint256 collateralLot;
+        bool cancelledPartial;
+    }
+
+    // Object containing the collateral and debt snapshots for a given active trove
+    struct RewardSnapshot {
+        uint256 collateral;
+        uint256 debt;
+    }
+
+    enum TroveManagerOperation {
+        open,
+        close,
+        adjust,
+        liquidate,
+        redeemCollateral
+    }
+
+    enum Status {
+        nonExistent,
+        active,
+        closedByOwner,
+        closedByLiquidation,
+        closedByRedemption
+    }
 
     function addCollateralSurplus(
         address borrower,
