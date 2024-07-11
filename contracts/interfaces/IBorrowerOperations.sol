@@ -152,7 +152,7 @@ interface IBorrowerOperations {
 
     function PERCENT_DIVISOR() external view returns (uint256);
 
-    function PRISMA_CORE() external view returns (address);
+    function ZAI_CORE() external view returns (address);
 
     function _100pct() external view returns (uint256);
 

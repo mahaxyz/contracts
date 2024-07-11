@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.19;
 
-interface IPrismaToken {
+interface IZaiToken {
     event Approval(
         address indexed owner,
         address indexed spender,

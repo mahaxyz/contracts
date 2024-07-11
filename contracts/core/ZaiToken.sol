@@ -15,10 +15,10 @@ pragma solidity 0.8.19;
 
 import {OFT, IERC20, ERC20} from "@layerzerolabs/solidity-examples/contracts/token/oft/OFT.sol";
 import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
-import "../interfaces/IPrismaCore.sol";
+import "../interfaces/IZaiCore.sol";
 
 /**
-    @title Prisma Debt Token "acUSD"
+    @title Zai Debt Token "acUSD"
     @notice CDP minted against collateral deposits within `TroveManager`.
             This contract has a 1:n relationship with multiple deployments of `TroveManager`,
             each of which hold one collateral type which may be used to mint this token.
@@ -51,7 +51,7 @@ contract ZaiToken is OFT {
     mapping(address => uint256) private _nonces;
 
     // --- Addresses ---
-    IPrismaCore private immutable _prismaCore;
+    IZaiCore private immutable _zaiCore;
     address public immutable stabilityPoolAddress;
     address public immutable borrowerOperationsAddress;
     address public immutable factory;
@@ -67,14 +67,14 @@ contract ZaiToken is OFT {
         string memory _symbol,
         address _stabilityPoolAddress,
         address _borrowerOperationsAddress,
-        IPrismaCore prismaCore_,
+        IZaiCore zaiCore_,
         address _layerZeroEndpoint,
         address _factory,
         address _gasPool,
         uint256 _gasCompensation
     ) OFT(_name, _symbol, _layerZeroEndpoint) {
         stabilityPoolAddress = _stabilityPoolAddress;
-        _prismaCore = prismaCore_;
+        _zaiCore = zaiCore_;
         borrowerOperationsAddress = _borrowerOperationsAddress;
         factory = _factory;
         gasPool = _gasPool;
@@ -99,7 +99,7 @@ contract ZaiToken is OFT {
         troveManager[_troveManager] = true;
     }
 
-    // --- Functions for intra-Prisma calls ---
+    // --- Functions for intra-Zai calls ---
 
     function mintWithGasCompensation(
         address _account,
@@ -247,7 +247,7 @@ contract ZaiToken is OFT {
         );
         _spendAllowance(address(receiver), address(this), amount + fee);
         _burn(address(receiver), amount);
-        _transfer(address(receiver), _prismaCore.feeReceiver(), fee);
+        _transfer(address(receiver), _zaiCore.feeReceiver(), fee);
         return true;
     }
 

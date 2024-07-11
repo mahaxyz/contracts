@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.19;
 
-interface IPrismaCore {
+interface IZaiCore {
     event FeeReceiverSet(address feeReceiver);
     event GuardianSet(address guardian);
     event NewOwnerAccepted(address oldOwner, address owner);

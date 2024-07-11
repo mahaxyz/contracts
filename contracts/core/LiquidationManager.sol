@@ -18,11 +18,11 @@ import "../interfaces/IStabilityPool.sol";
 import "../interfaces/ISortedTroves.sol";
 import "../interfaces/IBorrowerOperations.sol";
 import "../interfaces/ITroveManager.sol";
-import "../dependencies/PrismaMath.sol";
-import "../dependencies/PrismaBase.sol";
+import "../dependencies/ZaiMath.sol";
+import "../dependencies/ZaiBase.sol";
 
 /**
-    @title Prisma Liquidation Manager
+    @title Zai Liquidation Manager
     @notice Based on Liquity's `TroveManager`
             https://github.com/liquity/dev/blob/main/packages/contracts/contracts/TroveManager.sol
 
@@ -47,7 +47,7 @@ import "../dependencies/PrismaBase.sol";
                the value of the debt is distributed between stability pool depositors. The remaining
                collateral is left claimable by the trove owner.
  */
-contract LiquidationManager is PrismaBase {
+contract LiquidationManager is ZaiBase {
     IStabilityPool public immutable stabilityPool;
     IBorrowerOperations public immutable borrowerOperations;
     address public immutable factory;
@@ -113,7 +113,7 @@ contract LiquidationManager is PrismaBase {
         IBorrowerOperations _borrowerOperations,
         address _factory,
         uint256 _gasCompensation
-    ) PrismaBase(_gasCompensation) {
+    ) ZaiBase(_gasCompensation) {
         stabilityPool = _stabilityPoolAddress;
         borrowerOperations = _borrowerOperations;
         factory = _factory;
@@ -231,7 +231,7 @@ contract LiquidationManager is PrismaBase {
                 address account = nextAccount;
                 nextAccount = sortedTrovesCached.getPrev(account);
 
-                uint256 TCR = PrismaMath._computeCR(
+                uint256 TCR = ZaiMath._computeCR(
                     entireSystemColl,
                     entireSystemDebt
                 );
@@ -392,7 +392,7 @@ contract LiquidationManager is PrismaBase {
                     );
                 } else {
                     if (troveManagerValues.sunsetting) continue;
-                    uint256 TCR = PrismaMath._computeCR(
+                    uint256 TCR = ZaiMath._computeCR(
                         entireSystemColl,
                         entireSystemDebt
                     );
@@ -637,7 +637,7 @@ contract LiquidationManager is PrismaBase {
              *  - Send a fraction of the trove's collateral to the Stability Pool, equal to the fraction of its offset debt
              *
              */
-            debtToOffset = PrismaMath._min(_debt, _debtInStabPool);
+            debtToOffset = ZaiMath._min(_debt, _debtInStabPool);
             collToSendToSP = (_coll * debtToOffset) / _debt;
             debtToRedistribute = _debt - debtToOffset;
             collToRedistribute = _coll - collToSendToSP;

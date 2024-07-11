@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.19;
 
-interface IPrismaVault {
+interface IZaiVault {
     struct InitialAllowance {
         address receiver;
         uint256 amount;
@@ -98,7 +98,7 @@ interface IPrismaVault {
         uint256 amount
     ) external returns (bool);
 
-    function PRISMA_CORE() external view returns (address);
+    function ZAI_CORE() external view returns (address);
 
     function allocated(address) external view returns (uint256);
 
@@ -139,7 +139,7 @@ interface IPrismaVault {
         address claimant
     ) external view returns (uint256 amount);
 
-    function prismaToken() external view returns (address);
+    function zaiToken() external view returns (address);
 
     function receiverUpdatedWeek(uint256) external view returns (uint16);
 

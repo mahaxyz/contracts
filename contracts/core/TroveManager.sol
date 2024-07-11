@@ -22,24 +22,24 @@ import {ISortedTroves} from "../interfaces/ISortedTroves.sol";
 import {IVault} from "../interfaces/IVault.sol";
 import {IPriceFeed} from "../interfaces/IPriceFeed.sol";
 import {SystemStart} from "../dependencies/SystemStart.sol";
-import {PrismaBase} from "../dependencies/PrismaBase.sol";
-import {PrismaMath} from "../dependencies/PrismaMath.sol";
+import {ZaiBase} from "../dependencies/ZaiBase.sol";
+import {ZaiMath} from "../dependencies/ZaiMath.sol";
 import {ITroveManager} from "../interfaces/ITroveManager.sol";
-import {PrismaOwnable} from "../dependencies/PrismaOwnable.sol";
+import {ZaiOwnable} from "../dependencies/ZaiOwnable.sol";
 
 /**
-    @title Prisma Trove Manager
+    @title Zai Trove Manager
     @notice Based on Liquity's `TroveManager`
             https://github.com/liquity/dev/blob/main/packages/contracts/contracts/TroveManager.sol
 
-            Prisma's implementation is modified so that multiple `TroveManager` and `SortedTroves`
+            Zai's implementation is modified so that multiple `TroveManager` and `SortedTroves`
             contracts are deployed in tandem, with each pair managing troves of a single collateral
             type.
 
             Functionality related to liquidations has been moved to `LiquidationManager`. This was
             necessary to avoid the restriction on deployed bytecode size.
  */
-contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
+contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
     using SafeERC20 for IERC20;
 
     // --- Connected contract declarations ---
@@ -48,7 +48,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
     address public immutable liquidationManager;
     address immutable gasPoolAddress;
     IDebtToken public immutable debtToken;
-    IPrismaVault public immutable vault;
+    IZaiVault public immutable vault;
 
     IPriceFeed public priceFeed;
     IERC20 public collateralToken;
@@ -166,22 +166,18 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
     }
 
     constructor(
-        address _prismaCore,
+        address _zaiCore,
         address _gasPoolAddress,
         address _debtTokenAddress,
         address _borrowerOperationsAddress,
         address _vault,
         address _liquidationManager,
         uint256 _gasCompensation
-    )
-        PrismaOwnable(_prismaCore)
-        PrismaBase(_gasCompensation)
-        SystemStart(_prismaCore)
-    {
+    ) ZaiOwnable(_zaiCore) ZaiBase(_gasCompensation) SystemStart(_zaiCore) {
         gasPoolAddress = _gasPoolAddress;
         debtToken = IDebtToken(_debtTokenAddress);
         borrowerOperationsAddress = _borrowerOperationsAddress;
-        vault = IPrismaVault(_vault);
+        vault = IZaiVault(_vault);
         liquidationManager = _liquidationManager;
     }
 
@@ -327,7 +323,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
     function collectInterests() external {
         uint256 interestPayableCached = interestPayable;
         require(interestPayableCached > 0, "Nothing to collect");
-        debtToken.mint(PRISMA_CORE.feeReceiver(), interestPayableCached);
+        debtToken.mint(ZAI_CORE.feeReceiver(), interestPayableCached);
         interestPayable = 0;
     }
 
@@ -336,7 +332,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
     function fetchPrice() public returns (uint256) {
         IPriceFeed _priceFeed = priceFeed;
         if (address(_priceFeed) == address(0)) {
-            _priceFeed = IPriceFeed(PRISMA_CORE.priceFeed());
+            _priceFeed = IPriceFeed(ZAI_CORE.priceFeed());
         }
         return _priceFeed.fetchPrice(address(collateralToken));
     }
@@ -451,7 +447,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
             _borrower
         );
 
-        uint256 NICR = PrismaMath._computeNominalCR(
+        uint256 NICR = ZaiMath._computeNominalCR(
             currentCollateral,
             currentDebt
         );
@@ -467,7 +463,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
             _borrower
         );
 
-        uint256 ICR = PrismaMath._computeCR(
+        uint256 ICR = ZaiMath._computeCR(
             currentCollateral,
             currentDebt,
             _price
@@ -546,7 +542,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
             _totalDebtSupply;
 
         uint256 newBaseRate = decayedBaseRate + (redeemedDebtFraction / BETA);
-        newBaseRate = PrismaMath._min(newBaseRate, DECIMAL_PRECISION); // cap baseRate at a maximum of 100%
+        newBaseRate = ZaiMath._min(newBaseRate, DECIMAL_PRECISION); // cap baseRate at a maximum of 100%
 
         // Update the baseRate state variable
         baseRate = newBaseRate;
@@ -569,7 +565,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
         uint256 _baseRate
     ) internal view returns (uint256) {
         return
-            PrismaMath._min(
+            ZaiMath._min(
                 redemptionFeeFloor + _baseRate,
                 maxRedemptionFee // cap at a maximum of 100%
             );
@@ -608,7 +604,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
     function _calcBorrowingRate(
         uint256 _baseRate
     ) internal view returns (uint256) {
-        return PrismaMath._min(borrowingFeeFloor + _baseRate, maxBorrowingFee);
+        return ZaiMath._min(borrowingFeeFloor + _baseRate, maxBorrowingFee);
     }
 
     function getBorrowingFee(uint256 _debt) external view returns (uint256) {
@@ -643,10 +639,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
     function _calcDecayedBaseRate() internal view returns (uint256) {
         uint256 minutesPassed = (block.timestamp - lastFeeOperationTime) /
             SECONDS_IN_ONE_MINUTE;
-        uint256 decayFactor = PrismaMath._decPow(
-            minuteDecayFactor,
-            minutesPassed
-        );
+        uint256 decayFactor = ZaiMath._decPow(minuteDecayFactor, minutesPassed);
 
         return (baseRate * decayFactor) / DECIMAL_PRECISION;
     }
@@ -797,7 +790,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
             _maxFeePercentage
         );
 
-        _sendCollateral(PRISMA_CORE.feeReceiver(), totals.collateralFee);
+        _sendCollateral(ZAI_CORE.feeReceiver(), totals.collateralFee);
 
         totals.collateralToSendToRedeemer =
             totals.totalCollateralDrawn -
@@ -830,7 +823,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
     ) internal returns (SingleRedemptionValues memory singleRedemption) {
         Trove storage t = Troves[_borrower];
         // Determine the remaining amount (lot) to be redeemed, capped by the entire debt of the Trove minus the liquidation reserve
-        singleRedemption.debtLot = PrismaMath._min(
+        singleRedemption.debtLot = ZaiMath._min(
             _maxDebtAmount,
             t.debt - DEBT_GAS_COMPENSATION
         );
@@ -857,7 +850,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
                 TroveManagerOperation.redeemCollateral
             );
         } else {
-            uint256 newNICR = PrismaMath._computeNominalCR(newColl, newDebt);
+            uint256 newNICR = ZaiMath._computeNominalCR(newColl, newDebt);
             /*
              * If the provided hint is out of date, we bail since trying to reinsert without a good hint will almost
              * certainly result in running out of gas.
@@ -1204,7 +1197,7 @@ contract TroveManager is ITroveManager, PrismaBase, PrismaOwnable, SystemStart {
             t.coll = newColl;
         }
 
-        uint256 newNICR = PrismaMath._computeNominalCR(newColl, newDebt);
+        uint256 newNICR = ZaiMath._computeNominalCR(newColl, newDebt);
         sortedTroves.reInsert(_borrower, newNICR, _upperHint, _lowerHint);
         uint256 newStake = _updateStakeAndTotalStakes(t);
         emit TroveUpdated(

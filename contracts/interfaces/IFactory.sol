@@ -46,7 +46,7 @@ interface IFactory {
         address _sortedTrovesImpl
     ) external;
 
-    function PRISMA_CORE() external view returns (address);
+    function ZAI_CORE() external view returns (address);
 
     function borrowerOperations() external view returns (address);
 

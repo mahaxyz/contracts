@@ -213,7 +213,7 @@ interface ITroveManager {
 
     function PERCENT_DIVISOR() external view returns (uint256);
 
-    function PRISMA_CORE() external view returns (address);
+    function ZAI_CORE() external view returns (address);
 
     function SUNSETTING_INTEREST_RATE() external view returns (uint256);
 

@@ -15,17 +15,17 @@ pragma solidity 0.8.19;
 
 import {IAggregatorV3Interface} from "../interfaces/IAggregatorV3Interface.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
-import {PrismaMath} from "../dependencies/PrismaMath.sol";
-import {PrismaOwnable} from "../dependencies/PrismaOwnable.sol";
+import {ZaiMath} from "../dependencies/ZaiMath.sol";
+import {ZaiOwnable} from "../dependencies/ZaiOwnable.sol";
 
 /**
-    @title Prisma Multi Token Price Feed
+    @title Zai Multi Token Price Feed
     @notice Based on Gravita's PriceFeed:
             https://github.com/Gravita-Protocol/Gravita-SmartContracts/blob/9b69d555f3567622b0f84df8c7f1bb5cd9323573/contracts/PriceFeed.sol
 
-            Prisma's implementation additionally caches price values within a block and incorporates exchange rate settings for derivative tokens (e.g. stETH -> wstETH).
+            Zai's implementation additionally caches price values within a block and incorporates exchange rate settings for derivative tokens (e.g. stETH -> wstETH).
  */
-contract PriceFeed is PrismaOwnable {
+contract PriceFeed is ZaiOwnable {
     struct OracleRecord {
         IAggregatorV3Interface chainLinkOracle;
         uint8 decimals;
@@ -93,10 +93,10 @@ contract PriceFeed is PrismaOwnable {
     }
 
     constructor(
-        address _prismaCore,
+        address _zaiCore,
         address ethFeed,
         OracleSetup[] memory oracles
-    ) PrismaOwnable(_prismaCore) {
+    ) ZaiOwnable(_zaiCore) {
         _setOracle(address(0), ethFeed, 3600, 0, 0, false);
         for (uint i = 0; i < oracles.length; i++) {
             OracleSetup memory o = oracles[i];
@@ -356,8 +356,8 @@ contract PriceFeed is PrismaOwnable {
             decimals
         );
 
-        uint256 minPrice = PrismaMath._min(currentScaledPrice, prevScaledPrice);
-        uint256 maxPrice = PrismaMath._max(currentScaledPrice, prevScaledPrice);
+        uint256 minPrice = ZaiMath._min(currentScaledPrice, prevScaledPrice);
+        uint256 maxPrice = ZaiMath._max(currentScaledPrice, prevScaledPrice);
 
         /*
          * Use the larger price as the denominator:
@@ -365,7 +365,7 @@ contract PriceFeed is PrismaOwnable {
          * - If price increased, the percentage deviation is in relation to the current price.
          */
         uint256 percentDeviation = ((maxPrice - minPrice) *
-            PrismaMath.DECIMAL_PRECISION) / maxPrice;
+            ZaiMath.DECIMAL_PRECISION) / maxPrice;
 
         return percentDeviation > MAX_PRICE_DEVIATION_FROM_PREVIOUS_ROUND;
     }

@@ -13,11 +13,13 @@
 
 pragma solidity 0.8.19;
 
-/*
- * Base contract for TroveManager, BorrowerOperations and StabilityPool. Contains global system constants and
+/**
+ * @title ZaiBase
+ * @author Maha.xyz
+ * @notice Base contract for TroveManager, BorrowerOperations and StabilityPool. Contains global system constants and
  * common functions.
  */
-contract PrismaBase {
+abstract contract ZaiBase {
     uint256 public constant DECIMAL_PRECISION = 1e18;
 
     // Critical system collateral ratio. If the system's total collateral ratio (TCR) falls below the CCR, Recovery Mode is triggered.

@@ -16,7 +16,7 @@ pragma solidity 0.8.19;
 import "../interfaces/ITroveManager.sol";
 
 /**
-    @title Prisma Sorted Troves
+    @title Zai Sorted Troves
     @notice Based on Liquity's `SortedTroves`:
             https://github.com/liquity/dev/blob/main/packages/contracts/contracts/SortedTroves.sol
 

@@ -15,22 +15,22 @@ pragma solidity 0.8.19;
 
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {PrismaOwnable} from "../dependencies/PrismaOwnable.sol";
+import {ZaiOwnable} from "../dependencies/ZaiOwnable.sol";
 import {SystemStart} from "../dependencies/SystemStart.sol";
-import {PrismaMath} from "../dependencies/PrismaMath.sol";
+import {ZaiMath} from "../dependencies/ZaiMath.sol";
 import {IDebtToken} from "../interfaces/IDebtToken.sol";
 import {IStabilityPool} from "../interfaces/IStabilityPool.sol";
 import {IVault} from "../interfaces/IVault.sol";
 
 /**
-    @title Prisma Stability Pool
+    @title Zai Stability Pool
     @notice Based on Liquity's `StabilityPool`
             https://github.com/liquity/dev/blob/main/packages/contracts/contracts/StabilityPool.sol
 
-            Prisma's implementation is modified to support multiple collaterals. Deposits into
+            Zai's implementation is modified to support multiple collaterals. Deposits into
             the stability pool may be used to liquidate any supported collateral type.
  */
-contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
+contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
     using SafeERC20 for IERC20;
 
     uint256 public constant DECIMAL_PRECISION = 1e18;
@@ -40,7 +40,7 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
     uint256 public constant emissionId = 0;
 
     IDebtToken public immutable debtToken;
-    IPrismaVault public immutable vault;
+    IZaiVault public immutable vault;
     address public immutable factory;
     address public immutable liquidationManager;
 
@@ -95,16 +95,16 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
         public epochToScaleToSums;
 
     /*
-     * Similarly, the sum 'G' is used to calculate Prisma gains. During it's lifetime, each deposit d_t earns a Prisma gain of
+     * Similarly, the sum 'G' is used to calculate Zai gains. During it's lifetime, each deposit d_t earns a Zai gain of
      *  ( d_t * [G - G_t] )/P_t, where G_t is the depositor's snapshot of G taken at time t when  the deposit was made.
      *
-     *  Prisma reward events occur are triggered by depositor operations (new deposit, topup, withdrawal), and liquidations.
-     *  In each case, the Prisma reward is issued (i.e. G is updated), before other state changes are made.
+     *  Zai reward events occur are triggered by depositor operations (new deposit, topup, withdrawal), and liquidations.
+     *  In each case, the Zai reward is issued (i.e. G is updated), before other state changes are made.
      */
     mapping(uint128 => mapping(uint128 => uint256)) public epochToScaleToG;
 
-    // Error tracker for the error correction in the Prisma issuance calculation
-    uint256 public lastPrismaError;
+    // Error tracker for the error correction in the Zai issuance calculation
+    uint256 public lastZaiError;
     // Error trackers for the error correction in the offset calculation
     uint256[256] public lastCollateralError_Offset;
     uint256 public lastDebtLossError_Offset;
@@ -113,12 +113,12 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
     Queue queue;
 
     constructor(
-        address _prismaCore,
+        address _zaiCore,
         IDebtToken _debtTokenAddress,
-        IPrismaVault _vault,
+        IZaiVault _vault,
         address _factory,
         address _liquidationManager
-    ) PrismaOwnable(_prismaCore) SystemStart(_prismaCore) {
+    ) ZaiOwnable(_zaiCore) SystemStart(_zaiCore) {
         debtToken = _debtTokenAddress;
         vault = _vault;
         factory = _factory;
@@ -214,14 +214,14 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
 
     /*  provideToSP():
      *
-     * - Triggers a Prisma issuance, based on time passed since the last issuance. The Prisma issuance is shared between *all* depositors and front ends
+     * - Triggers a Zai issuance, based on time passed since the last issuance. The Zai issuance is shared between *all* depositors and front ends
      * - Tags the deposit with the provided front end tag param, if it's a new deposit
-     * - Sends depositor's accumulated gains (Prisma, collateral) to depositor
-     * - Sends the tagged front end's accumulated Prisma gains to the tagged front end
+     * - Sends depositor's accumulated gains (Zai, collateral) to depositor
+     * - Sends the tagged front end's accumulated Zai gains to the tagged front end
      * - Increases deposit and tagged front end's stake, and takes new snapshots for each.
      */
     function provideToSP(uint256 _amount) external {
-        require(!PRISMA_CORE.paused(), "Deposits are paused");
+        require(!ZAI_CORE.paused(), "Deposits are paused");
         require(_amount > 0, "StabilityPool: Amount must be non-zero");
 
         _triggerRewardIssuance();
@@ -249,10 +249,10 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
 
     /*  withdrawFromSP():
      *
-     * - Triggers a Prisma issuance, based on time passed since the last issuance. The Prisma issuance is shared between *all* depositors and front ends
+     * - Triggers a Zai issuance, based on time passed since the last issuance. The Zai issuance is shared between *all* depositors and front ends
      * - Removes the deposit's front end tag if it is a full withdrawal
-     * - Sends all depositor's accumulated gains (Prisma, collateral) to depositor
-     * - Sends the tagged front end's accumulated Prisma gains to the tagged front end
+     * - Sends all depositor's accumulated gains (Zai, collateral) to depositor
+     * - Sends the tagged front end's accumulated Zai gains to the tagged front end
      * - Decreases deposit and tagged front end's stake, and takes new snapshots for each.
      *
      * If _amount > userDeposit, the user withdraws all of their compounded deposit.
@@ -274,10 +274,7 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
         _accrueDepositorCollateralGain(msg.sender);
 
         uint256 compoundedDebtDeposit = getCompoundedDebtDeposit(msg.sender);
-        uint256 debtToWithdraw = PrismaMath._min(
-            _amount,
-            compoundedDebtDeposit
-        );
+        uint256 debtToWithdraw = ZaiMath._min(_amount, compoundedDebtDeposit);
 
         _accrueRewards(msg.sender);
 
@@ -297,7 +294,7 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
         emit UserDepositChanged(msg.sender, newDeposit);
     }
 
-    // --- Prisma issuance functions ---
+    // --- Zai issuance functions ---
 
     function _triggerRewardIssuance() internal {
         _updateG(_vestedEmissions());
@@ -331,38 +328,35 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
         return duration * rewardRate;
     }
 
-    function _updateG(uint256 _prismaIssuance) internal {
+    function _updateG(uint256 _zaiIssuance) internal {
         uint256 totalDebt = totalDebtTokenDeposits; // cached to save an SLOAD
         /*
-         * When total deposits is 0, G is not updated. In this case, the Prisma issued can not be obtained by later
+         * When total deposits is 0, G is not updated. In this case, the Zai issued can not be obtained by later
          * depositors - it is missed out on, and remains in the balanceof the Treasury contract.
          *
          */
-        if (totalDebt == 0 || _prismaIssuance == 0) {
+        if (totalDebt == 0 || _zaiIssuance == 0) {
             return;
         }
 
-        uint256 prismaPerUnitStaked;
-        prismaPerUnitStaked = _computePrismaPerUnitStaked(
-            _prismaIssuance,
-            totalDebt
-        );
+        uint256 zaiPerUnitStaked;
+        zaiPerUnitStaked = _computeZaiPerUnitStaked(_zaiIssuance, totalDebt);
         uint128 currentEpochCached = currentEpoch;
         uint128 currentScaleCached = currentScale;
-        uint256 marginalPrismaGain = prismaPerUnitStaked * P;
+        uint256 marginalZaiGain = zaiPerUnitStaked * P;
         uint256 newG = epochToScaleToG[currentEpochCached][currentScaleCached] +
-            marginalPrismaGain;
+            marginalZaiGain;
         epochToScaleToG[currentEpochCached][currentScaleCached] = newG;
 
         emit G_Updated(newG, currentEpochCached, currentScaleCached);
     }
 
-    function _computePrismaPerUnitStaked(
-        uint256 _prismaIssuance,
+    function _computeZaiPerUnitStaked(
+        uint256 _zaiIssuance,
         uint256 _totalDebtTokenDeposits
     ) internal returns (uint256) {
         /*
-         * Calculate the Prisma-per-unit staked.  Division uses a "feedback" error correction, to keep the
+         * Calculate the Zai-per-unit staked.  Division uses a "feedback" error correction, to keep the
          * cumulative error low in the running total G:
          *
          * 1) Form a numerator which compensates for the floor division error that occurred the last time this
@@ -372,15 +366,15 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
          * 4) Store this error for use in the next correction when this function is called.
          * 5) Note: static analysis tools complain about this "division before multiplication", however, it is intended.
          */
-        uint256 prismaNumerator = (_prismaIssuance * DECIMAL_PRECISION) +
-            lastPrismaError;
+        uint256 zaiNumerator = (_zaiIssuance * DECIMAL_PRECISION) +
+            lastZaiError;
 
-        uint256 prismaPerUnitStaked = prismaNumerator / _totalDebtTokenDeposits;
-        lastPrismaError =
-            prismaNumerator -
-            (prismaPerUnitStaked * _totalDebtTokenDeposits);
+        uint256 zaiPerUnitStaked = zaiNumerator / _totalDebtTokenDeposits;
+        lastZaiError =
+            zaiNumerator -
+            (zaiPerUnitStaked * _totalDebtTokenDeposits);
 
-        return prismaPerUnitStaked;
+        return zaiPerUnitStaked;
     }
 
     // --- Liquidation functions ---
@@ -639,8 +633,8 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
     }
 
     /*
-     * Calculate the Prisma gain earned by a deposit since its last snapshots were taken.
-     * Given by the formula:  Prisma = d0 * (G - G(0))/P(0)
+     * Calculate the Zai gain earned by a deposit since its last snapshots were taken.
+     * Given by the formula:  Zai = d0 * (G - G(0))/P(0)
      * where G(0) and P(0) are the depositor's snapshots of the sum G and product P, respectively.
      * d0 is the last recorded deposit value.
      */
@@ -653,10 +647,10 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
         if (totalDebt == 0 || initialDeposit == 0) {
             return storedPendingReward[_depositor];
         }
-        uint256 prismaNumerator = (_vestedEmissions() * DECIMAL_PRECISION) +
-            lastPrismaError;
-        uint256 prismaPerUnitStaked = prismaNumerator / totalDebt;
-        uint256 marginalPrismaGain = prismaPerUnitStaked * P;
+        uint256 zaiNumerator = (_vestedEmissions() * DECIMAL_PRECISION) +
+            lastZaiError;
+        uint256 zaiPerUnitStaked = zaiNumerator / totalDebt;
+        uint256 marginalZaiGain = zaiPerUnitStaked * P;
 
         Snapshots memory snapshots = depositSnapshots[_depositor];
         uint128 epochSnapshot = snapshots.epoch;
@@ -667,7 +661,7 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
             firstPortion =
                 epochToScaleToG[epochSnapshot][scaleSnapshot] -
                 snapshots.G +
-                marginalPrismaGain;
+                marginalZaiGain;
             secondPortion =
                 epochToScaleToG[epochSnapshot][scaleSnapshot + 1] /
                 SCALE_FACTOR;
@@ -677,7 +671,7 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
                 snapshots.G;
             secondPortion =
                 (epochToScaleToG[epochSnapshot][scaleSnapshot + 1] +
-                    marginalPrismaGain) /
+                    marginalZaiGain) /
                 SCALE_FACTOR;
         }
 
@@ -698,16 +692,16 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
 
         Snapshots memory snapshots = depositSnapshots[_depositor];
 
-        return _getPrismaGainFromSnapshots(initialDeposit, snapshots);
+        return _getZaiGainFromSnapshots(initialDeposit, snapshots);
     }
 
-    function _getPrismaGainFromSnapshots(
+    function _getZaiGainFromSnapshots(
         uint256 initialStake,
         Snapshots memory snapshots
     ) internal view returns (uint256) {
         /*
-         * Grab the sum 'G' from the epoch at which the stake was made. The Prisma gain may span up to one scale change.
-         * If it does, the second portion of the Prisma gain is scaled by 1e9.
+         * Grab the sum 'G' from the epoch at which the stake was made. The Zai gain may span up to one scale change.
+         * If it does, the second portion of the Zai gain is scaled by 1e9.
          * If the gain spans no scale change, the second portion will be 0.
          */
         uint128 epochSnapshot = snapshots.epoch;
@@ -721,11 +715,11 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
             scaleSnapshot + 1
         ] / SCALE_FACTOR;
 
-        uint256 prismaGain = (initialStake * (firstPortion + secondPortion)) /
+        uint256 zaiGain = (initialStake * (firstPortion + secondPortion)) /
             P_Snapshot /
             DECIMAL_PRECISION;
 
-        return prismaGain;
+        return zaiGain;
     }
 
     // --- Compounded deposit and compounded front end stake ---
@@ -797,7 +791,7 @@ contract StabilityPool is PrismaOwnable, SystemStart, IStabilityPool {
         return compoundedStake;
     }
 
-    // --- Sender functions for Debt deposit, collateral gains and Prisma gains ---
+    // --- Sender functions for Debt deposit, collateral gains and Zai gains ---
     function claimCollateralGains(
         address recipient,
         uint256[] calldata collateralIndexes

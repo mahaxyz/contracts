@@ -37,7 +37,7 @@ interface IPriceFeed {
         view
         returns (uint256);
 
-    function PRISMA_CORE() external view returns (address);
+    function ZAI_CORE() external view returns (address);
 
     function RESPONSE_TIMEOUT() external view returns (uint256);
 

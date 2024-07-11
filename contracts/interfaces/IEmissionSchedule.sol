@@ -39,7 +39,7 @@ interface IEmissionSchedule {
 
     function MAX_LOCK_WEEKS() external view returns (uint256);
 
-    function PRISMA_CORE() external view returns (address);
+    function ZAI_CORE() external view returns (address);
 
     function getWeek() external view returns (uint256 week);
 

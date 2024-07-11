@@ -1,11 +1,29 @@
 import { ethers } from "hardhat";
 import hre from "hardhat";
-import { deployContract, estimateDeploymentAddress, getDeploymentNonce } from "./utils";
-import { BorrowerOperations, DebtToken, Factory, FeeReceiver, LiquidationManager, MultiCollateralHintHelpers, MultiTroveGetter, PriceFeed, PrismaCore, SortedTroves, StabilityPool, TroveManager, TroveManagerGetters } from "../typechain";
+import {
+  deployContract,
+  estimateDeploymentAddress,
+  getDeploymentNonce,
+} from "./utils";
+import {
+  BorrowerOperations,
+  DebtToken,
+  Factory,
+  FeeReceiver,
+  LiquidationManager,
+  MultiCollateralHintHelpers,
+  MultiTroveGetter,
+  PriceFeed,
+  ZaiCore,
+  SortedTroves,
+  StabilityPool,
+  TroveManager,
+  TroveManagerGetters,
+} from "../typechain";
 import { BigNumber } from "ethers";
 
 async function main() {
-  const ethFeed = "0x694AA1769357215DE4FAC081bf1f309aDC325306" // Sepolia ETH/USD Chainlink Feed address
+  const ethFeed = "0x694AA1769357215DE4FAC081bf1f309aDC325306"; // Sepolia ETH/USD Chainlink Feed address
   const MIN_NET_DEBT = 200;
   const GAS_COMPENSATION = 10;
   const DEBT_TOKEN_NAME = "Maha Debt";
@@ -15,15 +33,15 @@ async function main() {
 
   console.log("- Estimating deployment addresses");
   const [signer] = await ethers.getSigners();
-  const deployer = await (signer).getAddress();
+  const deployer = await signer.getAddress();
   const nonce = await getDeploymentNonce(signer);
 
   const addreses: string[] = [];
   for (let index = 0; index < 13; index++) {
-    addreses.push(await estimateDeploymentAddress(deployer, nonce+index));
+    addreses.push(await estimateDeploymentAddress(deployer, nonce + index));
   }
   const addressList = {
-    PrismaCore: addreses[0],
+    ZaiCore: addreses[0],
     PriceFeed: addreses[1],
     FeeReceiver: addreses[2],
     Factory: addreses[3],
@@ -35,11 +53,11 @@ async function main() {
     TroveManagerGetters: addreses[9],
     SortedTroves: addreses[10],
     TroveManager: addreses[11],
-    PrismaVault: addreses[12]
-  }
+    ZaiVault: addreses[12],
+  };
 
-  //// PrismaCore.sol ////
-  await deployContract<PrismaCore>("PrismaCore", [
+  //// ZaiCore.sol ////
+  await deployContract<ZaiCore>("ZaiCore", [
     deployer, // owner
     deployer, // guardian
     addressList.PriceFeed, // priceFeed
@@ -48,19 +66,17 @@ async function main() {
 
   //// PriceFeed.sol ////
   await deployContract<PriceFeed>("PriceFeed", [
-    addressList.PrismaCore, // prismaCore
+    addressList.ZaiCore, // zaiCore
     ethFeed, // Sepolia ETH/USD Chainlink Feed address
-    []
+    [],
   ]);
 
   //// FeeReceiver.sol ////
-  await deployContract<FeeReceiver>("FeeReceiver", [
-    addressList.PrismaCore,
-  ]);
+  await deployContract<FeeReceiver>("FeeReceiver", [addressList.ZaiCore]);
 
   //// Factory.sol ////
   await deployContract<Factory>("Factory", [
-    addressList.PrismaCore, // address _prismaCore,
+    addressList.ZaiCore, // address _zaiCore,
     addressList.DebtToken, // IDebtToken _debtToken,
     addressList.StabilityPool, // IStabilityPool _stabilityPool,
     addressList.BorrowerOperations, // IBorrowerOperations _borrowerOperations,
@@ -71,7 +87,7 @@ async function main() {
 
   //// BorrowerOperations.sol ////
   await deployContract<BorrowerOperations>("BorrowerOperations", [
-    addressList.PrismaCore, // address _prismaCore,
+    addressList.ZaiCore, // address _zaiCore,
     addressList.DebtToken, // address _debtTokenAddress,
     addressList.Factory, // address _factory,
     e18.mul(MIN_NET_DEBT), // uint256 _minNetDebt,
@@ -84,7 +100,7 @@ async function main() {
     DEBT_TOKEN_SYMBOL, // token symbol
     addressList.StabilityPool, // address _stabilityPoolAddress
     addressList.BorrowerOperations, // address _borrowerOperationsAddress
-    addressList.PrismaCore, // IPrismaCore prismaCore_,
+    addressList.ZaiCore, // IZaiCore zaiCore_,
     LAYER_ZERO_ENDPOINT, // address _layerZeroEndpoint,
     addressList.Factory, // address _factory,
     addressList.GasPool, // address _gasPool,
@@ -104,37 +120,37 @@ async function main() {
 
   //// StabilityPool.sol ////
   await deployContract<StabilityPool>("StabilityPool", [
-    addressList.PrismaCore, // address _prismaCore,
+    addressList.ZaiCore, // address _zaiCore,
     addressList.DebtToken, // IDebtTokenOnezProxy _debtTokenAddress,
-    addressList.PrismaVault, // IPrismaVault _vault,
+    addressList.ZaiVault, // IZaiVault _vault,
     addressList.Factory, // address _factory,
     addressList.LiquidationManager, // address _liquidationManager
   ]);
 
   //// MultiCollateralHintHelpers.sol ////
-  await deployContract<MultiCollateralHintHelpers>("MultiCollateralHintHelpers",[
-    addressList.PrismaCore, 
-    GAS_COMPENSATION
-  ]);
+  await deployContract<MultiCollateralHintHelpers>(
+    "MultiCollateralHintHelpers",
+    [addressList.ZaiCore, GAS_COMPENSATION]
+  );
 
   //// MultiTroveGetter.sol ////
   await deployContract<MultiTroveGetter>("MultiTroveGetter");
 
   //// TroveManagerGetters.sol ////
-  await deployContract<TroveManagerGetters>("TroveManagerGetters",[
-    addressList.Factory
+  await deployContract<TroveManagerGetters>("TroveManagerGetters", [
+    addressList.Factory,
   ]);
 
   //// SortedTroves.sol ////
   await deployContract<SortedTroves>("SortedTroves");
 
   //// TroveManager.sol ////
-  await deployContract<TroveManager>("TroveManager",[
-    addressList.PrismaCore, // address _prismaCore,
+  await deployContract<TroveManager>("TroveManager", [
+    addressList.ZaiCore, // address _zaiCore,
     addressList.GasPool, // address _gasPoolAddress,
     addressList.DebtToken, // address _debtTokenAddress,
     addressList.BorrowerOperations, // address _borrowerOperationsAddress,
-    addressList.PrismaVault, // address _vault,
+    addressList.ZaiVault, // address _vault,
     addressList.LiquidationManager, // address _liquidationManager,
     GAS_COMPENSATION, // uint256 _gasCompensation
   ]);

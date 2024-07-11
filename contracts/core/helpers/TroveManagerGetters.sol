@@ -16,7 +16,7 @@ pragma solidity 0.8.19;
 import "../../interfaces/ITroveManager.sol";
 import "../../interfaces/IFactory.sol";
 
-/*  Helper contract for grabbing Trove data for the front end. Not part of the core Prisma system. */
+/*  Helper contract for grabbing Trove data for the front end. Not part of the core Zai system. */
 contract TroveManagerGetters {
     struct Collateral {
         address collateral;

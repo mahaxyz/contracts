@@ -18,22 +18,22 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ITroveManager} from "../interfaces/ITroveManager.sol";
 import {IBorrowerOperations} from "../interfaces/IBorrowerOperations.sol";
 import {IDebtToken} from "../interfaces/IDebtToken.sol";
-import {PrismaBase} from "../dependencies/PrismaBase.sol";
-import {PrismaMath} from "../dependencies/PrismaMath.sol";
-import {PrismaOwnable} from "../dependencies/PrismaOwnable.sol";
+import {ZaiBase} from "../dependencies/ZaiBase.sol";
+import {ZaiMath} from "../dependencies/ZaiMath.sol";
+import {ZaiOwnable} from "../dependencies/ZaiOwnable.sol";
 import {DelegatedOps} from "../dependencies/DelegatedOps.sol";
 
 /**
-    @title Prisma Borrower Operations
+    @title Zai Borrower Operations
     @notice Based on Liquity's `BorrowerOperations`
             https://github.com/liquity/dev/blob/main/packages/contracts/contracts/BorrowerOperations.sol
 
-            Prisma's implementation is modified to support multiple collaterals. There is a 1:n
+            Zai's implementation is modified to support multiple collaterals. There is a 1:n
             relationship between `BorrowerOperations` and each `TroveManager` / `SortedTroves` pair.
  */
 contract BorrowerOperations is
-    PrismaBase,
-    PrismaOwnable,
+    ZaiBase,
+    ZaiOwnable,
     DelegatedOps,
     IBorrowerOperations
 {
@@ -47,12 +47,12 @@ contract BorrowerOperations is
     ITroveManager[] internal _troveManagers;
 
     constructor(
-        address _prismaCore,
+        address _zaiCore,
         address _debtTokenAddress,
         address _factory,
         uint256 _minNetDebt,
         uint256 _gasCompensation
-    ) PrismaOwnable(_prismaCore) PrismaBase(_gasCompensation) {
+    ) ZaiOwnable(_zaiCore) ZaiBase(_gasCompensation) {
         debtToken = IDebtToken(_debtTokenAddress);
         factory = _factory;
         _setMinNetDebt(_minNetDebt);
@@ -156,7 +156,7 @@ contract BorrowerOperations is
         address _upperHint,
         address _lowerHint
     ) external callerOrDelegated(account) {
-        require(!PRISMA_CORE.paused(), "Deposits are paused");
+        require(!ZAI_CORE.paused(), "Deposits are paused");
         IERC20 collateralToken;
         LocalVariables_openTrove memory vars;
         bool isRecoveryMode;
@@ -187,12 +187,12 @@ contract BorrowerOperations is
 
         // ICR is based on the composite debt, i.e. the requested Debt amount + Debt borrowing fee + Debt gas comp.
         vars.compositeDebt = _getCompositeDebt(vars.netDebt);
-        vars.ICR = PrismaMath._computeCR(
+        vars.ICR = ZaiMath._computeCR(
             _collateralAmount,
             vars.compositeDebt,
             vars.price
         );
-        vars.NICR = PrismaMath._computeNominalCR(
+        vars.NICR = ZaiMath._computeNominalCR(
             _collateralAmount,
             vars.compositeDebt
         );
@@ -242,7 +242,7 @@ contract BorrowerOperations is
         address _upperHint,
         address _lowerHint
     ) external callerOrDelegated(account) {
-        require(!PRISMA_CORE.paused(), "Trove adjustments are paused");
+        require(!ZAI_CORE.paused(), "Trove adjustments are paused");
         _adjustTrove(
             troveManager,
             account,
@@ -286,7 +286,7 @@ contract BorrowerOperations is
         address _upperHint,
         address _lowerHint
     ) external callerOrDelegated(account) {
-        require(!PRISMA_CORE.paused(), "Withdrawals are paused");
+        require(!ZAI_CORE.paused(), "Withdrawals are paused");
         _adjustTrove(
             troveManager,
             account,
@@ -333,7 +333,7 @@ contract BorrowerOperations is
         address _lowerHint
     ) external callerOrDelegated(account) {
         require(
-            (_collDeposit == 0 && !_isDebtIncrease) || !PRISMA_CORE.paused(),
+            (_collDeposit == 0 && !_isDebtIncrease) || !ZAI_CORE.paused(),
             "Trove adjustments are paused"
         );
         require(
@@ -510,7 +510,7 @@ contract BorrowerOperations is
 
         _requireUserAcceptsFee(debtFee, _debtAmount, _maxFeePercentage);
 
-        debtToken.mint(PRISMA_CORE.feeReceiver(), debtFee);
+        debtToken.mint(ZAI_CORE.feeReceiver(), debtFee);
 
         emit BorrowingFeePaid(_caller, collateralToken, debtFee);
 
@@ -552,7 +552,7 @@ contract BorrowerOperations is
          */
 
         // Get the trove's old ICR before the adjustment
-        uint256 oldICR = PrismaMath._computeCR(
+        uint256 oldICR = ZaiMath._computeCR(
             _vars.coll,
             _vars.debt,
             _vars.price
@@ -659,7 +659,7 @@ contract BorrowerOperations is
             _isDebtIncrease
         );
 
-        uint256 newICR = PrismaMath._computeCR(newColl, newDebt, _price);
+        uint256 newICR = ZaiMath._computeCR(newColl, newDebt, _price);
         return newICR;
     }
 
@@ -695,7 +695,7 @@ contract BorrowerOperations is
             ? totalColl + _collChange
             : totalColl - _collChange;
 
-        uint256 newTCR = PrismaMath._computeCR(totalColl, totalDebt);
+        uint256 newTCR = ZaiMath._computeCR(totalColl, totalDebt);
         return newTCR;
     }
 
@@ -719,7 +719,7 @@ contract BorrowerOperations is
                 ++i;
             }
         }
-        amount = PrismaMath._computeCR(totalPricedCollateral, totalDebt);
+        amount = ZaiMath._computeCR(totalPricedCollateral, totalDebt);
 
         return (amount, totalPricedCollateral, totalDebt);
     }

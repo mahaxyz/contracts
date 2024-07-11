@@ -13,30 +13,30 @@
 
 pragma solidity 0.8.19;
 
-import "../interfaces/IPrismaCore.sol";
+import "../interfaces/IZaiCore.sol";
 
 /**
-    @title Prisma Ownable
-    @notice Contracts inheriting `PrismaOwnable` have the same owner as `PrismaCore`.
+    @title Zai Ownable
+    @notice Contracts inheriting `ZaiOwnable` have the same owner as `ZaiCore`.
             The ownership cannot be independently modified or renounced.
  */
-contract PrismaOwnable {
-    IPrismaCore public immutable PRISMA_CORE;
+contract ZaiOwnable {
+    IZaiCore public immutable ZAI_CORE;
 
-    constructor(address _prismaCore) {
-        PRISMA_CORE = IPrismaCore(_prismaCore);
+    constructor(address _zaiCore) {
+        ZAI_CORE = IZaiCore(_zaiCore);
     }
 
     modifier onlyOwner() {
-        require(msg.sender == PRISMA_CORE.owner(), "Only owner");
+        require(msg.sender == ZAI_CORE.owner(), "Only owner");
         _;
     }
 
     function owner() public view returns (address) {
-        return PRISMA_CORE.owner();
+        return ZAI_CORE.owner();
     }
 
     function guardian() public view returns (address) {
-        return PRISMA_CORE.guardian();
+        return ZAI_CORE.guardian();
     }
 }

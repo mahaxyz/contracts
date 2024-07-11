@@ -14,7 +14,7 @@
 pragma solidity 0.8.19;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
-import "../dependencies/PrismaOwnable.sol";
+import "../dependencies/ZaiOwnable.sol";
 import "../interfaces/ITroveManager.sol";
 import "../interfaces/IBorrowerOperations.sol";
 import "../interfaces/IDebtToken.sol";
@@ -23,11 +23,11 @@ import "../interfaces/IStabilityPool.sol";
 import "../interfaces/ILiquidationManager.sol";
 
 /**
-    @title Prisma Trove Factory
+    @title Zai Trove Factory
     @notice Deploys cloned pairs of `TroveManager` and `SortedTroves` in order to
             add new collateral types within the system.
  */
-contract Factory is PrismaOwnable {
+contract Factory is ZaiOwnable {
     using Clones for address;
 
     // fixed single-deployment contracts
@@ -62,14 +62,14 @@ contract Factory is PrismaOwnable {
     );
 
     constructor(
-        address _prismaCore,
+        address _zaiCore,
         IDebtToken _debtToken,
         IStabilityPool _stabilityPool,
         IBorrowerOperations _borrowerOperations,
         address _sortedTroves,
         address _troveManager,
         ILiquidationManager _liquidationManager
-    ) PrismaOwnable(_prismaCore) {
+    ) ZaiOwnable(_zaiCore) {
         debtToken = _debtToken;
         stabilityPool = _stabilityPool;
         borrowerOperations = _borrowerOperations;
@@ -89,7 +89,7 @@ contract Factory is PrismaOwnable {
         @dev * When using the default `PriceFeed`, ensure it is configured correctly
                prior to calling this function.
              * After calling this function, the owner should also call `Vault.registerReceiver`
-               to enable PRISMA emissions on the newly deployed `TroveManager`
+               to enable ZAI emissions on the newly deployed `TroveManager`
         @param collateral Collateral token to use in new deployment
         @param priceFeed Custom `PriceFeed` deployment. Leave as `address(0)` to use the default.
         @param customTroveManagerImpl Custom `TroveManager` implementation to clone from.
