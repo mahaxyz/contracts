@@ -27,33 +27,25 @@ interface IZaiCore {
     event PriceFeedSet(address priceFeed);
     event Unpaused();
 
-    function acceptTransferOwnership() external;
-
-    function commitTransferOwnership(address newOwner) external;
-
-    function revokeTransferOwnership() external;
-
     function setFeeReceiver(address _feeReceiver) external;
 
     function setGuardian(address _guardian) external;
 
+    /**
+     * @notice Sets the global pause state of the protocol. Pausing is used to mitigate risks in exceptional circumstances.
+     * Functionalities affected by pausing are:
+     * - New borrowing is not possible
+     * - New collateral deposits are not possible
+     * - New stability pool deposits are not possible
+     * @param what If true the protocol is paused
+     */
     function setPaused(bool _paused) external;
 
     function setPriceFeed(address _priceFeed) external;
 
-    function OWNERSHIP_TRANSFER_DELAY() external view returns (uint256);
-
     function feeReceiver() external view returns (address);
 
     function guardian() external view returns (address);
-
-    function owner() external view returns (address);
-
-    function ownershipTransferDeadline() external view returns (uint256);
-
-    function paused() external view returns (bool);
-
-    function pendingOwner() external view returns (address);
 
     function priceFeed() external view returns (address);
 

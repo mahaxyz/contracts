@@ -16,12 +16,12 @@ pragma solidity 0.8.19;
 import "../interfaces/ITroveManager.sol";
 
 /**
-    @title Zai Sorted Troves
-    @notice Based on Liquity's `SortedTroves`:
-            https://github.com/liquity/dev/blob/main/packages/contracts/contracts/SortedTroves.sol
-
-            Originally derived from `SortedDoublyLinkedList`:
-            https://github.com/livepeer/protocol/blob/master/contracts/libraries/SortedDoublyLL.sol
+ * @title Zai Sorted Troves
+ * @author maha.xyz
+ * @notice Based on Liquity's `SortedTroves`:
+ * https://github.com/liquity/dev/blob/main/packages/contracts/contracts/SortedTroves.sol
+ * Originally derived from `SortedDoublyLinkedList`:
+ * https://github.com/livepeer/protocol/blob/master/contracts/libraries/SortedDoublyLL.sol
  */
 contract SortedTroves {
     ITroveManager public troveManager;

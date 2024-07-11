@@ -13,18 +13,19 @@
 
 pragma solidity 0.8.19;
 
-import "../interfaces/IZaiCore.sol";
+import {IZaiCore} from "../interfaces/IZaiCore.sol";
 
 /**
-    @title Zai Ownable
-    @notice Contracts inheriting `ZaiOwnable` have the same owner as `ZaiCore`.
-            The ownership cannot be independently modified or renounced.
+ * @title Zai Ownable
+ * @author maha.xyz
+ * @notice Contracts inheriting `ZaiOwnable` have the same owner as `ZaiCore`.
+ * The ownership cannot be independently modified or renounced.
  */
 contract ZaiOwnable {
     IZaiCore public immutable ZAI_CORE;
 
-    constructor(address _zaiCore) {
-        ZAI_CORE = IZaiCore(_zaiCore);
+    constructor(address core) {
+        ZAI_CORE = IZaiCore(core);
     }
 
     modifier onlyOwner() {

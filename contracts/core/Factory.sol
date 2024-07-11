@@ -13,14 +13,15 @@
 
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/proxy/Clones.sol";
-import "../dependencies/ZaiOwnable.sol";
-import "../interfaces/ITroveManager.sol";
-import "../interfaces/IBorrowerOperations.sol";
-import "../interfaces/IDebtToken.sol";
-import "../interfaces/ISortedTroves.sol";
-import "../interfaces/IStabilityPool.sol";
-import "../interfaces/ILiquidationManager.sol";
+import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
+import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
+import {ITroveManager} from "../interfaces/ITroveManager.sol";
+import {IBorrowerOperations} from "../interfaces/IBorrowerOperations.sol";
+import {IDebtToken} from "../interfaces/IDebtToken.sol";
+import {ISortedTroves} from "../interfaces/ISortedTroves.sol";
+import {IStabilityPool} from "../interfaces/IStabilityPool.sol";
+import {ILiquidationManager} from "../interfaces/ILiquidationManager.sol";
+import {IFactory} from "../interfaces/IFactory.sol";
 
 /**
  * @title Zai Trove Factory
@@ -28,7 +29,7 @@ import "../interfaces/ILiquidationManager.sol";
  * @notice Deploys cloned pairs of `TroveManager` and `SortedTroves` in order to
  * add new collateral types within the system.
  */
-contract Factory is ZaiOwnable {
+contract Factory is IFactory, ZaiOwnable {
     using Clones for address;
 
     // fixed single-deployment contracts
@@ -40,37 +41,17 @@ contract Factory is ZaiOwnable {
     // implementation contracts, redeployed each time via clone proxy
     address public sortedTrovesImpl;
     address public troveManagerImpl;
-
     address[] public troveManagers;
 
-    // commented values are suggested default parameters
-    struct DeploymentParams {
-        uint256 minuteDecayFactor; // 999037758833783000  (half life of 12 hours)
-        uint256 redemptionFeeFloor; // 1e18 / 1000 * 5  (0.5%)
-        uint256 maxRedemptionFee; // 1e18  (100%)
-        uint256 borrowingFeeFloor; // 1e18 / 1000 * 5  (0.5%)
-        uint256 maxBorrowingFee; // 1e18 / 100 * 5  (5%)
-        uint256 interestRateInBps; // 100 (1%)
-        uint256 maxDebt;
-        uint256 MCR; // 12 * 1e17  (120%)
-    }
-
-    event NewDeployment(
-        address collateral,
-        address priceFeed,
-        address troveManager,
-        address sortedTroves
-    );
-
     constructor(
-        address _zaiCore,
+        address core,
         IDebtToken _debtToken,
         IStabilityPool _stabilityPool,
         IBorrowerOperations _borrowerOperations,
         address _sortedTroves,
         address _troveManager,
         ILiquidationManager _liquidationManager
-    ) ZaiOwnable(_zaiCore) {
+    ) ZaiOwnable(core) {
         debtToken = _debtToken;
         stabilityPool = _stabilityPool;
         borrowerOperations = _borrowerOperations;

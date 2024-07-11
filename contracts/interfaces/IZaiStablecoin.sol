@@ -17,4 +17,10 @@ interface ZaiStablecoin {
     function mint(address _account, uint256 _amount) external;
 
     function burn(address _account, uint256 _amount) external;
+
+    function transferPermissioned(
+        address _from,
+        address _to,
+        uint256 _amount
+    ) external;
 }

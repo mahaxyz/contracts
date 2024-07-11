@@ -19,11 +19,12 @@ import {ZaiMath} from "../dependencies/ZaiMath.sol";
 import {ZaiOwnable} from "../dependencies/ZaiOwnable.sol";
 
 /**
-    @title Zai Multi Token Price Feed
-    @notice Based on Gravita's PriceFeed:
-            https://github.com/Gravita-Protocol/Gravita-SmartContracts/blob/9b69d555f3567622b0f84df8c7f1bb5cd9323573/contracts/PriceFeed.sol
-
-            Zai's implementation additionally caches price values within a block and incorporates exchange rate settings for derivative tokens (e.g. stETH -> wstETH).
+ * @title Zai Multi Token Price Feed
+ * @author maha.xyz
+ * @notice Based on Gravita's PriceFeed:
+ * https://github.com/Gravita-Protocol/Gravita-SmartContracts/blob/9b69d555f3567622b0f84df8c7f1bb5cd9323573/contracts/PriceFeed.sol
+ * Zai's implementation additionally caches price values within a block
+ * and incorporates exchange rate settings for derivative tokens (e.g. stETH -> wstETH).
  */
 contract PriceFeed is ZaiOwnable {
     struct OracleRecord {

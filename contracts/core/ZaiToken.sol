@@ -33,6 +33,7 @@ contract ZaiStablecoin is
     AccessControlEnumerable,
     IZaiStablecoin
 {
+    /// @inheritdoc
     bytes32 public TROVE_ROLE = keccak256("TROVE_ROLE");
 
     /**
@@ -64,5 +65,14 @@ contract ZaiStablecoin is
         uint256 _amount
     ) external onlyRole(TROVE_ROLE) {
         _burn(_account, _amount);
+    }
+
+    /// @inheritdoc
+    function transferPermissioned(
+        address _from,
+        address _to,
+        uint256 _amount
+    ) external onlyRole(TROVE_ROLE) {
+        _transfer(_from, _to, _amount);
     }
 }

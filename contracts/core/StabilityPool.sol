@@ -23,12 +23,12 @@ import {IStabilityPool} from "../interfaces/IStabilityPool.sol";
 import {IVault} from "../interfaces/IVault.sol";
 
 /**
-    @title Zai Stability Pool
-    @notice Based on Liquity's `StabilityPool`
-            https://github.com/liquity/dev/blob/main/packages/contracts/contracts/StabilityPool.sol
-
-            Zai's implementation is modified to support multiple collaterals. Deposits into
-            the stability pool may be used to liquidate any supported collateral type.
+ * @title Zai Stability Pool
+ * @author maha.xyz
+ * @notice Based on Liquity's `StabilityPool`
+ * https://github.com/liquity/dev/blob/main/packages/contracts/contracts/StabilityPool.sol
+ * Zai's implementation is modified to support multiple collaterals. Deposits into
+ * the stability pool may be used to liquidate any supported collateral type.
  */
 contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
     using SafeERC20 for IERC20;

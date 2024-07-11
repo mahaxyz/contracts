@@ -13,31 +13,30 @@
 
 pragma solidity 0.8.19;
 
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {IBorrowerOperations} from "../interfaces/IBorrowerOperations.sol";
 import {IDebtToken} from "../interfaces/IDebtToken.sol";
-import {ISortedTroves} from "../interfaces/ISortedTroves.sol";
-import {IVault} from "../interfaces/IVault.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IPriceFeed} from "../interfaces/IPriceFeed.sol";
-import {SystemStart} from "../dependencies/SystemStart.sol";
-import {ZaiBase} from "../dependencies/ZaiBase.sol";
-import {ZaiMath} from "../dependencies/ZaiMath.sol";
+import {ISortedTroves} from "../interfaces/ISortedTroves.sol";
 import {ITroveManager} from "../interfaces/ITroveManager.sol";
-import {ZaiOwnable} from "../dependencies/ZaiOwnable.sol";
+import {IVault} from "../interfaces/IVault.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {SystemStart} from "./dependencies/SystemStart.sol";
+import {ZaiBase} from "./dependencies/ZaiBase.sol";
+import {ZaiMath} from "./dependencies/ZaiMath.sol";
+import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
 
 /**
-    @title Zai Trove Manager
-    @notice Based on Liquity's `TroveManager`
-            https://github.com/liquity/dev/blob/main/packages/contracts/contracts/TroveManager.sol
-
-            Zai's implementation is modified so that multiple `TroveManager` and `SortedTroves`
-            contracts are deployed in tandem, with each pair managing troves of a single collateral
-            type.
-
-            Functionality related to liquidations has been moved to `LiquidationManager`. This was
-            necessary to avoid the restriction on deployed bytecode size.
+ * @title Zai Trove Manager
+ * @author maha.xyz
+ * @notice Based on Liquity's `TroveManager`
+ * https://github.com/liquity/dev/blob/main/packages/contracts/contracts/TroveManager.sol
+ * Zai's implementation is modified so that multiple `TroveManager` and `SortedTroves`
+ * contracts are deployed in tandem, with each pair managing troves of a single collateral
+ * type.
+ * Functionality related to liquidations has been moved to `LiquidationManager`. This was
+ * necessary to avoid the restriction on deployed bytecode size.
  */
 contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
     using SafeERC20 for IERC20;
