@@ -24,7 +24,7 @@ import "../interfaces/ILiquidationManager.sol";
 
 /**
  * @title Zai Trove Factory
- * @author Maha.xyz
+ * @author maha.xyz
  * @notice Deploys cloned pairs of `TroveManager` and `SortedTroves` in order to
  * add new collateral types within the system.
  */

@@ -17,7 +17,7 @@ import "../interfaces/IZaiCore.sol";
 
 /**
  * @title Zai System Start Time
- * @author Maha.xyz
+ * @author maha.xyz
  * @dev Provides a unified `startTime` and `getWeek`, used for emissions.
  */
 contract SystemStart {

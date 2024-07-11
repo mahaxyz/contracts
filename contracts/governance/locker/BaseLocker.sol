@@ -21,7 +21,7 @@ import {IOmnichainStaking} from "../interfaces/IOmnichainStaking.sol";
 
 /**
  * @title Voting Escrow
- * @author Maha.xyz
+ * @author maha.xyz
  * @notice Votes have a weight depending on time, so that users are
  * committed to the future of (whatever they are voting for)
  */

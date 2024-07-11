@@ -15,7 +15,7 @@ pragma solidity 0.8.19;
 
 /**
  * @title ZaiBase
- * @author Maha.xyz
+ * @author maha.xyz
  * @notice Base contract for TroveManager, BorrowerOperations and StabilityPool. Contains global system constants and
  * common functions.
  */

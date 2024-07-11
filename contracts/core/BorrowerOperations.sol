@@ -25,7 +25,7 @@ import {DelegatedOps} from "../dependencies/DelegatedOps.sol";
 
 /**
  * @title Zai Borrower Operations
- * @author Maha.xyz
+ * @author maha.xyz
  * @notice Based on Liquity's `BorrowerOperations`
  * https://github.com/liquity/dev/blob/main/packages/contracts/contracts/BorrowerOperations.sol
  * Zai's implementation is modified to support multiple collaterals. There is a 1:n

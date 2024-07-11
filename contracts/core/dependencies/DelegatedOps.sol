@@ -15,7 +15,7 @@ pragma solidity 0.8.19;
 
 /**
  * @title Delegated Operations
- * @author Maha.xyz
+ * @author maha.xyz
  * @notice Allows delegation to specific contract functionality. Useful for creating
  * wrapper contracts to bundle multiple interactions into a single call.
  * Functions that supports delegation should include an `account` input allowing

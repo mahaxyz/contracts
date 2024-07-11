@@ -21,7 +21,7 @@ import {IZaiStablecoin} from "../interfaces/IZaiStablecoin.sol";
 
 /**
  * @title Zai Stablecoin "USDz"
- * @author Maha.xyz
+ * @author maha.xyz
  * @notice Represents the ZAI stablecoin. It is minted either by governance or by troves.
  * @dev This is a OFT compatible token.
  */
