@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.20;
+// SPDX-License-Identifier: BUSL-1.1
 
 // ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
 // ████╗ ████║██╔══██╗██║  ██║██╔══██╗
@@ -11,6 +10,8 @@ pragma solidity ^0.8.20;
 // Website: https://maha.xyz
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
+
+pragma solidity 0.8.19;
 
 import {IStakingBonus} from "../interfaces/IStakingBonus.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";

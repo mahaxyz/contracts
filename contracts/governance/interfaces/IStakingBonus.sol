@@ -1,5 +1,17 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.20;
+// SPDX-License-Identifier: BUSL-1.1
+
+// ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
+// ████╗ ████║██╔══██╗██║  ██║██╔══██╗
+// ██╔████╔██║███████║███████║███████║
+// ██║╚██╔╝██║██╔══██║██╔══██║██╔══██║
+// ██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║
+// ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+
+// Website: https://maha.xyz
+// Discord: https://discord.gg/mahadao
+// Twitter: https://twitter.com/mahaxyz_
+
+pragma solidity 0.8.19;
 
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 import {IVestedZeroNFT} from "../interfaces/IVestedZeroNFT.sol";
@@ -8,7 +20,6 @@ import {IZeroLocker} from "../interfaces/IZeroLocker.sol";
 /// @title StakingBonus Interface
 /// @notice Interface for the StakingBonus contract that rewards users for converting unvested tokens into a 4-year stake
 interface IStakingBonus {
-    
     /**
      * @notice Initialize the contract with necessary parameters
      * @param _zero Address of the ZERO token contract
@@ -63,7 +74,11 @@ interface IStakingBonus {
      * @param amount The amount of tokens to lock
      * @param duration The lock duration in seconds
      */
-    function createLockFor(address who, uint256 amount, uint256 duration) external;
+    function createLockFor(
+        address who,
+        uint256 amount,
+        uint256 duration
+    ) external;
 
     /**
      * @notice Set the bonus basis points
@@ -77,7 +92,10 @@ interface IStakingBonus {
      * @param duration The lock duration in seconds
      * @return The calculated bonus
      */
-    function calculateBonus(uint256 amount, uint256 duration) external view returns (uint256);
+    function calculateBonus(
+        uint256 amount,
+        uint256 duration
+    ) external view returns (uint256);
 
     /// @notice Emitted when the bonus basis points are set
     event SetBonusBPS(uint256 oldBps, uint256 newBps);

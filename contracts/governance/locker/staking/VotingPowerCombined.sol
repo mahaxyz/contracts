@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-pragma solidity ^0.8.20;
+// SPDX-License-Identifier: BUSL-1.1
 
 // ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
 // ████╗ ████║██╔══██╗██║  ██║██╔══██╗
@@ -11,6 +10,8 @@ pragma solidity ^0.8.20;
 // Website: https://maha.xyz
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
+
+pragma solidity 0.8.19;
 
 import {IOmnichainStaking} from "../../interfaces/IOmnichainStaking.sol";
 import {IPoolVoter} from "../../interfaces/IPoolVoter.sol";

@@ -1,6 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.12;
+// ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
+// ████╗ ████║██╔══██╗██║  ██║██╔══██╗
+// ██╔████╔██║███████║███████║███████║
+// ██║╚██╔╝██║██╔══██║██╔══██║██╔══██║
+// ██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║
+// ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+
+// Website: https://maha.xyz
+// Discord: https://discord.gg/mahadao
+// Twitter: https://twitter.com/mahaxyz_
+
+pragma solidity 0.8.19;
 
 import "../interfaces/INileAMM.sol";
 import "../interfaces/IPythAggregatorV3.sol";
