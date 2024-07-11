@@ -95,4 +95,11 @@ library ZAIEventsLib {
     event Paused();
 
     event Unpaused();
+
+    event NewDeployment(
+        address collateral,
+        address priceFeed,
+        address troveManager,
+        address sortedTroves
+    );
 }

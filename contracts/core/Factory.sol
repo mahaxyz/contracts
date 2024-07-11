@@ -14,14 +14,14 @@
 pragma solidity 0.8.19;
 
 import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
-import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
-import {ITroveManager} from "../interfaces/ITroveManager.sol";
 import {IBorrowerOperations} from "../interfaces/IBorrowerOperations.sol";
-import {IDebtToken} from "../interfaces/IDebtToken.sol";
+import {IFactory} from "../interfaces/IFactory.sol";
+import {ILiquidationManager} from "../interfaces/ILiquidationManager.sol";
 import {ISortedTroves} from "../interfaces/ISortedTroves.sol";
 import {IStabilityPool} from "../interfaces/IStabilityPool.sol";
-import {ILiquidationManager} from "../interfaces/ILiquidationManager.sol";
-import {IFactory} from "../interfaces/IFactory.sol";
+import {ITroveManager} from "../interfaces/ITroveManager.sol";
+import {IZaiPermissioned} from "../interfaces/IZaiPermissioned.sol";
+import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
 
 /**
  * @title Zai Trove Factory
@@ -33,7 +33,7 @@ contract Factory is IFactory, ZaiOwnable {
     using Clones for address;
 
     // fixed single-deployment contracts
-    IDebtToken public immutable debtToken;
+    IZaiPermissioned public immutable debtToken;
     IStabilityPool public immutable stabilityPool;
     ILiquidationManager public immutable liquidationManager;
     IBorrowerOperations public immutable borrowerOperations;
@@ -45,7 +45,7 @@ contract Factory is IFactory, ZaiOwnable {
 
     constructor(
         address core,
-        IDebtToken _debtToken,
+        IZaiPermissioned _debtToken,
         IStabilityPool _stabilityPool,
         IBorrowerOperations _borrowerOperations,
         address _sortedTroves,
@@ -55,31 +55,17 @@ contract Factory is IFactory, ZaiOwnable {
         debtToken = _debtToken;
         stabilityPool = _stabilityPool;
         borrowerOperations = _borrowerOperations;
-
         sortedTrovesImpl = _sortedTroves;
         troveManagerImpl = _troveManager;
         liquidationManager = _liquidationManager;
     }
 
+    /// @inheritdoc IFactory
     function troveManagerCount() external view returns (uint256) {
         return troveManagers.length;
     }
 
-    /**
-        @notice Deploy new instances of `TroveManager` and `SortedTroves`, adding
-                a new collateral type to the system.
-        @dev * When using the default `PriceFeed`, ensure it is configured correctly
-               prior to calling this function.
-             * After calling this function, the owner should also call `Vault.registerReceiver`
-               to enable ZAI emissions on the newly deployed `TroveManager`
-        @param collateral Collateral token to use in new deployment
-        @param priceFeed Custom `PriceFeed` deployment. Leave as `address(0)` to use the default.
-        @param customTroveManagerImpl Custom `TroveManager` implementation to clone from.
-                                      Leave as `address(0)` to use the default.
-        @param customSortedTrovesImpl Custom `SortedTroves` implementation to clone from.
-                                      Leave as `address(0)` to use the default.
-        @param params Struct of initial parameters to be set on the new trove manager
-     */
+    /// @inheritdoc IFactory
     function deployNewInstance(
         address collateral,
         address priceFeed,
@@ -131,6 +117,7 @@ contract Factory is IFactory, ZaiOwnable {
         emit NewDeployment(collateral, priceFeed, troveManager, sortedTroves);
     }
 
+    /// @inheritdoc IFactory
     function setImplementations(
         address _troveManagerImpl,
         address _sortedTrovesImpl

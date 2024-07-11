@@ -13,7 +13,9 @@
 
 pragma solidity 0.8.19;
 
-interface IFactory {
+import {IZaiOwnable} from "./IZaiOwnable.sol";
+
+interface IFactory is IZaiOwnable {
     // commented values are suggested default parameters
     struct DeploymentParams {
         uint256 minuteDecayFactor; // 999037758833783000  (half life of 12 hours)
@@ -26,13 +28,18 @@ interface IFactory {
         uint256 MCR; // 12 * 1e17  (120%)
     }
 
-    event NewDeployment(
-        address collateral,
-        address priceFeed,
-        address troveManager,
-        address sortedTroves
-    );
-
+    /**
+     * @notice Deploy new instances of `TroveManager` and `SortedTroves`, adding
+     * a new collateral type to the system.
+     * @dev When using the default `PriceFeed`, ensure it is configured correctly
+     * prior to calling this function. After calling this function, the owner should also call `Vault.registerReceiver`
+     * to enable ZAI emissions on the newly deployed `TroveManager`
+     * @param collateral Collateral token to use in new deployment
+     * @param priceFeed Custom `PriceFeed` deployment. Leave as `address(0)` to use the default.
+     * @param customTroveManagerImpl Custom `TroveManager` implementation to clone from. Leave as `address(0)` to use the default.
+     * @param customSortedTrovesImpl Custom `SortedTroves` implementation to clone from. Leave as `address(0)` to use the default.
+     * @param params Struct of initial parameters to be set on the new trove manager
+     */
     function deployNewInstance(
         address collateral,
         address priceFeed,
@@ -46,17 +53,11 @@ interface IFactory {
         address _sortedTrovesImpl
     ) external;
 
-    function ZAI_CORE() external view returns (address);
-
     function borrowerOperations() external view returns (address);
 
     function debtToken() external view returns (address);
 
-    function guardian() external view returns (address);
-
     function liquidationManager() external view returns (address);
-
-    function owner() external view returns (address);
 
     function sortedTrovesImpl() external view returns (address);
 
