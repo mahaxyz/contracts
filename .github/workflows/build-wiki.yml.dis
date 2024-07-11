@@ -1,0 +1,31 @@
+# This workflow will build the wiki page for the repository
+name: Build Wiki
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [master, develop]
+
+jobs:
+  wiki-build:
+    runs-on: ubuntu-latest
+    name: Create the wiki page
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: ./.github/actions/install
+      - name: Generate Docs
+        run: yarn docs
+      - name: Deploy to Wiki Pages
+        id: deployment
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.PERSONAL_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: master
+          external_repository: mahaxyz/contracts.wiki

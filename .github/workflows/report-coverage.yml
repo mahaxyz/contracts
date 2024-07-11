@@ -1,0 +1,47 @@
+# This workflow will run the coverage reports and publish it on github pages.
+name: Coverage & Gas Report
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    name: Build Coverage & Gas Report
+    steps:
+      # setup env
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: ./.github/actions/install
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Run hardhat coverage
+        run: yarn compile --force && yarn coverage
+
+      - name: Run gas report
+        run: REPORT_GAS=true npx hardhat test
+
+      # Deploy to gh pages
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './coverage'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,135 +1,85 @@
 import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-ethers";
 import "@nomicfoundation/hardhat-toolbox";
-import "hardhat-deploy";
-import "hardhat-contract-sizer";
-// import "hardhat-typechain";
-import "@nomiclabs/hardhat-etherscan";
 import "hardhat-dependency-compiler";
+import "hardhat-abi-exporter";
 import "@openzeppelin/hardhat-upgrades";
-import "@typechain/hardhat";
-
+import "hardhat-deploy";
+import "solidity-coverage";
+import "solidity-docgen";
+import "hardhat-tracer";
 import dotenv from "dotenv";
 dotenv.config();
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "lineaSepolia",
-  dependencyCompiler: {
-    paths: [
-      "@zerolendxyz/core-v3/contracts/protocol/tokenization/VariableDebtToken.sol",
-      "@openzeppelin/contracts/utils/Context.sol",
-      "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-    ],
+  abiExporter: {
+    path: "./abi",
+    runOnCompile: true,
+    clear: true,
+    spacing: 2,
+    format: "minimal",
   },
-  networks: {
-    hardhat: {
-      allowUnlimitedContractSize: true,
-      accounts: [
-        {
-          privateKey: process.env.WALLET_PRIVATE_KEY || "",
-          balance: "100000000000000000000",
-        },
-      ],
-      forking: {
-        url: "https://rpc.linea.build",
-      },
-    },
-    linea: {
-      url: "https://rpc.linea.build",
-      accounts: [process.env.WALLET_PRIVATE_KEY || ""],
-    },
-    blastSepolia: {
-      url: "https://sepolia.blast.io",
-      accounts: [process.env.WALLET_PRIVATE_KEY || ""],
-      chainId: 168587773,
-      gasPrice: 1000000000,
-    },
-    sepolia: {
-      url: "https://public.stackup.sh/api/v1/node/ethereum-sepolia",
-      accounts: [process.env.WALLET_PRIVATE_KEY || ""],
-      chainId: 11155111,
-      allowUnlimitedContractSize: true,
-    },
-    lineaSepolia: {
-      url: "https://rpc.sepolia.linea.build",
-      accounts: [process.env.WALLET_PRIVATE_KEY || ""],
-      chainId: 59141
-    },
+  docgen: {
+    pages: "files",
+    exclude: ["interfaces", "tests"],
   },
   gasReporter: {
-    enabled: true,
+    // @ts-ignore
+    reportFormat: "terminal",
+    outputFile: "coverage/gasReport.txt",
+    noColors: true,
+    forceTerminalOutput: true,
+    forceTerminalOutputFormat: "terminal",
+  },
+  dependencyCompiler: {
+    paths: [
+      "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol",
+    ],
+  },
+  typechain: {
+    outDir: "types",
   },
   solidity: {
     compilers: [
       {
-        version: "0.8.19",
+        version: "0.8.10",
         settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200,
-          },
+          optimizer: { enabled: true, runs: 100_000 },
         },
       },
       {
         version: "0.8.12",
         settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200,
-          },
+          optimizer: { enabled: true, runs: 100_000 },
+        },
+      },
+      {
+        version: "0.8.20",
+        settings: {
+          optimizer: { enabled: true, runs: 100_000 },
         },
       },
     ],
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200,
-        details: { yul: false }
-      },
+  },
+  networks: {
+    mainnet: {
+      url: `https://rpc.ankr.com/eth`,
+      accounts: [process.env.WALLET_PRIVATE_KEY || ""],
+      saveDeployments: true,
     },
   },
-  typechain: {
-    outDir: "typechain",
-    target: "ethers-v5",
-  },
-  mocha: {
-    timeout: 0,
-    bail: true,
+  namedAccounts: {
+    deployer: 0,
   },
   etherscan: {
     apiKey: {
-      manta: "123",
-      blast: "BIMMMKKB7I2HMABKJ9C2U1EH6PIIZCSPEF",
-      linea: "Y7TKICWCPM22AUWWF3TXXAFCMPT6XTVHJI",
-      sepolia: "V1S3WJ3ZP251TF71MWQWEMYRZZ48XPUIME",
-      lineaSepolia: "Y7TKICWCPM22AUWWF3TXXAFCMPT6XTVHJI"
-      // [eEthereumNetwork.main]: "YKI5VW86TBDGWQZQFHIA3AACABTUUFMYPV",
+      blast: process.env.BLASTSCAN_KEY || "",
+      linea: process.env.LINEASCAN_KEY || "",
+      xLayer: process.env.XLAYER_KEY || "",
+      mainnet: process.env.ETHERSCAN_KEY || "",
+      blastSepolia: process.env.BLAST_SEPOLIA_KEY || "",
+      era: process.env.ZKSYNC_KEY || "",
     },
-    customChains: [
-      {
-        network: "manta",
-        chainId: 169,
-        urls: {
-          apiURL: "https://pacific-explorer.manta.network/api",
-          browserURL: "https://pacific-explorer.manta.network",
-        },
-      },
-      {
-        network: "blast",
-        chainId: 81457,
-        urls: {
-          apiURL: "https://api.blastscan.io/api",
-          browserURL: "https://blastscan.io",
-        },
-      },
-      {
-        network: "linea",
-        chainId: 59144,
-        urls: {
-          apiURL: "https://api.lineascan.build/api",
-          browserURL: "https://lineascan.build",
-        },
-      },
-    ],
   },
 };
 

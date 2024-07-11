@@ -1,0 +1,33 @@
+name: Release Please
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: node
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+        if: ${{ steps.release.outputs.release_created }}
+
+      - uses: ./.github/actions/install
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Publish to NPM
+        run: npm publish
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
