@@ -1,5 +1,4 @@
 import hre, { ethers } from "hardhat";
-
 import { buildBytecode } from "./create2";
 
 async function main() {
