@@ -13,10 +13,11 @@
 
 pragma solidity 0.8.20;
 
-import {IAggregatorV3Interface} from "../interfaces/IAggregatorV3Interface.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {IAggregatorV3Interface} from "../interfaces/IAggregatorV3Interface.sol";
+import {IPriceFeed} from "../interfaces/IPriceFeed.sol";
 import {ZaiMath} from "./dependencies/ZaiMath.sol";
-import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
+import {ZaiOwnable, IZaiCore, IZaiOwnable} from "./dependencies/ZaiOwnable.sol";
 
 /**
  * @title Zai Multi Token Price Feed
@@ -26,48 +27,7 @@ import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
  * Zai's implementation additionally caches price values within a block
  * and incorporates exchange rate settings for derivative tokens (e.g. stETH -> wstETH).
  */
-contract PriceFeed is ZaiOwnable {
-    struct OracleRecord {
-        IAggregatorV3Interface chainLinkOracle;
-        uint8 decimals;
-        uint32 heartbeat;
-        bytes4 sharePriceSignature;
-        uint8 sharePriceDecimals;
-        bool isFeedWorking;
-        bool isEthIndexed;
-    }
-
-    struct PriceRecord {
-        uint96 scaledPrice;
-        uint32 timestamp;
-        uint32 lastUpdated;
-        uint80 roundId;
-    }
-
-    struct FeedResponse {
-        uint80 roundId;
-        int256 answer;
-        uint256 timestamp;
-        bool success;
-    }
-
-    // Custom Errors --------------------------------------------------------------------------------------------------
-
-    error PriceFeed__InvalidFeedResponseError(address token);
-    error PriceFeed__FeedFrozenError(address token);
-    error PriceFeed__UnknownFeedError(address token);
-    error PriceFeed__HeartbeatOutOfBoundsError();
-
-    // Events ---------------------------------------------------------------------------------------------------------
-
-    event NewOracleRegistered(
-        address token,
-        address chainlinkAggregator,
-        bool isEthIndexed
-    );
-    event PriceFeedStatusUpdated(address token, address oracle, bool isWorking);
-    event PriceRecordUpdated(address indexed token, uint256 _price);
-
+abstract contract PriceFeed is ZaiOwnable, IPriceFeed {
     /** Constants ---------------------------------------------------------------------------------------------------- */
 
     // Used to convert a chainlink price answer to an 18-digit precision uint
@@ -457,4 +417,34 @@ contract PriceFeed is ZaiOwnable {
             } catch {}
         }
     }
+
+    /// @inheritdoc IZaiOwnable
+    function owner()
+        public
+        view
+        override(ZaiOwnable, IPriceFeed)
+        returns (address)
+    {
+        return super.owner();
+    }
+
+    /// @inheritdoc IZaiOwnable
+    function guardian()
+        public
+        view
+        override(ZaiOwnable, IPriceFeed)
+        returns (address)
+    {
+        return super.guardian();
+    }
+
+    // /// @inheritdoc IZaiOwnable
+    // function ZAI_CORE()
+    //     external
+    //     view
+    //     override(ZaiOwnable, IPriceFeed)
+    //     returns (IZaiCore)
+    // {
+    //     return super.ZAI_CORE();
+    // }
 }

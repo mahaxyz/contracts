@@ -41,9 +41,14 @@ import {ILiquidationManager} from "../interfaces/ILiquidationManager.sol";
  * the value of the debt is distributed between stability pool depositors. The remaining
  * collateral is left claimable by the trove owner.
  */
-contract LiquidationManager is ZaiBase, ILiquidationManager {
+abstract contract LiquidationManager is ZaiBase, ILiquidationManager {
+    /// @inheritdoc ILiquidationManager
     IStabilityPool public immutable stabilityPool;
+
+    /// @inheritdoc ILiquidationManager
     IBorrowerOperations public immutable borrowerOperations;
+
+    /// @inheritdoc ILiquidationManager
     address public immutable factory;
 
     uint256 private constant _100pct = 1000000000000000000; // 1e18 == 100%
@@ -259,7 +264,7 @@ contract LiquidationManager is ZaiBase, ILiquidationManager {
         if (totals.totalDebtToOffset > 0 || totals.totalCollToSendToSP > 0) {
             // Move liquidated collateral and Debt to the appropriate pools
             stabilityPoolCached.offset(
-                troveManager.collateralToken(),
+                address(troveManager.collateralToken()),
                 totals.totalDebtToOffset,
                 totals.totalCollToSendToSP
             );
@@ -422,7 +427,7 @@ contract LiquidationManager is ZaiBase, ILiquidationManager {
         if (totals.totalDebtToOffset > 0 || totals.totalCollToSendToSP > 0) {
             // Move liquidated collateral and Debt to the appropriate pools
             stabilityPoolCached.offset(
-                troveManager.collateralToken(),
+                address(troveManager.collateralToken()),
                 totals.totalDebtToOffset,
                 totals.totalCollToSendToSP
             );

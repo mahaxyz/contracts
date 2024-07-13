@@ -33,10 +33,10 @@ import {ZAIEventsLib} from "../interfaces/events/ZAIEventsLib.sol";
  * relationship between `BorrowerOperations` and each `TroveManager` / `SortedTroves` pair.
  */
 abstract contract BorrowerOperations is
+    IBorrowerOperations,
     ZaiBase,
     ZaiOwnable,
-    DelegatedOps,
-    IBorrowerOperations
+    DelegatedOps
 {
     using SafeERC20 for IERC20;
 

@@ -13,7 +13,40 @@
 
 pragma solidity 0.8.20;
 
+import {IAggregatorV3Interface} from "./IAggregatorV3Interface.sol";
+
 interface IPriceFeed {
+    struct OracleRecord {
+        IAggregatorV3Interface chainLinkOracle;
+        uint8 decimals;
+        uint32 heartbeat;
+        bytes4 sharePriceSignature;
+        uint8 sharePriceDecimals;
+        bool isFeedWorking;
+        bool isEthIndexed;
+    }
+
+    struct PriceRecord {
+        uint96 scaledPrice;
+        uint32 timestamp;
+        uint32 lastUpdated;
+        uint80 roundId;
+    }
+
+    struct FeedResponse {
+        uint80 roundId;
+        int256 answer;
+        uint256 timestamp;
+        bool success;
+    }
+
+    // Custom Errors --------------------------------------------------------------------------------------------------
+
+    error PriceFeed__InvalidFeedResponseError(address token);
+    error PriceFeed__FeedFrozenError(address token);
+    error PriceFeed__UnknownFeedError(address token);
+    error PriceFeed__HeartbeatOutOfBoundsError();
+
     event NewOracleRegistered(
         address token,
         address chainlinkAggregator,

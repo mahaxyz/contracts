@@ -35,14 +35,25 @@ contract Factory is IFactory, ZaiOwnable {
     using Clones for address;
 
     // fixed single-deployment contracts
+    /// @inheritdoc IFactory
     IZaiPermissioned public immutable debtToken;
+
+    /// @inheritdoc IFactory
     IStabilityPool public immutable stabilityPool;
+
+    /// @inheritdoc IFactory
     ILiquidationManager public immutable liquidationManager;
+
+    /// @inheritdoc IFactory
     IBorrowerOperations public immutable borrowerOperations;
 
-    // implementation contracts, redeployed each time via clone proxy
+    /// @inheritdoc IFactory
     address public sortedTrovesImpl;
+
+    /// @inheritdoc IFactory
     address public troveManagerImpl;
+
+    /// @inheritdoc IFactory
     address[] public troveManagers;
 
     constructor(

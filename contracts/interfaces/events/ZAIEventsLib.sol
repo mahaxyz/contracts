@@ -21,13 +21,7 @@ library ZAIEventsLib {
     event CollateralConfigured(address troveManager, address collateralToken);
     event TroveCreated(address indexed _borrower, uint256 arrayIndex);
     event TroveManagerRemoved(address troveManager);
-    event TroveUpdated(
-        address indexed _borrower,
-        uint256 _debt,
-        uint256 _coll,
-        uint256 stake,
-        uint8 operation
-    );
+
     event TroveUpdated(
         address indexed _borrower,
         uint256 _debt,
@@ -99,5 +93,25 @@ library ZAIEventsLib {
         address priceFeed,
         address troveManager,
         address sortedTroves
+    );
+
+    event Liquidation(
+        uint256 _liquidatedDebt,
+        uint256 _liquidatedColl,
+        uint256 _collGasCompensation,
+        uint256 _debtGasCompensation
+    );
+    event TroveLiquidated(
+        address indexed _borrower,
+        uint256 _debt,
+        uint256 _coll,
+        uint8 _operation
+    );
+    event TroveUpdated(
+        address indexed _borrower,
+        uint256 _debt,
+        uint256 _coll,
+        uint256 _stake,
+        uint8 _operation
     );
 }

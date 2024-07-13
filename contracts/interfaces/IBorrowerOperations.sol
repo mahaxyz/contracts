@@ -14,8 +14,10 @@
 pragma solidity 0.8.20;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IZaiBase} from "./IZaiBase.sol";
+import {IZaiOwnable} from "./IZaiOwnable.sol";
 
-interface IBorrowerOperations {
+interface IBorrowerOperations is IZaiBase, IZaiOwnable {
     struct Balances {
         uint256[] collaterals;
         uint256[] debts;
@@ -123,8 +125,6 @@ interface IBorrowerOperations {
         address _lowerHint
     ) external;
 
-    function setDelegateApproval(address _delegate, bool _isApproved) external;
-
     function setMinNetDebt(uint256 _minNetDebt) external;
 
     function withdrawColl(
@@ -153,8 +153,6 @@ interface IBorrowerOperations {
     function DECIMAL_PRECISION() external view returns (uint256);
 
     function PERCENT_DIVISOR() external view returns (uint256);
-
-    function ZAI_CORE() external view returns (address);
 
     function _100pct() external view returns (uint256);
 
