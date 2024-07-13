@@ -26,13 +26,6 @@ library ZAIEventsLib {
     event TroveCreated(address indexed _borrower, uint256 arrayIndex);
     event TroveManagerRemoved(address troveManager);
 
-    event TroveUpdated(
-        address indexed _borrower,
-        uint256 _debt,
-        uint256 _coll,
-        uint256 _stake,
-        ITroveManager.TroveManagerOperation _operation
-    );
     event Redemption(
         uint256 _attemptedDebtAmount,
         uint256 _actualDebtAmount,
@@ -109,13 +102,13 @@ library ZAIEventsLib {
         address indexed _borrower,
         uint256 _debt,
         uint256 _coll,
-        uint8 _operation
+        ITroveManager.TroveManagerOperation _operation
     );
     event TroveUpdated(
         address indexed _borrower,
         uint256 _debt,
         uint256 _coll,
         uint256 _stake,
-        uint8 _operation
+        ITroveManager.TroveManagerOperation _operation
     );
 }

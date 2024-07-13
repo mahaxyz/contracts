@@ -34,15 +34,12 @@ import {ZAIEventsLib} from "../interfaces/events/ZAIEventsLib.sol";
 abstract contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
     using SafeERC20 for IERC20;
 
-    /// @inheritdoc IStabilityPool
     uint256 public constant DECIMAL_PRECISION = 1e18;
 
-    /// @inheritdoc IStabilityPool
     uint128 public constant SUNSET_DURATION = 180 days;
 
     uint256 private constant REWARD_DURATION = 1 weeks;
 
-    /// @inheritdoc IStabilityPool
     uint256 public constant emissionId = 0;
 
     /// @inheritdoc IStabilityPool
@@ -94,10 +91,8 @@ abstract contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
      * During its lifetime, a deposit's value evolves from d_t to d_t * P / P_t , where P_t
      * is the snapshot of P taken at the instant the deposit was made. 18-digit decimal.
      */
-    /// @inheritdoc IStabilityPool
     uint256 public P = DECIMAL_PRECISION;
 
-    /// @inheritdoc IStabilityPool
     uint256 public constant SCALE_FACTOR = 1e9;
 
     // Each time the scale of P shifts by SCALE_FACTOR, the scale is incremented by 1
