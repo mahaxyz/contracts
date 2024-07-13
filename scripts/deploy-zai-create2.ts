@@ -18,7 +18,7 @@ async function main() {
   const factory = await hre.ethers.getContractFactory("ZaiStablecoin");
 
   const salt =
-    "0x8878409d4588ff2531c08d2858c4ec683e6ec8d7bd9c6279fdd416d6dfba32b3";
+    "0xcaf0534451ba5639c1d8c0dc6b1a98c11290ec6170f4bd4393463523460ecc59";
 
   const bytecode = buildBytecode(
     ["address", "address"],
