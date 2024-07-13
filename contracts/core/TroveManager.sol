@@ -11,15 +11,15 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 import {IBorrowerOperations} from "../interfaces/IBorrowerOperations.sol";
-import {IDebtToken} from "../interfaces/IDebtToken.sol";
+import {IZaiPermissioned} from "../interfaces/IZaiPermissioned.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IPriceFeed} from "../interfaces/IPriceFeed.sol";
 import {ISortedTroves} from "../interfaces/ISortedTroves.sol";
 import {ITroveManager} from "../interfaces/ITroveManager.sol";
-import {IVault} from "../interfaces/IVault.sol";
+import {IZaiVault} from "../interfaces/IZaiVault.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {SystemStart} from "./dependencies/SystemStart.sol";
@@ -45,7 +45,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
     address public immutable borrowerOperationsAddress;
     address public immutable liquidationManager;
     address immutable gasPoolAddress;
-    IDebtToken public immutable debtToken;
+    IZaiPermissioned public immutable debtToken;
     IZaiVault public immutable vault;
 
     IPriceFeed public priceFeed;
@@ -174,7 +174,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         uint256 _gasCompensation
     ) ZaiOwnable(_zaiCore) ZaiBase(_gasCompensation) SystemStart(_zaiCore) {
         gasPoolAddress = _gasPoolAddress;
-        debtToken = IDebtToken(_debtTokenAddress);
+        debtToken = IZaiPermissioned(_debtTokenAddress);
         borrowerOperationsAddress = _borrowerOperationsAddress;
         vault = IZaiVault(_vault);
         liquidationManager = _liquidationManager;

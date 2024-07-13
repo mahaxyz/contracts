@@ -11,7 +11,7 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 library ZaiMath {
     uint256 internal constant DECIMAL_PRECISION = 1e18;

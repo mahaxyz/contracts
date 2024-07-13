@@ -40,17 +40,17 @@ const config: HardhatUserConfig = {
     outDir: "types",
   },
   solidity: {
-    version: "0.8.19",
+    version: "0.8.20",
     settings: {
       optimizer: { enabled: true, runs: 100_000 },
     },
   },
   networks: {
-    mainnet: {
-      url: `https://rpc.ankr.com/eth`,
-      accounts: [process.env.WALLET_PRIVATE_KEY || ""],
-      saveDeployments: true,
-    },
+    // mainnet: {
+    //   url: `https://rpc.ankr.com/eth`,
+    //   accounts: [process.env.WALLET_PRIVATE_KEY || ""],
+    //   saveDeployments: true,
+    // },
   },
   namedAccounts: {
     deployer: 0,

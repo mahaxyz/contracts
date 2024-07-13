@@ -11,17 +11,18 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ITroveManager} from "../interfaces/ITroveManager.sol";
 import {IBorrowerOperations} from "../interfaces/IBorrowerOperations.sol";
-import {IDebtToken} from "../interfaces/IDebtToken.sol";
-import {ZaiBase} from "../dependencies/ZaiBase.sol";
-import {ZaiMath} from "../dependencies/ZaiMath.sol";
-import {ZaiOwnable} from "../dependencies/ZaiOwnable.sol";
-import {DelegatedOps} from "../dependencies/DelegatedOps.sol";
+import {IZaiPermissioned} from "../interfaces/IZaiPermissioned.sol";
+import {ZaiBase} from "./dependencies/ZaiBase.sol";
+import {ZaiMath} from "./dependencies/ZaiMath.sol";
+import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
+import {DelegatedOps} from "./dependencies/DelegatedOps.sol";
+import {ZAIEventsLib} from "../interfaces/events/ZAIEventsLib.sol";
 
 /**
  * @title Zai Borrower Operations
@@ -39,7 +40,7 @@ contract BorrowerOperations is
 {
     using SafeERC20 for IERC20;
 
-    IDebtToken public immutable debtToken;
+    IZaiPermissioned public immutable debtToken;
     address public immutable factory;
     uint256 public minNetDebt;
 
@@ -53,7 +54,7 @@ contract BorrowerOperations is
         uint256 _minNetDebt,
         uint256 _gasCompensation
     ) ZaiOwnable(_zaiCore) ZaiBase(_gasCompensation) {
-        debtToken = IDebtToken(_debtTokenAddress);
+        debtToken = IZaiPermissioned(_debtTokenAddress);
         factory = _factory;
         _setMinNetDebt(_minNetDebt);
     }
@@ -72,7 +73,7 @@ contract BorrowerOperations is
             uint16(_troveManagers.length)
         );
         _troveManagers.push(troveManager);
-        emit CollateralConfigured(troveManager, collateralToken);
+        emit ZAIEventsLib.CollateralConfigured(troveManager, collateralToken);
     }
 
     function removeTroveManager(ITroveManager troveManager) external {
@@ -92,7 +93,7 @@ contract BorrowerOperations is
         }
 
         _troveManagers.pop();
-        emit TroveManagerRemoved(troveManager);
+        emit ZAIEventsLib.TroveManagerRemoved(troveManager);
     }
 
     /**
@@ -507,7 +508,7 @@ contract BorrowerOperations is
 
         debtToken.mint(ZAI_CORE.feeReceiver(), debtFee);
 
-        emit BorrowingFeePaid(_caller, collateralToken, debtFee);
+        emit ZAIEventsLib.BorrowingFeePaid(_caller, collateralToken, debtFee);
 
         return debtFee;
     }

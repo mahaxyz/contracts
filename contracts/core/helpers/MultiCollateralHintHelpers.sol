@@ -11,14 +11,14 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 import "../../interfaces/IBorrowerOperations.sol";
 import "../../interfaces/ITroveManager.sol";
 import "../../interfaces/ISortedTroves.sol";
 import "../../interfaces/IFactory.sol";
-import "../../dependencies/ZaiBase.sol";
-import "../../dependencies/ZaiMath.sol";
+import "../dependencies/ZaiBase.sol";
+import "../dependencies/ZaiMath.sol";
 
 contract MultiCollateralHintHelpers is ZaiBase {
     IBorrowerOperations public immutable borrowerOperations;

@@ -11,7 +11,7 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 interface ILiquidityGauge {
     function deposit(uint256 amount, address receiver) external;

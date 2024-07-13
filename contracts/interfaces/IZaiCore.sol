@@ -11,7 +11,7 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 interface IZaiCore {
     event FeeReceiverSet(address feeReceiver);
@@ -39,7 +39,7 @@ interface IZaiCore {
      * - New stability pool deposits are not possible
      * @param what If true the protocol is paused
      */
-    function setPaused(bool _paused) external;
+    function setPaused(bool what) external;
 
     function setPriceFeed(address _priceFeed) external;
 

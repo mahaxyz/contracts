@@ -11,9 +11,9 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
-import "../interfaces/IZaiCore.sol";
+import "../../interfaces/IZaiCore.sol";
 
 /**
  * @title Zai System Start Time

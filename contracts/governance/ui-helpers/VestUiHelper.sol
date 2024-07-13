@@ -11,36 +11,15 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
-import {VestedZeroNFT} from "../vesting/VestedZeroNFT.sol";
 import {OmnichainStakingToken} from "../locker/staking/OmnichainStakingToken.sol";
 import {OmnichainStakingLP} from "../locker/staking/OmnichainStakingLP.sol";
-import {ILocker} from "../interfaces/ILocker.sol";
+import {ILocker} from "../../interfaces/ILocker.sol";
 
-/// @title VestedZeroNFT is a NFT based contract to hold all the user vests
 contract VestUiHelper {
-    VestedZeroNFT public vestedZero;
     OmnichainStakingToken public omnichainStaking;
     OmnichainStakingLP public omnichainStakingLp;
-
-    struct VestDetails {
-        uint256 id;
-        uint256 cliffDuration;
-        uint256 unlockDate;
-        uint256 pendingClaimed;
-        uint256 pending;
-        uint256 upfrontClaimed;
-        uint256 upfront;
-        uint256 linearDuration;
-        uint256 createdAt;
-        bool hasPenalty;
-        VestedZeroNFT.VestCategory category;
-        uint256 claimable;
-        uint256 unClaimed;
-        uint256 penalty;
-        bool isFrozen;
-    }
 
     struct LockedBalanceWithApr {
         uint256 id;
@@ -51,69 +30,9 @@ contract VestUiHelper {
         uint256 apr;
     }
 
-    constructor(
-        address _vestedZeroNFT,
-        address _omnichainStaking,
-        address _omnichainStakingLp
-    ) {
-        vestedZero = VestedZeroNFT(_vestedZeroNFT);
+    constructor(address _omnichainStaking, address _omnichainStakingLp) {
         omnichainStaking = OmnichainStakingToken(_omnichainStaking);
         omnichainStakingLp = OmnichainStakingLP(payable(_omnichainStakingLp));
-    }
-
-    function getVestedNFTData(
-        address _userAddress
-    ) external view returns (VestDetails[] memory) {
-        uint256 nftsOwned = vestedZero.balanceOf(_userAddress);
-        VestDetails[] memory lockDetails = new VestDetails[](nftsOwned);
-        for (uint i; i < nftsOwned; ) {
-            VestDetails memory lock;
-            uint256 tokenId = vestedZero.tokenOfOwnerByIndex(_userAddress, i);
-            (
-                lock.cliffDuration,
-                lock.unlockDate,
-                lock.pendingClaimed,
-                lock.pending,
-                lock.upfrontClaimed,
-                ,
-                ,
-                ,
-                ,
-
-            ) = vestedZero.tokenIdToLockDetails(tokenId);
-            (
-                ,
-                ,
-                ,
-                ,
-                ,
-                lock.upfront,
-                lock.linearDuration,
-                lock.createdAt,
-                lock.hasPenalty,
-                lock.category
-            ) = vestedZero.tokenIdToLockDetails(tokenId);
-
-            (uint256 upfrontClaimable, uint256 pendingClaimable) = vestedZero
-                .claimable(tokenId);
-
-            lock.id = tokenId;
-            lock.penalty = vestedZero.penalty(tokenId);
-            lock.claimable =
-                upfrontClaimable +
-                pendingClaimable -
-                (lock.upfrontClaimed + lock.pendingClaimed);
-            lock.unClaimed = vestedZero.unclaimed(tokenId);
-            lock.isFrozen = vestedZero.frozen(tokenId);
-
-            lockDetails[i] = lock;
-
-            unchecked {
-                ++i;
-            }
-        }
-
-        return lockDetails;
     }
 
     function getLockDetails(

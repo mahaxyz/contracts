@@ -13,6 +13,6 @@
 
 pragma solidity 0.8.20;
 
-contract Deployer {
-    // todo
+interface IGauge {
+    function notifyRewardAmount(uint256 amount) external;
 }

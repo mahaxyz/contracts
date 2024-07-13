@@ -11,15 +11,15 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IStabilityPool} from "../interfaces/IStabilityPool.sol";
 import {ISortedTroves} from "../interfaces/ISortedTroves.sol";
 import {IBorrowerOperations} from "../interfaces/IBorrowerOperations.sol";
 import {ITroveManager} from "../interfaces/ITroveManager.sol";
-import {ZaiMath} from "../dependencies/ZaiMath.sol";
-import {ZaiBase} from "../dependencies/ZaiBase.sol";
+import {ZaiMath} from "./dependencies/ZaiMath.sol";
+import {ZaiBase} from "./dependencies/ZaiBase.sol";
 import {ILiquidationManager} from "../interfaces/ILiquidationManager.sol";
 
 /**

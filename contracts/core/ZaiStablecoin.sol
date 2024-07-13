@@ -11,12 +11,13 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
-import {OFT, IERC20, ERC20} from "@layerzerolabs/solidity-examples/contracts/token/oft/OFT.sol";
+import {OFT, ERC20} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
-import {ERC20FlashMint} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
-import {AccessControlEnumerable} from "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import {ERC20FlashMint} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20FlashMint.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import {IZaiStablecoin} from "../interfaces/IZaiStablecoin.sol";
 
 /**

@@ -11,7 +11,10 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
+
+import {ITroveManager} from "../ITroveManager.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 library ZAIEventsLib {
     event BorrowingFeePaid(address indexed borrower, uint256 amount);
@@ -30,7 +33,7 @@ library ZAIEventsLib {
         uint256 _debt,
         uint256 _coll,
         uint256 _stake,
-        TroveManagerOperation _operation
+        ITroveManager.TroveManagerOperation _operation
     );
     event Redemption(
         uint256 _attemptedDebtAmount,
@@ -49,11 +52,6 @@ library ZAIEventsLib {
     event TroveSnapshotsUpdated(uint256 _L_collateral, uint256 _L_debt);
     event TroveIndexUpdated(address _borrower, uint256 _newIndex);
     event CollateralSent(address _to, uint256 _amount);
-    event RewardClaimed(
-        address indexed account,
-        address indexed recipient,
-        uint256 claimed
-    );
 
     event StabilityPoolDebtBalanceUpdated(uint256 _newBalance);
 

@@ -11,17 +11,17 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
-import {ILPOracle} from "../../interfaces/ILPOracle.sol";
-import {IPythAggregatorV3} from "../../interfaces/IPythAggregatorV3.sol";
+import {ILPOracle} from "../../../interfaces/ILPOracle.sol";
+import {IAggregatorV3Interface} from "../../../interfaces/IAggregatorV3Interface.sol";
 import {OmnichainStakingBase} from "./OmnichainStakingBase.sol";
 import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 contract OmnichainStakingLP is OmnichainStakingBase {
     using SafeCast for int256;
     ILPOracle public oracleLP;
-    IPythAggregatorV3 public oracleZERO;
+    IAggregatorV3Interface public oracleZERO;
 
     function init(
         address _locker,
@@ -44,7 +44,7 @@ contract OmnichainStakingLP is OmnichainStakingBase {
         );
 
         oracleLP = ILPOracle(_lpOracle);
-        oracleZERO = IPythAggregatorV3(_zeroPythAggregator);
+        oracleZERO = IAggregatorV3Interface(_zeroPythAggregator);
 
         _transferOwnership(_owner);
     }

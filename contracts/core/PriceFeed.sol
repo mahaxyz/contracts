@@ -11,12 +11,12 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 import {IAggregatorV3Interface} from "../interfaces/IAggregatorV3Interface.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
-import {ZaiMath} from "../dependencies/ZaiMath.sol";
-import {ZaiOwnable} from "../dependencies/ZaiOwnable.sol";
+import {ZaiMath} from "./dependencies/ZaiMath.sol";
+import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
 
 /**
  * @title Zai Multi Token Price Feed

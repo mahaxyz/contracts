@@ -11,10 +11,10 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
-import {IOmnichainStaking} from "../../interfaces/IOmnichainStaking.sol";
-import {IPoolVoter} from "../../interfaces/IPoolVoter.sol";
+import {IOmnichainStaking} from "../../../interfaces/IOmnichainStaking.sol";
+import {IPoolVoter} from "../../../interfaces/IPoolVoter.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {IVotes} from "@openzeppelin/contracts/governance/utils/IVotes.sol";
 

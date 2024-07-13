@@ -11,16 +11,16 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ZaiOwnable} from "../dependencies/ZaiOwnable.sol";
-import {SystemStart} from "../dependencies/SystemStart.sol";
-import {ZaiMath} from "../dependencies/ZaiMath.sol";
-import {IDebtToken} from "../interfaces/IDebtToken.sol";
+import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
+import {SystemStart} from "./dependencies/SystemStart.sol";
+import {ZaiMath} from "./dependencies/ZaiMath.sol";
+import {IZaiPermissioned} from "../interfaces/IZaiPermissioned.sol";
 import {IStabilityPool} from "../interfaces/IStabilityPool.sol";
-import {IVault} from "../interfaces/IVault.sol";
+import {IZaiVault} from "../interfaces/IZaiVault.sol";
 
 /**
  * @title Zai Stability Pool
@@ -39,8 +39,8 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
 
     uint256 public constant emissionId = 0;
 
-    IDebtToken public immutable debtToken;
-    IZaiVault public immutable vault;
+    IZaiPermissioned public immutable debtToken;
+    IZaIZaiVault public immutable vault;
     address public immutable factory;
     address public immutable liquidationManager;
 
@@ -114,8 +114,8 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
 
     constructor(
         address _zaiCore,
-        IDebtToken _debtTokenAddress,
-        IZaiVault _vault,
+        IZaiPermissioned _debtTokenAddress,
+        IZaIZaiVault _vault,
         address _factory,
         address _liquidationManager
     ) ZaiOwnable(_zaiCore) SystemStart(_zaiCore) {

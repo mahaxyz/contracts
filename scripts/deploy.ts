@@ -77,7 +77,7 @@ async function main() {
   //// Factory.sol ////
   await deployContract<Factory>("Factory", [
     addressList.ZaiCore, // address _zaiCore,
-    addressList.DebtToken, // IDebtToken _debtToken,
+    addressList.DebtToken, // IZaiPermissioned _debtToken,
     addressList.StabilityPool, // IStabilityPool _stabilityPool,
     addressList.BorrowerOperations, // IBorrowerOperations _borrowerOperations,
     addressList.SortedTroves, // address _sortedTroves,
@@ -121,7 +121,7 @@ async function main() {
   //// StabilityPool.sol ////
   await deployContract<StabilityPool>("StabilityPool", [
     addressList.ZaiCore, // address _zaiCore,
-    addressList.DebtToken, // IDebtTokenOnezProxy _debtTokenAddress,
+    addressList.DebtToken, // IZaiPermissionedOnezProxy _debtTokenAddress,
     addressList.ZaiVault, // IZaiVault _vault,
     addressList.Factory, // address _factory,
     addressList.LiquidationManager, // address _liquidationManager
