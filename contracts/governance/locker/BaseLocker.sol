@@ -16,7 +16,7 @@ pragma solidity 0.8.19;
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 import {IERC165, ERC721EnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import {IZeroLocker} from "../interfaces/IZeroLocker.sol";
+import {ILocker} from "../interfaces/ILocker.sol";
 import {IOmnichainStaking} from "../interfaces/IOmnichainStaking.sol";
 
 /**
@@ -28,7 +28,7 @@ import {IOmnichainStaking} from "../interfaces/IOmnichainStaking.sol";
 contract BaseLocker is
     ReentrancyGuardUpgradeable,
     ERC721EnumerableUpgradeable,
-    IZeroLocker
+    ILocker
 {
     uint256 internal WEEK;
     uint256 internal MAXTIME;
