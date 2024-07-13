@@ -14,6 +14,7 @@
 pragma solidity 0.8.20;
 
 import {IZaiCore} from "../../interfaces/IZaiCore.sol";
+import {IZaiOwnable} from "../../interfaces/IZaiOwnable.sol";
 
 /**
  * @title Zai Ownable
@@ -21,7 +22,7 @@ import {IZaiCore} from "../../interfaces/IZaiCore.sol";
  * @notice Contracts inheriting `ZaiOwnable` have the same owner as `ZaiCore`.
  * The ownership cannot be independently modified or renounced.
  */
-contract ZaiOwnable {
+contract ZaiOwnable is IZaiOwnable {
     IZaiCore public immutable ZAI_CORE;
 
     constructor(address core) {

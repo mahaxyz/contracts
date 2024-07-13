@@ -46,7 +46,7 @@ contract ZaiPermissioned is IZaiPermissioned {
         address _gasPool,
         uint256 _gasCompensation
     ) {
-        zai = _zai;
+        zai = IZaiStablecoin(_zai);
         stabilityPoolAddress = _stabilityPoolAddress;
         borrowerOperationsAddress = _borrowerOperationsAddress;
         factory = _factory;

@@ -13,12 +13,6 @@
 
 pragma solidity 0.8.20;
 
-import {IZaiCore} from "./IZaiCore.sol";
-
-interface IZaiOwnable {
-    function ZAI_CORE() external view returns (IZaiCore);
-
-    function owner() external view returns (address);
-
-    function guardian() external view returns (address);
+interface ISystemStart {
+    function getWeek() external view returns (uint256 week);
 }

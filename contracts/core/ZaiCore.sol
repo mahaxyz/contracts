@@ -16,6 +16,7 @@ pragma solidity 0.8.20;
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {IZaiCore} from "../interfaces/IZaiCore.sol";
+import {ZAIEventsLib} from "../interfaces/events/ZAIEventsLib.sol";
 
 /**
  * @title Zai Core
@@ -25,16 +26,17 @@ import {IZaiCore} from "../interfaces/IZaiCore.sol";
  * Other ownable Zai contracts inherit their ownership from this contract
  * using `ZaiOwnable`.
  */
-contract ZaiCore is Ownable, Pausable {
+contract ZaiCore is Ownable, Pausable, IZaiCore {
+    /// @inheritdoc IZaiCore
     address public feeReceiver;
+
+    /// @inheritdoc IZaiCore
     address public priceFeed;
-    address public owner;
-    address public pendingOwner;
-    uint256 public ownershipTransferDeadline;
+
+    /// @inheritdoc IZaiCore
     address public guardian;
 
-    // System-wide start time, rounded down the nearest epoch week.
-    // Other contracts that require access to this should inherit `SystemStart`.
+    /// @inheritdoc IZaiCore
     uint256 public immutable startTime;
 
     constructor(
@@ -42,45 +44,57 @@ contract ZaiCore is Ownable, Pausable {
         address _guardian,
         address _priceFeed,
         address _feeReceiver
-    ) {
-        owner = _owner;
+    ) Ownable(_owner) {
         startTime = (block.timestamp / 1 weeks) * 1 weeks;
         guardian = _guardian;
         priceFeed = _priceFeed;
         feeReceiver = _feeReceiver;
 
-        emit GuardianSet(_guardian);
-        emit PriceFeedSet(_priceFeed);
-        emit FeeReceiverSet(_feeReceiver);
+        emit ZAIEventsLib.GuardianSet(_guardian);
+        emit ZAIEventsLib.PriceFeedSet(_priceFeed);
+        emit ZAIEventsLib.FeeReceiverSet(_feeReceiver);
 
         _transferOwnership(_owner);
     }
 
-    /**
-     * @notice Set the receiver of all fees across the protocol
-     * @param _feeReceiver Address of the fee's recipient
-     */
+    /// @inheritdoc IZaiCore
     function setFeeReceiver(address _feeReceiver) external onlyOwner {
         feeReceiver = _feeReceiver;
-        emit FeeReceiverSet(_feeReceiver);
+        emit ZAIEventsLib.FeeReceiverSet(_feeReceiver);
     }
 
-    /**
-     * @notice Set the price feed used in the protocol
-     * @param _priceFeed Price feed address
-     */
+    /// @inheritdoc IZaiCore
     function setPriceFeed(address _priceFeed) external onlyOwner {
         priceFeed = _priceFeed;
-        emit PriceFeedSet(_priceFeed);
+        emit ZAIEventsLib.PriceFeedSet(_priceFeed);
     }
 
-    /**
-     * @notice Set the guardian address. The guardian can execute some emergency actions
-     * @param _guardian Guardian address
-     */
+    /// @inheritdoc IZaiCore
     function setGuardian(address _guardian) external onlyOwner {
         guardian = _guardian;
-        emit GuardianSet(_guardian);
+        emit ZAIEventsLib.GuardianSet(_guardian);
+    }
+
+    /// @inheritdoc IZaiCore
+    function owner()
+        public
+        view
+        virtual
+        override(IZaiCore, Ownable)
+        returns (address)
+    {
+        return super.owner();
+    }
+
+    /// @inheritdoc IZaiCore
+    function paused()
+        public
+        view
+        virtual
+        override(IZaiCore, Pausable)
+        returns (bool)
+    {
+        return super.paused();
     }
 
     /// @inheritdoc IZaiCore

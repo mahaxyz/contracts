@@ -22,6 +22,7 @@ import {IStabilityPool} from "../interfaces/IStabilityPool.sol";
 import {ITroveManager} from "../interfaces/ITroveManager.sol";
 import {IZaiPermissioned} from "../interfaces/IZaiPermissioned.sol";
 import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
+import {ZAIEventsLib} from "../interfaces/events/ZAIEventsLib.sol";
 
 /**
  * @title Zai Trove Factory
@@ -114,7 +115,12 @@ contract Factory is IFactory, ZaiOwnable {
             params.MCR
         );
 
-        emit NewDeployment(collateral, priceFeed, troveManager, sortedTroves);
+        emit ZAIEventsLib.NewDeployment(
+            collateral,
+            priceFeed,
+            troveManager,
+            sortedTroves
+        );
     }
 
     /// @inheritdoc IFactory

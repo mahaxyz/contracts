@@ -15,12 +15,13 @@ pragma solidity 0.8.20;
 
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
-import {SystemStart} from "./dependencies/SystemStart.sol";
+import {IZaiOwnable, ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
+import {SystemStart, ISystemStart} from "./dependencies/SystemStart.sol";
 import {ZaiMath} from "./dependencies/ZaiMath.sol";
 import {IZaiPermissioned} from "../interfaces/IZaiPermissioned.sol";
 import {IStabilityPool} from "../interfaces/IStabilityPool.sol";
 import {IZaiVault} from "../interfaces/IZaiVault.sol";
+import {ZAIEventsLib} from "../interfaces/events/ZAIEventsLib.sol";
 
 /**
  * @title Zai Stability Pool
@@ -33,33 +34,58 @@ import {IZaiVault} from "../interfaces/IZaiVault.sol";
 contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
     using SafeERC20 for IERC20;
 
+    /// @inheritdoc IStabilityPool
     uint256 public constant DECIMAL_PRECISION = 1e18;
+
+    /// @inheritdoc IStabilityPool
     uint128 public constant SUNSET_DURATION = 180 days;
+
+    /// @inheritdoc IStabilityPool
     uint256 constant REWARD_DURATION = 1 weeks;
 
+    /// @inheritdoc IStabilityPool
     uint256 public constant emissionId = 0;
 
+    /// @inheritdoc IStabilityPool
     IZaiPermissioned public immutable debtToken;
-    IZaIZaiVault public immutable vault;
+
+    /// @inheritdoc IStabilityPool
+    IZaiVault public immutable vault;
+
+    /// @inheritdoc IStabilityPool
     address public immutable factory;
+
+    /// @inheritdoc IStabilityPool
     address public immutable liquidationManager;
 
+    /// @inheritdoc IStabilityPool
     uint128 public rewardRate;
+
+    /// @inheritdoc IStabilityPool
     uint32 public lastUpdate;
+
+    /// @inheritdoc IStabilityPool
     uint32 public periodFinish;
 
+    /// @inheritdoc IStabilityPool
     mapping(IERC20 collateral => uint256 index) public indexByCollateral;
+
+    /// @inheritdoc IStabilityPool
     IERC20[] public collateralTokens;
 
-    // Tracker for Debt held in the pool. Changes when users deposit/withdraw, and when Trove debt is offset.
     uint256 internal totalDebtTokenDeposits;
 
+    /// @inheritdoc IStabilityPool
     mapping(address => AccountDeposit) public accountDeposits; // depositor address -> initial deposit
+
+    /// @inheritdoc IStabilityPool
     mapping(address => Snapshots) public depositSnapshots; // depositor address -> snapshots struct
 
     // index values are mapped against the values within `collateralTokens`
+    /// @inheritdoc IStabilityPool
     mapping(address => uint256[256]) public depositSums; // depositor address -> sums
 
+    /// @inheritdoc IStabilityPool
     mapping(address depositor => uint80[256] gains)
         public collateralGainsByDepositor;
 
@@ -71,26 +97,21 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
      * During its lifetime, a deposit's value evolves from d_t to d_t * P / P_t , where P_t
      * is the snapshot of P taken at the instant the deposit was made. 18-digit decimal.
      */
+    /// @inheritdoc IStabilityPool
     uint256 public P = DECIMAL_PRECISION;
 
+    /// @inheritdoc IStabilityPool
     uint256 public constant SCALE_FACTOR = 1e9;
 
     // Each time the scale of P shifts by SCALE_FACTOR, the scale is incremented by 1
+    /// @inheritdoc IStabilityPool
     uint128 public currentScale;
 
     // With each offset that fully empties the Pool, the epoch is incremented by 1
+    /// @inheritdoc IStabilityPool
     uint128 public currentEpoch;
 
-    /* collateral Gain sum 'S': During its lifetime, each deposit d_t earns a collateral gain of ( d_t * [S - S_t] )/P_t, where S_t
-     * is the depositor's snapshot of S taken at the time t when the deposit was made.
-     *
-     * The 'S' sums are stored in a nested mapping (epoch => scale => sum):
-     *
-     * - The inner mapping records the sum S at different scales
-     * - The outer mapping records the (scale => sum) mappings, for different epochs.
-     */
-
-    // index values are mapped against the values within `collateralTokens`
+    /// @inheritdoc IStabilityPool
     mapping(uint128 => mapping(uint128 => uint256[256]))
         public epochToScaleToSums;
 
@@ -104,18 +125,24 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
     mapping(uint128 => mapping(uint128 => uint256)) public epochToScaleToG;
 
     // Error tracker for the error correction in the Zai issuance calculation
+    /// @inheritdoc IStabilityPool
     uint256 public lastZaiError;
+
     // Error trackers for the error correction in the offset calculation
+    /// @inheritdoc IStabilityPool
     uint256[256] public lastCollateralError_Offset;
+
+    /// @inheritdoc IStabilityPool
     uint256 public lastDebtLossError_Offset;
 
-    mapping(uint16 => SunsetIndex) _sunsetIndexes;
-    Queue queue;
+    mapping(uint16 => SunsetIndex) private _sunsetIndexes;
+
+    Queue private queue;
 
     constructor(
         address _zaiCore,
         IZaiPermissioned _debtTokenAddress,
-        IZaIZaiVault _vault,
+        IZaiVault _vault,
         address _factory,
         address _liquidationManager
     ) ZaiOwnable(_zaiCore) SystemStart(_zaiCore) {
@@ -126,6 +153,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
         periodFinish = uint32(block.timestamp - 1);
     }
 
+    /// @inheritdoc IStabilityPool
     function enableCollateral(IERC20 _collateral) external {
         require(msg.sender == factory, "Not factory");
         uint256 length = collateralTokens.length;
@@ -182,7 +210,10 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
             }
         }
         indexByCollateral[_newCollateral] = idx + 1;
-        emit CollateralOverwritten(collateralTokens[idx], _newCollateral);
+        emit ZAIEventsLib.CollateralOverwritten(
+            collateralTokens[idx],
+            _newCollateral
+        );
         collateralTokens[idx] = _newCollateral;
     }
 
@@ -194,6 +225,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
         @param collateral Collateral to sunset
 
      */
+    /// @inheritdoc IStabilityPool
     function startCollateralSunset(IERC20 collateral) external onlyOwner {
         require(
             indexByCollateral[collateral] > 0,
@@ -206,6 +238,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
         delete indexByCollateral[collateral]; //This will prevent calls to the SP in case of liquidations
     }
 
+    /// @notice IStabilityPool
     function getTotalDebtTokenDeposits() external view returns (uint256) {
         return totalDebtTokenDeposits;
     }
@@ -220,6 +253,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
      * - Sends the tagged front end's accumulated Zai gains to the tagged front end
      * - Increases deposit and tagged front end's stake, and takes new snapshots for each.
      */
+    /// @inheritdoc IStabilityPool
     function provideToSP(uint256 _amount) external {
         require(!ZAI_CORE.paused(), "Deposits are paused");
         require(_amount > 0, "StabilityPool: Amount must be non-zero");
@@ -235,7 +269,9 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
         debtToken.sendToSP(msg.sender, _amount);
         uint256 newTotalDebtTokenDeposits = totalDebtTokenDeposits + _amount;
         totalDebtTokenDeposits = newTotalDebtTokenDeposits;
-        emit StabilityPoolDebtBalanceUpdated(newTotalDebtTokenDeposits);
+        emit ZAIEventsLib.StabilityPoolDebtBalanceUpdated(
+            newTotalDebtTokenDeposits
+        );
 
         uint256 newDeposit = compoundedDebtDeposit + _amount;
         accountDeposits[msg.sender] = AccountDeposit({
@@ -244,7 +280,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
         });
 
         _updateSnapshots(msg.sender, newDeposit);
-        emit UserDepositChanged(msg.sender, newDeposit);
+        emit ZAIEventsLib.UserDepositChanged(msg.sender, newDeposit);
     }
 
     /*  withdrawFromSP():
@@ -257,6 +293,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
      *
      * If _amount > userDeposit, the user withdraws all of their compounded deposit.
      */
+    /// @inheritdoc IStabilityPool
     function withdrawFromSP(uint256 _amount) external {
         uint256 initialDeposit = accountDeposits[msg.sender].amount;
         uint128 depositTimestamp = accountDeposits[msg.sender].timestamp;
@@ -291,7 +328,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
         });
 
         _updateSnapshots(msg.sender, newDeposit);
-        emit UserDepositChanged(msg.sender, newDeposit);
+        emit ZAIEventsLib.UserDepositChanged(msg.sender, newDeposit);
     }
 
     // --- Zai issuance functions ---
@@ -348,7 +385,11 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
             marginalZaiGain;
         epochToScaleToG[currentEpochCached][currentScaleCached] = newG;
 
-        emit G_Updated(newG, currentEpochCached, currentScaleCached);
+        emit ZAIEventsLib.G_Updated(
+            newG,
+            currentEpochCached,
+            currentScaleCached
+        );
     }
 
     function _computeZaiPerUnitStaked(
@@ -382,6 +423,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
     /*
      * Cancels out the specified debt against the Debt contained in the Stability Pool (as far as possible)
      */
+    /// @inheritdoc IStabilityPool
     function offset(
         IERC20 collateral,
         uint256 _debtToOffset,
@@ -518,14 +560,19 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
             currentP;
         uint256 newS = currentS + marginalCollateralGain;
         epochToScaleToSums[currentEpochCached][currentScaleCached][idx] = newS;
-        emit S_Updated(idx, newS, currentEpochCached, currentScaleCached);
+        emit ZAIEventsLib.S_Updated(
+            idx,
+            newS,
+            currentEpochCached,
+            currentScaleCached
+        );
 
         // If the Stability Pool was emptied, increment the epoch, and reset the scale and product P
         if (newProductFactor == 0) {
             currentEpoch = currentEpochCached + 1;
-            emit EpochUpdated(currentEpoch);
+            emit ZAIEventsLib.EpochUpdated(currentEpoch);
             currentScale = 0;
-            emit ScaleUpdated(currentScale);
+            emit ZAIEventsLib.ScaleUpdated(currentScale);
             newP = DECIMAL_PRECISION;
 
             // If multiplying P by a non-zero product factor would reduce P below the scale boundary, increment the scale
@@ -536,20 +583,22 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
                 (currentP * newProductFactor * SCALE_FACTOR) /
                 DECIMAL_PRECISION;
             currentScale = currentScaleCached + 1;
-            emit ScaleUpdated(currentScale);
+            emit ZAIEventsLib.ScaleUpdated(currentScale);
         } else {
             newP = (currentP * newProductFactor) / DECIMAL_PRECISION;
         }
 
         require(newP > 0, "NewP");
         P = newP;
-        emit P_Updated(newP);
+        emit ZAIEventsLib.P_Updated(newP);
     }
 
     function _decreaseDebt(uint256 _amount) internal {
         uint256 newTotalDebtTokenDeposits = totalDebtTokenDeposits - _amount;
         totalDebtTokenDeposits = newTotalDebtTokenDeposits;
-        emit StabilityPoolDebtBalanceUpdated(newTotalDebtTokenDeposits);
+        emit ZAIEventsLib.StabilityPoolDebtBalanceUpdated(
+            newTotalDebtTokenDeposits
+        );
     }
 
     // --- Reward calculator functions for depositor and front end ---
@@ -559,6 +608,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
      * where S(0) and P(0) are the depositor's snapshots of the sum S and product P, respectively.
      * d0 is the last recorded deposit value.
      */
+    /// @inheritdoc IStabilityPool
     function getDepositorCollateralGain(
         address _depositor
     ) external view returns (uint256[] memory collateralGains) {
@@ -638,6 +688,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
      * where G(0) and P(0) are the depositor's snapshots of the sum G and product P, respectively.
      * d0 is the last recorded deposit value.
      */
+    /// @inheritdoc IStabilityPool
     function claimableReward(
         address _depositor
     ) external view returns (uint256) {
@@ -728,6 +779,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
      * Return the user's compounded deposit. Given by the formula:  d = d0 * P/P(0)
      * where P(0) is the depositor's snapshot of the product P, taken when they last updated their deposit.
      */
+    /// @inheritdoc IStabilityPool
     function getCompoundedDebtDeposit(
         address _depositor
     ) public view returns (uint256) {
@@ -792,6 +844,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
     }
 
     // --- Sender functions for Debt deposit, collateral gains and Zai gains ---
+    /// @inheritdoc IStabilityPool
     function claimCollateralGains(
         address recipient,
         uint256[] calldata collateralIndexes
@@ -821,7 +874,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
                 ++i;
             }
         }
-        emit CollateralGainWithdrawn(msg.sender, collateralGains);
+        emit ZAIEventsLib.CollateralGainWithdrawn(msg.sender, collateralGains);
     }
 
     // --- Stability Pool Deposit Functionality ---
@@ -835,7 +888,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
             for (uint256 i = 0; i < length; i++) {
                 depositSums[_depositor][i] = 0;
             }
-            emit DepositSnapshotUpdated(_depositor, 0, 0);
+            emit ZAIEventsLib.DepositSnapshotUpdated(_depositor, 0, 0);
             return;
         }
         uint128 currentScaleCached = currentScale;
@@ -861,7 +914,11 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
             depositSums[_depositor][i] = currentS[i];
         }
 
-        emit DepositSnapshotUpdated(_depositor, currentP, currentG);
+        emit ZAIEventsLib.DepositSnapshotUpdated(
+            _depositor,
+            currentP,
+            currentG
+        );
     }
 
     //This assumes the snapshot gets updated in the caller
@@ -872,15 +929,17 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
             amount;
     }
 
+    /// @inheritdoc IStabilityPool
     function claimReward(address recipient) external returns (uint256 amount) {
         amount = _claimReward(msg.sender);
         if (amount > 0) {
             vault.transferAllocatedTokens(msg.sender, recipient, amount);
         }
-        emit RewardClaimed(msg.sender, recipient, amount);
+        emit ZAIEventsLib.RewardClaimed(msg.sender, recipient, amount);
         return amount;
     }
 
+    /// @inheritdoc IStabilityPool
     function vaultClaimReward(
         address claimant,
         address
@@ -918,5 +977,35 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
             storedPendingReward[account] = 0;
         }
         return amount;
+    }
+
+    /// @inheritdoc IZaiOwnable
+    function owner()
+        public
+        view
+        override(ZaiOwnable, IStabilityPool)
+        returns (address)
+    {
+        return super.owner();
+    }
+
+    /// @inheritdoc IZaiOwnable
+    function guardian()
+        public
+        view
+        override(ZaiOwnable, IStabilityPool)
+        returns (address)
+    {
+        return super.guardian();
+    }
+
+    /// @inheritdoc ISystemStart
+    function getWeek()
+        public
+        view
+        override(SystemStart, IStabilityPool)
+        returns (uint256)
+    {
+        return super.getWeek();
     }
 }

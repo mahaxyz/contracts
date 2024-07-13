@@ -16,6 +16,8 @@ pragma solidity 0.8.20;
 interface IZaiStablecoin {
     function mint(address _account, uint256 _amount) external;
 
+    // function TROVE_ROLE() external view returns (bytes32);
+
     function burn(address _account, uint256 _amount) external;
 
     function transferPermissioned(

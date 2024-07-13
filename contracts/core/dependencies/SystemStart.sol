@@ -13,14 +13,15 @@
 
 pragma solidity 0.8.20;
 
-import "../../interfaces/IZaiCore.sol";
+import {IZaiCore} from "../../interfaces/IZaiCore.sol";
+import {ISystemStart} from "../../interfaces/ISystemStart.sol";
 
 /**
  * @title Zai System Start Time
  * @author maha.xyz
  * @dev Provides a unified `startTime` and `getWeek`, used for emissions.
  */
-contract SystemStart {
+contract SystemStart is ISystemStart {
     uint256 immutable startTime;
 
     constructor(address zaiCore) {
