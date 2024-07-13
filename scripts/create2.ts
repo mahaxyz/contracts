@@ -25,8 +25,6 @@ const saltToHex = (salt: string | number) => ethers.id(salt.toString());
 
 const encodeParams = (dataTypes: any[], data: any[]) => {
   const abiCoder = new ethers.AbiCoder();
-
-  console.log("arapsm", abiCoder.encode(dataTypes, data));
   return abiCoder.encode(dataTypes, data);
 };
 
