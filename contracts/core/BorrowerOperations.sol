@@ -62,11 +62,6 @@ contract BorrowerOperations is
         _setMinNetDebt(_minNetDebt);
     }
 
-    function _setMinNetDebt(uint256 _minNetDebt) internal {
-        require(_minNetDebt > 0);
-        minNetDebt = _minNetDebt;
-    }
-
     function configureCollateral(
         ITroveManager troveManager,
         IERC20 collateralToken
@@ -101,9 +96,9 @@ contract BorrowerOperations is
     }
 
     /**
-        @notice Get the global total collateral ratio
-        @dev Not a view because fetching from the oracle is state changing.
-             Can still be accessed as a view from within the UX.
+     * @notice Get the global total collateral ratio
+     * @dev Not a view because fetching from the oracle is state changing.
+     * Can still be accessed as a view from within the UX.
      */
     function getTCR() external returns (uint256 globalTotalCollateralRatio) {
         SystemBalances memory balances = fetchBalances();
@@ -112,10 +107,10 @@ contract BorrowerOperations is
     }
 
     /**
-        @notice Get total collateral and debt balances for all active collaterals, as well as
-                the current collateral prices
-        @dev Not a view because fetching from the oracle is state changing.
-             Can still be accessed as a view from within the UX.
+     * @notice Get total collateral and debt balances for all active collaterals, as well as
+     * the current collateral prices
+     * @dev Not a view because fetching from the oracle is state changing.
+     * Can still be accessed as a view from within the UX.
      */
     function fetchBalances() public returns (SystemBalances memory balances) {
         uint256 loopEnd = _troveManagers.length;
@@ -765,5 +760,10 @@ contract BorrowerOperations is
     {
         SystemBalances memory balances = fetchBalances();
         (, totalPricedCollateral, totalDebt) = _getTCRData(balances);
+    }
+
+    function _setMinNetDebt(uint256 _minNetDebt) internal {
+        require(_minNetDebt > 0);
+        minNetDebt = _minNetDebt;
     }
 }

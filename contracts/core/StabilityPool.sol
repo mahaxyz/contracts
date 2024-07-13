@@ -65,7 +65,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
 
     mapping(address depositor => uint256 rewards) private storedPendingReward;
 
-    /*  Product 'P': Running product by which to multiply an initial deposit, in order to find the current compounded deposit,
+    /* Product 'P': Running product by which to multiply an initial deposit, in order to find the current compounded deposit,
      * after a series of liquidations have occurred, each of which cancel some debt with the deposit.
      *
      * During its lifetime, a deposit's value evolves from d_t to d_t * P / P_t , where P_t

@@ -34,8 +34,7 @@ import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
  * https://github.com/liquity/dev/blob/main/packages/contracts/contracts/TroveManager.sol
  * Zai's implementation is modified so that multiple `TroveManager` and `SortedTroves`
  * contracts are deployed in tandem, with each pair managing troves of a single collateral
- * type.
- * Functionality related to liquidations has been moved to `LiquidationManager`. This was
+ * type. Functionality related to liquidations has been moved to `LiquidationManager`. This was
  * necessary to avoid the restriction on deployed bytecode size.
  */
 contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
@@ -56,6 +55,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
     ISortedTroves public sortedTroves;
 
     EmissionId public emissionId;
+
     // Minimum collateral ratio for individual troves
     uint256 public MCR;
 
