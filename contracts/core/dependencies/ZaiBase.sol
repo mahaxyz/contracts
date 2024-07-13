@@ -22,21 +22,23 @@ import {IZaiBase} from "../../interfaces/IZaiBase.sol";
  * common functions.
  */
 contract ZaiBase is IZaiBase {
+    /// @inheritdoc IZaiBase
     uint256 public constant DECIMAL_PRECISION = 1e18;
 
     // Critical system collateral ratio. If the system's total collateral ratio (TCR) falls below the CCR, Recovery Mode is triggered.
+    /// @inheritdoc IZaiBase
     uint256 public constant CCR = 1500000000000000000; // 150%
 
     // Amount of debt to be locked in gas pool on opening troves
+    /// @inheritdoc IZaiBase
     uint256 public immutable DEBT_GAS_COMPENSATION;
 
+    /// @inheritdoc IZaiBase
     uint256 public constant PERCENT_DIVISOR = 200; // dividing by 200 yields 0.5%
 
     constructor(uint256 _gasCompensation) {
         DEBT_GAS_COMPENSATION = _gasCompensation;
     }
-
-    // --- Gas compensation functions ---
 
     // Returns the composite debt (drawn debt + gas compensation) of a trove, for the purpose of ICR calculation
     function _getCompositeDebt(uint256 _debt) internal view returns (uint256) {

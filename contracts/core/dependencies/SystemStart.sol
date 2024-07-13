@@ -28,6 +28,7 @@ contract SystemStart is ISystemStart {
         startTime = IZaiCore(zaiCore).startTime();
     }
 
+    /// @inheritdoc ISystemStart
     function getWeek() public view returns (uint256 week) {
         return (block.timestamp - startTime) / 1 weeks;
     }

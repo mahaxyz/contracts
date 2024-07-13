@@ -27,15 +27,26 @@ import {IZaiPermissioned} from "../interfaces/IZaiPermissioned.sol";
  * each of which hold one collateral type which may be used to mint this token.
  */
 contract ZaiPermissioned is IZaiPermissioned {
+    /// @inheritdoc IZaiPermissioned
     IZaiStablecoin public immutable zai;
+
+    /// @inheritdoc IZaiPermissioned
     address public immutable stabilityPoolAddress;
+
+    /// @inheritdoc IZaiPermissioned
     address public immutable borrowerOperationsAddress;
+
+    /// @inheritdoc IZaiPermissioned
     address public immutable factory;
+
+    /// @inheritdoc IZaiPermissioned
     address public immutable gasPool;
 
+    /// @inheritdoc IZaiPermissioned
     mapping(address => bool) public troveManager;
 
     // Amount of debt to be locked in gas pool on opening troves
+    /// @inheritdoc IZaiPermissioned
     uint256 public immutable DEBT_GAS_COMPENSATION;
 
     constructor(
@@ -55,6 +66,7 @@ contract ZaiPermissioned is IZaiPermissioned {
         DEBT_GAS_COMPENSATION = _gasCompensation;
     }
 
+    /// @inheritdoc IZaiPermissioned
     function enableTroveManager(address _troveManager) external {
         require(msg.sender == factory, "!Factory");
         troveManager[_troveManager] = true;
@@ -62,6 +74,7 @@ contract ZaiPermissioned is IZaiPermissioned {
 
     // --- Functions for intra-Zai calls ---
 
+    /// @inheritdoc IZaiPermissioned
     function mintWithGasCompensation(
         address _account,
         uint256 _amount
@@ -72,6 +85,7 @@ contract ZaiPermissioned is IZaiPermissioned {
         return true;
     }
 
+    /// @inheritdoc IZaiPermissioned
     function burnWithGasCompensation(
         address _account,
         uint256 _amount
@@ -82,6 +96,7 @@ contract ZaiPermissioned is IZaiPermissioned {
         return true;
     }
 
+    /// @inheritdoc IZaiPermissioned
     function mint(address _account, uint256 _amount) external {
         require(
             msg.sender == borrowerOperationsAddress || troveManager[msg.sender],
@@ -90,15 +105,18 @@ contract ZaiPermissioned is IZaiPermissioned {
         zai.mint(_account, _amount);
     }
 
+    /// @inheritdoc IZaiPermissioned
     function balanceOf(address _account) external view returns (uint256) {
         return zai.balanceOf(_account);
     }
 
+    /// @inheritdoc IZaiPermissioned
     function burn(address _account, uint256 _amount) external {
         require(troveManager[msg.sender], "Debt: Caller not TroveManager");
         zai.burn(_account, _amount);
     }
 
+    /// @inheritdoc IZaiPermissioned
     function sendToSP(address _sender, uint256 _amount) external {
         require(
             msg.sender == stabilityPoolAddress,
@@ -107,6 +125,7 @@ contract ZaiPermissioned is IZaiPermissioned {
         zai.transferPermissioned(_sender, msg.sender, _amount);
     }
 
+    /// @inheritdoc IZaiPermissioned
     function returnFromPool(
         address _poolAddress,
         address _receiver,

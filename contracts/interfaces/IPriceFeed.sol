@@ -70,39 +70,11 @@ interface IPriceFeed {
         view
         returns (uint256);
 
-    function ZAI_CORE() external view returns (address);
-
-    function RESPONSE_TIMEOUT() external view returns (uint256);
+    // function RESPONSE_TIMEOUT() external view returns (uint256);
 
     function TARGET_DIGITS() external view returns (uint256);
 
-    function guardian() external view returns (address);
+    function oracleRecords(address) external view returns (OracleRecord memory);
 
-    function oracleRecords(
-        address
-    )
-        external
-        view
-        returns (
-            address chainLinkOracle,
-            uint8 decimals,
-            bytes4 sharePriceSignature,
-            uint8 sharePriceDecimals,
-            bool isFeedWorking,
-            bool isEthIndexed
-        );
-
-    function owner() external view returns (address);
-
-    function priceRecords(
-        address
-    )
-        external
-        view
-        returns (
-            uint96 scaledPrice,
-            uint32 timestamp,
-            uint32 lastUpdated,
-            uint80 roundId
-        );
+    function priceRecords(address) external view returns (PriceRecord memory);
 }

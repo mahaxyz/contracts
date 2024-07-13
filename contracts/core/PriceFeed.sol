@@ -27,7 +27,7 @@ import {ZaiOwnable, IZaiCore, IZaiOwnable} from "./dependencies/ZaiOwnable.sol";
  * Zai's implementation additionally caches price values within a block
  * and incorporates exchange rate settings for derivative tokens (e.g. stETH -> wstETH).
  */
-abstract contract PriceFeed is ZaiOwnable, IPriceFeed {
+contract PriceFeed is ZaiOwnable, IPriceFeed {
     /** Constants ---------------------------------------------------------------------------------------------------- */
 
     // Used to convert a chainlink price answer to an 18-digit precision uint
@@ -41,8 +41,9 @@ abstract contract PriceFeed is ZaiOwnable, IPriceFeed {
 
     // State ------------------------------------------------------------------------------------------------------------
 
-    mapping(address => OracleRecord) public oracleRecords;
-    mapping(address => PriceRecord) public priceRecords;
+    mapping(address => OracleRecord) internal _oracleRecords;
+
+    mapping(address => PriceRecord) internal _priceRecords;
 
     struct OracleSetup {
         address token;
@@ -136,8 +137,8 @@ abstract contract PriceFeed is ZaiOwnable, IPriceFeed {
             isEthIndexed: _isEthIndexed
         });
 
-        oracleRecords[_token] = record;
-        PriceRecord memory _priceRecord = priceRecords[_token];
+        _oracleRecords[_token] = record;
+        PriceRecord memory _priceRecord = _priceRecords[_token];
 
         _processFeedResponses(
             _token,
@@ -159,8 +160,8 @@ abstract contract PriceFeed is ZaiOwnable, IPriceFeed {
         @return The latest valid price for the requested token
      */
     function fetchPrice(address _token) public returns (uint256) {
-        PriceRecord memory priceRecord = priceRecords[_token];
-        OracleRecord memory oracle = oracleRecords[_token];
+        PriceRecord memory priceRecord = _priceRecords[_token];
+        OracleRecord memory oracle = _oracleRecords[_token];
 
         uint256 scaledPrice = priceRecord.scaledPrice;
         // We short-circuit only if the price was already correct in the current block
@@ -192,7 +193,7 @@ abstract contract PriceFeed is ZaiOwnable, IPriceFeed {
                 }
 
                 priceRecord.lastUpdated = uint32(block.timestamp);
-                priceRecords[_token] = priceRecord;
+                _priceRecords[_token] = priceRecord;
             }
         }
 
@@ -351,7 +352,7 @@ abstract contract PriceFeed is ZaiOwnable, IPriceFeed {
         OracleRecord memory _oracle,
         bool _isWorking
     ) internal {
-        oracleRecords[_token].isFeedWorking = _isWorking;
+        _oracleRecords[_token].isFeedWorking = _isWorking;
         emit PriceFeedStatusUpdated(
             _token,
             address(_oracle.chainLinkOracle),
@@ -365,7 +366,7 @@ abstract contract PriceFeed is ZaiOwnable, IPriceFeed {
         uint256 _timestamp,
         uint80 roundId
     ) internal {
-        priceRecords[_token] = PriceRecord({
+        _priceRecords[_token] = PriceRecord({
             scaledPrice: uint96(_price),
             timestamp: uint32(_timestamp),
             lastUpdated: uint32(block.timestamp),
@@ -418,33 +419,15 @@ abstract contract PriceFeed is ZaiOwnable, IPriceFeed {
         }
     }
 
-    /// @inheritdoc IZaiOwnable
-    function owner()
-        public
-        view
-        override(ZaiOwnable, IPriceFeed)
-        returns (address)
-    {
-        return super.owner();
+    function oracleRecords(
+        address what
+    ) external view override returns (OracleRecord memory) {
+        return _oracleRecords[what];
     }
 
-    /// @inheritdoc IZaiOwnable
-    function guardian()
-        public
-        view
-        override(ZaiOwnable, IPriceFeed)
-        returns (address)
-    {
-        return super.guardian();
+    function priceRecords(
+        address what
+    ) external view override returns (PriceRecord memory) {
+        return _priceRecords[what];
     }
-
-    // /// @inheritdoc IZaiOwnable
-    // function ZAI_CORE()
-    //     external
-    //     view
-    //     override(ZaiOwnable, IPriceFeed)
-    //     returns (IZaiCore)
-    // {
-    //     return super.ZAI_CORE();
-    // }
 }

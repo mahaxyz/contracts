@@ -13,6 +13,8 @@
 
 pragma solidity 0.8.20;
 
+import {IZaiStablecoin} from "./IZaiStablecoin.sol";
+
 interface IZaiPermissioned {
     function burn(address _account, uint256 _amount) external;
 
@@ -45,6 +47,8 @@ interface IZaiPermissioned {
     function factory() external view returns (address);
 
     function gasPool() external view returns (address);
+
+    function zai() external view returns (IZaiStablecoin);
 
     function sendToSP(address _sender, uint256 _amount) external;
 

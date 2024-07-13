@@ -18,7 +18,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 interface IZaiStablecoin is IERC20 {
     function mint(address _account, uint256 _amount) external;
 
-    // function TROVE_ROLE() external view returns (bytes32);
+    function TROVE_ROLE() external view returns (bytes32);
 
     function burn(address _account, uint256 _amount) external;
 
@@ -27,4 +27,10 @@ interface IZaiStablecoin is IERC20 {
         address _to,
         uint256 _amount
     ) external;
+
+    function grantTroveRole(address _account) external;
+
+    function revokeTroveRole(address _account) external;
+
+    function isTrove(address _account) external view returns (bool what);
 }

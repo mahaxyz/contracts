@@ -23,6 +23,7 @@ import {IZaiOwnable} from "../../interfaces/IZaiOwnable.sol";
  * The ownership cannot be independently modified or renounced.
  */
 contract ZaiOwnable is IZaiOwnable {
+    /// @inheritdoc IZaiOwnable
     IZaiCore public immutable ZAI_CORE;
 
     constructor(address core) {
@@ -34,10 +35,12 @@ contract ZaiOwnable is IZaiOwnable {
         _;
     }
 
+    /// @inheritdoc IZaiOwnable
     function owner() public view returns (address) {
         return ZAI_CORE.owner();
     }
 
+    /// @inheritdoc IZaiOwnable
     function guardian() public view returns (address) {
         return ZAI_CORE.guardian();
     }

@@ -41,7 +41,7 @@ import {ILiquidationManager} from "../interfaces/ILiquidationManager.sol";
  * the value of the debt is distributed between stability pool depositors. The remaining
  * collateral is left claimable by the trove owner.
  */
-abstract contract LiquidationManager is ZaiBase, ILiquidationManager {
+contract LiquidationManager is ZaiBase, ILiquidationManager {
     /// @inheritdoc ILiquidationManager
     IStabilityPool public immutable stabilityPool;
 

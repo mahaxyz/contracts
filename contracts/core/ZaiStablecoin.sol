@@ -34,6 +34,7 @@ contract ZaiStablecoin is
     AccessControlEnumerable,
     IZaiStablecoin
 {
+    /// @inheritdoc IZaiStablecoin
     bytes32 public TROVE_ROLE = keccak256("TROVE_ROLE");
 
     /**
@@ -53,14 +54,17 @@ contract ZaiStablecoin is
         _grantRole(DEFAULT_ADMIN_ROLE, address(this));
     }
 
+    /// @inheritdoc IZaiStablecoin
     function grantTroveRole(address _account) external onlyOwner {
         _grantRole(TROVE_ROLE, _account);
     }
 
+    /// @inheritdoc IZaiStablecoin
     function revokeTroveRole(address _account) external onlyOwner {
         _revokeRole(TROVE_ROLE, _account);
     }
 
+    /// @inheritdoc IZaiStablecoin
     function isTrove(address _account) external view returns (bool what) {
         what = hasRole(TROVE_ROLE, _account);
     }
