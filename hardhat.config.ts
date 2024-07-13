@@ -12,6 +12,16 @@ import "hardhat-tracer";
 import dotenv from "dotenv";
 dotenv.config();
 
+const defaultAccount = {
+  mnemonic:
+    process.env.SEED_PHRASE ||
+    "test test test test test test test test test test test junk",
+  path: "m/44'/60'/0'/0",
+  initialIndex: 0,
+  count: 20,
+  passphrase: "",
+};
+
 const config: HardhatUserConfig = {
   abiExporter: {
     path: "./abi",
@@ -44,11 +54,16 @@ const config: HardhatUserConfig = {
     version: "0.8.20",
   },
   networks: {
-    // mainnet: {
-    //   url: `https://rpc.ankr.com/eth`,
-    //   accounts: [process.env.WALLET_PRIVATE_KEY || ""],
-    //   saveDeployments: true,
-    // },
+    hardhat: {
+      forking: {
+        url: `https://rpc.ankr.com/eth`,
+      },
+    },
+    mainnet: {
+      url: `https://rpc.ankr.com/eth`,
+      accounts: defaultAccount,
+      saveDeployments: true,
+    },
   },
   namedAccounts: {
     deployer: 0,
