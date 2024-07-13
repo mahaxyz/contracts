@@ -31,7 +31,7 @@ import {ZAIEventsLib} from "../interfaces/events/ZAIEventsLib.sol";
  * Zai's implementation is modified to support multiple collaterals. Deposits into
  * the stability pool may be used to liquidate any supported collateral type.
  */
-contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
+abstract contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
     using SafeERC20 for IERC20;
 
     /// @inheritdoc IStabilityPool
@@ -72,8 +72,6 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
 
     /// @inheritdoc IStabilityPool
     IERC20[] public collateralTokens;
-
-    uint256 internal totalDebtTokenDeposits;
 
     /// @inheritdoc IStabilityPool
     mapping(address => AccountDeposit) public accountDeposits; // depositor address -> initial deposit
@@ -138,6 +136,7 @@ contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
     mapping(uint16 => SunsetIndex) private _sunsetIndexes;
 
     Queue private queue;
+    uint256 internal totalDebtTokenDeposits;
 
     constructor(
         address _zaiCore,

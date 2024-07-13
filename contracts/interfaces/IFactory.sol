@@ -14,6 +14,10 @@
 pragma solidity 0.8.20;
 
 import {IZaiOwnable} from "./IZaiOwnable.sol";
+import {IBorrowerOperations} from "./IBorrowerOperations.sol";
+import {IZaiPermissioned} from "./IZaiPermissioned.sol";
+import {ILiquidationManager} from "./ILiquidationManager.sol";
+import {IStabilityPool} from "./IStabilityPool.sol";
 
 interface IFactory is IZaiOwnable {
     // commented values are suggested default parameters
@@ -53,15 +57,15 @@ interface IFactory is IZaiOwnable {
         address _sortedTrovesImpl
     ) external;
 
-    function borrowerOperations() external view returns (address);
+    function borrowerOperations() external view returns (IBorrowerOperations);
 
-    function debtToken() external view returns (address);
+    function debtToken() external view returns (IZaiPermissioned);
 
-    function liquidationManager() external view returns (address);
+    function liquidationManager() external view returns (ILiquidationManager);
 
     function sortedTrovesImpl() external view returns (address);
 
-    function stabilityPool() external view returns (address);
+    function stabilityPool() external view returns (IStabilityPool);
 
     function troveManagerCount() external view returns (uint256);
 

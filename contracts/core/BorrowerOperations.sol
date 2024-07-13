@@ -32,7 +32,7 @@ import {ZAIEventsLib} from "../interfaces/events/ZAIEventsLib.sol";
  * Zai's implementation is modified to support multiple collaterals. There is a 1:n
  * relationship between `BorrowerOperations` and each `TroveManager` / `SortedTroves` pair.
  */
-contract BorrowerOperations is
+abstract contract BorrowerOperations is
     ZaiBase,
     ZaiOwnable,
     DelegatedOps,

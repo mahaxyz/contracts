@@ -13,9 +13,9 @@
 
 pragma solidity 0.8.20;
 
-import "../../interfaces/ITroveManager.sol";
-import "../../interfaces/ISortedTroves.sol";
-import "../../interfaces/IFactory.sol";
+import {ITroveManager} from "../../interfaces/ITroveManager.sol";
+import {ISortedTroves} from "../../interfaces/ISortedTroves.sol";
+import {IFactory} from "../../interfaces/IFactory.sol";
 
 /*  Helper contract for grabbing Trove data for the front end. Not part of the core Zai system. */
 contract MultiTroveGetter {
@@ -92,17 +92,18 @@ contract MultiTroveGetter {
 
         for (uint256 idx = 0; idx < _count; ++idx) {
             _troves[idx].owner = currentTroveowner;
-            (
-                _troves[idx].debt,
-                _troves[idx].coll,
-                _troves[idx].stake,
-                /* status */
-                /* arrayIndex */
-                /* interestIndex */
-                ,
-                ,
+            // (
+            //     _troves[idx].debt,
+            //     _troves[idx].coll,
+            //     _troves[idx].stake,
+            //     /* status */
+            //     /* arrayIndex */
+            //     /* interestIndex */
+            //     ,
+            //     ,
 
-            ) = troveManager.Troves(currentTroveowner);
+            // ) = troveManager.troves(currentTroveowner);
+
             (
                 _troves[idx].snapshotCollateral,
                 _troves[idx].snapshotDebt
@@ -128,17 +129,17 @@ contract MultiTroveGetter {
 
         for (uint256 idx = 0; idx < _count; ++idx) {
             _troves[idx].owner = currentTroveowner;
-            (
-                _troves[idx].debt,
-                _troves[idx].coll,
-                _troves[idx].stake,
-                /* status */
-                /* arrayIndex */
-                /* interestIndex */
-                ,
-                ,
+            // (
+            //     _troves[idx].debt,
+            //     _troves[idx].coll,
+            //     _troves[idx].stake,
+            //     /* status */
+            //     /* arrayIndex */
+            //     /* interestIndex */
+            //     ,
+            //     ,
 
-            ) = troveManager.Troves(currentTroveowner);
+            // ) = troveManager.troves(currentTroveowner);
             (
                 _troves[idx].snapshotCollateral,
                 _troves[idx].snapshotDebt

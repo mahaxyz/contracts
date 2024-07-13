@@ -15,14 +15,15 @@ pragma solidity 0.8.20;
 
 import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
 import {IBorrowerOperations} from "../interfaces/IBorrowerOperations.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IFactory} from "../interfaces/IFactory.sol";
 import {ILiquidationManager} from "../interfaces/ILiquidationManager.sol";
 import {ISortedTroves} from "../interfaces/ISortedTroves.sol";
 import {IStabilityPool} from "../interfaces/IStabilityPool.sol";
 import {ITroveManager} from "../interfaces/ITroveManager.sol";
 import {IZaiPermissioned} from "../interfaces/IZaiPermissioned.sol";
-import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
 import {ZAIEventsLib} from "../interfaces/events/ZAIEventsLib.sol";
+import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
 
 /**
  * @title Zai Trove Factory
@@ -99,7 +100,7 @@ contract Factory is IFactory, ZaiOwnable {
         // verify that the oracle is correctly working
         ITroveManager(troveManager).fetchPrice();
 
-        stabilityPool.enableCollateral(collateral);
+        stabilityPool.enableCollateral(IERC20(collateral));
         liquidationManager.enableTroveManager(troveManager);
         debtToken.enableTroveManager(troveManager);
         borrowerOperations.configureCollateral(troveManager, collateral);
