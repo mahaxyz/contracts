@@ -16,19 +16,20 @@ pragma solidity 0.8.20;
 import {IBorrowerOperations} from "./IBorrowerOperations.sol";
 import {IZaiBase} from "./IZaiBase.sol";
 import {IStabilityPool} from "./IStabilityPool.sol";
+import {ITroveManager} from "./ITroveManager.sol";
 
 interface ILiquidationManager is IZaiBase {
     function batchLiquidateTroves(
-        address troveManager,
+        ITroveManager troveManager,
         address[] calldata _troveArray
     ) external;
 
-    function enableTroveManager(address _troveManager) external;
+    function enableTroveManager(ITroveManager troveManager) external;
 
-    function liquidate(address troveManager, address borrower) external;
+    function liquidate(ITroveManager troveManager, address borrower) external;
 
     function liquidateTroves(
-        address troveManager,
+        ITroveManager troveManager,
         uint256 maxTrovesToLiquidate,
         uint256 maxICR
     ) external;

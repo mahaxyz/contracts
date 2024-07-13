@@ -264,7 +264,7 @@ contract LiquidationManager is ZaiBase, ILiquidationManager {
         if (totals.totalDebtToOffset > 0 || totals.totalCollToSendToSP > 0) {
             // Move liquidated collateral and Debt to the appropriate pools
             stabilityPoolCached.offset(
-                address(troveManager.collateralToken()),
+                troveManager.collateralToken(),
                 totals.totalDebtToOffset,
                 totals.totalCollToSendToSP
             );
@@ -427,7 +427,7 @@ contract LiquidationManager is ZaiBase, ILiquidationManager {
         if (totals.totalDebtToOffset > 0 || totals.totalCollToSendToSP > 0) {
             // Move liquidated collateral and Debt to the appropriate pools
             stabilityPoolCached.offset(
-                address(troveManager.collateralToken()),
+                troveManager.collateralToken(),
                 totals.totalDebtToOffset,
                 totals.totalCollToSendToSP
             );

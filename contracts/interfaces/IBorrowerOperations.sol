@@ -15,15 +15,11 @@ pragma solidity 0.8.20;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IZaiBase} from "./IZaiBase.sol";
+import {ITroveManager} from "./ITroveManager.sol";
+import {IZaiPermissioned} from "./IZaiPermissioned.sol";
 import {IZaiOwnable} from "./IZaiOwnable.sol";
 
-interface IBorrowerOperations is IZaiBase, IZaiOwnable {
-    struct Balances {
-        uint256[] collaterals;
-        uint256[] debts;
-        uint256[] prices;
-    }
-
+interface IBorrowerOperations {
     struct TroveManagerData {
         IERC20 collateralToken;
         uint16 index;
@@ -71,7 +67,7 @@ interface IBorrowerOperations is IZaiBase, IZaiOwnable {
     }
 
     function addColl(
-        address troveManager,
+        ITroveManager troveManager,
         address account,
         uint256 _collateralAmount,
         address _upperHint,
@@ -79,7 +75,7 @@ interface IBorrowerOperations is IZaiBase, IZaiOwnable {
     ) external;
 
     function adjustTrove(
-        address troveManager,
+        ITroveManager troveManager,
         address account,
         uint256 _maxFeePercentage,
         uint256 _collDeposit,
@@ -90,14 +86,14 @@ interface IBorrowerOperations is IZaiBase, IZaiOwnable {
         address _lowerHint
     ) external;
 
-    function closeTrove(address troveManager, address account) external;
+    function closeTrove(ITroveManager troveManager, address account) external;
 
     function configureCollateral(
-        address troveManager,
-        address collateralToken
+        ITroveManager troveManager,
+        IERC20 collateralToken
     ) external;
 
-    function fetchBalances() external returns (Balances memory balances);
+    function fetchBalances() external returns (SystemBalances memory balances);
 
     function getGlobalSystemBalances()
         external
@@ -106,7 +102,7 @@ interface IBorrowerOperations is IZaiBase, IZaiOwnable {
     function getTCR() external returns (uint256 globalTotalCollateralRatio);
 
     function openTrove(
-        address troveManager,
+        ITroveManager troveManager,
         address account,
         uint256 _maxFeePercentage,
         uint256 _collateralAmount,
@@ -115,10 +111,10 @@ interface IBorrowerOperations is IZaiBase, IZaiOwnable {
         address _lowerHint
     ) external;
 
-    function removeTroveManager(address troveManager) external;
+    function removeTroveManager(ITroveManager troveManager) external;
 
     function repayDebt(
-        address troveManager,
+        ITroveManager troveManager,
         address account,
         uint256 _debtAmount,
         address _upperHint,
@@ -128,7 +124,7 @@ interface IBorrowerOperations is IZaiBase, IZaiOwnable {
     function setMinNetDebt(uint256 _minNetDebt) external;
 
     function withdrawColl(
-        address troveManager,
+        ITroveManager troveManager,
         address account,
         uint256 _collWithdrawal,
         address _upperHint,
@@ -136,7 +132,7 @@ interface IBorrowerOperations is IZaiBase, IZaiOwnable {
     ) external;
 
     function withdrawDebt(
-        address troveManager,
+        ITroveManager troveManager,
         address account,
         uint256 _maxFeePercentage,
         uint256 _debtAmount,
@@ -146,34 +142,15 @@ interface IBorrowerOperations is IZaiBase, IZaiOwnable {
 
     function checkRecoveryMode(uint256 TCR) external pure returns (bool);
 
-    function CCR() external view returns (uint256);
-
-    function DEBT_GAS_COMPENSATION() external view returns (uint256);
-
-    function DECIMAL_PRECISION() external view returns (uint256);
-
-    function PERCENT_DIVISOR() external view returns (uint256);
-
-    function _100pct() external view returns (uint256);
-
-    function debtToken() external view returns (address);
+    function debtToken() external view returns (IZaiPermissioned);
 
     function factory() external view returns (address);
 
     function getCompositeDebt(uint256 _debt) external view returns (uint256);
 
-    function guardian() external view returns (address);
-
-    function isApprovedDelegate(
-        address owner,
-        address caller
-    ) external view returns (bool isApproved);
-
     function minNetDebt() external view returns (uint256);
 
-    function owner() external view returns (address);
-
     function troveManagersData(
-        address
-    ) external view returns (address collateralToken, uint16 index);
+        ITroveManager
+    ) external view returns (TroveManagerData memory);
 }

@@ -29,7 +29,7 @@ contract SystemStart is ISystemStart {
     }
 
     /// @inheritdoc ISystemStart
-    function getWeek() public view returns (uint256 week) {
+    function getWeek() public view virtual returns (uint256 week) {
         return (block.timestamp - startTime) / 1 weeks;
     }
 }

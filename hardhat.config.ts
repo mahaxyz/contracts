@@ -8,6 +8,7 @@ import "hardhat-deploy";
 import "solidity-coverage";
 import "solidity-docgen";
 import "hardhat-tracer";
+
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -41,9 +42,6 @@ const config: HardhatUserConfig = {
   },
   solidity: {
     version: "0.8.20",
-    settings: {
-      optimizer: { enabled: true, runs: 100_000 },
-    },
   },
   networks: {
     // mainnet: {

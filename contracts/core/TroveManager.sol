@@ -73,8 +73,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
     uint256 public MCR;
 
     // volume-based amounts are divided by this value to allow storing as uint32
-    /// @inheritdoc ITroveManager
-    uint256 constant VOLUME_MULTIPLIER = 1e20;
+    uint256 private constant VOLUME_MULTIPLIER = 1e20;
 
     // Maximum interest rate must be lower than the minimum LST staking yield
     // so that over time the actual TCR becomes greater than the calculated TCR.
@@ -210,9 +209,6 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
     mapping(address => VolumeData) public accountLatestMint;
 
     /// @inheritdoc ITroveManager
-    mapping(address => Trove) public _troves;
-
-    /// @inheritdoc ITroveManager
     mapping(address => uint256) public surplusBalances;
 
     // Map addresses with active troves to their RewardSnapshot
@@ -221,6 +217,8 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
 
     // Array of all active trove addresses - used to to compute an approximate hint off-chain, for the sorted list insertion
     address[] private _troveOwners;
+
+    mapping(address => Trove) private _troves;
 
     uint256 private constant SECONDS_IN_ONE_MINUTE = 60;
     uint256 private constant INTEREST_PRECISION = 1e27;
@@ -1749,35 +1747,5 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
 
     function _requireCallerIsLM() internal view {
         require(msg.sender == liquidationManager, "Not Liquidation Manager");
-    }
-
-    /// @inheritdoc IZaiOwnable
-    function owner()
-        public
-        view
-        override(ZaiOwnable, ITroveManager)
-        returns (address)
-    {
-        return super.owner();
-    }
-
-    /// @inheritdoc IZaiOwnable
-    function guardian()
-        public
-        view
-        override(ZaiOwnable, ITroveManager)
-        returns (address)
-    {
-        return super.guardian();
-    }
-
-    /// @inheritdoc ISystemStart
-    function getWeek()
-        public
-        view
-        override(SystemStart, ITroveManager)
-        returns (uint256)
-    {
-        return super.getWeek();
     }
 }

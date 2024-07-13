@@ -17,7 +17,11 @@ import {ITroveManager} from "../ITroveManager.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 library ZAIEventsLib {
-    event BorrowingFeePaid(address indexed borrower, uint256 amount);
+    event BorrowingFeePaid(
+        address indexed borrower,
+        address indexed collateralToken,
+        uint256 amount
+    );
     event CollateralConfigured(address troveManager, address collateralToken);
     event TroveCreated(address indexed _borrower, uint256 arrayIndex);
     event TroveManagerRemoved(address troveManager);

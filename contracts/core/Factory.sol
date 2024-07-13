@@ -112,9 +112,12 @@ contract Factory is IFactory, ZaiOwnable {
         ITroveManager(troveManager).fetchPrice();
 
         stabilityPool.enableCollateral(IERC20(collateral));
-        liquidationManager.enableTroveManager(troveManager);
+        liquidationManager.enableTroveManager(ITroveManager(troveManager));
         debtToken.enableTroveManager(troveManager);
-        borrowerOperations.configureCollateral(troveManager, collateral);
+        borrowerOperations.configureCollateral(
+            ITroveManager(troveManager),
+            IERC20(collateral)
+        );
 
         ITroveManager(troveManager).setParameters(
             params.minuteDecayFactor,

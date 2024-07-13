@@ -242,7 +242,7 @@ contract PoolVoter is
         claimable[_gauge] = 0;
         IERC20(reward).approve(_gauge, 0); // first set to 0, this helps reset some non-standard tokens
         IERC20(reward).approve(_gauge, _claimable);
-        if (!IGauge(_gauge).notifyRewardAmount(address(reward), _claimable)) {
+        if (!IGauge(_gauge).notifyRewardAmount(_claimable)) {
             // can return false, will simply not distribute tokens
             claimable[_gauge] = _claimable;
         }

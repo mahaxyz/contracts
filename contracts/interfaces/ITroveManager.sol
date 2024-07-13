@@ -13,15 +13,13 @@
 
 pragma solidity 0.8.20;
 
-import {IZaiOwnable} from "./IZaiOwnable.sol";
-import {IZaiBase} from "./IZaiBase.sol";
 import {IPriceFeed} from "./IPriceFeed.sol";
 import {IZaiPermissioned} from "./IZaiPermissioned.sol";
 import {ISortedTroves} from "./ISortedTroves.sol";
 import {IZaiVault} from "./IZaiVault.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface ITroveManager is IZaiOwnable, IZaiBase {
+interface ITroveManager {
     struct VolumeData {
         uint32 amount;
         uint32 week;
@@ -310,11 +308,7 @@ interface ITroveManager is IZaiOwnable, IZaiBase {
 
     function getTroveStatus(address _borrower) external view returns (uint256);
 
-    function getWeek() external view returns (uint256 week);
-
     function getWeekAndDay() external view returns (uint256, uint256);
-
-    function guardian() external view returns (address);
 
     function hasPendingRewards(address _borrower) external view returns (bool);
 
@@ -345,8 +339,6 @@ interface ITroveManager is IZaiOwnable, IZaiBase {
 
     function minuteDecayFactor() external view returns (uint256);
 
-    function owner() external view returns (address);
-
     function paused() external view returns (bool);
 
     function periodFinish() external view returns (uint32);
@@ -358,7 +350,7 @@ interface ITroveManager is IZaiOwnable, IZaiBase {
     function rewardIntegral() external view returns (uint256);
 
     function rewardIntegralFor(address) external view returns (uint256);
-    
+
     function storedPendingReward(address) external view returns (uint256);
 
     function rewardRate() external view returns (uint128);

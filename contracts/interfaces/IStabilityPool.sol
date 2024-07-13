@@ -18,7 +18,7 @@ import {IZaiPermissioned} from "./IZaiPermissioned.sol";
 import {IZaiVault} from "./IZaiVault.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface IStabilityPool is IZaiOwnable {
+interface IStabilityPool {
     struct AccountDeposit {
         uint128 amount;
         uint128 timestamp; // timestamp of the last deposit
@@ -50,7 +50,7 @@ interface IStabilityPool is IZaiOwnable {
     function enableCollateral(IERC20 _collateral) external;
 
     function offset(
-        address collateral,
+        IERC20 collateral,
         uint256 _debtToOffset,
         uint256 _collToAdd
     ) external;
@@ -138,12 +138,8 @@ interface IStabilityPool is IZaiOwnable {
      */
     function getTotalDebtTokenDeposits() external view returns (uint256);
 
-    function getWeek() external view returns (uint256 week);
-
-    function guardian() external view returns (address);
-
     function indexByCollateral(
-        address collateral
+        IERC20 collateral
     ) external view returns (uint256 index);
 
     function lastCollateralError_Offset() external view returns (uint256);
@@ -155,8 +151,6 @@ interface IStabilityPool is IZaiOwnable {
     function lastUpdate() external view returns (uint32);
 
     function liquidationManager() external view returns (address);
-
-    function owner() external view returns (address);
 
     function periodFinish() external view returns (uint32);
 

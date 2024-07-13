@@ -14,5 +14,5 @@
 pragma solidity 0.8.20;
 
 interface IGauge {
-    function notifyRewardAmount(uint256 amount) external;
+    function notifyRewardAmount(uint256 amount) external returns (bool);
 }

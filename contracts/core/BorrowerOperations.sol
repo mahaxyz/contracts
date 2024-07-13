@@ -20,7 +20,7 @@ import {IBorrowerOperations} from "../interfaces/IBorrowerOperations.sol";
 import {IZaiPermissioned} from "../interfaces/IZaiPermissioned.sol";
 import {ZaiBase} from "./dependencies/ZaiBase.sol";
 import {ZaiMath} from "./dependencies/ZaiMath.sol";
-import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
+import {ZaiOwnable, IZaiOwnable} from "./dependencies/ZaiOwnable.sol";
 import {DelegatedOps} from "./dependencies/DelegatedOps.sol";
 import {ZAIEventsLib} from "../interfaces/events/ZAIEventsLib.sol";
 
@@ -32,7 +32,7 @@ import {ZAIEventsLib} from "../interfaces/events/ZAIEventsLib.sol";
  * Zai's implementation is modified to support multiple collaterals. There is a 1:n
  * relationship between `BorrowerOperations` and each `TroveManager` / `SortedTroves` pair.
  */
-abstract contract BorrowerOperations is
+contract BorrowerOperations is
     IBorrowerOperations,
     ZaiBase,
     ZaiOwnable,
@@ -40,11 +40,16 @@ abstract contract BorrowerOperations is
 {
     using SafeERC20 for IERC20;
 
+    /// @inheritdoc IBorrowerOperations
     IZaiPermissioned public immutable debtToken;
+
+    /// @inheritdoc IBorrowerOperations
     address public immutable factory;
+
+    /// @inheritdoc IBorrowerOperations
     uint256 public minNetDebt;
 
-    mapping(ITroveManager => TroveManagerData) public troveManagersData;
+    mapping(ITroveManager => TroveManagerData) internal _troveManagersData;
     ITroveManager[] internal _troveManagers;
 
     constructor(
@@ -59,41 +64,47 @@ abstract contract BorrowerOperations is
         _setMinNetDebt(_minNetDebt);
     }
 
+    /// @inheritdoc IBorrowerOperations
     function setMinNetDebt(uint256 _minNetDebt) public onlyOwner {
         _setMinNetDebt(_minNetDebt);
     }
 
+    /// @inheritdoc IBorrowerOperations
     function configureCollateral(
         ITroveManager troveManager,
         IERC20 collateralToken
     ) external {
         require(msg.sender == factory, "!factory");
-        troveManagersData[troveManager] = TroveManagerData(
+        _troveManagersData[troveManager] = TroveManagerData(
             collateralToken,
             uint16(_troveManagers.length)
         );
         _troveManagers.push(troveManager);
-        emit ZAIEventsLib.CollateralConfigured(troveManager, collateralToken);
+        emit ZAIEventsLib.CollateralConfigured(
+            address(troveManager),
+            address(collateralToken)
+        );
     }
 
+    /// @inheritdoc IBorrowerOperations
     function removeTroveManager(ITroveManager troveManager) external {
-        TroveManagerData memory tmData = troveManagersData[troveManager];
+        TroveManagerData memory tmData = _troveManagersData[troveManager];
         require(
             address(tmData.collateralToken) != address(0) &&
                 troveManager.sunsetting() &&
                 troveManager.getEntireSystemDebt() == 0,
             "Trove Manager cannot be removed"
         );
-        delete troveManagersData[troveManager];
+        delete _troveManagersData[troveManager];
         uint256 lastIndex = _troveManagers.length - 1;
         if (tmData.index < lastIndex) {
             ITroveManager lastTm = _troveManagers[lastIndex];
             _troveManagers[tmData.index] = lastTm;
-            troveManagersData[lastTm].index = tmData.index;
+            _troveManagersData[lastTm].index = tmData.index;
         }
 
         _troveManagers.pop();
-        emit ZAIEventsLib.TroveManagerRemoved(troveManager);
+        emit ZAIEventsLib.TroveManagerRemoved(address(troveManager));
     }
 
     /**
@@ -101,6 +112,7 @@ abstract contract BorrowerOperations is
      * @dev Not a view because fetching from the oracle is state changing.
      * Can still be accessed as a view from within the UX.
      */
+    /// @inheritdoc IBorrowerOperations
     function getTCR() external returns (uint256 globalTotalCollateralRatio) {
         SystemBalances memory balances = fetchBalances();
         (globalTotalCollateralRatio, , ) = _getTCRData(balances);
@@ -113,6 +125,7 @@ abstract contract BorrowerOperations is
      * @dev Not a view because fetching from the oracle is state changing.
      * Can still be accessed as a view from within the UX.
      */
+    /// @inheritdoc IBorrowerOperations
     function fetchBalances() public returns (SystemBalances memory balances) {
         uint256 loopEnd = _troveManagers.length;
         balances = SystemBalances({
@@ -133,16 +146,18 @@ abstract contract BorrowerOperations is
         }
     }
 
+    /// @inheritdoc IBorrowerOperations
     function checkRecoveryMode(uint256 TCR) public pure returns (bool) {
         return TCR < CCR;
     }
 
+    /// @inheritdoc IBorrowerOperations
     function getCompositeDebt(uint256 _debt) external view returns (uint256) {
         return _getCompositeDebt(_debt);
     }
 
     // --- Borrower Trove Operations ---
-
+    /// @inheritdoc IBorrowerOperations
     function openTrove(
         ITroveManager troveManager,
         address account,
@@ -231,6 +246,7 @@ abstract contract BorrowerOperations is
     }
 
     // Send collateral to a trove
+    /// @inheritdoc IBorrowerOperations
     function addColl(
         ITroveManager troveManager,
         address account,
@@ -253,6 +269,7 @@ abstract contract BorrowerOperations is
     }
 
     // Withdraw collateral from a trove
+    /// @inheritdoc IBorrowerOperations
     function withdrawColl(
         ITroveManager troveManager,
         address account,
@@ -274,6 +291,7 @@ abstract contract BorrowerOperations is
     }
 
     // Withdraw Debt tokens from a trove: mint new Debt tokens to the owner, and increase the trove's debt accordingly
+    /// @inheritdoc IBorrowerOperations
     function withdrawDebt(
         ITroveManager troveManager,
         address account,
@@ -297,6 +315,7 @@ abstract contract BorrowerOperations is
     }
 
     // Repay Debt tokens to a Trove: Burn the repaid Debt tokens, and reduce the trove's debt accordingly
+    /// @inheritdoc IBorrowerOperations
     function repayDebt(
         ITroveManager troveManager,
         address account,
@@ -317,6 +336,7 @@ abstract contract BorrowerOperations is
         );
     }
 
+    /// @inheritdoc IBorrowerOperations
     function adjustTrove(
         ITroveManager troveManager,
         address account,
@@ -446,6 +466,7 @@ abstract contract BorrowerOperations is
             );
     }
 
+    /// @inheritdoc IBorrowerOperations
     function closeTrove(
         ITroveManager troveManager,
         address account
@@ -508,7 +529,11 @@ abstract contract BorrowerOperations is
 
         debtToken.mint(ZAI_CORE.feeReceiver(), debtFee);
 
-        emit ZAIEventsLib.BorrowingFeePaid(_caller, collateralToken, debtFee);
+        emit ZAIEventsLib.BorrowingFeePaid(
+            _caller,
+            address(collateralToken),
+            debtFee
+        );
 
         return debtFee;
     }
@@ -732,7 +757,7 @@ abstract contract BorrowerOperations is
             bool isRecoveryMode
         )
     {
-        TroveManagerData storage t = troveManagersData[troveManager];
+        TroveManagerData storage t = _troveManagersData[troveManager];
         uint256 index;
         (collateralToken, index) = (t.collateralToken, t.index);
 
@@ -755,6 +780,7 @@ abstract contract BorrowerOperations is
         );
     }
 
+    /// @inheritdoc IBorrowerOperations
     function getGlobalSystemBalances()
         external
         returns (uint256 totalPricedCollateral, uint256 totalDebt)
@@ -766,5 +792,12 @@ abstract contract BorrowerOperations is
     function _setMinNetDebt(uint256 _minNetDebt) internal {
         require(_minNetDebt > 0);
         minNetDebt = _minNetDebt;
+    }
+
+    /// @inheritdoc IBorrowerOperations
+    function troveManagersData(
+        ITroveManager what
+    ) external view returns (TroveManagerData memory) {
+        return _troveManagersData[what];
     }
 }

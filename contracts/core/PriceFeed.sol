@@ -74,16 +74,7 @@ contract PriceFeed is ZaiOwnable, IPriceFeed {
     }
 
     // Admin routines ---------------------------------------------------------------------------------------------------
-
-    /**
-        @notice Set the oracle for a specific token
-        @param _token Address of the LST to set the oracle for
-        @param _chainlinkOracle Address of the chainlink oracle for this LST
-        @param _heartbeat Oracle heartbeat, in seconds
-        @param sharePriceSignature Four byte function selector to be used when calling `_collateral`, in order to obtain the share price
-        @param sharePriceDecimals Decimal precision used in the returned share price
-        @param _isEthIndexed True if the base currency is ETH
-     */
+    /// @inheritdoc IPriceFeed
     function setOracle(
         address _token,
         address _chainlinkOracle,
@@ -419,12 +410,14 @@ contract PriceFeed is ZaiOwnable, IPriceFeed {
         }
     }
 
+    /// @inheritdoc IPriceFeed
     function oracleRecords(
         address what
     ) external view override returns (OracleRecord memory) {
         return _oracleRecords[what];
     }
 
+    /// @inheritdoc IPriceFeed
     function priceRecords(
         address what
     ) external view override returns (PriceRecord memory) {

@@ -92,17 +92,14 @@ contract MultiTroveGetter {
 
         for (uint256 idx = 0; idx < _count; ++idx) {
             _troves[idx].owner = currentTroveowner;
-            // (
-            //     _troves[idx].debt,
-            //     _troves[idx].coll,
-            //     _troves[idx].stake,
-            //     /* status */
-            //     /* arrayIndex */
-            //     /* interestIndex */
-            //     ,
-            //     ,
 
-            // ) = troveManager.troves(currentTroveowner);
+            ITroveManager.Trove memory t = troveManager.troves(
+                currentTroveowner
+            );
+
+            _troves[idx].debt = t.debt;
+            _troves[idx].coll = t.coll;
+            _troves[idx].stake = t.stake;
 
             (
                 _troves[idx].snapshotCollateral,
@@ -129,17 +126,14 @@ contract MultiTroveGetter {
 
         for (uint256 idx = 0; idx < _count; ++idx) {
             _troves[idx].owner = currentTroveowner;
-            // (
-            //     _troves[idx].debt,
-            //     _troves[idx].coll,
-            //     _troves[idx].stake,
-            //     /* status */
-            //     /* arrayIndex */
-            //     /* interestIndex */
-            //     ,
-            //     ,
 
-            // ) = troveManager.troves(currentTroveowner);
+            ITroveManager.Trove memory t = troveManager.troves(
+                currentTroveowner
+            );
+
+            _troves[idx].debt = t.debt;
+            _troves[idx].coll = t.coll;
+            _troves[idx].stake = t.stake;
             (
                 _troves[idx].snapshotCollateral,
                 _troves[idx].snapshotDebt

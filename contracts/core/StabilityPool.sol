@@ -40,8 +40,7 @@ abstract contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
     /// @inheritdoc IStabilityPool
     uint128 public constant SUNSET_DURATION = 180 days;
 
-    /// @inheritdoc IStabilityPool
-    uint256 constant REWARD_DURATION = 1 weeks;
+    uint256 private constant REWARD_DURATION = 1 weeks;
 
     /// @inheritdoc IStabilityPool
     uint256 public constant emissionId = 0;
@@ -127,7 +126,6 @@ abstract contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
     uint256 public lastZaiError;
 
     // Error trackers for the error correction in the offset calculation
-    /// @inheritdoc IStabilityPool
     uint256[256] public lastCollateralError_Offset;
 
     /// @inheritdoc IStabilityPool
@@ -976,35 +974,5 @@ abstract contract StabilityPool is ZaiOwnable, SystemStart, IStabilityPool {
             storedPendingReward[account] = 0;
         }
         return amount;
-    }
-
-    /// @inheritdoc IZaiOwnable
-    function owner()
-        public
-        view
-        override(ZaiOwnable, IStabilityPool)
-        returns (address)
-    {
-        return super.owner();
-    }
-
-    /// @inheritdoc IZaiOwnable
-    function guardian()
-        public
-        view
-        override(ZaiOwnable, IStabilityPool)
-        returns (address)
-    {
-        return super.guardian();
-    }
-
-    /// @inheritdoc ISystemStart
-    function getWeek()
-        public
-        view
-        override(SystemStart, IStabilityPool)
-        returns (uint256)
-    {
-        return super.getWeek();
     }
 }
