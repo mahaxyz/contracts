@@ -14,18 +14,19 @@
 pragma solidity 0.8.20;
 
 import {IBorrowerOperations} from "../interfaces/IBorrowerOperations.sol";
-import {IZaiPermissioned} from "../interfaces/IZaiPermissioned.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IPriceFeed} from "../interfaces/IPriceFeed.sol";
 import {ISortedTroves} from "../interfaces/ISortedTroves.sol";
 import {ITroveManager} from "../interfaces/ITroveManager.sol";
+import {IZaiPermissioned} from "../interfaces/IZaiPermissioned.sol";
 import {IZaiVault} from "../interfaces/IZaiVault.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {SystemStart} from "./dependencies/SystemStart.sol";
+import {SystemStart, ISystemStart} from "./dependencies/SystemStart.sol";
 import {ZaiBase} from "./dependencies/ZaiBase.sol";
+import {ZAIEventsLib} from "../interfaces/events/ZAIEventsLib.sol";
 import {ZaiMath} from "./dependencies/ZaiMath.sol";
-import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
+import {ZaiOwnable, IZaiOwnable} from "./dependencies/ZaiOwnable.sol";
 
 /**
  * @title Zai Trove Manager
@@ -40,75 +41,113 @@ import {ZaiOwnable} from "./dependencies/ZaiOwnable.sol";
 contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
     using SafeERC20 for IERC20;
 
-    // --- Connected contract declarations ---
-
+    /// @inheritdoc ITroveManager
     address public immutable borrowerOperationsAddress;
+
+    /// @inheritdoc ITroveManager
     address public immutable liquidationManager;
-    address immutable gasPoolAddress;
+
+    address private immutable gasPoolAddress;
+
+    /// @inheritdoc ITroveManager
     IZaiPermissioned public immutable debtToken;
+
+    /// @inheritdoc ITroveManager
     IZaiVault public immutable vault;
 
+    /// @inheritdoc ITroveManager
     IPriceFeed public priceFeed;
+
+    /// @inheritdoc ITroveManager
     IERC20 public collateralToken;
 
-    // A doubly linked list of Troves, sorted by their collateral ratios
+    // A doubly linked list of troves, sorted by their collateral ratios
+    /// @inheritdoc ITroveManager
     ISortedTroves public sortedTroves;
 
+    /// @inheritdoc ITroveManager
     EmissionId public emissionId;
 
     // Minimum collateral ratio for individual troves
+    /// @inheritdoc ITroveManager
     uint256 public MCR;
 
-    uint256 constant SECONDS_IN_ONE_MINUTE = 60;
-    uint256 constant INTEREST_PRECISION = 1e27;
-    uint256 constant SECONDS_IN_YEAR = 365 days;
-    uint256 constant REWARD_DURATION = 1 weeks;
-
     // volume-based amounts are divided by this value to allow storing as uint32
+    /// @inheritdoc ITroveManager
     uint256 constant VOLUME_MULTIPLIER = 1e20;
 
     // Maximum interest rate must be lower than the minimum LST staking yield
     // so that over time the actual TCR becomes greater than the calculated TCR.
+    /// @inheritdoc ITroveManager
     uint256 public constant MAX_INTEREST_RATE_IN_BPS = 400; // 4%
+
+    /// @inheritdoc ITroveManager
     uint256 public constant SUNSETTING_INTEREST_RATE =
         (INTEREST_PRECISION * 5000) / (10000 * SECONDS_IN_YEAR); //50%
 
     // During bootsrap period redemptions are not allowed
+    /// @inheritdoc ITroveManager
     uint256 public constant BOOTSTRAP_PERIOD = 14 days;
 
     /*
      * BETA: 18 digit decimal. Parameter by which to divide the redeemed fraction, in order to calc the new base rate from a redemption.
      * Corresponds to (1 / ALPHA) in the white paper.
      */
-    uint256 constant BETA = 2;
+    uint256 private constant BETA = 2;
 
     // commented values are Liquity's fixed settings for each parameter
+    /// @inheritdoc ITroveManager
     uint256 public minuteDecayFactor; // 999037758833783000  (half-life of 12 hours)
+
+    /// @inheritdoc ITroveManager
     uint256 public redemptionFeeFloor; // DECIMAL_PRECISION / 1000 * 5  (0.5%)
+
+    /// @inheritdoc ITroveManager
     uint256 public maxRedemptionFee; // DECIMAL_PRECISION  (100%)
+
+    /// @inheritdoc ITroveManager
     uint256 public borrowingFeeFloor; // DECIMAL_PRECISION / 1000 * 5  (0.5%)
+
+    /// @inheritdoc ITroveManager
     uint256 public maxBorrowingFee; // DECIMAL_PRECISION / 100 * 5  (5%)
+
+    /// @inheritdoc ITroveManager
     uint256 public maxSystemDebt;
 
+    /// @inheritdoc ITroveManager
     uint256 public interestRate;
+
+    /// @inheritdoc ITroveManager
     uint256 public activeInterestIndex;
+
+    /// @inheritdoc ITroveManager
     uint256 public lastActiveIndexUpdate;
 
+    /// @inheritdoc ITroveManager
     uint256 public systemDeploymentTime;
+
+    /// @inheritdoc ITroveManager
     bool public sunsetting;
+
+    /// @inheritdoc ITroveManager
     bool public paused;
 
+    /// @inheritdoc ITroveManager
     uint256 public baseRate;
 
     // The timestamp of the latest fee operation (redemption or new debt issuance)
+    /// @inheritdoc ITroveManager
     uint256 public lastFeeOperationTime;
 
+    /// @inheritdoc ITroveManager
     uint256 public totalStakes;
 
     // Snapshot of the value of totalStakes, taken immediately after the latest liquidation
+    /// @inheritdoc ITroveManager
     uint256 public totalStakesSnapshot;
 
     // Snapshot of the total collateral taken immediately after the latest liquidation.
+    /// @inheritdoc ITroveManager
     uint256 public totalCollateralSnapshot;
 
     /*
@@ -119,45 +158,77 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
      *
      * Where L_collateral(0) and L_debt(0) are snapshots of L_collateral and L_debt for the active Trove taken at the instant the stake was made
      */
+    /// @inheritdoc ITroveManager
     uint256 public L_collateral;
+
+    /// @inheritdoc ITroveManager
     uint256 public L_debt;
 
     // Error trackers for the trove redistribution calculation
+    /// @inheritdoc ITroveManager
     uint256 public lastCollateralError_Redistribution;
+
+    /// @inheritdoc ITroveManager
     uint256 public lastDebtError_Redistribution;
 
-    uint256 internal totalActiveCollateral;
-    uint256 internal totalActiveDebt;
+    /// @inheritdoc ITroveManager
     uint256 public interestPayable;
 
+    /// @inheritdoc ITroveManager
     uint256 public defaultedCollateral;
+
+    /// @inheritdoc ITroveManager
     uint256 public defaultedDebt;
 
+    /// @inheritdoc ITroveManager
     uint256 public rewardIntegral;
+
+    /// @inheritdoc ITroveManager
     uint128 public rewardRate;
+
+    /// @inheritdoc ITroveManager
     uint32 public lastUpdate;
+
+    /// @inheritdoc ITroveManager
     uint32 public periodFinish;
 
+    /// @inheritdoc ITroveManager
     mapping(address => uint256) public rewardIntegralFor;
-    mapping(address => uint256) private storedPendingReward;
+
+    /// @inheritdoc ITroveManager
+    mapping(address => uint256) public storedPendingReward;
 
     // week -> total available rewards for 1 day within this week
+    /// @inheritdoc ITroveManager
     uint256[65535] public dailyMintReward;
 
     // week -> day -> total amount redeemed this day
     uint32[7][65535] private totalMints;
 
     // account -> data for latest activity
+    /// @inheritdoc ITroveManager
     mapping(address => VolumeData) public accountLatestMint;
 
-    mapping(address => Trove) public Troves;
+    /// @inheritdoc ITroveManager
+    mapping(address => Trove) public _troves;
+
+    /// @inheritdoc ITroveManager
     mapping(address => uint256) public surplusBalances;
 
     // Map addresses with active troves to their RewardSnapshot
+    /// @inheritdoc ITroveManager
     mapping(address => RewardSnapshot) public rewardSnapshots;
 
     // Array of all active trove addresses - used to to compute an approximate hint off-chain, for the sorted list insertion
-    address[] TroveOwners;
+    address[] private _troveOwners;
+
+    uint256 private constant SECONDS_IN_ONE_MINUTE = 60;
+    uint256 private constant INTEREST_PRECISION = 1e27;
+    uint256 private constant SECONDS_IN_YEAR = 365 days;
+    uint256 private constant REWARD_DURATION = 1 weeks;
+
+    uint256 internal totalActiveCollateral;
+    uint256 internal totalActiveDebt;
 
     modifier whenNotPaused() {
         require(!paused, "Collateral Paused");
@@ -350,21 +421,21 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
     }
 
     function getTroveOwnersCount() external view returns (uint256) {
-        return TroveOwners.length;
+        return _troveOwners.length;
     }
 
     function getTroveFromTroveOwnersArray(
         uint256 _index
     ) external view returns (address) {
-        return TroveOwners[_index];
+        return _troveOwners[_index];
     }
 
     function getTroveStatus(address _borrower) external view returns (uint256) {
-        return uint256(Troves[_borrower].status);
+        return uint256(_troves[_borrower].status);
     }
 
     function getTroveStake(address _borrower) external view returns (uint256) {
-        return Troves[_borrower].stake;
+        return _troves[_borrower].stake;
     }
 
     /**
@@ -394,7 +465,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
             uint256 pendingCollateralReward
         )
     {
-        Trove storage t = Troves[_borrower];
+        Trove storage t = _troves[_borrower];
         debt = t.debt;
         coll = t.coll;
 
@@ -497,10 +568,10 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         uint256 coll = L_collateral - snapshot.collateral;
         uint256 debt = L_debt - snapshot.debt;
 
-        if (coll + debt == 0 || Troves[_borrower].status != Status.active)
+        if (coll + debt == 0 || _troves[_borrower].status != Status.active)
             return (0, 0);
 
-        uint256 stake = Troves[_borrower].stake;
+        uint256 stake = _troves[_borrower].stake;
         return (
             (stake * coll) / DECIMAL_PRECISION,
             (stake * debt) / DECIMAL_PRECISION
@@ -513,7 +584,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
          * this indicates that rewards have occured since the snapshot was made, and the user therefore has
          * pending rewards
          */
-        if (Troves[_borrower].status != Status.active) {
+        if (_troves[_borrower].status != Status.active) {
             return false;
         }
 
@@ -545,7 +616,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
 
         // Update the baseRate state variable
         baseRate = newBaseRate;
-        emit BaseRateUpdated(newBaseRate);
+        emit ZAIEventsLib.BaseRateUpdated(newBaseRate);
 
         _updateLastFeeOpTime();
 
@@ -631,7 +702,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
 
         if (timePassed >= SECONDS_IN_ONE_MINUTE) {
             lastFeeOperationTime = block.timestamp;
-            emit LastFeeOpTimeUpdated(block.timestamp);
+            emit ZAIEventsLib.LastFeeOpTimeUpdated(block.timestamp);
         }
     }
 
@@ -645,18 +716,18 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
 
     // --- Redemption functions ---
 
-    /* Send _debtAmount debt to the system and redeem the corresponding amount of collateral from as many Troves as are needed to fill the redemption
+    /* Send _debtAmount debt to the system and redeem the corresponding amount of collateral from as many troves as are needed to fill the redemption
      * request.  Applies pending rewards to a Trove before reducing its debt and coll.
      *
      * Note that if _amount is very large, this function can run out of gas, specially if traversed troves are small. This can be easily avoided by
      * splitting the total _amount in appropriate chunks and calling the function multiple times.
      *
-     * Param `_maxIterations` can also be provided, so the loop through Troves is capped (if it’s zero, it will be ignored).This makes it easier to
+     * Param `_maxIterations` can also be provided, so the loop through troves is capped (if it’s zero, it will be ignored).This makes it easier to
      * avoid OOG for the frontend, as only knowing approximately the average cost of an iteration is enough, without needing to know the “topology”
      * of the trove list. It also avoids the need to set the cap in stone in the contract, nor doing gas calculations, as both gas price and opcode
      * costs can vary.
      *
-     * All Troves that are redeemed from -- with the likely exception of the last one -- will end up with no debt left, therefore they will be closed.
+     * All troves that are redeemed from -- with the likely exception of the last one -- will end up with no debt left, therefore they will be closed.
      * If the last Trove does have some remaining debt, it has a finite ICR, and the reinsertion could be anywhere in the list, therefore it requires a hint.
      * A frontend should use getRedemptionHints() to calculate what the ICR of this Trove will be after redemption, and pass a hint for its position
      * in the sortedTroves list along with the ICR value that the hint was found for.
@@ -724,7 +795,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
             }
         }
 
-        // Loop through the Troves starting from the one with lowest collateral ratio until _amount of debt is exchanged for collateral
+        // Loop through the troves starting from the one with lowest collateral ratio until _amount of debt is exchanged for collateral
         if (_maxIterations == 0) {
             _maxIterations = type(uint256).max;
         }
@@ -795,7 +866,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
             totals.totalCollateralDrawn -
             totals.collateralFee;
 
-        emit Redemption(
+        emit ZAIEventsLib.Redemption(
             _debtAmount,
             totals.totalDebtToRedeem,
             totals.totalCollateralDrawn,
@@ -820,7 +891,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         address _lowerPartialRedemptionHint,
         uint256 _partialRedemptionHintNICR
     ) internal returns (SingleRedemptionValues memory singleRedemption) {
-        Trove storage t = Troves[_borrower];
+        Trove storage t = _troves[_borrower];
         // Determine the remaining amount (lot) to be redeemed, capped by the entire debt of the Trove minus the liquidation reserve
         singleRedemption.debtLot = ZaiMath._min(
             _maxDebtAmount,
@@ -841,7 +912,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
             _removeStake(_borrower);
             _closeTrove(_borrower, Status.closedByRedemption);
             _redeemCloseTrove(_borrower, DEBT_GAS_COMPENSATION, newColl);
-            emit TroveUpdated(
+            emit ZAIEventsLib.TroveUpdated(
                 _borrower,
                 0,
                 0,
@@ -883,7 +954,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
             t.coll = newColl;
             _updateStakeAndTotalStakes(t);
 
-            emit TroveUpdated(
+            emit ZAIEventsLib.TroveUpdated(
                 _borrower,
                 newDebt,
                 newColl,
@@ -953,7 +1024,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         if (amount > 0) {
             vault.transferAllocatedTokens(msg.sender, receiver, amount);
         }
-        emit RewardClaimed(msg.sender, receiver, amount);
+        emit ZAIEventsLib.RewardClaimed(msg.sender, receiver, amount);
         return amount;
     }
 
@@ -1001,7 +1072,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         uint256 integralFor = rewardIntegralFor[account];
 
         if (integral > integralFor) {
-            amount += (Troves[account].debt * (integral - integralFor)) / 1e18;
+            amount += (_troves[account].debt * (integral - integralFor)) / 1e18;
         }
 
         // pending mint rewards
@@ -1114,7 +1185,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         require(!sunsetting, "Cannot open while sunsetting");
         uint256 supply = totalActiveDebt;
 
-        Trove storage t = Troves[_borrower];
+        Trove storage t = _troves[_borrower];
         require(t.status != Status.active, "BorrowerOps: Trove is active");
         t.status = Status.active;
         t.coll = _collateralAmount;
@@ -1125,8 +1196,8 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         stake = _updateStakeAndTotalStakes(t);
         sortedTroves.insert(_borrower, NICR, _upperHint, _lowerHint);
 
-        TroveOwners.push(_borrower);
-        arrayIndex = TroveOwners.length - 1;
+        _troveOwners.push(_borrower);
+        arrayIndex = _troveOwners.length - 1;
         t.arrayIndex = uint128(arrayIndex);
 
         _updateIntegrals(_borrower, 0, supply);
@@ -1139,7 +1210,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
             "Collateral debt limit reached"
         );
         totalActiveDebt = _newTotalDebt;
-        emit TroveUpdated(
+        emit ZAIEventsLib.TroveUpdated(
             _borrower,
             _compositeDebt,
             _collateralAmount,
@@ -1166,7 +1237,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
             require(!sunsetting, "Cannot increase while sunsetting");
         }
 
-        Trove storage t = Troves[_borrower];
+        Trove storage t = _troves[_borrower];
         require(t.status == Status.active, "Trove closed or does not exist");
 
         uint256 newDebt = t.debt;
@@ -1199,7 +1270,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         uint256 newNICR = ZaiMath._computeNominalCR(newColl, newDebt);
         sortedTroves.reInsert(_borrower, newNICR, _upperHint, _lowerHint);
         uint256 newStake = _updateStakeAndTotalStakes(t);
-        emit TroveUpdated(
+        emit ZAIEventsLib.TroveUpdated(
             _borrower,
             newDebt,
             newColl,
@@ -1218,7 +1289,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
     ) external {
         _requireCallerIsBO();
         require(
-            Troves[_borrower].status == Status.active,
+            _troves[_borrower].status == Status.active,
             "Trove closed or does not exist"
         );
         _removeStake(_borrower);
@@ -1226,7 +1297,13 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         totalActiveDebt = totalActiveDebt - debtAmount;
         _sendCollateral(_receiver, collAmount);
         _resetState();
-        emit TroveUpdated(_borrower, 0, 0, 0, TroveManagerOperation.close);
+        emit ZAIEventsLib.TroveUpdated(
+            _borrower,
+            0,
+            0,
+            0,
+            TroveManagerOperation.close
+        );
     }
 
     /**
@@ -1236,7 +1313,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
              must be closed by repaying the debt or via a redemption.
      */
     function _resetState() private {
-        if (TroveOwners.length == 0) {
+        if (_troveOwners.length == 0) {
             activeInterestIndex = INTEREST_PRECISION;
             lastActiveIndexUpdate = block.timestamp;
             totalStakes = 0;
@@ -1254,9 +1331,9 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
     }
 
     function _closeTrove(address _borrower, Status closedStatus) internal {
-        uint256 TroveOwnersArrayLength = TroveOwners.length;
+        uint256 TroveOwnersArrayLength = _troveOwners.length;
 
-        Trove storage t = Troves[_borrower];
+        Trove storage t = _troves[_borrower];
         t.status = closedStatus;
         t.coll = 0;
         t.debt = 0;
@@ -1265,15 +1342,15 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         rewardSnapshots[_borrower].collateral = 0;
         rewardSnapshots[_borrower].debt = 0;
         if (TroveOwnersArrayLength > 1 && sortedTrovesCached.getSize() > 1) {
-            // remove trove owner from the TroveOwners array, not preserving array order
+            // remove trove owner from the _troveOwners array, not preserving array order
             uint128 index = t.arrayIndex;
-            address addressToMove = TroveOwners[TroveOwnersArrayLength - 1];
-            TroveOwners[index] = addressToMove;
-            Troves[addressToMove].arrayIndex = index;
-            emit TroveIndexUpdated(addressToMove, index);
+            address addressToMove = _troveOwners[TroveOwnersArrayLength - 1];
+            _troveOwners[index] = addressToMove;
+            _troves[addressToMove].arrayIndex = index;
+            emit ZAIEventsLib.TroveIndexUpdated(addressToMove, index);
         }
 
-        TroveOwners.pop();
+        _troveOwners.pop();
 
         sortedTrovesCached.remove(_borrower);
         t.arrayIndex = 0;
@@ -1321,7 +1398,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         uint256 decayedBaseRate = _calcDecayedBaseRate();
 
         baseRate = decayedBaseRate;
-        emit BaseRateUpdated(decayedBaseRate);
+        emit ZAIEventsLib.BaseRateUpdated(decayedBaseRate);
 
         _updateLastFeeOpTime();
 
@@ -1335,11 +1412,15 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         return _applyPendingRewards(_borrower);
     }
 
+    function troves(address what) external view returns (Trove memory) {
+        return _troves[what];
+    }
+
     // Add the borrowers's coll and debt rewards earned from redistributions, to their Trove
     function _applyPendingRewards(
         address _borrower
     ) internal returns (uint256 coll, uint256 debt) {
-        Trove storage t = Troves[_borrower];
+        Trove storage t = _troves[_borrower];
         if (t.status == Status.active) {
             uint256 troveInterestIndex = t.activeInterestIndex;
             uint256 supply = totalActiveDebt;
@@ -1387,14 +1468,17 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
             L_collateralCached,
             L_debtCached
         );
-        emit TroveSnapshotsUpdated(L_collateralCached, L_debtCached);
+        emit ZAIEventsLib.TroveSnapshotsUpdated(
+            L_collateralCached,
+            L_debtCached
+        );
     }
 
     // Remove borrower's stake from the totalStakes sum, and set their stake to 0
     function _removeStake(address _borrower) internal {
-        uint256 stake = Troves[_borrower].stake;
+        uint256 stake = _troves[_borrower].stake;
         totalStakes = totalStakes - stake;
-        Troves[_borrower].stake = 0;
+        _troves[_borrower].stake = 0;
     }
 
     // Update borrower's stake based on their latest collateral value
@@ -1406,7 +1490,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         t.stake = newStake;
         uint256 newTotalStakes = totalStakes - oldStake + newStake;
         totalStakes = newTotalStakes;
-        emit TotalStakesUpdated(newTotalStakes);
+        emit ZAIEventsLib.TotalStakesUpdated(newTotalStakes);
 
         return newStake;
     }
@@ -1437,11 +1521,17 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
 
     function closeTroveByLiquidation(address _borrower) external {
         _requireCallerIsLM();
-        uint256 debtBefore = Troves[_borrower].debt;
+        uint256 debtBefore = _troves[_borrower].debt;
         _removeStake(_borrower);
         _closeTrove(_borrower, Status.closedByLiquidation);
         _updateIntegralForAccount(_borrower, debtBefore, rewardIntegral);
-        emit TroveUpdated(_borrower, 0, 0, 0, TroveManagerOperation.liquidate);
+        emit ZAIEventsLib.TroveUpdated(
+            _borrower,
+            0,
+            0,
+            0,
+            TroveManagerOperation.liquidate
+        );
     }
 
     function movePendingTroveRewardsToActiveBalances(
@@ -1494,7 +1584,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
             _activeColl -
             _collGasComp +
             defaultedCollateral;
-        emit SystemSnapshotsUpdated(
+        emit ZAIEventsLib.SystemSnapshotsUpdated(
             totalStakesSnapshot,
             totalCollateralSnapshot
         );
@@ -1542,7 +1632,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
         L_collateral = new_L_collateral;
         L_debt = new_L_debt;
 
-        emit LTermsUpdated(new_L_collateral, new_L_debt);
+        emit ZAIEventsLib.LTermsUpdated(new_L_collateral, new_L_debt);
 
         totalActiveDebt -= _debt;
         defaultedDebt += _debt;
@@ -1555,7 +1645,7 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
     function _sendCollateral(address _account, uint256 _amount) private {
         if (_amount > 0) {
             totalActiveCollateral = totalActiveCollateral - _amount;
-            emit CollateralSent(_account, _amount);
+            emit ZAIEventsLib.CollateralSent(_account, _amount);
 
             collateralToken.safeTransfer(_account, _amount);
         }
@@ -1659,5 +1749,35 @@ contract TroveManager is ITroveManager, ZaiBase, ZaiOwnable, SystemStart {
 
     function _requireCallerIsLM() internal view {
         require(msg.sender == liquidationManager, "Not Liquidation Manager");
+    }
+
+    /// @inheritdoc IZaiOwnable
+    function owner()
+        public
+        view
+        override(ZaiOwnable, ITroveManager)
+        returns (address)
+    {
+        return super.owner();
+    }
+
+    /// @inheritdoc IZaiOwnable
+    function guardian()
+        public
+        view
+        override(ZaiOwnable, ITroveManager)
+        returns (address)
+    {
+        return super.guardian();
+    }
+
+    /// @inheritdoc ISystemStart
+    function getWeek()
+        public
+        view
+        override(SystemStart, ITroveManager)
+        returns (uint256)
+    {
+        return super.getWeek();
     }
 }

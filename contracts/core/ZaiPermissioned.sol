@@ -90,6 +90,10 @@ contract ZaiPermissioned is IZaiPermissioned {
         zai.mint(_account, _amount);
     }
 
+    function balanceOf(address _account) external view returns (uint256) {
+        return zai.balanceOf(_account);
+    }
+
     function burn(address _account, uint256 _amount) external {
         require(troveManager[msg.sender], "Debt: Caller not TroveManager");
         zai.burn(_account, _amount);

@@ -16,6 +16,8 @@ pragma solidity 0.8.20;
 interface IZaiPermissioned {
     function burn(address _account, uint256 _amount) external;
 
+    function balanceOf(address _account) external view returns (uint256);
+
     function burnWithGasCompensation(
         address _account,
         uint256 _amount

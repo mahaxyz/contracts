@@ -14,5 +14,11 @@
 pragma solidity 0.8.20;
 
 interface IZaiBase {
-    function ZAI_CORE() external view returns (address);
+    function DECIMAL_PRECISION() external view returns (uint256);
+
+    function CCR() external view returns (uint256);
+
+    function DEBT_GAS_COMPENSATION() external view returns (uint256);
+
+    function PERCENT_DIVISOR() external view returns (uint256);
 }

@@ -86,7 +86,7 @@ abstract contract OmnichainStakingBase is
 
         locker = ILocker(_locker);
         poolVoter = IPoolVoter(_poolVoter);
-        rewardsToken = IZeroLend(_zeroToken);
+        rewardsToken = IERC20(_zeroToken);
         rewardsDuration = _rewardsDuration;
 
         // give approvals for increase lock functions

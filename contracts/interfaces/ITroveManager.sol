@@ -13,7 +13,15 @@
 
 pragma solidity 0.8.20;
 
-interface ITroveManager {
+import {IZaiOwnable} from "./IZaiOwnable.sol";
+import {IZaiBase} from "./IZaiBase.sol";
+import {IPriceFeed} from "./IPriceFeed.sol";
+import {IZaiPermissioned} from "./IZaiPermissioned.sol";
+import {ISortedTroves} from "./ISortedTroves.sol";
+import {IZaiVault} from "./IZaiVault.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+interface ITroveManager is IZaiOwnable, IZaiBase {
     struct VolumeData {
         uint32 amount;
         uint32 week;
@@ -197,12 +205,6 @@ interface ITroveManager {
 
     function BOOTSTRAP_PERIOD() external view returns (uint256);
 
-    function CCR() external view returns (uint256);
-
-    function DEBT_GAS_COMPENSATION() external view returns (uint256);
-
-    function DECIMAL_PRECISION() external view returns (uint256);
-
     function L_collateral() external view returns (uint256);
 
     function L_debt() external view returns (uint256);
@@ -211,25 +213,9 @@ interface ITroveManager {
 
     function MCR() external view returns (uint256);
 
-    function PERCENT_DIVISOR() external view returns (uint256);
-
-    function ZAI_CORE() external view returns (address);
-
     function SUNSETTING_INTEREST_RATE() external view returns (uint256);
 
-    function Troves(
-        address
-    )
-        external
-        view
-        returns (
-            uint256 debt,
-            uint256 coll,
-            uint256 stake,
-            uint8 status,
-            uint128 arrayIndex,
-            uint256 activeInterestIndex
-        );
+    function troves(address) external view returns (Trove memory);
 
     function accountLatestMint(
         address
@@ -245,11 +231,11 @@ interface ITroveManager {
 
     function claimableReward(address account) external view returns (uint256);
 
-    function collateralToken() external view returns (address);
+    function collateralToken() external view returns (IERC20);
 
     function dailyMintReward(uint256) external view returns (uint256);
 
-    function debtToken() external view returns (address);
+    function debtToken() external view returns (IZaiPermissioned);
 
     function defaultedCollateral() external view returns (uint256);
 
@@ -365,13 +351,15 @@ interface ITroveManager {
 
     function periodFinish() external view returns (uint32);
 
-    function priceFeed() external view returns (address);
+    function priceFeed() external view returns (IPriceFeed);
 
     function redemptionFeeFloor() external view returns (uint256);
 
     function rewardIntegral() external view returns (uint256);
 
     function rewardIntegralFor(address) external view returns (uint256);
+    
+    function storedPendingReward(address) external view returns (uint256);
 
     function rewardRate() external view returns (uint128);
 
@@ -379,7 +367,7 @@ interface ITroveManager {
         address
     ) external view returns (uint256 collateral, uint256 debt);
 
-    function sortedTroves() external view returns (address);
+    function sortedTroves() external view returns (ISortedTroves);
 
     function sunsetting() external view returns (bool);
 
@@ -393,5 +381,5 @@ interface ITroveManager {
 
     function totalStakesSnapshot() external view returns (uint256);
 
-    function vault() external view returns (address);
+    function vault() external view returns (IZaiVault);
 }
