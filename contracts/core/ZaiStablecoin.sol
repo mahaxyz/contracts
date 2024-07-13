@@ -35,7 +35,7 @@ contract ZaiStablecoin is
     IZaiStablecoin
 {
     /// @inheritdoc IZaiStablecoin
-    bytes32 public TROVE_ROLE = keccak256("TROVE_ROLE");
+    bytes32 public MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
     /**
      * Initializes the stablecoin and sets the LZ endpoint
@@ -55,25 +55,25 @@ contract ZaiStablecoin is
     }
 
     /// @inheritdoc IZaiStablecoin
-    function grantTroveRole(address _account) external onlyOwner {
-        _grantRole(TROVE_ROLE, _account);
+    function grantManagerRole(address _account) external onlyOwner {
+        _grantRole(MANAGER_ROLE, _account);
     }
 
     /// @inheritdoc IZaiStablecoin
-    function revokeTroveRole(address _account) external onlyOwner {
-        _revokeRole(TROVE_ROLE, _account);
+    function revokeManagerRole(address _account) external onlyOwner {
+        _revokeRole(MANAGER_ROLE, _account);
     }
 
     /// @inheritdoc IZaiStablecoin
-    function isTrove(address _account) external view returns (bool what) {
-        what = hasRole(TROVE_ROLE, _account);
+    function isManager(address _account) external view returns (bool what) {
+        what = hasRole(MANAGER_ROLE, _account);
     }
 
     /// @inheritdoc IZaiStablecoin
     function mint(
         address _account,
         uint256 _amount
-    ) external onlyRole(TROVE_ROLE) {
+    ) external onlyRole(MANAGER_ROLE) {
         _mint(_account, _amount);
     }
 
@@ -81,7 +81,7 @@ contract ZaiStablecoin is
     function burn(
         address _account,
         uint256 _amount
-    ) external onlyRole(TROVE_ROLE) {
+    ) external onlyRole(MANAGER_ROLE) {
         _burn(_account, _amount);
     }
 
@@ -90,7 +90,7 @@ contract ZaiStablecoin is
         address _from,
         address _to,
         uint256 _amount
-    ) external onlyRole(TROVE_ROLE) {
+    ) external onlyRole(MANAGER_ROLE) {
         _transfer(_from, _to, _amount);
     }
 }

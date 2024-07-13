@@ -1,4 +1,4 @@
-import hre from "hardhat";
+import hre, { ethers } from "hardhat";
 
 import { buildBytecode } from "./create2";
 
@@ -27,7 +27,10 @@ async function main() {
     factory.bytecode
   );
 
-  const txPopulated = await deployer.deploy.populateTransaction(bytecode, salt);
+  const txPopulated = await deployer.deploy.populateTransaction(
+    bytecode,
+    ethers.id(salt)
+  );
   const tx = await wallet.sendTransaction(txPopulated);
 
   const txR = await tx.wait(1);
