@@ -1,111 +1,53 @@
-// SPDX-FileCopyrightText: © 2021 Dai Foundation <www.daifoundation.org>
-// SPDX-License-Identifier: AGPL-3.0-or-later
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.14;
+// ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
+// ████╗ ████║██╔══██╗██║  ██║██╔══██╗
+// ██╔████╔██║███████║███████║███████║
+// ██║╚██╔╝██║██╔══██║██╔══██║██╔══██║
+// ██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║
+// ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+
+// Website: https://maha.xyz
+// Discord: https://discord.gg/mahadao
+// Twitter: https://twitter.com/mahaxyz_
+
+pragma solidity 0.8.20;
 
 import {IDDPool} from "../../../interfaces/core/IDDPool.sol";
-import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
+import {IZaiStablecoin} from "../../../interfaces/IZaiStablecoin.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 
-interface VatLike {
-    function live() external view returns (uint256);
-
-    function hope(address) external;
-
-    function nope(address) external;
-}
-
-interface D3mHubLike {
-    function vat() external view returns (address);
-
-    function end() external view returns (EndLike);
-}
-
-interface EndLike {
-    function Art(bytes32) external view returns (uint256);
-}
-
-abstract contract DDMetaMorpho is IDDPool {
-    mapping(address => uint256) public wards;
+abstract contract DDMetaMorpho is AccessControlEnumerable, IDDPool {
     address public hub;
     uint256 public exited;
 
-    bytes32 public immutable ilk;
-    VatLike public immutable vat;
     IERC4626 public immutable vault;
-    IERC20 public immutable dai;
+    IZaiStablecoin public immutable zai;
 
-    // --- Events ---
-    event Rely(address indexed usr);
-    event Deny(address indexed usr);
-    event File(bytes32 indexed what, address data);
+    constructor(address _hub, address _zai, address _vault) {
+        zai = IZaiStablecoin(_zai);
+        vault = IERC4626(_vault);
 
-    constructor(bytes32 ilk_, address hub_, address dai_, address vault_) {
-        ilk = ilk_;
-        dai = IERC20(dai_);
-        vault = IERC4626(vault_);
-
-        require(ilk_ != bytes32(0), "D3M4626TypePool/zero-bytes32");
-        require(hub_ != address(0), "D3M4626TypePool/zero-address");
-        require(dai_ != address(0), "D3M4626TypePool/zero-address");
-        require(vault_ != address(0), "D3M4626TypePool/zero-address");
+        require(_hub != address(0), "D3M4626TypePool/zero-address");
+        require(_zai != address(0), "D3M4626TypePool/zero-address");
+        require(_vault != address(0), "D3M4626TypePool/zero-address");
         require(
-            IERC4626(vault_).asset() == dai_,
-            "D3M4626TypePool/vault-asset-is-not-dai"
+            IERC4626(_vault).asset() == _zai,
+            "D3M4626TypePool/vault-asset-is-not-zai"
         );
 
-        dai.approve(vault_, type(uint256).max);
+        zai.approve(_vault, type(uint256).max);
+        hub = _hub;
+        // vat = VatLike(D3mHubLike(_hub).vat());
+        // vat.hope(_hub);
 
-        hub = hub_;
-        vat = VatLike(D3mHubLike(hub_).vat());
-        vat.hope(hub_);
-
-        wards[msg.sender] = 1;
-        emit Rely(msg.sender);
-    }
-
-    modifier auth() {
-        require(wards[msg.sender] == 1, "D3M4626TypePool/not-authorized");
-        _;
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     modifier onlyHub() {
         require(msg.sender == hub, "D3M4626TypePool/only-hub");
         _;
-    }
-
-    // --- Admin ---
-    function rely(address usr) external auth {
-        wards[usr] = 1;
-        emit Rely(usr);
-    }
-
-    function deny(address usr) external auth {
-        wards[usr] = 0;
-        emit Deny(usr);
-    }
-
-    function file(bytes32 what, address data) external auth {
-        require(vat.live() == 1, "D3M4626TypePool/no-file-during-shutdown");
-        if (what == "hub") {
-            vat.nope(hub);
-            hub = data;
-            vat.hope(data);
-        } else revert("D3M4626TypePool/file-unrecognized-param");
-        emit File(what, data);
     }
 
     /// https://github.com/morpho-org/metamorpho/blob/fcf3c41d9c113514c9af0bbf6298e88a1060b220/src/MetaMorpho.sol#L531
@@ -124,18 +66,18 @@ abstract contract DDMetaMorpho is IDDPool {
     function exit(address dst, uint256 wad) external override onlyHub {
         uint256 exited_ = exited;
         exited = exited_ + wad;
-        uint256 amt = (wad * vault.balanceOf(address(this))) /
-            (D3mHubLike(hub).end().Art(ilk) - exited_);
-        require(vault.transfer(dst, amt), "D3M4626TypePool/transfer-failed");
+        // uint256 amt = (wad * vault.balanceOf(address(this))) /
+        //     (D3mHubLike(hub).end().Art(ilk) - exited_);
+        // require(vault.transfer(dst, amt), "D3M4626TypePool/transfer-failed");
     }
 
     /// @inheritdoc IDDPool
-    function quit(address dst) external auth {
-        require(vat.live() == 1, "D3M4626TypePool/no-quit-during-shutdown");
-        require(
-            vault.transfer(dst, vault.balanceOf(address(this))),
-            "D3M4626TypePool/transfer-failed"
-        );
+    function quit(address dst) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        // require(vat.live() == 1, "D3M4626TypePool/no-quit-during-shutdown");
+        // require(
+        //     vault.transfer(dst, vault.balanceOf(address(this))),
+        //     "D3M4626TypePool/transfer-failed"
+        // );
     }
 
     /// @inheritdoc IDDPool
