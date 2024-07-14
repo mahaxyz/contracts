@@ -18,9 +18,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
       - uses: ./.github/actions/install
+
       - name: Generate Docs
         run: yarn docs
+
       - name: Deploy to Wiki Pages
         id: deployment
         uses: peaceiris/actions-gh-pages@v4

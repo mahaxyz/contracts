@@ -4,7 +4,8 @@
   "license": "GPL-3.0",
   "scripts": {
     "clean": "rimraf artifacts cache coverage",
-    "compile": "hardhat compile"
+    "docs": "hardhat docgen",
+    "compile": "hardhat compile && forge build"
   },
   "files": [
     "artifacts",
