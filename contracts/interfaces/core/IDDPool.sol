@@ -42,24 +42,6 @@ interface IDDPool {
     function withdraw(uint256 amount) external;
 
     /**
-     * @notice Exit proportional amount of shares.
-     * @dev If the external pool/token contract requires a different amount to be
-     * passed in the conversion should occur here as the Hub passes Gem [wad]
-     * amounts.
-     * @dev msg.sender must be the hub.
-     * @param dst address that should receive the redeemable tokens
-     * @param wad amount in Gem terms that we want to withdraw
-     */
-    function exit(address dst, uint256 wad) external;
-
-    /**
-     * @notice Transfer all assets from this pool.
-     * @dev msg.sender must be authorized.
-     * @param destination address that should receive the assets.
-     */
-    function quit(address destination) external;
-
-    /**
      * @notice Some external pools require actions before debt changes
      */
     function preDebtChange() external;

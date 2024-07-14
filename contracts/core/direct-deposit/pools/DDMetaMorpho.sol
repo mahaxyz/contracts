@@ -17,6 +17,11 @@ import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {IDDPool, DDBase} from "../DDBase.sol";
 import {AccessControlEnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 
+/**
+ * @title MetaMorpho Direct Deposit Module
+ * @author maha.xyz
+ * @notice A direct deposit module that manages a morpho vault
+ */
 contract DDMetaMorpho is AccessControlEnumerableUpgradeable, DDBase {
     uint256 public exited;
 
