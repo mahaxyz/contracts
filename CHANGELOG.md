@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/mahaxyz/contracts/compare/v1.0.0...v1.0.1) (2024-07-14)
+
+
+### Bug Fixes
+
+* updated npm package ([88b4cdd](https://github.com/mahaxyz/contracts/commit/88b4cdd2ecc2b7559cf122da06d06d3667c14fbd))
+
 ## 1.0.0 (2024-07-14)
 
 
