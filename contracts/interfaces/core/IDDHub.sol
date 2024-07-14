@@ -18,21 +18,21 @@ import {IDDPlan} from "./IDDPlan.sol";
 
 interface IDDHub {
     error NotAuthorized();
+    error NoOp(IDDPool pool);
 
     // --- Events ---
     event Rely(address indexed usr);
     event Deny(address indexed usr);
     event File(bytes32 indexed what, address data);
-    event File(bytes32 indexed ilk, bytes32 indexed what, address data);
-    event File(bytes32 indexed ilk, bytes32 indexed what, uint256 data);
-    event Wind(bytes32 indexed ilk, uint256 amt);
-    event Unwind(bytes32 indexed ilk, uint256 amt);
-    event NoOp(bytes32 indexed ilk);
-    event Fees(bytes32 indexed ilk, uint256 amt);
-    event Exit(bytes32 indexed ilk, address indexed usr, uint256 amt);
-    event Cage(bytes32 indexed ilk);
-    event Cull(bytes32 indexed ilk, uint256 ink, uint256 art);
-    event Uncull(bytes32 indexed ilk, uint256 wad);
+    event File(IDDPool indexed pool, bytes32 indexed what, address data);
+    event File(IDDPool indexed pool, bytes32 indexed what, uint256 data);
+    event Wind(IDDPool indexed pool, uint256 amt);
+    event Unwind(IDDPool indexed pool, uint256 amt);
+    event Fees(IDDPool indexed pool, uint256 amt);
+    event Exit(IDDPool indexed pool, address indexed usr, uint256 amt);
+    event Cage(IDDPool indexed pool);
+    event Cull(IDDPool indexed pool, uint256 ink, uint256 art);
+    event Uncull(IDDPool indexed pool, uint256 wad);
 
     /**
      * @notice Tracking struct for each of the D3M ilks.
@@ -42,13 +42,19 @@ interface IDDHub {
      * @param writtenOffDebt Debt write off triggered (1 or 0)
      * @param tic    Timestamp when the pool is caged
      */
-    struct Ilk {
+    struct PoolInfo {
         IDDPool pool; // Access external pool and holds balances
         IDDPlan plan; // How we calculate target debt
-        uint256 tau; // Time until you can write off the debt [sec]
-        uint256 writtenOffDebt; // Debt write off triggered
-        uint256 tic; // Timestamp when the d3m can be culled (tau + timestamp when caged)
+        bool isLive;
+        uint256 debt;
+        uint256 debtCeiling;
     }
+
+    function exec(IDDPool pool) external;
+
+    function evaluatePoolAction(
+        IDDPool pool
+    ) external view returns (uint256 toSupply, uint256 toWithdraw);
 
     // --- Administration ---
     /**
