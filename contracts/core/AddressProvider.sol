@@ -13,12 +13,16 @@
 
 pragma solidity 0.8.20;
 
-interface IZaiBase {
-    function DECIMAL_PRECISION() external view returns (uint256);
+import {IAddressProvider} from "../interfaces/core/IAddressProvider.sol";
+import {IZaiStablecoin} from "../interfaces/IZaiStablecoin.sol";
 
-    function CCR() external view returns (uint256);
+contract AddressProvider is IAddressProvider {
+    IZaiStablecoin public zai;
 
-    function DEBT_GAS_COMPENSATION() external view returns (uint256);
+    // todo
+    function deposit(address destination, uint256 amount) external {
+        zai.mint(destination, amount);
+    }
 
-    function PERCENT_DIVISOR() external view returns (uint256);
+    function withdraw(address destination, uint256 amount) external {}
 }

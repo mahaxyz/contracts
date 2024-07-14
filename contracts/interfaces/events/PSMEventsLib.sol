@@ -15,8 +15,36 @@ pragma solidity 0.8.20;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface IWETH is IERC20 {
-    function deposit() external payable;
+library PSMEventsLib {
+    event Mint(
+        address indexed destination,
+        uint256 indexed shares,
+        uint256 indexed amount,
+        uint256 newDebt,
+        uint256 supplyCap,
+        address sender
+    );
 
-    function withdraw(uint256 wad) external;
+    event RateUpdated(
+        uint256 indexed oldRate,
+        uint256 indexed newRate,
+        address sender
+    );
+
+    event Redeem(
+        address indexed destination,
+        uint256 indexed shares,
+        uint256 indexed amount,
+        uint256 newDebt,
+        uint256 supplyCap,
+        address sender
+    );
+
+    event SupplyCapUpdated(
+        uint256 indexed _newSupplyCap,
+        uint256 indexed _newDebtCap,
+        uint256 _oldSupplyCap,
+        uint256 _oldDebtCap,
+        address sender
+    );
 }

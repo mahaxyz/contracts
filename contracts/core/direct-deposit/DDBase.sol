@@ -13,14 +13,21 @@
 
 pragma solidity 0.8.20;
 
-interface ILiquidityGauge {
-    function deposit(uint256 amount, address receiver) external;
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
+import {IDDBase} from "../../interfaces/core/IDDBase.sol";
 
-    function withdraw(uint value) external;
+abstract contract DDBBase is IDDBase {
+    IZaiStablecoin public zai;
+    address public hub;
 
-    function lp_token() external view returns (address);
+    function __DDBBase_init(address _zai, address _hub) internal {
+        zai = IZaiStablecoin(_zai);
+        hub = _hub;
+    }
 
-    function set_approve_deposit(address depositor, bool can_deposit) external;
-
-    function set_rewards_receiver(address receiver) external;
+    modifier onlyHub() {
+        if (msg.sender != hub) revert NotAuthorized();
+        _;
+    }
 }

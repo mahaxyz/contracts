@@ -13,6 +13,15 @@
 
 pragma solidity 0.8.20;
 
-interface IGauge {
-    function notifyRewardAmount(uint256 amount) external returns (bool);
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
+import {IDDHub} from "../../interfaces/core/IDDHub.sol";
+
+/**
+ * @title Direct Deposit Hub
+ * @author maha.xyz
+ * @notice This is the main contract responsible for managing pools.
+ */
+contract DDHub is IDDHub {
+    IZaiStablecoin public zai;
 }
