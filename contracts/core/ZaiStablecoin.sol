@@ -84,13 +84,4 @@ contract ZaiStablecoin is
     ) external onlyRole(MANAGER_ROLE) {
         _burn(_account, _amount);
     }
-
-    /// @inheritdoc IZaiStablecoin
-    function transferPermissioned(
-        address _from,
-        address _to,
-        uint256 _amount
-    ) external onlyRole(MANAGER_ROLE) {
-        _transfer(_from, _to, _amount);
-    }
 }

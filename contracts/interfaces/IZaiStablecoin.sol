@@ -38,19 +38,6 @@ interface IZaiStablecoin is IERC20 {
     function burn(address _account, uint256 _amount) external;
 
     /**
-     * @notice Move the balance from one address to another
-     * @dev This is only callable by verified minters approved by governance
-     * @param _from The address to debit
-     * @param _to The address to credit
-     * @param _amount The amount to move
-     */
-    function transferPermissioned(
-        address _from,
-        address _to,
-        uint256 _amount
-    ) external;
-
-    /**
      * @notice Grants the manager role to an account
      * @dev Can only be called by governance
      * @param _account The account to grant the role to
