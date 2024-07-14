@@ -63,24 +63,6 @@ abstract contract DDMetaMorpho is AccessControlEnumerable, IDDPool {
     }
 
     /// @inheritdoc IDDPool
-    function exit(address dst, uint256 wad) external override onlyHub {
-        uint256 exited_ = exited;
-        exited = exited_ + wad;
-        // uint256 amt = (wad * vault.balanceOf(address(this))) /
-        //     (D3mHubLike(hub).end().Art(ilk) - exited_);
-        // require(vault.transfer(dst, amt), "D3M4626TypePool/transfer-failed");
-    }
-
-    /// @inheritdoc IDDPool
-    function quit(address dst) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        // require(vat.live() == 1, "D3M4626TypePool/no-quit-during-shutdown");
-        // require(
-        //     vault.transfer(dst, vault.balanceOf(address(this))),
-        //     "D3M4626TypePool/transfer-failed"
-        // );
-    }
-
-    /// @inheritdoc IDDPool
     function preDebtChange() external override {}
 
     /// @inheritdoc IDDPool
