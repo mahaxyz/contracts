@@ -13,9 +13,9 @@
 
 pragma solidity 0.8.20;
 
-import {IZaiStablecoin} from "../interfaces/IZaiStablecoin.sol";
-import {IPegStabilityModule} from "../interfaces/core/IPegStabilityModule.sol";
-import {PSMEventsLib} from "../interfaces/events/PSMEventsLib.sol";
+import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
+import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
+import {PSMEventsLib} from "../../interfaces/events/PSMEventsLib.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
@@ -80,7 +80,10 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
   function mint(address dest, uint256 shares) external nonReentrant {
     uint256 amount = toCollateralAmountWithFee(shares, mintFeeBps);
 
-    require(collateral.balanceOf(address(this)) + amount <= supplyCap, "supply cap exceeded");
+    require(
+      collateral.balanceOf(address(this)) + amount <= supplyCap,
+      "supply cap exceeded"
+    );
     require(debt + shares <= debtCap, "debt cap exceeded");
 
     collateral.transferFrom(msg.sender, address(this), amount);
@@ -117,7 +120,10 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
   }
 
   /// @inheritdoc IPegStabilityModule
-  function updateFees(uint256 _mintFeeBps, uint256 _redeemFeeBps) external onlyOwner {
+  function updateFees(
+    uint256 _mintFeeBps,
+    uint256 _redeemFeeBps
+  ) external onlyOwner {
     _updateFees(_mintFeeBps, _redeemFeeBps);
   }
 
@@ -132,12 +138,18 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
   }
 
   /// @inheritdoc IPegStabilityModule
-  function toCollateralAmountWithFee(uint256 _amount, uint256 _fee) public view returns (uint256) {
+  function toCollateralAmountWithFee(
+    uint256 _amount,
+    uint256 _fee
+  ) public view returns (uint256) {
     return (toCollateralAmount(_amount) * (MAX_FEE_BPS + _fee)) / MAX_FEE_BPS;
   }
 
   /// @inheritdoc IPegStabilityModule
-  function toCollateralAmountWithFeeInverse(uint256 _amount, uint256 _fee) public view returns (uint256) {
+  function toCollateralAmountWithFeeInverse(
+    uint256 _amount,
+    uint256 _fee
+  ) public view returns (uint256) {
     return (toCollateralAmount(_amount) * (MAX_FEE_BPS - _fee)) / MAX_FEE_BPS;
   }
 
@@ -153,7 +165,13 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
     supplyCap = _supplyCap;
     debtCap = _debtCap;
 
-    emit PSMEventsLib.SupplyCapUpdated(_supplyCap, _debtCap, oldSupplyCap, olsDebtCap, msg.sender);
+    emit PSMEventsLib.SupplyCapUpdated(
+      _supplyCap,
+      _debtCap,
+      oldSupplyCap,
+      olsDebtCap,
+      msg.sender
+    );
   }
 
   /**
@@ -173,7 +191,11 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
   function _updateFeeDestination(address _feeDestination) internal {
     address oldFeeDestination = feeDestination;
     feeDestination = _feeDestination;
-    emit PSMEventsLib.FeeDestinationUpdated(_feeDestination, oldFeeDestination, msg.sender);
+    emit PSMEventsLib.FeeDestinationUpdated(
+      _feeDestination,
+      oldFeeDestination,
+      msg.sender
+    );
   }
 
   /**
@@ -186,6 +208,12 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
     uint256 oldRedeemFeeBps = redeemFeeBps;
     mintFeeBps = _mintFeeBps;
     redeemFeeBps = _redeemFeeBps;
-    emit PSMEventsLib.FeesUpdated(_mintFeeBps, _redeemFeeBps, oldMintFeeBps, oldRedeemFeeBps, msg.sender);
+    emit PSMEventsLib.FeesUpdated(
+      _mintFeeBps,
+      _redeemFeeBps,
+      oldMintFeeBps,
+      oldRedeemFeeBps,
+      msg.sender
+    );
   }
 }

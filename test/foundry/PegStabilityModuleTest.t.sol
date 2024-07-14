@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.20;
 
-import {PegStabilityModule} from "../../contracts/core/PegStabilityModule.sol";
+import {PegStabilityModule} from "../../contracts/core/psm/PegStabilityModule.sol";
 import {ZaiStablecoin} from "../../contracts/core/ZaiStablecoin.sol";
 import {BaseTest} from "./BaseTest.t.sol";
 
