@@ -13,6 +13,8 @@
 
 pragma solidity 0.8.20;
 
+import {IZaiStablecoin} from "../IZaiStablecoin.sol";
+
 interface IDDPool {
     error NotAuthorized();
 
@@ -85,4 +87,8 @@ interface IDDPool {
      * @notice returns address of redeemable tokens (if any)
      */
     function redeemable() external view returns (address);
+
+    function zai() external view returns (IZaiStablecoin);
+
+    function hub() external view returns (address);
 }

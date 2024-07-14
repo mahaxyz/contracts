@@ -14,12 +14,12 @@
 pragma solidity 0.8.20;
 
 import {AccessControlEnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
-import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
-import {IDDHub} from "../../interfaces/core/IDDHub.sol";
-import {IDDPool} from "../../interfaces/core/IDDPool.sol";
-import {IDDPlan} from "../../interfaces/core/IDDPlan.sol";
-import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {Constants} from "./Constants.sol";
+import {IDDHub} from "../../interfaces/core/IDDHub.sol";
+import {IDDPlan} from "../../interfaces/core/IDDPlan.sol";
+import {IDDPool} from "../../interfaces/core/IDDPool.sol";
+import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 
 /**
@@ -28,22 +28,29 @@ import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/ut
  * @notice This is the main contract responsible for managing pools.
  * @dev Has permissions to mint/burn ZAI
  */
-abstract contract DDHub is
+contract DDHub is
     IDDHub,
     AccessControlEnumerableUpgradeable,
     ReentrancyGuardUpgradeable
 {
+    /// @inheritdoc IDDHub
     IZaiStablecoin public zai;
 
+    /// @inheritdoc IDDHub
     bytes32 public RISK_ROLE;
+
+    /// @inheritdoc IDDHub
     bytes32 public EXECUTOR_ROLE;
 
+    /// @inheritdoc IDDHub
     address public feeCollector;
 
-    mapping(IDDPool => PoolInfo) public poolInfos;
-
+    /// @inheritdoc IDDHub
     uint256 public globalDebtCeiling;
 
+    mapping(IDDPool => PoolInfo) internal _poolInfos;
+
+    /// @inheritdoc IDDHub
     function initialize(
         address _feeCollector,
         uint256 _globalDebtCeiling,
@@ -58,8 +65,15 @@ abstract contract DDHub is
     }
 
     /// @inheritdoc IDDHub
+    function poolInfos(
+        IDDPool pool
+    ) external view returns (PoolInfo memory info) {
+        info = _poolInfos[pool];
+    }
+
+    /// @inheritdoc IDDHub
     function exec(IDDPool pool) external nonReentrant onlyRole(EXECUTOR_ROLE) {
-        PoolInfo memory info = poolInfos[pool];
+        PoolInfo memory info = _poolInfos[pool];
         require(info.plan != IDDPlan(address(0)), "not registered");
 
         pool.preDebtChange();
@@ -70,6 +84,7 @@ abstract contract DDHub is
         pool.postDebtChange();
     }
 
+    /// @inheritdoc IDDHub
     function registerPool(
         IDDPool pool,
         IDDPlan plan,
@@ -83,33 +98,44 @@ abstract contract DDHub is
             debtCeiling: debtCeiling
         });
 
-        poolInfos[pool] = info;
+        _poolInfos[pool] = info;
     }
 
+    /// @inheritdoc IDDHub
     function reduceDebtCeiling(
         IDDPool pool,
         uint256 amountToReduce
     ) external onlyRole(RISK_ROLE) {
-        PoolInfo storage info = poolInfos[pool];
+        PoolInfo storage info = _poolInfos[pool];
         info.debtCeiling -= amountToReduce;
     }
 
+    /// @inheritdoc IDDHub
     function setDebtCeiling(
         IDDPool pool,
         uint256 amount
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        PoolInfo storage info = poolInfos[pool];
+        PoolInfo storage info = _poolInfos[pool];
         info.debtCeiling = amount;
     }
 
+    /// @inheritdoc IDDHub
+    function setFeeCollector(
+        address who
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        feeCollector = who;
+    }
+
+    /// @inheritdoc IDDHub
     function setGlobalDebtCeiling(
         uint256 amount
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         globalDebtCeiling = amount;
     }
 
+    /// @inheritdoc IDDHub
     function shutdownPool(IDDPool pool) external onlyRole(RISK_ROLE) {
-        PoolInfo storage info = poolInfos[pool];
+        PoolInfo storage info = _poolInfos[pool];
         info.isLive = false;
     }
 
@@ -117,7 +143,7 @@ abstract contract DDHub is
     function evaluatePoolAction(
         IDDPool pool
     ) public view returns (uint256 toSupply, uint256 toWithdraw) {
-        PoolInfo memory info = poolInfos[pool];
+        PoolInfo memory info = _poolInfos[pool];
 
         uint256 currentAssets = pool.assetBalance(); // Should return DAI owned by D3MPool
         uint256 maxWithdraw = Math.min(pool.maxWithdraw(), Constants.SAFEMAX);
@@ -177,7 +203,7 @@ abstract contract DDHub is
     }
 
     function _sweepFees(IDDPool pool) internal {
-        PoolInfo memory info = poolInfos[pool];
+        PoolInfo memory info = _poolInfos[pool];
         uint256 balance = pool.assetBalance();
         uint256 balanceBefore = zai.balanceOf(address(pool));
 
