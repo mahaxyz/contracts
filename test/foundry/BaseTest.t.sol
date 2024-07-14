@@ -22,6 +22,7 @@ abstract contract BaseTest is Test {
   address shark = address(0x2);
   address whale = address(0x3);
   address ant = address(0x4);
+  address feeDestination = address(0x5);
 
   function setUpBase() internal {
     MockLayerZero lz = new MockLayerZero();
@@ -39,7 +40,8 @@ abstract contract BaseTest is Test {
       100_000 * 1e8, // uint256 _supplyCap,
       100_000 * 1e18, // uint256 _debtCap
       100, // supplyFeeBps 1%
-      100 // redeemFeeBps 1%
+      100, // redeemFeeBps 1%
+      feeDestination
     );
 
     psmDAI = new PegStabilityModule(
@@ -50,7 +52,8 @@ abstract contract BaseTest is Test {
       100_000 * 1e18, // uint256 _supplyCap,
       100_000 * 1e18, // uint256 _debtCap
       100, // supplyFeeBps 1%
-      100 // redeemFeeBps 1%
+      100, // redeemFeeBps 1%
+      feeDestination
     );
 
     // give permissions

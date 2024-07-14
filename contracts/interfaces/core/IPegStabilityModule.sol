@@ -52,10 +52,24 @@ interface IPegStabilityModule {
    */
   function rate() external returns (uint256);
 
+  /**
+   * @notice The mint fee in BPS
+   */
   function mintFeeBps() external returns (uint256);
 
+  /**
+   * @notice The address where fees are sent
+   */
+  function feeDestination() external returns (address);
+
+  /**
+   * @notice The redeem fee in BPS
+   */
   function redeemFeeBps() external returns (uint256);
 
+  /**
+   * @notice The maximum fee that can be charged
+   */
   function MAX_FEE_BPS() external returns (uint256);
 
   /**
@@ -94,5 +108,49 @@ interface IPegStabilityModule {
    * @param _amount The amount of ZAI
    * @return collateralAmount The amount of collateral
    */
-  function toCollateralAmount(uint256 _amount) external view returns (uint256 collateralAmount);
+  function toCollateralAmount(
+    uint256 _amount
+  ) external view returns (uint256 collateralAmount);
+
+  /**
+   * @notice Converts ZAI amount to collateral with fee added
+   * @dev Fee is calculated as (amount * (MAX_FEE_BPS + fee)) / MAX_FEE_BPS
+   * @param _amount The amount of ZAI
+   * @param _fee The fee to be charged in BPS
+   */
+  function toCollateralAmountWithFee(
+    uint256 _amount,
+    uint256 _fee
+  ) external view returns (uint256);
+
+  /**
+   * @notice Converts ZAI amount to collateral with fee removed
+   * @dev Fee is calculated as (amount * (MAX_FEE_BPS - fee)) / MAX_FEE_BPS
+   * @param _amount The amount of ZAI
+   * @param _fee The fee to be charged in BPS
+   */
+  function toCollateralAmountWithFeeInverse(
+    uint256 _amount,
+    uint256 _fee
+  ) external view returns (uint256);
+
+  /**
+   * @notice How much fees has been collected by the protocol
+   * @return fees The amount of fees collected in ZAI
+   */
+  function feesCollected() external view returns (uint256 fees);
+
+  /**
+   * @notice Updates the mint and redeem fees
+   * @param _mintFeeBps The new mint fee in BPS
+   * @param _redeemFeeBps The new redeem fee in BPS
+   */
+  function updateFees(uint256 _mintFeeBps, uint256 _redeemFeeBps) external;
+
+  /**
+   * @notice Updates the fee destination
+   * @param _feeDestination The new fee destination
+   * @dev Only callable by the admin
+   */
+  function updateFeeDestination(address _feeDestination) external;
 }

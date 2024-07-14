@@ -31,7 +31,12 @@ library PSMEventsLib {
    * @param sender The address that called the mint function
    */
   event Mint(
-    address indexed destination, uint256 indexed shares, uint256 indexed amount, uint256 newDebt, uint256 supplyCap, address sender
+    address indexed destination,
+    uint256 indexed shares,
+    uint256 indexed amount,
+    uint256 newDebt,
+    uint256 supplyCap,
+    address sender
   );
 
   /**
@@ -41,7 +46,11 @@ library PSMEventsLib {
    * @param newRate The new rate of ZAI/Collateral
    * @param sender The address that called the update function
    */
-  event RateUpdated(uint256 indexed oldRate, uint256 indexed newRate, address sender);
+  event RateUpdated(
+    uint256 indexed oldRate,
+    uint256 indexed newRate,
+    address sender
+  );
 
   /**
    * @notice Emitted when a user redeems ZAI
@@ -53,7 +62,12 @@ library PSMEventsLib {
    * @param sender The address that called the redeem function
    */
   event Redeem(
-    address indexed destination, uint256 indexed shares, uint256 indexed amount, uint256 newDebt, uint256 supplyCap, address sender
+    address indexed destination,
+    uint256 indexed shares,
+    uint256 indexed amount,
+    uint256 newDebt,
+    uint256 supplyCap,
+    address sender
   );
 
   /**
@@ -65,7 +79,11 @@ library PSMEventsLib {
    * @param sender The address that called the update function
    */
   event SupplyCapUpdated(
-    uint256 indexed _newSupplyCap, uint256 indexed _newDebtCap, uint256 _oldSupplyCap, uint256 _oldDebtCap, address sender
+    uint256 indexed _newSupplyCap,
+    uint256 indexed _newDebtCap,
+    uint256 _oldSupplyCap,
+    uint256 _oldDebtCap,
+    address sender
   );
 
   /**
@@ -77,6 +95,22 @@ library PSMEventsLib {
    * @param sender The address that called the update function
    */
   event FeesUpdated(
-    uint256 indexed _newMintFeeBps, uint256 indexed _newRedeemFeeBps, uint256 _oldMintFeeBps, uint256 _oldRedeemFeeBps, address sender
+    uint256 indexed _newMintFeeBps,
+    uint256 indexed _newRedeemFeeBps,
+    uint256 _oldMintFeeBps,
+    uint256 _oldRedeemFeeBps,
+    address sender
+  );
+
+  /**
+   * @notice Emitted when the fee destination is updated
+   * @param _newFeeDestination The new fee destination
+   * @param _oldFeeDestination The old fee destination
+   * @param sender The address that called the update function
+   */
+  event FeeDestinationUpdated(
+    address indexed _newFeeDestination,
+    address indexed _oldFeeDestination,
+    address sender
   );
 }

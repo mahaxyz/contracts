@@ -101,11 +101,9 @@ contract PegStabilityModuleTest is BaseTest {
     assertEq(zai.totalSupply(), 0);
     assertEq(usdc.balanceOf(address(psmUSDC)), 20 * 1e8);
     assertEq(zai.balanceOf(ant), 0);
-    vm.stopPrank();
 
-    vm.prank(governance);
-    psmUSDC.sweepFees(whale);
+    psmUSDC.sweepFees();
 
-    assertEq(usdc.balanceOf(address(whale)), 20 * 1e8);
+    assertEq(usdc.balanceOf(address(feeDestination)), 20 * 1e8);
   }
 }

@@ -42,7 +42,9 @@ interface IDDHub {
 
   function exec(IDDPool pool) external;
 
-  function evaluatePoolAction(IDDPool pool) external view returns (uint256 toSupply, uint256 toWithdraw);
+  function evaluatePoolAction(
+    IDDPool pool
+  ) external view returns (uint256 toSupply, uint256 toWithdraw);
 
   function zai() external view returns (IZaiStablecoin);
 
@@ -56,17 +58,53 @@ interface IDDHub {
 
   function globalDebtCeiling() external view returns (uint256);
 
-  function initialize(address _feeCollector, uint256 _globalDebtCeiling, address _zai, address _governance) external;
+  function initialize(
+    address _feeCollector,
+    uint256 _globalDebtCeiling,
+    address _zai,
+    address _governance
+  ) external;
 
-  function registerPool(IDDPool pool, IDDPlan plan, uint256 debtCeiling) external;
+  function registerPool(
+    IDDPool pool,
+    IDDPlan plan,
+    uint256 debtCeiling
+  ) external;
 
+  /**
+   * @notice Reduces the debt ceiling for a pool
+   * @dev Callable by the risk manager only
+   * @param pool The pool to reduce the debt ceiling for
+   * @param amountToReduce The amount to reduce the debt ceiling by
+   */
   function reduceDebtCeiling(IDDPool pool, uint256 amountToReduce) external;
 
+  /**
+   * @notice Sets the debt ceiling for a pool
+   * @dev Callable by the governance only
+   * @param pool The pool to set the debt ceiling for
+   * @param amount The new debt ceiling
+   */
   function setDebtCeiling(IDDPool pool, uint256 amount) external;
 
+  /**
+   * @notice Sets the fee collector
+   * @dev Callable by governance only
+   * @param who The new fee collector
+   */
   function setFeeCollector(address who) external;
 
+  /**
+   * @notice Sets the global debt ceiling
+   * @dev Callable by governance only
+   * @param amount The new global debt ceiling
+   */
   function setGlobalDebtCeiling(uint256 amount) external;
 
+  /**
+   * @notice Shuts down a pool
+   * @dev Callable by governance only
+   * @param pool The pool to shutdown
+   */
   function shutdownPool(IDDPool pool) external;
 }
