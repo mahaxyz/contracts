@@ -25,13 +25,17 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Install lcov
+        run: sudo apt-get -y install lcov
+        shell: bash
+
       - uses: ./.github/actions/install
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Run coverage
-        run: yarn compile && yarn coverage
+        run: yarn compile && yarn coverage && genhtml lcov.info --output-dir coverage --rc lcov_branch_coverage=1
 
       # Deploy to gh pages
       - name: Upload artifact
