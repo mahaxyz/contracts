@@ -13,41 +13,36 @@
 
 pragma solidity 0.8.20;
 
-import {IDDPool} from "../../../interfaces/core/IDDPool.sol";
-import {IZaiStablecoin} from "../../../interfaces/IZaiStablecoin.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
-import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+import {IDDPool, DDBase} from "../DDBase.sol";
+import {AccessControlEnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 
-abstract contract DDMetaMorpho is AccessControlEnumerable, IDDPool {
-    address public hub;
+contract DDMetaMorpho is AccessControlEnumerableUpgradeable, DDBase {
     uint256 public exited;
 
-    IERC4626 public immutable vault;
-    IZaiStablecoin public immutable zai;
+    IERC4626 public vault;
 
-    constructor(address _hub, address _zai, address _vault) {
-        zai = IZaiStablecoin(_zai);
+    function initialize(
+        address _hub,
+        address _zai,
+        address _vault
+    ) external reinitializer(1) {
+        __DDBBase_init(_zai, _hub);
+        __AccessControl_init();
+
         vault = IERC4626(_vault);
 
-        require(_hub != address(0), "D3M4626TypePool/zero-address");
-        require(_zai != address(0), "D3M4626TypePool/zero-address");
-        require(_vault != address(0), "D3M4626TypePool/zero-address");
+        require(_hub != address(0), "DDMetaMorpho/zero-address");
+        require(_zai != address(0), "DDMetaMorpho/zero-address");
+        require(_vault != address(0), "DDMetaMorpho/zero-address");
         require(
             IERC4626(_vault).asset() == _zai,
-            "D3M4626TypePool/vault-asset-is-not-zai"
+            "DDMetaMorpho/vault-asset-is-not-zai"
         );
 
         zai.approve(_vault, type(uint256).max);
-        hub = _hub;
-        // vat = VatLike(D3mHubLike(_hub).vat());
-        // vat.hope(_hub);
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-    }
-
-    modifier onlyHub() {
-        require(msg.sender == hub, "D3M4626TypePool/only-hub");
-        _;
     }
 
     /// https://github.com/morpho-org/metamorpho/blob/fcf3c41d9c113514c9af0bbf6298e88a1060b220/src/MetaMorpho.sol#L531

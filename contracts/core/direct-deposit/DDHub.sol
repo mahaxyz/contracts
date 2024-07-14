@@ -18,6 +18,7 @@ import {Constants} from "./Constants.sol";
 import {IDDHub} from "../../interfaces/core/IDDHub.sol";
 import {IDDPlan} from "../../interfaces/core/IDDPlan.sol";
 import {IDDPool} from "../../interfaces/core/IDDPool.sol";
+import {DDEventsLib} from "../../interfaces/events/DDEventsLib.sol";
 import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
@@ -91,7 +92,6 @@ contract DDHub is
         uint256 debtCeiling
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         PoolInfo memory info = PoolInfo({
-            pool: pool,
             plan: plan,
             isLive: true,
             debt: 0,
@@ -198,7 +198,7 @@ contract DDHub is
         if (amount > 0) {
             pool.withdraw(amount);
             zai.burn(address(this), amount);
-            emit Unwind(pool, amount);
+            emit DDEventsLib.Unwind(pool, amount);
         } else revert NoOp(pool);
     }
 
@@ -222,7 +222,7 @@ contract DDHub is
 
         // send the fees to the fee collector
         zai.transfer(feeCollector, fees);
-        emit Fees(pool, fees);
+        emit DDEventsLib.Fees(pool, fees);
     }
 
     function _exec(IDDPool pool, PoolInfo memory info) internal {
@@ -235,7 +235,7 @@ contract DDHub is
         if (toWithdraw > 0) {
             pool.withdraw(toWithdraw);
             zai.burn(address(this), toWithdraw);
-            emit Unwind(pool, toWithdraw);
+            emit DDEventsLib.Unwind(pool, toWithdraw);
         } else if (toSupply > 0) {
             require(
                 info.debt + toSupply <= Constants.SAFEMAX,
@@ -243,7 +243,7 @@ contract DDHub is
             );
             zai.mint(address(this), toSupply);
             pool.deposit(toSupply);
-            emit Wind(pool, toSupply);
+            emit DDEventsLib.Wind(pool, toSupply);
         } else revert NoOp(pool);
     }
 }

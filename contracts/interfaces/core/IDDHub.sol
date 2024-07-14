@@ -17,26 +17,24 @@ import {IDDPool} from "./IDDPool.sol";
 import {IDDPlan} from "./IDDPlan.sol";
 import {IZaiStablecoin} from "../IZaiStablecoin.sol";
 
+/**
+ * @title Direct Deposit Hub
+ * @author maha.xyz
+ * @notice This is the main contract responsible for managing pools.
+ */
 interface IDDHub {
     error NotAuthorized();
     error NoOp(IDDPool pool);
 
-    // --- Events ---
-    event Wind(IDDPool indexed pool, uint256 amt);
-    event Unwind(IDDPool indexed pool, uint256 amt);
-    event Fees(IDDPool indexed pool, uint256 amt);
-
     /**
-     * @notice Tracking struct for each of the D3M ilks.
-     * @param pool   Contract to access external pool and hold balances
-     * @param plan   Contract used to calculate target debt
-     * @param tau    Time until you can write off the debt [sec]
-     * @param writtenOffDebt Debt write off triggered (1 or 0)
-     * @param tic    Timestamp when the pool is caged
+     * @notice Tracking struct for each of the DD Pools
+     * @param plan Contract used to calculate target debt
+     * @param isLive Is the pool active
+     * @param debt How much debt is currently in the pool
+     * @param debtCeiling How much debt can the pool hold
      */
     struct PoolInfo {
-        IDDPool pool; // Access external pool and holds balances
-        IDDPlan plan; // How we calculate target debt
+        IDDPlan plan;
         bool isLive;
         uint256 debt;
         uint256 debtCeiling;

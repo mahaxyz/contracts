@@ -17,11 +17,11 @@ import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions
 import {IDDPool} from "../../interfaces/core/IDDPool.sol";
 import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
 
-abstract contract DDBBase is IDDPool {
-    /// @inheritdoc IDDPool
+abstract contract DDBase is IDDPool {
+    /// @notice The ZAI Stablecoin
     IZaiStablecoin public zai;
 
-    /// @inheritdoc IDDPool
+    /// @notice The Direct Deposit module hub
     address public hub;
 
     function __DDBBase_init(address _zai, address _hub) internal {

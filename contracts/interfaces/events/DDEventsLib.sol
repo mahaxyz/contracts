@@ -13,6 +13,18 @@
 
 pragma solidity 0.8.20;
 
-interface IAddressProvider {
-    // todo
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IDDPool} from "../core/IDDPool.sol";
+import {IDDPlan} from "../core/IDDPlan.sol";
+
+/**
+ * @title DDEventsLib
+ * @author maha.xyz
+ * @notice This library defines events for the Direct Deposit contract
+ */
+library DDEventsLib {
+    // --- Events ---
+    event Wind(IDDPool indexed pool, uint256 amt);
+    event Unwind(IDDPool indexed pool, uint256 amt);
+    event Fees(IDDPool indexed pool, uint256 amt);
 }

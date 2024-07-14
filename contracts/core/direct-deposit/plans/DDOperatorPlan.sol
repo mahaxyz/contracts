@@ -17,7 +17,7 @@ import {AccessControlDefaultAdminRules} from "@openzeppelin/contracts/access/ext
 import {IDDPlan} from "../../../interfaces/core/IDDPlan.sol";
 
 /**
- * @title DD Operator Plan
+ * @title Direct Deposit Operator Plan
  * @notice An operator sets the desired target assets for a simple vault
  */
 contract DDOperatorPlan is AccessControlDefaultAdminRules, IDDPlan {
@@ -36,15 +36,18 @@ contract DDOperatorPlan is AccessControlDefaultAdminRules, IDDPlan {
         targetAssets = value;
     }
 
+    /// @inheritdoc IDDPlan
     function getTargetAssets(uint256) external view override returns (uint256) {
         if (enabled == 0) return 0;
         return targetAssets;
     }
 
+    /// @inheritdoc IDDPlan
     function active() public view override returns (bool) {
         return enabled == 1;
     }
 
+    /// @inheritdoc IDDPlan
     function disable() external override {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, msg.sender) ||
