@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {ZaiStablecoin} from '../contracts/core/ZaiStablecoin.sol';
-import {Test, console} from '../lib/forge-std/src/Test.sol';
+import {ZaiStablecoin} from '../../contracts/core/ZaiStablecoin.sol';
+import {Test, console} from '../../lib/forge-std/src/Test.sol';
 import {BaseTest} from './BaseTest.t.sol';
 
 contract PegStabilityModuleTest is BaseTest {
