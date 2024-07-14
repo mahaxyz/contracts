@@ -7,6 +7,8 @@
 // ██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║
 // ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
 
+// The Stable Money of the Ethermind
+
 // Website: https://maha.xyz
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
@@ -40,6 +42,7 @@ contract ZaiStablecoin is
     /**
      * Initializes the stablecoin and sets the LZ endpoint
      * @param _layerZeroEndpoint the layerzero endpoint
+     * @param _delegate the layerzero delegate
      */
     constructor(
         address _layerZeroEndpoint,
