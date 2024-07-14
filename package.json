@@ -14,8 +14,23 @@
     "artifacts",
     "contracts",
     "deployments",
+    "LICENSE",
+    "README.md",
     "types"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahaxyz/contracts.git"
+  },
+  "author": {
+    "name": "maha.xyz",
+    "email": "security@maha.xyz",
+    "url": "https://github.com/mahaxyz"
+  },
+  "bugs": {
+    "url": "https://github.com/mahaxyz/contracts/issues"
+  },
+  "homepage": "https://github.com/mahaxyz/contracts#readme",
   "devDependencies": {
     "@ethersproject/bignumber": "^5.6.2",
     "@layerzerolabs/lz-evm-oapp-v2": "^2.3.29",
