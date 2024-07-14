@@ -31,6 +31,16 @@ yarn test
 
 Unit test coverages for foundry can be found [here](https://mahaxyz.github.io/contracts/).
 
+## Deploy Instructions
+
+To deploy the contracts, we use hardat's deploy scripts to deploy the various contracts. Deployers are saved in the [deployments](./deployments/) and synced with our npm repository. Open the [deploy](./deploy/) folder to view the scripts that can be executed.
+
+The below command is an example of how to execute the [deploy-zai.ts](./deploy/deploy-zai.ts) script.
+
+```
+npx hardhat deploy --tags ZAIStablecoin --network mainnet
+```
+
 ---
 
 For any questions or queries, feel free to reach out to us on [Discord](https://discord.gg/mahadao)
