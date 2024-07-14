@@ -3,7 +3,6 @@
 .cache/
 .dynamodb/
 .env
-.env
 .env.test
 .eslintcache
 .fusebox/
@@ -39,10 +38,8 @@ bower_components
 build/Release
 cache
 cache-zk
-cache/
 coverage
 dist
-docs
 docs/
 generated-abi
 hardhat-dependency-compiler/
