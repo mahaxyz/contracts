@@ -65,10 +65,13 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
     function mint(address dest, uint256 shares) external nonReentrant {
         uint256 amount = toCollateralAmount(shares);
 
-        require(collateral.balanceOf(address(this)) + shares <= supplyCap);
-        require(debt + shares <= debtCap);
+        require(
+            collateral.balanceOf(address(this)) + amount <= supplyCap,
+            "supply cap exceeded"
+        );
+        require(debt + shares <= debtCap, "debt cap exceeded");
 
-        collateral.transferFrom(msg.sender, address(this), shares);
+        collateral.transferFrom(msg.sender, address(this), amount);
         zai.mint(dest, shares);
 
         debt += shares;
