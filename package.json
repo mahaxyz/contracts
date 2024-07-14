@@ -10,9 +10,11 @@
     "compile": "hardhat compile && forge build"
   },
   "files": [
+    "abi",
     "artifacts",
     "contracts",
-    "deployments"
+    "deployments",
+    "types"
   ],
   "devDependencies": {
     "@ethersproject/bignumber": "^5.6.2",
