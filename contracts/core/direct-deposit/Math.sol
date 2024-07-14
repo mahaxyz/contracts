@@ -13,21 +13,24 @@
 
 pragma solidity 0.8.20;
 
-import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
-import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
-import {IDDPool} from "../../interfaces/core/IDDPool.sol";
+contract Math {
+    // --- Math ---
+    uint256 internal constant WAD = 10 ** 18;
+    uint256 internal constant RAY = 10 ** 27;
+    uint256 internal constant MAXINT256 = uint256(type(int256).max);
+    uint256 internal constant SAFEMAX = MAXINT256 / RAY;
 
-abstract contract DDBBase is IDDPool {
-    IZaiStablecoin public zai;
-    address public hub;
-
-    function __DDBBase_init(address _zai, address _hub) internal {
-        zai = IZaiStablecoin(_zai);
-        hub = _hub;
+    function _min(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = x <= y ? x : y;
     }
 
-    modifier onlyHub() {
-        if (msg.sender != hub) revert NotAuthorized();
-        _;
+    function _max(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = x >= y ? x : y;
+    }
+
+    function _divup(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        unchecked {
+            z = x != 0 ? ((x - 1) / y) + 1 : 0;
+        }
     }
 }
