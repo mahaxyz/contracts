@@ -33,7 +33,7 @@ Unit test coverages for foundry can be found [here](https://mahaxyz.github.io/co
 
 ## Deploy Instructions
 
-To deploy the contracts, we use hardat's deploy scripts to deploy the various contracts. Deployers are saved in the [deployments](./deployments/) and synced with our npm repository. Open the [deploy](./deploy/) folder to view the scripts that can be executed.
+To deploy the contracts, we use [hardat-deploy](https://github.com/wighawag/hardhat-deploy) to deploy the various contracts. Deployments are saved in the [deployments](./deployments/) folder and synced with our npm repository. Open the [deploy](./deploy/) folder to view the scripts that can be executed.
 
 The below command is an example of how to execute the [deploy-zai.ts](./deploy/deploy-zai.ts) script.
 
