@@ -47,7 +47,10 @@ contract VotingPowerCombined is IVotes, OwnableUpgradeable {
   }
 
   function reset(address _who) external {
-    require(msg.sender == _who || msg.sender == address(lpStaking) || msg.sender == address(tokenStaking), "invalid reset performed");
+    require(
+      msg.sender == _who || msg.sender == address(lpStaking) || msg.sender == address(tokenStaking),
+      "invalid reset performed"
+    );
     voter.reset(_who);
   }
 

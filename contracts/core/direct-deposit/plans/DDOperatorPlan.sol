@@ -14,7 +14,8 @@
 pragma solidity 0.8.20;
 
 import {IDDPlan} from "../../../interfaces/core/IDDPlan.sol";
-import {AccessControlDefaultAdminRules} from "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol";
+import {AccessControlDefaultAdminRules} from
+  "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol";
 
 /**
  * @title Direct Deposit Operator Plan

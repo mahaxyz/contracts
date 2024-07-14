@@ -15,13 +15,12 @@ pragma solidity 0.8.20;
 
 import {BaseTest} from "./BaseTest.t.sol";
 
-contract ZaiStablecoinTest is BaseTest {
-  function setUp() public {
-    setUpBase();
-  }
+contract BaseMorphoTest is BaseTest {
+  address vault = address(0x1);
+  address morpho = address(0x2);
 
-  function test_NameAndSymbol() public view {
-    assertEq(zai.name(), "Zai Stablecoin");
-    assertEq(zai.symbol(), "USDz");
+  function setUpMorpho() internal {
+    setUpBase();
+    // todo: implement
   }
 }

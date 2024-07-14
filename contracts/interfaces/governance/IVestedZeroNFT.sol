@@ -52,7 +52,11 @@ interface IVestedZeroNFT {
   /// @param tokenIds the nfts to update
   /// @param linearDurations the linear duration to update with
   /// @param cliffDurations the cliff duration to update with
-  function updateCliffDuration(uint256[] memory tokenIds, uint256[] memory linearDurations, uint256[] memory cliffDurations) external;
+  function updateCliffDuration(
+    uint256[] memory tokenIds,
+    uint256[] memory linearDurations,
+    uint256[] memory cliffDurations
+  ) external;
 
   /// How much ZERO tokens this vesting nft can claim
   /// @param tokenId the id of the nft contract

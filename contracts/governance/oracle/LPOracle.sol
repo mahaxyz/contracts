@@ -19,7 +19,8 @@ pragma solidity 0.8.20;
 /// @title LPOracle
 /// @notice This contract provides a price oracle for the liquidity pool tokens in a Nile AMM.
 /// @dev This contract interacts with the INileAMM interface to fetch reserves and calculate prices.
-/// @dev Reference from https://github.com/AlphaFinanceLab/alpha-homora-v2-contract/blob/master/contracts/oracle/UniswapV2Oracle.sol
+/// @dev Reference from
+/// https://github.com/AlphaFinanceLab/alpha-homora-v2-contract/blob/master/contracts/oracle/UniswapV2Oracle.sol
 contract LPOracle {
 // INileAMM public immutable nileAMM;
 // IAggregatorV3Interface public immutable zeroPriceFeed;
@@ -36,7 +37,8 @@ contract LPOracle {
 //     ethPriceFeed = IAggregatorV3Interface(_ethPriceFeed);
 // }
 // /// @notice Gets the price of the liquidity pool token.
-// /// @dev This function fetches reserves from the Nile AMM and uses a pre-defined price for tokens to calculate the LP token price.
+// /// @dev This function fetches reserves from the Nile AMM and uses a pre-defined price for tokens to calculate the LP
+// token price.
 // /// @return price The price of the liquidity pool token.
 // function getPrice() public view returns (uint256 price) {
 //     (uint256 reserve0, uint256 reserve1, ) = nileAMM.getReserves();

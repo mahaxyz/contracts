@@ -3,7 +3,8 @@ pragma solidity ^0.8.12;
 
 interface ILPOracle {
   /// @notice Gets the price of the liquidity pool token.
-  /// @dev This function fetches reserves from the Nile AMM and uses a pre-defined price for tokens to calculate the LP token price.
+  /// @dev This function fetches reserves from the Nile AMM and uses a pre-defined price for tokens to calculate the LP
+  /// token price.
   /// @return price The price of the liquidity pool token.
   function getPrice() external view returns (uint256 price);
 

@@ -50,7 +50,12 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
   mapping(IDDPool => PoolInfo) internal _poolInfos;
 
   /// @inheritdoc IDDHub
-  function initialize(address _feeCollector, uint256 _globalDebtCeiling, address _zai, address _governance) external reinitializer(1) {
+  function initialize(
+    address _feeCollector,
+    uint256 _globalDebtCeiling,
+    address _zai,
+    address _governance
+  ) external reinitializer(1) {
     zai = IZaiStablecoin(_zai);
     feeCollector = _feeCollector;
     globalDebtCeiling = _globalDebtCeiling;
@@ -61,6 +66,11 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
   /// @inheritdoc IDDHub
   function poolInfos(IDDPool pool) external view returns (PoolInfo memory info) {
     info = _poolInfos[pool];
+  }
+
+  /// @inheritdoc IDDHub
+  function isPool(address pool) external view returns (bool what) {
+    what = _poolInfos[IDDPool(pool)].plan != IDDPlan(address(0));
   }
 
   /// @inheritdoc IDDHub
@@ -79,7 +89,6 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
   /// @inheritdoc IDDHub
   function registerPool(IDDPool pool, IDDPlan plan, uint256 debtCeiling) external onlyRole(DEFAULT_ADMIN_ROLE) {
     PoolInfo memory info = PoolInfo({plan: plan, isLive: true, debt: 0, debtCeiling: debtCeiling});
-
     _poolInfos[pool] = info;
   }
 
@@ -118,8 +127,10 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     uint256 currentAssets = pool.assetBalance(); // Should return DAI owned by D3MPool
     uint256 maxWithdraw = Math.min(pool.maxWithdraw(), Constants.SAFEMAX);
 
-    // Determine if it needs to fully unwind due to D3M ilk being caged (but not culled), plan is not active or something
-    // wrong is going with the third party and we are entering in the ilegal situation of having less assets than registered
+    // Determine if it needs to fully unwind due to D3M ilk being caged (but not culled), plan is not active or
+    // something
+    // wrong is going with the third party and we are entering in the ilegal situation of having less assets than
+    // registered
     // It's adding up `WAD` due possible rounding errors
     if (!info.isLive || info.plan.active() || currentAssets + Constants.WAD < info.debt) {
       toWithdraw = maxWithdraw;

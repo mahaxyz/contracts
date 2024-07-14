@@ -16,7 +16,8 @@ pragma solidity 0.8.20;
 import {ILocker} from "../../interfaces/governance/ILocker.sol";
 import {IOmnichainStaking} from "../../interfaces/governance/IOmnichainStaking.sol";
 import {
-  ERC721EnumerableUpgradeable, IERC165
+  ERC721EnumerableUpgradeable,
+  IERC165
 } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";

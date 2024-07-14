@@ -29,7 +29,8 @@ interface IRewardBase {
 interface IGauge is IRewardBase {
   function rewardPerToken(address token) external view override returns (uint256);
 
-  // used to update an account internally and externally, since ve decays over times, an address could have 0 balance but still register
+  // used to update an account internally and externally, since ve decays over times, an address could have 0 balance
+  // but still register
   // here
   function kick(address account) external;
 

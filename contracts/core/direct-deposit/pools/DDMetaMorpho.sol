@@ -37,7 +37,7 @@ contract DDMetaMorpho is AccessControlEnumerableUpgradeable, DDBase {
     require(_hub != address(0), "DDMetaMorpho/zero-address");
     require(_zai != address(0), "DDMetaMorpho/zero-address");
     require(_vault != address(0), "DDMetaMorpho/zero-address");
-    require(IERC4626(_vault).asset() == _zai, "DDMetaMorpho/vault-asset-is-not-zai");
+    // require(IERC4626(_vault).asset() == _zai, "DDMetaMorpho/vault-asset-is-not-zai");
 
     zai.approve(_vault, type(uint256).max);
 

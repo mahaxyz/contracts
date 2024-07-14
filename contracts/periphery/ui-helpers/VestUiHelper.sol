@@ -36,7 +36,8 @@ contract VestUiHelper {
   }
 
   function getLockDetails(address _userAddress) external view returns (LockedBalanceWithApr[] memory) {
-    (uint256[] memory tokenIds, ILocker.LockedBalance[] memory lockedBalances) = omnichainStaking.getLockedNftDetails(_userAddress);
+    (uint256[] memory tokenIds, ILocker.LockedBalance[] memory lockedBalances) =
+      omnichainStaking.getLockedNftDetails(_userAddress);
 
     uint256 rewardRate = omnichainStaking.rewardRate();
     uint256 totalSupply = omnichainStaking.totalSupply();
@@ -50,7 +51,9 @@ contract VestUiHelper {
 
       uint256 vePower = omnichainStaking.getTokenPower(lockedBalance.amount);
 
-      uint256 scale = (lockedBalance.power != 0 && lockedBalance.amount != 0) ? (lockedBalance.power * 1e18) / lockedBalance.amount : 1e18;
+      uint256 scale = (lockedBalance.power != 0 && lockedBalance.amount != 0)
+        ? (lockedBalance.power * 1e18) / lockedBalance.amount
+        : 1e18;
 
       uint256 poolRewardAnnual = rewardRate * 31_536_000;
       uint256 apr = (poolRewardAnnual * 1000) / totalSupply;
@@ -74,7 +77,8 @@ contract VestUiHelper {
   }
 
   function getLPLockDetails(address _userAddress) external view returns (LockedBalanceWithApr[] memory) {
-    (uint256[] memory tokenIds, ILocker.LockedBalance[] memory lockedBalances) = omnichainStakingLp.getLockedNftDetails(_userAddress);
+    (uint256[] memory tokenIds, ILocker.LockedBalance[] memory lockedBalances) =
+      omnichainStakingLp.getLockedNftDetails(_userAddress);
 
     uint256 rewardRate = omnichainStakingLp.rewardRate();
     uint256 totalSupply = omnichainStakingLp.totalSupply();
@@ -88,7 +92,9 @@ contract VestUiHelper {
 
       uint256 vePower = omnichainStakingLp.getTokenPower(lockedBalance.amount);
 
-      uint256 scale = (lockedBalance.power != 0 && lockedBalance.amount != 0) ? (lockedBalance.power * 1e18) / lockedBalance.amount : 1e18;
+      uint256 scale = (lockedBalance.power != 0 && lockedBalance.amount != 0)
+        ? (lockedBalance.power * 1e18) / lockedBalance.amount
+        : 1e18;
 
       uint256 priceConversion = zeroToETH();
 

@@ -40,36 +40,76 @@ interface IDDHub {
     uint256 debtCeiling;
   }
 
+  /**
+   * @notice Executes the actions for a pool
+   * @dev This is a permission-less function
+   * @param pool The pool to execute actions for
+   */
   function exec(IDDPool pool) external;
 
-  function evaluatePoolAction(
-    IDDPool pool
-  ) external view returns (uint256 toSupply, uint256 toWithdraw);
+  /**
+   * @notice Evaluates the actions to take for a pool
+   * @param pool The pool to evaluate
+   * @return toSupply The amount of ZAI to supply
+   * @return toWithdraw The amount of ZAI to withdraw
+   */
+  function evaluatePoolAction(IDDPool pool) external view returns (uint256 toSupply, uint256 toWithdraw);
 
+  /**
+   * @notice The ZAI stablecoin contract
+   */
   function zai() external view returns (IZaiStablecoin);
 
+  /**
+   * @notice The risk manager role
+   */
   function RISK_ROLE() external view returns (bytes32);
 
+  /**
+   * @notice The executor role
+   */
   function EXECUTOR_ROLE() external view returns (bytes32);
 
+  /**
+   * @notice The fee collector address
+   */
   function feeCollector() external view returns (address);
 
+  /**
+   * @notice The pool info for a given pool
+   * @param pool The pool to get the info for
+   * @return The pool info
+   */
   function poolInfos(IDDPool pool) external view returns (PoolInfo memory);
 
+  /**
+   * @notice The total debt ceiling for all pools
+   * @return The total debt ceiling
+   */
   function globalDebtCeiling() external view returns (uint256);
 
-  function initialize(
-    address _feeCollector,
-    uint256 _globalDebtCeiling,
-    address _zai,
-    address _governance
-  ) external;
+  /**
+   * @notice Initializes the contract
+   * @param _feeCollector The address to send fees to
+   * @param _globalDebtCeiling The global debt ceiling
+   * @param _zai The ZAI stablecoin contract
+   * @param _governance The governance contract for ownership
+   */
+  function initialize(address _feeCollector, uint256 _globalDebtCeiling, address _zai, address _governance) external;
 
-  function registerPool(
-    IDDPool pool,
-    IDDPlan plan,
-    uint256 debtCeiling
-  ) external;
+  /**
+   * @notice Registers a pool
+   * @param pool The pool to register
+   * @param plan The plan to use for the pool
+   * @param debtCeiling The debt ceiling for the pool
+   */
+  function registerPool(IDDPool pool, IDDPlan plan, uint256 debtCeiling) external;
+
+  /**
+   * @notice Checks if a pool is registered
+   * @param pool The pool to check
+   */
+  function isPool(address pool) external view returns (bool what);
 
   /**
    * @notice Reduces the debt ceiling for a pool

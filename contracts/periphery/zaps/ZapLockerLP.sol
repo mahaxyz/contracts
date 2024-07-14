@@ -18,7 +18,8 @@ import {IERC20, IWETH} from "../../interfaces/governance/IWETH.sol";
 
 /**
  * @title ZapLockerLP
- * @dev This contract allows users to perform a Zap operation by swapping ETH for Zero tokens, adding liquidity to Nile LP, and locking LP
+ * @dev This contract allows users to perform a Zap operation by swapping ETH for Zero tokens, adding liquidity to Nile
+ * LP, and locking LP
  * tokens.
  */
 contract ZapLockerLP {
@@ -56,13 +57,19 @@ contract ZapLockerLP {
   }
 
   /**
-   * @dev Executes the Zap operation by swapping ETH for Zero tokens, adding liquidity to Nile LP, and locking LP tokens.
+   * @dev Executes the Zap operation by swapping ETH for Zero tokens, adding liquidity to Nile LP, and locking LP
+   * tokens.
    * @param duration The duration for which the LP tokens will be locked.
    * @param zeroAmount How much ZERO the user will pass into the LP token
    * @param wethAmount How much WETH the user will pass into the LP token
    * @param odosSwapData The data required for the Odos swap.
    */
-  function zapAndStake(uint256 duration, uint256 zeroAmount, uint256 wethAmount, bytes calldata odosSwapData) external payable {
+  function zapAndStake(
+    uint256 duration,
+    uint256 zeroAmount,
+    uint256 wethAmount,
+    bytes calldata odosSwapData
+  ) external payable {
     // fetch tokens and wrap eth
     if (msg.value > 0) weth.deposit{value: msg.value}();
     if (zeroAmount > 0) zero.transferFrom(msg.sender, me, zeroAmount);

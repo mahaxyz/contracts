@@ -20,7 +20,8 @@ import {IOmnichainStaking} from "../../../interfaces/governance/IOmnichainStakin
 import {IPoolVoter} from "../../../interfaces/governance/IPoolVoter.sol";
 import {IWETH} from "../../../interfaces/governance/IWETH.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {ERC20VotesUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20VotesUpgradeable.sol";
+import {ERC20VotesUpgradeable} from
+  "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20VotesUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -29,7 +30,12 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  * @dev An omnichain staking contract that allows users to stake their veNFT
  * and get some voting power. Once staked, the voting power is available cross-chain.
  */
-abstract contract OmnichainStakingBase is IOmnichainStaking, ERC20VotesUpgradeable, ReentrancyGuardUpgradeable, OwnableUpgradeable {
+abstract contract OmnichainStakingBase is
+  IOmnichainStaking,
+  ERC20VotesUpgradeable,
+  ReentrancyGuardUpgradeable,
+  OwnableUpgradeable
+{
   ILocker public locker;
   ILocker public __; // unwanted variable to keep storage layout
   IPoolVoter public poolVoter;
@@ -97,7 +103,12 @@ abstract contract OmnichainStakingBase is IOmnichainStaking, ERC20VotesUpgradeab
    * @param data Additional data.
    * @return ERC721 onERC721Received selector.
    */
-  function _onERC721ReceivedInternal(address, address from, uint256 tokenId, bytes calldata data) internal returns (bytes4) {
+  function _onERC721ReceivedInternal(
+    address,
+    address from,
+    uint256 tokenId,
+    bytes calldata data
+  ) internal returns (bytes4) {
     require(msg.sender == address(locker), "only locker");
 
     if (data.length > 0) {
