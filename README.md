@@ -29,7 +29,7 @@ yarn compile
 yarn test
 ```
 
-Unit test coverages for foundry can be found [here](https://zerolend.github.io/zerolend-one/foundry/).
+Unit test coverages for foundry can be found [here](https://mahaxyz.github.io/contracts/).
 
 ---
 
