@@ -14,7 +14,7 @@
 pragma solidity 0.8.20;
 
 contract MockLayerZero {
-    function setDelegate(address) external {
-        // nothing
-    }
+  function setDelegate(address) external {
+    // nothing
+  }
 }

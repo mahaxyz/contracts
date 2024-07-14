@@ -13,24 +13,24 @@
 
 pragma solidity 0.8.20;
 
-import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
-import {IDDPool} from "../../../interfaces/core/IDDPool.sol";
-import {IZaiStablecoin} from "../../../interfaces/IZaiStablecoin.sol";
+import {IZaiStablecoin} from '../../../interfaces/IZaiStablecoin.sol';
+import {IDDPool} from '../../../interfaces/core/IDDPool.sol';
+import {AccessControlEnumerable} from '@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol';
 
 abstract contract DDBase is IDDPool {
-    /// @notice The ZAI Stablecoin
-    IZaiStablecoin public zai;
+  /// @notice The ZAI Stablecoin
+  IZaiStablecoin public zai;
 
-    /// @notice The Direct Deposit module hub
-    address public hub;
+  /// @notice The Direct Deposit module hub
+  address public hub;
 
-    function __DDBBase_init(address _zai, address _hub) internal {
-        zai = IZaiStablecoin(_zai);
-        hub = _hub;
-    }
+  function __DDBBase_init(address _zai, address _hub) internal {
+    zai = IZaiStablecoin(_zai);
+    hub = _hub;
+  }
 
-    modifier onlyHub() {
-        if (msg.sender != hub) revert NotAuthorized();
-        _;
-    }
+  modifier onlyHub() {
+    if (msg.sender != hub) revert NotAuthorized();
+    _;
+  }
 }
