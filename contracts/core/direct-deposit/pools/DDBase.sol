@@ -14,8 +14,8 @@
 pragma solidity 0.8.20;
 
 import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
-import {IDDPool} from "../../interfaces/core/IDDPool.sol";
-import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
+import {IDDPool} from "../../../interfaces/core/IDDPool.sol";
+import {IZaiStablecoin} from "../../../interfaces/IZaiStablecoin.sol";
 
 abstract contract DDBase is IDDPool {
     /// @notice The ZAI Stablecoin

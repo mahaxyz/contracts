@@ -14,7 +14,7 @@
 pragma solidity 0.8.20;
 
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
-import {IDDPool, DDBase} from "../DDBase.sol";
+import {IDDPool, DDBase} from "./DDBase.sol";
 import {AccessControlEnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 
 /**
@@ -63,10 +63,14 @@ contract DDMetaMorpho is AccessControlEnumerableUpgradeable, DDBase {
     }
 
     /// @inheritdoc IDDPool
-    function preDebtChange() external override {}
+    function preDebtChange() external override {
+        // nothing
+    }
 
     /// @inheritdoc IDDPool
-    function postDebtChange() external override {}
+    function postDebtChange() external override {
+        // nothing
+    }
 
     /// @inheritdoc IDDPool
     function assetBalance() external view returns (uint256) {
