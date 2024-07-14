@@ -7,7 +7,8 @@
     "docs": "hardhat docgen",
     "coverage": "forge coverage --report lcov",
     "test": "forge test",
-    "compile": "hardhat compile && forge build"
+    "compile": "hardhat compile && forge build",
+    "prepublishOnly": "npm run compile && npm run docs && npm run test"
   },
   "files": [
     "abi",
