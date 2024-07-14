@@ -14,8 +14,7 @@
 pragma solidity 0.8.20;
 
 import {DDBase, IDDPool} from "./DDBase.sol";
-import {AccessControlEnumerableUpgradeable} from
-  "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
+import {AccessControlEnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
 /**
@@ -24,11 +23,13 @@ import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
  * @notice A direct deposit module that manages a morpho vault
  */
 contract DDMetaMorpho is AccessControlEnumerableUpgradeable, DDBase {
-  uint256 public exited;
-
   IERC4626 public vault;
 
-  function initialize(address _hub, address _zai, address _vault) external reinitializer(1) {
+  function initialize(
+    address _hub,
+    address _zai,
+    address _vault
+  ) external reinitializer(1) {
     __DDBBase_init(_zai, _hub);
     __AccessControl_init();
 

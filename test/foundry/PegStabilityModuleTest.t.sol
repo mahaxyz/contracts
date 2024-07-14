@@ -24,7 +24,8 @@ contract PegStabilityModuleTest is BaseTest {
   function setUp() public {
     setUpBase();
 
-    psmUSDC = new PegStabilityModule(
+    psmUSDC = new PegStabilityModule();
+    psmUSDC.initialize(
       address(zai), // address _zai,
       address(usdc), // address _collateral,
       governance, // address _governance,
@@ -36,7 +37,8 @@ contract PegStabilityModuleTest is BaseTest {
       feeDestination
     );
 
-    psmDAI = new PegStabilityModule(
+    psmDAI = new PegStabilityModule();
+    psmDAI.initialize(
       address(zai), // address _zai,
       address(dai), // address _collateral,
       governance, // address _governance,

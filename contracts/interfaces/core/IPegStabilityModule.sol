@@ -108,7 +108,9 @@ interface IPegStabilityModule {
    * @param _amount The amount of ZAI
    * @return collateralAmount The amount of collateral
    */
-  function toCollateralAmount(uint256 _amount) external view returns (uint256 collateralAmount);
+  function toCollateralAmount(
+    uint256 _amount
+  ) external view returns (uint256 collateralAmount);
 
   /**
    * @notice Converts ZAI amount to collateral with fee added
@@ -116,7 +118,10 @@ interface IPegStabilityModule {
    * @param _amount The amount of ZAI
    * @param _fee The fee to be charged in BPS
    */
-  function toCollateralAmountWithFee(uint256 _amount, uint256 _fee) external view returns (uint256);
+  function toCollateralAmountWithFee(
+    uint256 _amount,
+    uint256 _fee
+  ) external view returns (uint256);
 
   /**
    * @notice Converts ZAI amount to collateral with fee removed
@@ -124,7 +129,10 @@ interface IPegStabilityModule {
    * @param _amount The amount of ZAI
    * @param _fee The fee to be charged in BPS
    */
-  function toCollateralAmountWithFeeInverse(uint256 _amount, uint256 _fee) external view returns (uint256);
+  function toCollateralAmountWithFeeInverse(
+    uint256 _amount,
+    uint256 _fee
+  ) external view returns (uint256);
 
   /**
    * @notice How much fees has been collected by the protocol
@@ -145,4 +153,28 @@ interface IPegStabilityModule {
    * @dev Only callable by the admin
    */
   function updateFeeDestination(address _feeDestination) external;
+
+  /**
+   * @notice Initializes the contract
+   * @param _zai The ZAI stablecoin
+   * @param _collateral The collateral token
+   * @param _governance Governance address
+   * @param _newRate The new rate of ZAI/Collateral
+   * @param _supplyCap The supply cap
+   * @param _debtCap The debt cap
+   * @param _mintFeeBps The mint fee in BPS
+   * @param _redeemFeeBps The redeem fee in BPS
+   * @param _feeDestination The address where fees are sent
+   */
+  function initialize(
+    address _zai,
+    address _collateral,
+    address _governance,
+    uint256 _newRate,
+    uint256 _supplyCap,
+    uint256 _debtCap,
+    uint256 _mintFeeBps,
+    uint256 _redeemFeeBps,
+    address _feeDestination
+  ) external;
 }

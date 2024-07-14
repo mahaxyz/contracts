@@ -16,16 +16,20 @@ pragma solidity 0.8.20;
 import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
 import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
 import {PSMEventsLib} from "../../interfaces/events/PSMEventsLib.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 
 /**
  * @title Peg Stability Module
  * @author maha.xyz
  * @notice Used to mint ZAI with collateral at a pre-defined rate
  */
-contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
+contract PegStabilityModule is
+  OwnableUpgradeable,
+  ReentrancyGuardUpgradeable,
+  IPegStabilityModule
+{
   /// @inheritdoc IPegStabilityModule
   IZaiStablecoin public zai;
 
@@ -56,7 +60,8 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
   /// @inheritdoc IPegStabilityModule
   uint256 public immutable MAX_FEE_BPS = 10_000;
 
-  constructor(
+  /// @inheritdoc IPegStabilityModule
+  function initialize(
     address _zai,
     address _collateral,
     address _governance,
@@ -66,9 +71,12 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
     uint256 _mintFeeBps,
     uint256 _redeemFeeBps,
     address _feeDestination
-  ) Ownable(_governance) {
+  ) external reinitializer(1) {
     zai = IZaiStablecoin(_zai);
     collateral = IERC20(_collateral);
+
+    __Ownable_init(_governance);
+    __ReentrancyGuard_init();
 
     _updateFees(_mintFeeBps, _redeemFeeBps);
     _updateCaps(_supplyCap, _debtCap);
