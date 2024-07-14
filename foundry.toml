@@ -38,7 +38,7 @@
   multiline_func_header = "params_first"
   number_underscore = "thousands"
   sort_imports = true
-  quote_style = "single"
+  quote_style = "double"
   contract_new_lines = false
   override_spacing = true
   tab_width = 2

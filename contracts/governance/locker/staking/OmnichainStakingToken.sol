@@ -13,9 +13,9 @@
 
 pragma solidity 0.8.20;
 
-import {IAggregatorV3Interface} from '../../../interfaces/governance/IAggregatorV3Interface.sol';
-import {ILPOracle} from '../../../interfaces/governance/ILPOracle.sol';
-import {OmnichainStakingBase} from './OmnichainStakingBase.sol';
+import {IAggregatorV3Interface} from "../../../interfaces/governance/IAggregatorV3Interface.sol";
+import {ILPOracle} from "../../../interfaces/governance/ILPOracle.sol";
+import {OmnichainStakingBase} from "./OmnichainStakingBase.sol";
 
 contract OmnichainStakingToken is OmnichainStakingBase {
   function init(
@@ -26,7 +26,7 @@ contract OmnichainStakingToken is OmnichainStakingBase {
     address _owner,
     address _distributor
   ) external reinitializer(5) {
-    super.__OmnichainStakingBase_init('ZERO Voting Power', 'ZEROvp', _locker, _zeroToken, _poolVoter, _rewardsDuration, _distributor);
+    super.__OmnichainStakingBase_init("ZERO Voting Power", "ZEROvp", _locker, _zeroToken, _poolVoter, _rewardsDuration, _distributor);
 
     _transferOwnership(_owner);
   }

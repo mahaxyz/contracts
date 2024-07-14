@@ -13,8 +13,8 @@
 
 pragma solidity 0.8.20;
 
-import {IZaiStablecoin} from '../IZaiStablecoin.sol';
-import {IERC20} from '@openzeppelin/contracts/interfaces/IERC20.sol';
+import {IZaiStablecoin} from "../IZaiStablecoin.sol";
+import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 /**
  * @title Peg Stability Module
@@ -51,6 +51,12 @@ interface IPegStabilityModule {
    * @notice Returns the current rate of ZAI/Collateral
    */
   function rate() external returns (uint256);
+
+  function mintFeeBps() external returns (uint256);
+
+  function redeemFeeBps() external returns (uint256);
+
+  function MAX_FEE_BPS() external returns (uint256);
 
   /**
    * @notice Mints ZAI with collateral

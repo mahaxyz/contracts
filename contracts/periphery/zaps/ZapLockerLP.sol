@@ -13,8 +13,8 @@
 
 pragma solidity 0.8.20;
 
-import {ILocker} from '../../interfaces/governance/ILocker.sol';
-import {IERC20, IWETH} from '../../interfaces/governance/IWETH.sol';
+import {ILocker} from "../../interfaces/governance/ILocker.sol";
+import {IERC20, IWETH} from "../../interfaces/governance/IWETH.sol";
 
 /**
  * @title ZapLockerLP
@@ -86,7 +86,7 @@ contract ZapLockerLP {
     uint256 wethB = weth.balanceOf(address(this));
 
     if (eth > 0) {
-      (bool ethSendSuccess,) = msg.sender.call{value: eth}('');
+      (bool ethSendSuccess,) = msg.sender.call{value: eth}("");
       if (!ethSendSuccess) revert EthSendFailed();
     }
 

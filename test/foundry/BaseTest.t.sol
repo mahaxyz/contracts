@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {ZaiStablecoin} from '../../contracts/core/ZaiStablecoin.sol';
-import {MockLayerZero} from '../../contracts/tests/MockLayerZero.sol';
-import {Test, console} from '../../lib/forge-std/src/Test.sol';
+import {ZaiStablecoin} from "../../contracts/core/ZaiStablecoin.sol";
+import {MockLayerZero} from "../../contracts/tests/MockLayerZero.sol";
+import {Test, console} from "../../lib/forge-std/src/Test.sol";
 
-import {PegStabilityModule} from '../../contracts/core/PegStabilityModule.sol';
-import {MockERC20} from '../../contracts/tests/MockERC20.sol';
+import {PegStabilityModule} from "../../contracts/core/PegStabilityModule.sol";
+import {MockERC20} from "../../contracts/tests/MockERC20.sol";
 
 abstract contract BaseTest is Test {
   ZaiStablecoin public zai;
@@ -27,9 +27,9 @@ abstract contract BaseTest is Test {
     MockLayerZero lz = new MockLayerZero();
     zai = new ZaiStablecoin(address(lz), address(0x1));
 
-    usdc = new MockERC20('USD Coin', 'USDC', 8);
-    dai = new MockERC20('DAI', 'DAI', 18);
-    weth = new MockERC20('Wrapped Ether', 'WETH', 18);
+    usdc = new MockERC20("USD Coin", "USDC", 8);
+    dai = new MockERC20("DAI", "DAI", 18);
+    weth = new MockERC20("Wrapped Ether", "WETH", 18);
 
     psmUSDC = new PegStabilityModule(
       address(zai), // address _zai,

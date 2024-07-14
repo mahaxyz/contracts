@@ -13,10 +13,10 @@
 
 pragma solidity 0.8.20;
 
-import {DDBase, IDDPool} from './DDBase.sol';
+import {DDBase, IDDPool} from "./DDBase.sol";
 import {AccessControlEnumerableUpgradeable} from
-  '@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol';
-import {IERC4626} from '@openzeppelin/contracts/interfaces/IERC4626.sol';
+  "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
+import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
 /**
  * @title MetaMorpho Direct Deposit Module
@@ -34,10 +34,10 @@ contract DDMetaMorpho is AccessControlEnumerableUpgradeable, DDBase {
 
     vault = IERC4626(_vault);
 
-    require(_hub != address(0), 'DDMetaMorpho/zero-address');
-    require(_zai != address(0), 'DDMetaMorpho/zero-address');
-    require(_vault != address(0), 'DDMetaMorpho/zero-address');
-    require(IERC4626(_vault).asset() == _zai, 'DDMetaMorpho/vault-asset-is-not-zai');
+    require(_hub != address(0), "DDMetaMorpho/zero-address");
+    require(_zai != address(0), "DDMetaMorpho/zero-address");
+    require(_vault != address(0), "DDMetaMorpho/zero-address");
+    require(IERC4626(_vault).asset() == _zai, "DDMetaMorpho/vault-asset-is-not-zai");
 
     zai.approve(_vault, type(uint256).max);
 

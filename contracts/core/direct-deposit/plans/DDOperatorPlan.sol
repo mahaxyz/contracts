@@ -13,8 +13,8 @@
 
 pragma solidity 0.8.20;
 
-import {IDDPlan} from '../../../interfaces/core/IDDPlan.sol';
-import {AccessControlDefaultAdminRules} from '@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol';
+import {IDDPlan} from "../../../interfaces/core/IDDPlan.sol";
+import {AccessControlDefaultAdminRules} from "@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol";
 
 /**
  * @title Direct Deposit Operator Plan
@@ -23,7 +23,7 @@ import {AccessControlDefaultAdminRules} from '@openzeppelin/contracts/access/ext
 contract DDOperatorPlan is AccessControlDefaultAdminRules, IDDPlan {
   uint256 public enabled;
   uint256 public targetAssets;
-  bytes32 public OPERATOR_ROLE = keccak256('OPERATOR_ROLE');
+  bytes32 public OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
   constructor(uint48 _initialDelay, address _governance) AccessControlDefaultAdminRules(_initialDelay, _governance) {
     // nothing
@@ -46,7 +46,7 @@ contract DDOperatorPlan is AccessControlDefaultAdminRules, IDDPlan {
 
   /// @inheritdoc IDDPlan
   function disable() external override {
-    require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || hasRole(OPERATOR_ROLE, msg.sender), '!role');
+    require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || hasRole(OPERATOR_ROLE, msg.sender), "!role");
     enabled = 0;
     emit Disable();
   }

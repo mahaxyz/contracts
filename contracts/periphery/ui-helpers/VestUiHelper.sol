@@ -13,9 +13,9 @@
 
 pragma solidity 0.8.20;
 
-import {OmnichainStakingLP} from '../../governance/locker/staking/OmnichainStakingLP.sol';
-import {OmnichainStakingToken} from '../../governance/locker/staking/OmnichainStakingToken.sol';
-import {ILocker} from '../../interfaces/governance/ILocker.sol';
+import {OmnichainStakingLP} from "../../governance/locker/staking/OmnichainStakingLP.sol";
+import {OmnichainStakingToken} from "../../governance/locker/staking/OmnichainStakingToken.sol";
+import {ILocker} from "../../interfaces/governance/ILocker.sol";
 
 contract VestUiHelper {
   OmnichainStakingToken public omnichainStaking;

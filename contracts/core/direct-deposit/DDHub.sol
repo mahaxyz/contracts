@@ -13,17 +13,17 @@
 
 pragma solidity 0.8.20;
 
-import {IZaiStablecoin} from '../../interfaces/IZaiStablecoin.sol';
-import {IDDHub} from '../../interfaces/core/IDDHub.sol';
-import {IDDPlan} from '../../interfaces/core/IDDPlan.sol';
-import {IDDPool} from '../../interfaces/core/IDDPool.sol';
-import {DDEventsLib} from '../../interfaces/events/DDEventsLib.sol';
-import {Constants} from './Constants.sol';
+import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
+import {IDDHub} from "../../interfaces/core/IDDHub.sol";
+import {IDDPlan} from "../../interfaces/core/IDDPlan.sol";
+import {IDDPool} from "../../interfaces/core/IDDPool.sol";
+import {DDEventsLib} from "../../interfaces/events/DDEventsLib.sol";
+import {Constants} from "./Constants.sol";
 import {AccessControlEnumerableUpgradeable} from
-  '@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol';
+  "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 
-import {ReentrancyGuardUpgradeable} from '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
-import {Math} from '@openzeppelin/contracts/utils/math/Math.sol';
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 /**
  * @title Direct Deposit Hub
@@ -66,7 +66,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
   /// @inheritdoc IDDHub
   function exec(IDDPool pool) external nonReentrant onlyRole(EXECUTOR_ROLE) {
     PoolInfo memory info = _poolInfos[pool];
-    require(info.plan != IDDPlan(address(0)), 'not registered');
+    require(info.plan != IDDPlan(address(0)), "not registered");
 
     pool.preDebtChange();
 
@@ -176,7 +176,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     uint256 balance = pool.assetBalance();
     uint256 balanceBefore = zai.balanceOf(address(pool));
 
-    require(balance >= info.debt, 'invaraint balance >= debt');
+    require(balance >= info.debt, "invaraint balance >= debt");
 
     // calculate fees
     if (balance <= info.debt) return;
@@ -187,7 +187,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
 
     // invariant check
     uint256 balanceAfter = zai.balanceOf(address(pool));
-    require(fees == balanceBefore - balanceAfter, 'invaraint fees');
+    require(fees == balanceBefore - balanceAfter, "invaraint fees");
 
     // send the fees to the fee collector
     zai.transfer(feeCollector, fees);
@@ -206,7 +206,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
       zai.burn(address(this), toWithdraw);
       emit DDEventsLib.Unwind(pool, toWithdraw);
     } else if (toSupply > 0) {
-      require(info.debt + toSupply <= Constants.SAFEMAX, 'D3MHub/wind-overflow');
+      require(info.debt + toSupply <= Constants.SAFEMAX, "D3MHub/wind-overflow");
       zai.mint(address(this), toSupply);
       pool.deposit(toSupply);
       emit DDEventsLib.Wind(pool, toSupply);

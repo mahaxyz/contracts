@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.6;
 
-import {IERC20} from '@openzeppelin/contracts/interfaces/IERC20.sol';
-import {IERC721Enumerable} from '@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol';
+import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
+import {IERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 
 /// @title ILocker Interface
 /// @notice Interface for a contract that handles locking ERC20 tokens in exchange for NFT representations

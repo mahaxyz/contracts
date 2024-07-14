@@ -13,13 +13,12 @@
 
 pragma solidity 0.8.20;
 
-import {IZaiStablecoin} from '../interfaces/IZaiStablecoin.sol';
-import {IPegStabilityModule} from '../interfaces/core/IPegStabilityModule.sol';
-
-import {PSMEventsLib} from '../interfaces/events/PSMEventsLib.sol';
-import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
-import {IERC20} from '@openzeppelin/contracts/interfaces/IERC20.sol';
-import {ReentrancyGuard} from '@openzeppelin/contracts/utils/ReentrancyGuard.sol';
+import {IZaiStablecoin} from "../interfaces/IZaiStablecoin.sol";
+import {IPegStabilityModule} from "../interfaces/core/IPegStabilityModule.sol";
+import {PSMEventsLib} from "../interfaces/events/PSMEventsLib.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title Peg Stability Module
@@ -45,29 +44,39 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
   /// @inheritdoc IPegStabilityModule
   uint256 public rate;
 
+  /// @inheritdoc IPegStabilityModule
+  uint256 public mintFeeBps;
+
+  /// @inheritdoc IPegStabilityModule
+  uint256 public redeemFeeBps;
+
+  /// @inheritdoc IPegStabilityModule
+  uint256 public immutable MAX_FEE_BPS = 10_000;
+
   constructor(
     address _zai,
     address _collateral,
     address _governance,
     uint256 _newRate,
     uint256 _supplyCap,
-    uint256 _debtCap
+    uint256 _debtCap,
+    uint256 _mintFeeBps,
+    uint256 _redeemFeeBps
   ) Ownable(_governance) {
     zai = IZaiStablecoin(_zai);
     collateral = IERC20(_collateral);
-    supplyCap = _supplyCap;
-    debtCap = _debtCap;
 
+    _updateFees(_mintFeeBps, _redeemFeeBps);
     _updateCaps(_supplyCap, _debtCap);
     _updateRate(_newRate);
   }
 
   /// @inheritdoc IPegStabilityModule
   function mint(address dest, uint256 shares) external nonReentrant {
-    uint256 amount = toCollateralAmount(shares);
+    uint256 amount = toCollateralAmountWithFee(shares, mintFeeBps);
 
-    require(collateral.balanceOf(address(this)) + amount <= supplyCap, 'supply cap exceeded');
-    require(debt + shares <= debtCap, 'debt cap exceeded');
+    require(collateral.balanceOf(address(this)) + amount <= supplyCap, "supply cap exceeded");
+    require(debt + shares <= debtCap, "debt cap exceeded");
 
     collateral.transferFrom(msg.sender, address(this), amount);
     zai.mint(dest, shares);
@@ -78,7 +87,7 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
 
   /// @inheritdoc IPegStabilityModule
   function redeem(address dest, uint256 shares) external nonReentrant {
-    uint256 amount = toCollateralAmount(shares);
+    uint256 amount = toCollateralAmountWithFee(shares, redeemFeeBps);
 
     zai.transferFrom(msg.sender, address(this), shares);
     zai.burn(address(this), shares);
@@ -98,9 +107,21 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
     _updateRate(_newRate);
   }
 
+  function updateFees(uint256 _mintFeeBps, uint256 _redeemFeeBps) external onlyOwner {
+    _updateFees(_mintFeeBps, _redeemFeeBps);
+  }
+
   /// @inheritdoc IPegStabilityModule
   function toCollateralAmount(uint256 _amount) public view returns (uint256) {
     return (_amount * rate) / 1e18;
+  }
+
+  function toCollateralAmountWithFee(uint256 _amount, uint256 _fee) public view returns (uint256) {
+    return (toCollateralAmount(_amount) * (MAX_FEE_BPS - _fee)) / MAX_FEE_BPS;
+  }
+
+  function feesCollected() public view returns (uint256) {
+    return collateral.balanceOf(address(this)) - debt;
   }
 
   function _updateCaps(uint256 _supplyCap, uint256 _debtCap) internal {
@@ -117,5 +138,13 @@ contract PegStabilityModule is Ownable, ReentrancyGuard, IPegStabilityModule {
     uint256 oldRate = rate;
     rate = _rate;
     emit PSMEventsLib.RateUpdated(oldRate, _rate, msg.sender);
+  }
+
+  function _updateFees(uint256 _mintFeeBps, uint256 _redeemFeeBps) internal {
+    uint256 oldMintFeeBps = mintFeeBps;
+    uint256 oldRedeemFeeBps = redeemFeeBps;
+    mintFeeBps = _mintFeeBps;
+    redeemFeeBps = _redeemFeeBps;
+    emit PSMEventsLib.FeesUpdated(_mintFeeBps, _redeemFeeBps, oldMintFeeBps, oldRedeemFeeBps, msg.sender);
   }
 }

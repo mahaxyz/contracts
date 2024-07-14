@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {ZaiStablecoin} from '../../contracts/core/ZaiStablecoin.sol';
-import {Test, console} from '../../lib/forge-std/src/Test.sol';
-import {BaseTest} from './BaseTest.t.sol';
+import {ZaiStablecoin} from "../../contracts/core/ZaiStablecoin.sol";
+import {Test, console} from "../../lib/forge-std/src/Test.sol";
+import {BaseTest} from "./BaseTest.t.sol";
 
 contract PegStabilityModuleTest is BaseTest {
   function setUp() public {
@@ -11,15 +11,15 @@ contract PegStabilityModuleTest is BaseTest {
   }
 
   function test_values() public view {
-    assertEq(address(psmUSDC.zai()), address(zai), '!psm');
-    assertEq(psmUSDC.supplyCap(), 100_000 * 1e8, '!supplyCap');
-    assertEq(psmUSDC.debtCap(), 100_000 ether, '!debtCap');
-    assertEq(psmUSDC.debt(), 0, '!debt');
+    assertEq(address(psmUSDC.zai()), address(zai), "!psm");
+    assertEq(psmUSDC.supplyCap(), 100_000 * 1e8, "!supplyCap");
+    assertEq(psmUSDC.debtCap(), 100_000 ether, "!debtCap");
+    assertEq(psmUSDC.debt(), 0, "!debt");
   }
 
   function test_toCollateralAmount() public view {
-    assertEq(psmUSDC.toCollateralAmount(1000 ether), 1000 * 1e8, '!usdc');
-    assertEq(psmDAI.toCollateralAmount(1000 ether), 1000 ether, '!dai');
+    assertEq(psmUSDC.toCollateralAmount(1000 ether), 1000 * 1e8, "!usdc");
+    assertEq(psmDAI.toCollateralAmount(1000 ether), 1000 ether, "!dai");
   }
 
   function test_mint() public {

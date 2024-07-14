@@ -13,16 +13,16 @@
 
 pragma solidity 0.8.20;
 
-import {IAggregatorV3Interface} from '../../../interfaces/governance/IAggregatorV3Interface.sol';
-import {ILPOracle} from '../../../interfaces/governance/ILPOracle.sol';
-import {ILocker} from '../../../interfaces/governance/ILocker.sol';
-import {IOmnichainStaking} from '../../../interfaces/governance/IOmnichainStaking.sol';
-import {IPoolVoter} from '../../../interfaces/governance/IPoolVoter.sol';
-import {IWETH} from '../../../interfaces/governance/IWETH.sol';
-import {OwnableUpgradeable} from '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
-import {ERC20VotesUpgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20VotesUpgradeable.sol';
-import {ReentrancyGuardUpgradeable} from '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
-import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import {IAggregatorV3Interface} from "../../../interfaces/governance/IAggregatorV3Interface.sol";
+import {ILPOracle} from "../../../interfaces/governance/ILPOracle.sol";
+import {ILocker} from "../../../interfaces/governance/ILocker.sol";
+import {IOmnichainStaking} from "../../../interfaces/governance/IOmnichainStaking.sol";
+import {IPoolVoter} from "../../../interfaces/governance/IPoolVoter.sol";
+import {IWETH} from "../../../interfaces/governance/IWETH.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {ERC20VotesUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20VotesUpgradeable.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title OmnichainStaking
@@ -98,7 +98,7 @@ abstract contract OmnichainStakingBase is IOmnichainStaking, ERC20VotesUpgradeab
    * @return ERC721 onERC721Received selector.
    */
   function _onERC721ReceivedInternal(address, address from, uint256 tokenId, bytes calldata data) internal returns (bytes4) {
-    require(msg.sender == address(locker), 'only locker');
+    require(msg.sender == address(locker), "only locker");
 
     if (data.length > 0) {
       (, from,) = abi.decode(data, (bool, address, uint256));
@@ -154,7 +154,7 @@ abstract contract OmnichainStakingBase is IOmnichainStaking, ERC20VotesUpgradeab
    * @param tokenId The ID of the regular token NFT to unstake.
    */
   function unstakeToken(uint256 tokenId) external updateReward(msg.sender) {
-    require(lockedByToken[tokenId] != address(0), '!tokenId');
+    require(lockedByToken[tokenId] != address(0), "!tokenId");
     address lockedBy_ = lockedByToken[tokenId];
     if (_msgSender() != lockedBy_) {
       revert InvalidUnstaker(_msgSender(), lockedBy_);
@@ -177,9 +177,9 @@ abstract contract OmnichainStakingBase is IOmnichainStaking, ERC20VotesUpgradeab
    * @param newLockDuration The new lock duration in seconds.
    */
   function increaseLockDuration(uint256 tokenId, uint256 newLockDuration) external {
-    require(newLockDuration > 0, '!newLockAmount');
+    require(newLockDuration > 0, "!newLockAmount");
 
-    require(msg.sender == lockedByToken[tokenId], '!tokenId');
+    require(msg.sender == lockedByToken[tokenId], "!tokenId");
     locker.increaseUnlockTime(tokenId, newLockDuration);
 
     // update voting power
@@ -197,9 +197,9 @@ abstract contract OmnichainStakingBase is IOmnichainStaking, ERC20VotesUpgradeab
    * @param newLockAmount The new lock amount in tokens.
    */
   function increaseLockAmount(uint256 tokenId, uint256 newLockAmount) external {
-    require(newLockAmount > 0, '!newLockAmount');
+    require(newLockAmount > 0, "!newLockAmount");
 
-    require(msg.sender == lockedByToken[tokenId], '!tokenId');
+    require(msg.sender == lockedByToken[tokenId], "!tokenId");
     locker.underlying().transferFrom(msg.sender, address(this), newLockAmount);
     locker.increaseAmount(tokenId, newLockAmount);
 
@@ -273,7 +273,7 @@ abstract contract OmnichainStakingBase is IOmnichainStaking, ERC20VotesUpgradeab
   }
 
   function notifyRewardAmount(uint256 reward) external updateReward(address(0)) {
-    require(msg.sender == distributor, '!distributor');
+    require(msg.sender == distributor, "!distributor");
     rewardsToken.transferFrom(msg.sender, address(this), reward);
 
     if (block.timestamp >= periodFinish) {
@@ -289,7 +289,7 @@ abstract contract OmnichainStakingBase is IOmnichainStaking, ERC20VotesUpgradeab
     // very high values of rewardRate in the earned and rewardsPerToken functions;
     // Reward + leftover must be less than 2^256 / 10^18 to avoid overflow.
     uint256 balance = rewardsToken.balanceOf(address(this));
-    require(rewardRate <= balance / rewardsDuration, 'Provided reward too high');
+    require(rewardRate <= balance / rewardsDuration, "Provided reward too high");
 
     lastUpdateTime = block.timestamp;
     periodFinish = block.timestamp + rewardsDuration;
@@ -297,7 +297,7 @@ abstract contract OmnichainStakingBase is IOmnichainStaking, ERC20VotesUpgradeab
   }
 
   function recoverERC20(address tokenAddress, uint256 tokenAmount) external onlyOwner {
-    require(tokenAddress != address(rewardsToken), 'Cannot withdraw the staking token');
+    require(tokenAddress != address(rewardsToken), "Cannot withdraw the staking token");
     IERC20(tokenAddress).transfer(owner(), tokenAmount);
     emit Recovered(tokenAddress, tokenAmount);
   }
@@ -329,7 +329,7 @@ abstract contract OmnichainStakingBase is IOmnichainStaking, ERC20VotesUpgradeab
    */
   function initDelegates(address[] memory who) external {
     for (uint256 i = 0; i < who.length; i++) {
-      require(delegates(who[i]) == address(0), 'delegate already set');
+      require(delegates(who[i]) == address(0), "delegate already set");
       _delegate(who[i], who[i]);
     }
   }
@@ -355,8 +355,8 @@ abstract contract OmnichainStakingBase is IOmnichainStaking, ERC20VotesUpgradeab
     if (reward > 0) {
       rewards[msg.sender] = 0;
       IWETH(address(rewardsToken)).withdraw(reward);
-      (bool ethSendSuccess,) = msg.sender.call{value: reward}('');
-      require(ethSendSuccess, 'eth send failed');
+      (bool ethSendSuccess,) = msg.sender.call{value: reward}("");
+      require(ethSendSuccess, "eth send failed");
       emit RewardPaid(msg.sender, reward);
     }
   }
@@ -365,14 +365,14 @@ abstract contract OmnichainStakingBase is IOmnichainStaking, ERC20VotesUpgradeab
    * @dev Prevents transfers of voting power.
    */
   function transfer(address, uint256) public pure override returns (bool) {
-    revert('transfer disabled');
+    revert("transfer disabled");
   }
 
   /**
    * @dev Prevents transfers of voting power.
    */
   function transferFrom(address, address, uint256) public pure override returns (bool) {
-    revert('transferFrom disabled');
+    revert("transferFrom disabled");
   }
 
   /**

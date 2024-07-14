@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {ZaiStablecoin} from '../../contracts/core/ZaiStablecoin.sol';
-import {MockLayerZero} from '../../contracts/tests/MockLayerZero.sol';
-import {Test, console} from '../../lib/forge-std/src/Test.sol';
+import {ZaiStablecoin} from "../../contracts/core/ZaiStablecoin.sol";
+import {MockLayerZero} from "../../contracts/tests/MockLayerZero.sol";
+import {Test, console} from "../../lib/forge-std/src/Test.sol";
 
 contract ZaiStablecoinTest is Test {
   ZaiStablecoin public zai;
@@ -14,7 +14,7 @@ contract ZaiStablecoinTest is Test {
   }
 
   function test_NameAndSymbol() public view {
-    assertEq(zai.name(), 'Zai Stablecoin');
-    assertEq(zai.symbol(), 'USDz');
+    assertEq(zai.name(), "Zai Stablecoin");
+    assertEq(zai.symbol(), "USDz");
   }
 }

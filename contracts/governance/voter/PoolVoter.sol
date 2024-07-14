@@ -13,15 +13,15 @@
 
 pragma solidity 0.8.20;
 
-import {IGauge} from '../../interfaces/governance/IGauge.sol';
-import {IPoolVoter} from '../../interfaces/governance/IPoolVoter.sol';
+import {IGauge} from "../../interfaces/governance/IGauge.sol";
+import {IPoolVoter} from "../../interfaces/governance/IPoolVoter.sol";
 
-import {OwnableUpgradeable} from '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
-import {ReentrancyGuardUpgradeable} from '@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol';
-import {IVotes} from '@openzeppelin/contracts/governance/utils/IVotes.sol';
-import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import {IVotes} from "@openzeppelin/contracts/governance/utils/IVotes.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {SafeERC20} from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract PoolVoter is IPoolVoter, ReentrancyGuardUpgradeable, OwnableUpgradeable {
   using SafeERC20 for IERC20;
@@ -83,7 +83,7 @@ contract PoolVoter is IPoolVoter, ReentrancyGuardUpgradeable, OwnableUpgradeable
    * @dev Only callable by the owner of the contract.
    */
   function reset(address _who) external override {
-    require(msg.sender == _who || msg.sender == address(staking), 'Invalid reset performed');
+    require(msg.sender == _who || msg.sender == address(staking), "Invalid reset performed");
     _reset(_who);
   }
 
@@ -94,7 +94,7 @@ contract PoolVoter is IPoolVoter, ReentrancyGuardUpgradeable, OwnableUpgradeable
    * @dev The number of elements in _poolVote and _weights arrays must be the same.
    */
   function vote(address[] calldata _poolVote, uint256[] calldata _weights) external {
-    require(_poolVote.length == _weights.length, 'Invalid number of votes');
+    require(_poolVote.length == _weights.length, "Invalid number of votes");
     _vote(msg.sender, _poolVote, _weights);
   }
 

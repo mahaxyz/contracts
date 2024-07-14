@@ -12,10 +12,10 @@ pragma solidity ^0.8.20;
 // Discord: https://discord.gg/zerolend
 // Twitter: https://twitter.com/zerolendxyz
 
-import {IVotes} from '@openzeppelin/contracts/governance/utils/IVotes.sol';
-import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import {IVotes} from "@openzeppelin/contracts/governance/utils/IVotes.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {ILocker} from './ILocker.sol';
+import {ILocker} from "./ILocker.sol";
 
 interface IOmnichainStaking is IVotes {
   // An omni-chain staking contract that allows users to stake their veNFT

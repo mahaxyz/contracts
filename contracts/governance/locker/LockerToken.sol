@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.20;
 
-import {BaseLocker} from './BaseLocker.sol';
+import {BaseLocker} from "./BaseLocker.sol";
 
 abstract contract LockerToken is BaseLocker {
 // function init(address _token, address _staking) external initializer {

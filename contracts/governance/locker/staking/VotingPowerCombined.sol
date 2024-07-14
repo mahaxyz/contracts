@@ -13,10 +13,10 @@
 
 pragma solidity 0.8.20;
 
-import {IOmnichainStaking} from '../../../interfaces/governance/IOmnichainStaking.sol';
-import {IPoolVoter} from '../../../interfaces/governance/IPoolVoter.sol';
-import {OwnableUpgradeable} from '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
-import {IVotes} from '@openzeppelin/contracts/governance/utils/IVotes.sol';
+import {IOmnichainStaking} from "../../../interfaces/governance/IOmnichainStaking.sol";
+import {IPoolVoter} from "../../../interfaces/governance/IPoolVoter.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {IVotes} from "@openzeppelin/contracts/governance/utils/IVotes.sol";
 
 // TODO: Write LayerZero functions over here
 
@@ -47,7 +47,7 @@ contract VotingPowerCombined is IVotes, OwnableUpgradeable {
   }
 
   function reset(address _who) external {
-    require(msg.sender == _who || msg.sender == address(lpStaking) || msg.sender == address(tokenStaking), 'invalid reset performed');
+    require(msg.sender == _who || msg.sender == address(lpStaking) || msg.sender == address(tokenStaking), "invalid reset performed");
     voter.reset(_who);
   }
 
@@ -56,15 +56,15 @@ contract VotingPowerCombined is IVotes, OwnableUpgradeable {
   }
 
   function delegates(address) external pure override returns (address) {
-    require(false, 'delegate set at the staking level');
+    require(false, "delegate set at the staking level");
     return address(0);
   }
 
   function delegate(address) external pure override {
-    require(false, 'delegate set at the staking level');
+    require(false, "delegate set at the staking level");
   }
 
   function delegateBySig(address, uint256, uint256, uint8, bytes32, bytes32) external pure override {
-    require(false, 'delegate set at the staking level');
+    require(false, "delegate set at the staking level");
   }
 }
