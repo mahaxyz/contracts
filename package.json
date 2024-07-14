@@ -6,6 +6,7 @@
     "clean": "rimraf artifacts cache coverage",
     "docs": "hardhat docgen",
     "coverage": "forge coverage --report lcov",
+    "test": "forge test",
     "compile": "hardhat compile && forge build"
   },
   "files": [

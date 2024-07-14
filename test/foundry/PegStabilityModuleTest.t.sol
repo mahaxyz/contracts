@@ -24,32 +24,32 @@ contract PegStabilityModuleTest is BaseTest {
 
   function test_mint() public {
     vm.startPrank(ant);
-    usdc.mint(ant, 1000 * 1e8);
+    usdc.mint(ant, 2000 * 1e8);
 
     assertEq(zai.totalSupply(), 0);
 
-    usdc.approve(address(psmUSDC), 1000 * 1e8);
+    usdc.approve(address(psmUSDC), 2000 * 1e8);
     psmUSDC.mint(ant, 1000 ether);
 
     assertEq(zai.totalSupply(), 1000 ether);
     assertEq(zai.balanceOf(ant), 1000 ether);
-    assertEq(usdc.balanceOf(address(psmUSDC)), 1000 * 1e8);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 1010 * 1e8);
     vm.stopPrank();
 
     vm.expectRevert();
     psmUSDC.mint(ant, 1000 ether);
   }
 
-  function test_redeem() public {
+  function test_redeemPartial() public {
     vm.startPrank(ant);
-    usdc.mint(ant, 1000 * 1e8);
-    usdc.approve(address(psmUSDC), 1000 * 1e8);
+    usdc.mint(ant, 2000 * 1e8);
+    usdc.approve(address(psmUSDC), 2000 * 1e8);
     psmUSDC.mint(ant, 1000 ether);
     zai.transfer(whale, 500 ether);
     vm.stopPrank();
 
     assertEq(zai.totalSupply(), 1000 ether);
-    assertEq(usdc.balanceOf(address(psmUSDC)), 1000 * 1e8);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 1010 * 1e8);
     assertEq(zai.balanceOf(whale), 500 ether);
 
     // as whale try to redeem
@@ -59,10 +59,53 @@ contract PegStabilityModuleTest is BaseTest {
 
     // check balances
     assertEq(zai.totalSupply(), 700 ether);
-    assertEq(usdc.balanceOf(address(psmUSDC)), 700 * 1e8);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 713 * 1e8);
     assertEq(zai.balanceOf(whale), 200 ether);
 
     vm.expectRevert();
     psmUSDC.redeem(whale, 300 ether);
+  }
+
+  function test_redeemFull() public {
+    vm.startPrank(ant);
+    usdc.mint(ant, 2000 * 1e8);
+    usdc.approve(address(psmUSDC), 2000 * 1e8);
+    psmUSDC.mint(ant, 1000 ether);
+
+    assertEq(zai.totalSupply(), 1000 ether);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 1010 * 1e8);
+    assertEq(zai.balanceOf(ant), 1000 ether);
+
+    zai.approve(address(psmUSDC), 1000 ether);
+    psmUSDC.redeem(ant, 1000 ether);
+
+    // check balances
+    assertEq(zai.totalSupply(), 0);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 20 * 1e8);
+    assertEq(zai.balanceOf(ant), 0);
+
+    vm.expectRevert();
+    psmUSDC.redeem(ant, 300 ether);
+  }
+
+  function test_sweepFees() public {
+    vm.startPrank(ant);
+    usdc.mint(ant, 2000 * 1e8);
+    usdc.approve(address(psmUSDC), 2000 * 1e8);
+    zai.approve(address(psmUSDC), 1000 ether);
+    psmUSDC.mint(ant, 1000 ether);
+
+    psmUSDC.redeem(ant, 1000 ether);
+
+    // check balances
+    assertEq(zai.totalSupply(), 0);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 20 * 1e8);
+    assertEq(zai.balanceOf(ant), 0);
+    vm.stopPrank();
+
+    vm.prank(governance);
+    psmUSDC.sweepFees(whale);
+
+    assertEq(usdc.balanceOf(address(whale)), 20 * 1e8);
   }
 }

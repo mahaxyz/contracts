@@ -37,7 +37,9 @@ abstract contract BaseTest is Test {
       governance, // address _governance,
       1e8, // uint256 _newRate,
       100_000 * 1e8, // uint256 _supplyCap,
-      100_000 * 1e18 // uint256 _debtCap
+      100_000 * 1e18, // uint256 _debtCap
+      100, // supplyFeeBps 1%
+      100 // redeemFeeBps 1%
     );
 
     psmDAI = new PegStabilityModule(
@@ -46,7 +48,9 @@ abstract contract BaseTest is Test {
       governance, // address _governance,
       1e18, // uint256 _newRate,
       100_000 * 1e18, // uint256 _supplyCap,
-      100_000 * 1e18 // uint256 _debtCap
+      100_000 * 1e18, // uint256 _debtCap
+      100, // supplyFeeBps 1%
+      100 // redeemFeeBps 1%
     );
 
     // give permissions
