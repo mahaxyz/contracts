@@ -30,11 +30,8 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Run hardhat coverage
-        run: yarn compile --force && yarn coverage
-
-      - name: Run gas report
-        run: REPORT_GAS=true npx hardhat test
+      - name: Run coverage
+        run: yarn compile && yarn coverage
 
       # Deploy to gh pages
       - name: Upload artifact

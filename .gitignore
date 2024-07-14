@@ -60,3 +60,4 @@ types
 typings/
 yarn-debug.log*
 yarn-error.log*
+lcov.info

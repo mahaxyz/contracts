@@ -5,6 +5,7 @@
   "scripts": {
     "clean": "rimraf artifacts cache coverage",
     "docs": "hardhat docgen",
+    "coverage": "forge coverage --report lcov",
     "compile": "hardhat compile && forge build"
   },
   "files": [
