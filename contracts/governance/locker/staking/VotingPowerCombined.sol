@@ -13,8 +13,8 @@
 
 pragma solidity 0.8.20;
 
-import {IOmnichainStaking} from "../../../interfaces/IOmnichainStaking.sol";
-import {IPoolVoter} from "../../../interfaces/IPoolVoter.sol";
+import {IOmnichainStaking} from "../../../interfaces/governance/IOmnichainStaking.sol";
+import {IPoolVoter} from "../../../interfaces/governance/IPoolVoter.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {IVotes} from "@openzeppelin/contracts/governance/utils/IVotes.sol";
 

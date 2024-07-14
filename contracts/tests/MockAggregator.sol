@@ -13,16 +13,6 @@
 
 pragma solidity 0.8.20;
 
-// ███████╗███████╗██████╗  ██████╗
-// ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗
-//   ███╔╝ █████╗  ██████╔╝██║   ██║
-//  ███╔╝  ██╔══╝  ██╔══██╗██║   ██║
-// ███████╗███████╗██║  ██║╚██████╔╝
-// ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝
-// Website: https://zerolend.xyz
-// Discord: https://discord.gg/zerolend
-// Twitter: https://twitter.com/zerolendxyz
-
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MockAggregator is Ownable {

@@ -13,8 +13,8 @@
 
 pragma solidity 0.8.20;
 
-import {ILPOracle} from "../../../interfaces/ILPOracle.sol";
-import {IAggregatorV3Interface} from "../../../interfaces/IAggregatorV3Interface.sol";
+import {ILPOracle} from "../../../interfaces/governance/ILPOracle.sol";
+import {IAggregatorV3Interface} from "../../../interfaces/governance/IAggregatorV3Interface.sol";
 import {OmnichainStakingBase} from "./OmnichainStakingBase.sol";
 
 contract OmnichainStakingToken is OmnichainStakingBase {

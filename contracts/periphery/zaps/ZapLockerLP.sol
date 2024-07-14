@@ -13,8 +13,8 @@
 
 pragma solidity 0.8.20;
 
-import {ILocker} from "../../interfaces/ILocker.sol";
-import {IERC20, IWETH} from "../../interfaces/IWETH.sol";
+import {ILocker} from "../../interfaces/governance/ILocker.sol";
+import {IERC20, IWETH} from "../../interfaces/governance/IWETH.sol";
 
 /**
  * @title ZapLockerLP

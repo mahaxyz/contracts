@@ -15,12 +15,12 @@ pragma solidity 0.8.20;
 
 import {ERC20VotesUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20VotesUpgradeable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ILocker} from "../../../interfaces/ILocker.sol";
-import {ILPOracle} from "../../../interfaces/ILPOracle.sol";
-import {IOmnichainStaking} from "../../../interfaces/IOmnichainStaking.sol";
-import {IPoolVoter} from "../../../interfaces/IPoolVoter.sol";
-import {IAggregatorV3Interface} from "../../../interfaces/IAggregatorV3Interface.sol";
-import {IWETH} from "../../../interfaces/IWETH.sol";
+import {ILocker} from "../../../interfaces/governance/ILocker.sol";
+import {ILPOracle} from "../../../interfaces/governance/ILPOracle.sol";
+import {IOmnichainStaking} from "../../../interfaces/governance/IOmnichainStaking.sol";
+import {IPoolVoter} from "../../../interfaces/governance/IPoolVoter.sol";
+import {IAggregatorV3Interface} from "../../../interfaces/governance/IAggregatorV3Interface.sol";
+import {IWETH} from "../../../interfaces/governance/IWETH.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 

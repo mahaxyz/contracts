@@ -14,8 +14,8 @@
 pragma solidity 0.8.20;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IGauge} from "../../interfaces/IGauge.sol";
-import {IPoolVoter} from "../../interfaces/IPoolVoter.sol";
+import {IGauge} from "../../interfaces/governance/IGauge.sol";
+import {IPoolVoter} from "../../interfaces/governance/IPoolVoter.sol";
 import {IVotes} from "@openzeppelin/contracts/governance/utils/IVotes.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
