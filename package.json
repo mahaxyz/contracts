@@ -16,6 +16,7 @@
     "contracts",
     "deployments",
     "docs",
+    "forge-build",
     "LICENSE",
     "README.md",
     "types"
