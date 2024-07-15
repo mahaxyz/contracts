@@ -58,7 +58,7 @@ contract PegStabilityModule is
   address public feeDestination;
 
   /// @inheritdoc IPegStabilityModule
-  uint256 public immutable MAX_FEE_BPS = 10_000;
+  uint256 public MAX_FEE_BPS;
 
   /// @inheritdoc IPegStabilityModule
   function initialize(
@@ -82,6 +82,8 @@ contract PegStabilityModule is
     _updateCaps(_supplyCap, _debtCap);
     _updateRate(_newRate);
     _updateFeeDestination(_feeDestination);
+
+    MAX_FEE_BPS = 10_000;
   }
 
   /// @inheritdoc IPegStabilityModule
