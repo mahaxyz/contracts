@@ -1,12 +1,13 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
-import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {IRewardDistributor} from "../../interfaces/governance/IRewardDistributor.sol";
 import {IWETH} from "../../interfaces/governance/IWETH.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 contract FeeCollectorCron is Initializable, OwnableUpgradeable {
   address public collector;
@@ -57,7 +58,7 @@ contract FeeCollectorCron is Initializable, OwnableUpgradeable {
   function balances() public view returns (uint256[] memory, address[] memory) {
     uint256[] memory amounts = new uint256[](tokens.length);
 
-    for (uint i = 0; i < tokens.length; i++) {
+    for (uint256 i = 0; i < tokens.length; i++) {
       amounts[i] = IERC20(tokens[i]).balanceOf(address(this));
     }
 
@@ -70,7 +71,7 @@ contract FeeCollectorCron is Initializable, OwnableUpgradeable {
   }
 
   function approve() public {
-    for (uint i = 0; i < tokens.length; i++) {
+    for (uint256 i = 0; i < tokens.length; i++) {
       IERC20(tokens[i]).approve(odos, type(uint256).max);
     }
   }
@@ -79,7 +80,7 @@ contract FeeCollectorCron is Initializable, OwnableUpgradeable {
     require(msg.sender == owner() || msg.sender == gelatoooooo, "who dis?");
 
     // swap on odos
-    (bool success, ) = odos.call(data);
+    (bool success,) = odos.call(data);
     require(success, "odos call failed");
 
     // send all weth to the destination

@@ -108,9 +108,7 @@ interface IPegStabilityModule {
    * @param _amount The amount of ZAI
    * @return collateralAmount The amount of collateral
    */
-  function toCollateralAmount(
-    uint256 _amount
-  ) external view returns (uint256 collateralAmount);
+  function toCollateralAmount(uint256 _amount) external view returns (uint256 collateralAmount);
 
   /**
    * @notice Converts ZAI amount to collateral with fee added
@@ -118,10 +116,7 @@ interface IPegStabilityModule {
    * @param _amount The amount of ZAI
    * @param _fee The fee to be charged in BPS
    */
-  function toCollateralAmountWithFee(
-    uint256 _amount,
-    uint256 _fee
-  ) external view returns (uint256);
+  function toCollateralAmountWithFee(uint256 _amount, uint256 _fee) external view returns (uint256);
 
   /**
    * @notice Converts ZAI amount to collateral with fee removed
@@ -129,10 +124,7 @@ interface IPegStabilityModule {
    * @param _amount The amount of ZAI
    * @param _fee The fee to be charged in BPS
    */
-  function toCollateralAmountWithFeeInverse(
-    uint256 _amount,
-    uint256 _fee
-  ) external view returns (uint256);
+  function toCollateralAmountWithFeeInverse(uint256 _amount, uint256 _fee) external view returns (uint256);
 
   /**
    * @notice How much fees has been collected by the protocol

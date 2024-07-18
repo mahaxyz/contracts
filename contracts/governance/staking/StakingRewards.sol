@@ -2,13 +2,15 @@
 
 pragma solidity ^0.8.7;
 
-import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 import {IStakingRewards} from "../../interfaces/governance/IStakingRewards.sol";
+import {IWETH} from "../../interfaces/governance/IWETH.sol";
 
 /// @title StakingRewards
 /// @author Forked form SetProtocol
@@ -77,18 +79,8 @@ contract StakingRewards is IStakingRewards, ReentrancyGuard {
   /// @param _rewardToken ERC20 token given as reward
   /// @param _stakingToken ERC20 token used for staking
   /// @param _rewardsDuration Duration of the staking contract
-  constructor(
-    address _rewardsDistribution,
-    address _rewardToken,
-    address _stakingToken,
-    uint256 _rewardsDuration
-  ) {
-    require(
-      _stakingToken != address(0) &&
-        _rewardToken != address(0) &&
-        _rewardsDistribution != address(0),
-      "0"
-    );
+  constructor(address _rewardsDistribution, address _rewardToken, address _stakingToken, uint256 _rewardsDuration) {
+    require(_stakingToken != address(0) && _rewardToken != address(0) && _rewardsDistribution != address(0), "0");
 
     // We are not checking the compatibility of the reward token between the distributor and this contract here
     // because it is checked by the `RewardsDistributor` when activating the staking contract
@@ -99,6 +91,10 @@ contract StakingRewards is IStakingRewards, ReentrancyGuard {
     rewardsDistribution = _rewardsDistribution;
 
     stakingBase = 10 ** IERC20Metadata(_stakingToken).decimals();
+  }
+
+  receive() external payable {
+    // accept eth in the contract
   }
 
   // ============================ Modifiers ======================================
@@ -152,10 +148,7 @@ contract StakingRewards is IStakingRewards, ReentrancyGuard {
       return rewardPerTokenStored;
     }
     return
-      rewardPerTokenStored +
-      (((lastTimeRewardApplicable() - lastUpdateTime) *
-        rewardRate *
-        stakingBase) / _totalSupply);
+      rewardPerTokenStored + (((lastTimeRewardApplicable() - lastUpdateTime) * rewardRate * stakingBase) / _totalSupply);
   }
 
   /// @notice Returns how much a given account earned rewards
@@ -164,28 +157,20 @@ contract StakingRewards is IStakingRewards, ReentrancyGuard {
   /// @dev It adds to the rewards the amount of reward earned since last time that is the difference
   /// in reward per token from now and last time multiplied by the number of tokens staked by the person
   function earned(address account) public view returns (uint256) {
-    return
-      (_balances[account] *
-        (rewardPerToken() - userRewardPerTokenPaid[account])) /
-      stakingBase +
-      rewards[account];
+    return (_balances[account] * (rewardPerToken() - userRewardPerTokenPaid[account])) / stakingBase + rewards[account];
   }
 
   // ======================== Mutative functions forked ==========================
 
   /// @notice Lets someone stake a given amount of `stakingTokens`
   /// @param amount Amount of ERC20 staking token that the `msg.sender` wants to stake
-  function stake(
-    uint256 amount
-  ) external nonReentrant updateReward(msg.sender) {
+  function stake(uint256 amount) external nonReentrant updateReward(msg.sender) {
     _stake(amount, msg.sender);
   }
 
   /// @notice Lets a user withdraw a given amount of collateral from the staking contract
   /// @param amount Amount of the ERC20 staking token that the `msg.sender` wants to withdraw
-  function withdraw(
-    uint256 amount
-  ) public nonReentrant updateReward(msg.sender) {
+  function withdraw(uint256 amount) public nonReentrant updateReward(msg.sender) {
     require(amount > 0, "89");
     _totalSupply = _totalSupply - amount;
     _balances[msg.sender] = _balances[msg.sender] - amount;
@@ -203,12 +188,13 @@ contract StakingRewards is IStakingRewards, ReentrancyGuard {
     }
   }
 
-  /// @notice Triggers a payment of the reward earned to the msg.sender
   function getRewardETH() public nonReentrant updateReward(msg.sender) {
     uint256 reward = rewards[msg.sender];
     if (reward > 0) {
       rewards[msg.sender] = 0;
-      rewardToken.safeTransfer(msg.sender, reward);
+      IWETH(address(rewardToken)).withdraw(reward);
+      (bool ethSendSuccess,) = msg.sender.call{value: reward}("");
+      require(ethSendSuccess, "eth send failed");
       emit RewardPaid(msg.sender, reward);
     }
   }
@@ -253,9 +239,7 @@ contract StakingRewards is IStakingRewards, ReentrancyGuard {
   /// @notice Adds rewards to be distributed
   /// @param reward Amount of reward tokens to distribute
   /// @dev This reward will be distributed during `rewardsDuration` set previously
-  function notifyRewardAmount(
-    uint256 reward
-  )
+  function notifyRewardAmount(uint256 reward)
     external
     override
     onlyRewardsDistribution
@@ -289,16 +273,8 @@ contract StakingRewards is IStakingRewards, ReentrancyGuard {
   /// @param to Address to transfer to
   /// @param amount Amount to transfer
   /// @dev A use case would be to claim tokens if the staked tokens accumulate rewards
-  function recoverERC20(
-    address tokenAddress,
-    address to,
-    uint256 amount
-  ) external override onlyRewardsDistribution {
-    require(
-      tokenAddress != address(stakingToken) &&
-        tokenAddress != address(rewardToken),
-      "20"
-    );
+  function recoverERC20(address tokenAddress, address to, uint256 amount) external override onlyRewardsDistribution {
+    require(tokenAddress != address(stakingToken) && tokenAddress != address(rewardToken), "20");
 
     IERC20(tokenAddress).safeTransfer(to, amount);
     emit Recovered(tokenAddress, to, amount);
@@ -307,11 +283,10 @@ contract StakingRewards is IStakingRewards, ReentrancyGuard {
   /// @notice Changes the rewards distributor associated to this contract
   /// @param _rewardsDistribution Address of the new rewards distributor contract
   /// @dev This function was also added by Angle Core Team
-  /// @dev A compatibility check of the reward token is already performed in the current `RewardsDistributor` implementation
+  /// @dev A compatibility check of the reward token is already performed in the current `RewardsDistributor`
+  /// implementation
   /// which has right to call this function
-  function setNewRewardsDistribution(
-    address _rewardsDistribution
-  ) external override onlyRewardsDistribution {
+  function setNewRewardsDistribution(address _rewardsDistribution) external override onlyRewardsDistribution {
     rewardsDistribution = _rewardsDistribution;
     emit RewardsDistributionUpdated(_rewardsDistribution);
   }
