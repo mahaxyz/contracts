@@ -34,14 +34,15 @@ abstract contract BaseLocker is
   uint256 internal MAXTIME;
   uint256 internal MULTIPLIER;
   uint256 public supply;
-  mapping(uint256 => LockedBalance) public locked;
   string public version;
   uint8 public decimals;
 
   /// @dev Current count of token
   uint256 internal tokenId;
-  IERC20 public underlying;
   IOmnichainStaking public staking;
+
+  IERC20 internal _underlying;
+  mapping(uint256 => LockedBalance) internal _locked;
 
   function __BaseLocker_init(
     string memory _name,
@@ -58,7 +59,7 @@ abstract contract BaseLocker is
     MAXTIME = _maxTime;
     MULTIPLIER = 1 ether;
     staking = IOmnichainStaking(_staking);
-    underlying = IERC20(_token);
+    _underlying = IERC20(_token);
     _setApprovalForAll(address(this), _staking, true);
   }
 
@@ -74,7 +75,17 @@ abstract contract BaseLocker is
   /// @param _tokenId User NFT
   /// @return Epoch time of the lock end
   function lockedEnd(uint256 _tokenId) external view returns (uint256) {
-    return locked[_tokenId].end;
+    return _locked[_tokenId].end;
+  }
+
+  function underlying() external view returns (IERC20) {
+    return _underlying;
+  }
+
+  function locked(
+    uint256 _tokenId
+  ) external view returns (LockedBalance memory) {
+    return _locked[_tokenId];
   }
 
   /// @dev Returns the voting power of the `_owner`.
@@ -122,13 +133,13 @@ abstract contract BaseLocker is
     if (_unlockTime != 0) lock.end = _unlockTime;
     if (_type == DepositType.CREATE_LOCK_TYPE) lock.start = block.timestamp;
     lock.power = _calculatePower(lock);
-    locked[_tokenId] = lock;
+    _locked[_tokenId] = lock;
     // Possibilities:
     // Both oldLocked.end could be current or expired (>/< block.timestamp)
     // value == 0 (extend lock) or value > 0 (add to lock or extend lock)
     // _locked.end > block.timestamp (always)
     if (_value != 0 && _type != DepositType.MERGE_TYPE)
-      assert(underlying.transferFrom(msg.sender, address(this), _value));
+      assert(_underlying.transferFrom(msg.sender, address(this), _value));
     emit Deposit(
       msg.sender,
       _tokenId,
@@ -147,11 +158,11 @@ abstract contract BaseLocker is
       "from not approved"
     );
     require(_isAuthorized(ownerOf(_to), msg.sender, _to), "to not approved");
-    LockedBalance memory _locked0 = locked[_from];
-    LockedBalance memory _locked1 = locked[_to];
+    LockedBalance memory _locked0 = _locked[_from];
+    LockedBalance memory _locked1 = _locked[_to];
     uint256 value0 = uint256(int256(_locked0.amount));
     uint256 end = _locked0.end >= _locked1.end ? _locked0.end : _locked1.end;
-    locked[_from] = LockedBalance(0, 0, 0, 0);
+    _locked[_from] = LockedBalance(0, 0, 0, 0);
     _burn(_from);
     _depositFor(_to, value0, end, _locked1, DepositType.MERGE_TYPE);
   }
@@ -165,11 +176,11 @@ abstract contract BaseLocker is
     uint256 _tokenId,
     uint256 _value
   ) external override nonReentrant {
-    LockedBalance memory _locked = locked[_tokenId];
+    LockedBalance memory __locked = _locked[_tokenId];
     require(_value > 0, "value = 0"); // dev: need non-zero value
-    require(_locked.amount > 0, "No existing lock found");
-    require(_locked.end > block.timestamp, "Cannot add to expired lock.");
-    _depositFor(_tokenId, _value, 0, _locked, DepositType.DEPOSIT_FOR_TYPE);
+    require(__locked.amount > 0, "No existing lock found");
+    require(__locked.end > block.timestamp, "Cannot add to expired lock.");
+    _depositFor(_tokenId, _value, 0, __locked, DepositType.DEPOSIT_FOR_TYPE);
   }
 
   /// @notice Deposit `_value` tokens for `_to` and lock for `_lockDuration`
@@ -207,11 +218,17 @@ abstract contract BaseLocker is
       _isAuthorized(_ownerOf(_tokenId), msg.sender, _tokenId),
       "caller is not owner nor approved"
     );
-    LockedBalance memory _locked = locked[_tokenId];
+    LockedBalance memory __locked = _locked[_tokenId];
     assert(_value > 0); // dev: need non-zero value
-    require(_locked.amount > 0, "No existing lock found");
-    require(_locked.end > block.timestamp, "Cannot add to expired lock.");
-    _depositFor(_tokenId, _value, 0, _locked, DepositType.INCREASE_LOCK_AMOUNT);
+    require(__locked.amount > 0, "No existing lock found");
+    require(__locked.end > block.timestamp, "Cannot add to expired lock.");
+    _depositFor(
+      _tokenId,
+      _value,
+      0,
+      __locked,
+      DepositType.INCREASE_LOCK_AMOUNT
+    );
   }
 
   /// @notice Extend the unlock time for `_tokenId`
@@ -224,24 +241,24 @@ abstract contract BaseLocker is
       _isAuthorized(ownerOf(_tokenId), msg.sender, _tokenId),
       "caller is not owner nor approved"
     );
-    LockedBalance memory _locked = locked[_tokenId];
+    LockedBalance memory __locked = _locked[_tokenId];
     uint256 unlockTime = ((block.timestamp + _lockDuration) / WEEK) * WEEK; // Locktime is rounded down to weeks
-    require(_locked.end > block.timestamp, "Lock expired");
-    require(_locked.amount > 0, "Nothing is locked");
-    require(unlockTime > _locked.end, "Can only increase lock duration");
+    require(__locked.end > block.timestamp, "Lock expired");
+    require(__locked.amount > 0, "Nothing is locked");
+    require(unlockTime > __locked.end, "Can only increase lock duration");
     require(
       unlockTime <= block.timestamp + MAXTIME,
       "Voting lock can be 4 years max"
     );
     require(
-      unlockTime <= _locked.start + MAXTIME,
+      unlockTime <= __locked.start + MAXTIME,
       "Voting lock can be 4 years max"
     );
     _depositFor(
       _tokenId,
       0,
       unlockTime,
-      _locked,
+      __locked,
       DepositType.INCREASE_UNLOCK_TIME
     );
   }
@@ -253,13 +270,14 @@ abstract contract BaseLocker is
       _isAuthorized(ownerOf(_tokenId), msg.sender, _tokenId),
       "caller is not owner nor approved"
     );
-    LockedBalance memory _locked = locked[_tokenId];
-    require(block.timestamp >= _locked.end, "The lock didn't expire");
-    uint256 value = uint256(int256(_locked.amount));
-    locked[_tokenId] = LockedBalance(0, 0, 0, 0);
+    LockedBalance memory __locked = _locked[_tokenId];
+    require(block.timestamp >= __locked.end, "The lock didn't expire");
+    uint256 value = uint256(int256(__locked.amount));
+    _locked[_tokenId] = LockedBalance(0, 0, 0, 0);
     uint256 supplyBefore = supply;
     supply = supplyBefore - value;
-    assert(underlying.transfer(msg.sender, value));
+    assert(_underlying.transfer(msg.sender, value));
+
     // Burn the NFT
     _burn(_tokenId);
     emit Withdraw(msg.sender, _tokenId, value, block.timestamp);
@@ -311,7 +329,7 @@ abstract contract BaseLocker is
       _tokenId,
       _value,
       unlockTime,
-      locked[_tokenId],
+      _locked[_tokenId],
       DepositType.CREATE_LOCK_TYPE
     );
     // if the user wants to stake the NFT then we mint to the contract and
@@ -325,7 +343,7 @@ abstract contract BaseLocker is
   }
 
   function balanceOfNFT(uint256 _tokenId) public view returns (uint256) {
-    return locked[_tokenId].power;
+    return _locked[_tokenId].power;
   }
 
   function tokenURI(

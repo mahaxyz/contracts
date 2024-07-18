@@ -203,6 +203,16 @@ contract StakingRewards is IStakingRewards, ReentrancyGuard {
     }
   }
 
+  /// @notice Triggers a payment of the reward earned to the msg.sender
+  function getRewardETH() public nonReentrant updateReward(msg.sender) {
+    uint256 reward = rewards[msg.sender];
+    if (reward > 0) {
+      rewards[msg.sender] = 0;
+      rewardToken.safeTransfer(msg.sender, reward);
+      emit RewardPaid(msg.sender, reward);
+    }
+  }
+
   /// @notice Exits someone
   /// @dev This function lets the caller withdraw its staking and claim rewards
   // Attention here, there may be reentrancy attacks because of the following call
