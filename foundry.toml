@@ -14,6 +14,7 @@
   solc = "0.8.21"
   src = "contracts"
   test = "test"
+  # fs_permissions = [{ access = "read", path = "./lib/morpho-blue/out/Morpho.sol"}]
 
 [profile.ci]
   fuzz = { runs = 10_000 }

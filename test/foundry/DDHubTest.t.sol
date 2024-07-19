@@ -25,7 +25,7 @@ contract DDHubTest is BaseMorphoTest {
   DDMetaMorpho public samplePool;
   IDDPlan public samplePlan;
 
-  function setUp() public override {
+  function setUp() public {
     setUpMorpho();
 
     hub = new DDHub();

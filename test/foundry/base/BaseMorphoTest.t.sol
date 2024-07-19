@@ -17,24 +17,39 @@ import "../../../lib/metamorpho/test/forge/helpers/BaseTest.sol";
 
 import {ZaiStablecoin} from "../../../contracts/core/ZaiStablecoin.sol";
 import {MockLayerZero} from "../../../contracts/tests/MockLayerZero.sol";
+// import {Morpho} from "../../../lib/metamorpho/lib/morpho-blue/src/Morpho.sol";
 import {MockERC20} from "../../../contracts/tests/MockERC20.sol";
+import {BaseZaiTest} from "./BaseZaiTest.t.sol";
 
-contract BaseMorphoTest is BaseTest {
+contract BaseMorphoTest is BaseZaiTest {
+  using MarketParamsLib for MarketParams;
   using Math for uint256;
   using MathLib for uint256;
   using MorphoBalancesLib for IMorpho;
-  using MarketParamsLib for MarketParams;
+  using MorphoLib for IMorpho;
 
-  IMetaMorpho internal vault;
+  address internal OWNER = makeAddr("Owner");
+  address internal SUPPLIER = makeAddr("Supplier");
+  address internal BORROWER = makeAddr("Borrower");
+  address internal REPAYER = makeAddr("Repayer");
+  address internal ONBEHALF = makeAddr("OnBehalf");
+  address internal RECEIVER = makeAddr("Receiver");
+  address internal ALLOCATOR = makeAddr("Allocator");
+  address internal CURATOR = makeAddr("Curator");
+  address internal GUARDIAN = makeAddr("Guardian");
+  address internal FEE_RECIPIENT = makeAddr("FeeRecipient");
+  address internal SKIM_RECIPIENT = makeAddr("SkimRecipient");
+  address internal MORPHO_OWNER = makeAddr("MorphoOwner");
+  address internal MORPHO_FEE_RECIPIENT = makeAddr("MorphoFeeRecipient");
 
-  ZaiStablecoin public zai;
-  MockERC20 public usdc;
+  IMetaMorpho vault;
 
-  address governance = address(0x1);
-  address shark = address(0x2);
-  address whale = address(0x3);
-  address ant = address(0x4);
-  address feeDestination = address(0x5);
+  IMorpho internal morpho;
+  OracleMock internal oracle = new OracleMock();
+  IrmMock internal irm = new IrmMock();
+
+  MarketParams[] internal allMarkets;
+  MarketParams internal idleParams;
 
   function _setupToken() internal {
     MockLayerZero lz = new MockLayerZero();
@@ -42,7 +57,67 @@ contract BaseMorphoTest is BaseTest {
     usdc = new MockERC20("USD Coin", "USDC", 8);
   }
 
+  function _setupMorpoBlueMarkets() internal {
+    vm.label(address(morpho), "Morpho");
+    vm.label(address(oracle), "Oracle");
+    vm.label(address(irm), "Irm");
+
+    oracle.setPrice(ORACLE_PRICE_SCALE);
+
+    irm.setApr(0.5 ether); // 50%.
+
+    idleParams = MarketParams({
+      loanToken: address(zai),
+      collateralToken: address(0),
+      oracle: address(0),
+      irm: address(irm),
+      lltv: 0
+    });
+
+    vm.startPrank(MORPHO_OWNER);
+    morpho.enableIrm(address(irm));
+    morpho.setFeeRecipient(MORPHO_FEE_RECIPIENT);
+
+    morpho.enableLltv(0);
+    vm.stopPrank();
+
+    morpho.createMarket(idleParams);
+
+    for (uint256 i; i < NB_MARKETS; ++i) {
+      uint256 lltv = 0.8 ether / (i + 1);
+
+      MarketParams memory marketParams = MarketParams({
+        loanToken: address(zai),
+        collateralToken: address(usdc),
+        oracle: address(oracle),
+        irm: address(irm),
+        lltv: lltv
+      });
+
+      vm.prank(MORPHO_OWNER);
+      morpho.enableLltv(lltv);
+
+      morpho.createMarket(marketParams);
+
+      allMarkets.push(marketParams);
+    }
+
+    allMarkets.push(idleParams); // Must be pushed last.
+
+    vm.startPrank(SUPPLIER);
+    zai.approve(address(morpho), type(uint256).max);
+    usdc.approve(address(morpho), type(uint256).max);
+    vm.stopPrank();
+
+    vm.prank(BORROWER);
+    zai.approve(address(morpho), type(uint256).max);
+
+    vm.prank(REPAYER);
+    usdc.approve(address(morpho), type(uint256).max);
+  }
+
   function _setupMorpoBlue() internal {
+    // morpho = IMorpho(new Morpho(MORPHO_OWNER));
     idleParams = MarketParams({
       loanToken: address(zai),
       collateralToken: address(0),
@@ -152,9 +227,9 @@ contract BaseMorphoTest is BaseTest {
   }
 
   function setUpMorpho() public {
-    super.setUp();
     _setupToken();
     _setupMorpoBlue();
+    _setupMorpoBlueMarkets();
     _setupMetaMorpho();
   }
 
