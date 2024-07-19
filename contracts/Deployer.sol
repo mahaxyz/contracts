@@ -11,7 +11,7 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.21;
 
 contract Deployer {
   event Deploy(address addr);
@@ -20,7 +20,9 @@ contract Deployer {
     address addr;
     assembly {
       addr := create2(0, add(bytecode, 0x20), mload(bytecode), _salt)
-      if iszero(extcodesize(addr)) { revert(0, 0) }
+      if iszero(extcodesize(addr)) {
+        revert(0, 0)
+      }
     }
 
     emit Deploy(addr);

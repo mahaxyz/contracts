@@ -13,7 +13,7 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.21;
 
 import {IZaiStablecoin} from "../interfaces/IZaiStablecoin.sol";
 import {ERC20, OFT} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT.sol";
@@ -29,7 +29,13 @@ import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20P
  * @notice Represents the ZAI stablecoin. It is minted either by governance or by troves.
  * @dev This is a OFT compatible token.
  */
-contract ZaiStablecoin is ERC20FlashMint, ERC20Permit, OFT, AccessControlEnumerable, IZaiStablecoin {
+contract ZaiStablecoin is
+  ERC20FlashMint,
+  ERC20Permit,
+  OFT,
+  AccessControlEnumerable,
+  IZaiStablecoin
+{
   /// @inheritdoc IZaiStablecoin
   bytes32 public MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
@@ -41,7 +47,11 @@ contract ZaiStablecoin is ERC20FlashMint, ERC20Permit, OFT, AccessControlEnumera
   constructor(
     address _layerZeroEndpoint,
     address _delegate
-  ) OFT("Zai Stablecoin", "USDz", _layerZeroEndpoint, _delegate) Ownable(msg.sender) ERC20Permit("Zai Stablecoin") {
+  )
+    OFT("Zai Stablecoin", "USDz", _layerZeroEndpoint, _delegate)
+    Ownable(msg.sender)
+    ERC20Permit("Zai Stablecoin")
+  {
     _mint(msg.sender, 1e18);
     _burn(msg.sender, 1e18);
     _grantRole(DEFAULT_ADMIN_ROLE, address(this));
@@ -63,12 +73,18 @@ contract ZaiStablecoin is ERC20FlashMint, ERC20Permit, OFT, AccessControlEnumera
   }
 
   /// @inheritdoc IZaiStablecoin
-  function mint(address _account, uint256 _amount) external onlyRole(MANAGER_ROLE) {
+  function mint(
+    address _account,
+    uint256 _amount
+  ) external onlyRole(MANAGER_ROLE) {
     _mint(_account, _amount);
   }
 
   /// @inheritdoc IZaiStablecoin
-  function burn(address _account, uint256 _amount) external onlyRole(MANAGER_ROLE) {
+  function burn(
+    address _account,
+    uint256 _amount
+  ) external onlyRole(MANAGER_ROLE) {
     _burn(_account, _amount);
   }
 }

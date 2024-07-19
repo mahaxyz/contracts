@@ -11,7 +11,7 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.21;
 
 import {IZaiStablecoin} from "../../../interfaces/IZaiStablecoin.sol";
 import {IDDPool} from "../../../interfaces/core/IDDPool.sol";

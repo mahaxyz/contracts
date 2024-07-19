@@ -11,14 +11,11 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.21;
 
 import {ILocker} from "../../interfaces/governance/ILocker.sol";
 import {IOmnichainStaking} from "../../interfaces/governance/IOmnichainStaking.sol";
-import {
-  ERC721EnumerableUpgradeable,
-  IERC165
-} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import {ERC721EnumerableUpgradeable, IERC165} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 
@@ -28,7 +25,11 @@ import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
  * @notice Votes have a weight depending on time, so that users are
  * committed to the future of (whatever they are voting for)
  */
-abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgradeable, ILocker {
+abstract contract BaseLocker is
+  ReentrancyGuardUpgradeable,
+  ERC721EnumerableUpgradeable,
+  ILocker
+{
   uint256 internal WEEK;
   uint256 internal MAXTIME;
   uint256 internal MULTIPLIER;
@@ -64,12 +65,9 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
 
   /// @dev Interface identification is specified in ERC-165.
   /// @param _interfaceID Id of the interface
-  function supportsInterface(bytes4 _interfaceID)
-    public
-    view
-    override (ERC721EnumerableUpgradeable, IERC165)
-    returns (bool)
-  {
+  function supportsInterface(
+    bytes4 _interfaceID
+  ) public view override(ERC721EnumerableUpgradeable, IERC165) returns (bool) {
     return ERC721EnumerableUpgradeable.supportsInterface(_interfaceID);
   }
 
@@ -84,21 +82,27 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
     return _underlying;
   }
 
-  function locked(uint256 _tokenId) external view returns (LockedBalance memory) {
+  function locked(
+    uint256 _tokenId
+  ) external view returns (LockedBalance memory) {
     return _locked[_tokenId];
   }
 
   /// @dev Returns the voting power of the `_owner`.
   ///      Throws if `_owner` is the zero address. NFTs assigned to the zero address are considered invalid.
   /// @param _owner Address for whom to query the voting power of.
-  function votingPowerOf(address _owner) external view returns (uint256 _power) {
+  function votingPowerOf(
+    address _owner
+  ) external view returns (uint256 _power) {
     for (uint256 index = 0; index < balanceOf(_owner); index++) {
       uint256 _tokenId = tokenOfOwnerByIndex(_owner, index);
       _power += balanceOfNFT(_tokenId);
     }
   }
 
-  function _calculatePower(LockedBalance memory lock) internal view returns (uint256 power) {
+  function _calculatePower(
+    LockedBalance memory lock
+  ) internal view returns (uint256 power) {
     power = ((lock.end - lock.start) * lock.amount) / MAXTIME;
   }
 
@@ -119,7 +123,11 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
     uint256 supplyBefore = supply;
     supply = supplyBefore + _value;
     LockedBalance memory oldLocked;
-    (oldLocked.amount, oldLocked.end, oldLocked.power) = (lock.amount, lock.end, lock.power);
+    (oldLocked.amount, oldLocked.end, oldLocked.power) = (
+      lock.amount,
+      lock.end,
+      lock.power
+    );
     // Adding to existing lock, or if a lock is expired - creating a new one
     lock.amount += _value;
     if (_unlockTime != 0) lock.end = _unlockTime;
@@ -133,13 +141,23 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
     if (_value != 0 && _type != DepositType.MERGE_TYPE) {
       assert(_underlying.transferFrom(msg.sender, address(this), _value));
     }
-    emit Deposit(msg.sender, _tokenId, _value, lock.end, _type, block.timestamp);
+    emit Deposit(
+      msg.sender,
+      _tokenId,
+      _value,
+      lock.end,
+      _type,
+      block.timestamp
+    );
     emit Supply(supplyBefore, supplyBefore + _value);
   }
 
   function merge(uint256 _from, uint256 _to) external override {
     require(_from != _to, "same nft");
-    require(_isAuthorized(ownerOf(_from), msg.sender, _from), "from not approved");
+    require(
+      _isAuthorized(ownerOf(_from), msg.sender, _from),
+      "from not approved"
+    );
     require(_isAuthorized(ownerOf(_to), msg.sender, _to), "to not approved");
     LockedBalance memory _locked0 = _locked[_from];
     LockedBalance memory _locked1 = _locked[_to];
@@ -155,7 +173,10 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
   ///      cannot extend their locktime and deposit for a brand new user
   /// @param _tokenId lock NFT
   /// @param _value Amount to add to user's lock
-  function depositFor(uint256 _tokenId, uint256 _value) external override nonReentrant {
+  function depositFor(
+    uint256 _tokenId,
+    uint256 _value
+  ) external override nonReentrant {
     LockedBalance memory __locked = _locked[_tokenId];
     require(_value > 0, "value = 0"); // dev: need non-zero value
     require(__locked.amount > 0, "No existing lock found");
@@ -190,33 +211,66 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
 
   /// @notice Deposit `_value` additional tokens for `_tokenId` without modifying the unlock time
   /// @param _value Amount of tokens to deposit and add to the lock
-  function increaseAmount(uint256 _tokenId, uint256 _value) external nonReentrant {
-    require(_isAuthorized(_ownerOf(_tokenId), msg.sender, _tokenId), "caller is not owner nor approved");
+  function increaseAmount(
+    uint256 _tokenId,
+    uint256 _value
+  ) external nonReentrant {
+    require(
+      _isAuthorized(_ownerOf(_tokenId), msg.sender, _tokenId),
+      "caller is not owner nor approved"
+    );
     LockedBalance memory __locked = _locked[_tokenId];
     assert(_value > 0); // dev: need non-zero value
     require(__locked.amount > 0, "No existing lock found");
     require(__locked.end > block.timestamp, "Cannot add to expired lock.");
-    _depositFor(_tokenId, _value, 0, __locked, DepositType.INCREASE_LOCK_AMOUNT);
+    _depositFor(
+      _tokenId,
+      _value,
+      0,
+      __locked,
+      DepositType.INCREASE_LOCK_AMOUNT
+    );
   }
 
   /// @notice Extend the unlock time for `_tokenId`
   /// @param _lockDuration New number of seconds until tokens unlock
-  function increaseUnlockTime(uint256 _tokenId, uint256 _lockDuration) external nonReentrant {
-    require(_isAuthorized(ownerOf(_tokenId), msg.sender, _tokenId), "caller is not owner nor approved");
+  function increaseUnlockTime(
+    uint256 _tokenId,
+    uint256 _lockDuration
+  ) external nonReentrant {
+    require(
+      _isAuthorized(ownerOf(_tokenId), msg.sender, _tokenId),
+      "caller is not owner nor approved"
+    );
     LockedBalance memory __locked = _locked[_tokenId];
     uint256 unlockTime = ((block.timestamp + _lockDuration) / WEEK) * WEEK; // Locktime is rounded down to weeks
     require(__locked.end > block.timestamp, "Lock expired");
     require(__locked.amount > 0, "Nothing is locked");
     require(unlockTime > __locked.end, "Can only increase lock duration");
-    require(unlockTime <= block.timestamp + MAXTIME, "Voting lock can be 4 years max");
-    require(unlockTime <= __locked.start + MAXTIME, "Voting lock can be 4 years max");
-    _depositFor(_tokenId, 0, unlockTime, __locked, DepositType.INCREASE_UNLOCK_TIME);
+    require(
+      unlockTime <= block.timestamp + MAXTIME,
+      "Voting lock can be 4 years max"
+    );
+    require(
+      unlockTime <= __locked.start + MAXTIME,
+      "Voting lock can be 4 years max"
+    );
+    _depositFor(
+      _tokenId,
+      0,
+      unlockTime,
+      __locked,
+      DepositType.INCREASE_UNLOCK_TIME
+    );
   }
 
   /// @notice Withdraw all tokens for `_tokenId`
   /// @dev Only possible if the lock has expired
   function withdraw(uint256 _tokenId) public virtual nonReentrant {
-    require(_isAuthorized(ownerOf(_tokenId), msg.sender, _tokenId), "caller is not owner nor approved");
+    require(
+      _isAuthorized(ownerOf(_tokenId), msg.sender, _tokenId),
+      "caller is not owner nor approved"
+    );
     LockedBalance memory __locked = _locked[_tokenId];
     require(block.timestamp >= __locked.end, "The lock didn't expire");
     uint256 value = uint256(int256(__locked.amount));
@@ -233,7 +287,7 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
 
   function withdraw(uint256[] calldata _tokenIds) external nonReentrant {
     uint256 nftCount = _tokenIds.length;
-    for (uint256 i = 0; i < nftCount;) {
+    for (uint256 i = 0; i < nftCount; ) {
       withdraw(_tokenIds[i]);
       unchecked {
         ++i;
@@ -243,7 +297,7 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
 
   function withdraw(address _user) external nonReentrant {
     uint256 nftCount = balanceOf(_user);
-    for (uint256 i = 0; i < nftCount;) {
+    for (uint256 i = 0; i < nftCount; ) {
       uint256 tokenId_ = tokenOfOwnerByIndex(_user, i);
       withdraw(tokenId_);
       unchecked {
@@ -257,14 +311,28 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
   /// @param _lockDuration Number of seconds to lock tokens for (rounded down to nearest week)
   /// @param _to Address to deposit
   /// @param _stakeNFT should we stake into the staking contract
-  function _createLock(uint256 _value, uint256 _lockDuration, address _to, bool _stakeNFT) internal returns (uint256) {
+  function _createLock(
+    uint256 _value,
+    uint256 _lockDuration,
+    address _to,
+    bool _stakeNFT
+  ) internal returns (uint256) {
     uint256 unlockTime = ((block.timestamp + _lockDuration) / WEEK) * WEEK; // Locktime is rounded down to weeks
     require(_value > 0, "value = 0"); // dev: need non-zero value
     require(unlockTime > block.timestamp, "Can only lock in the future");
-    require(unlockTime <= block.timestamp + MAXTIME, "Voting lock can be 4 years max");
+    require(
+      unlockTime <= block.timestamp + MAXTIME,
+      "Voting lock can be 4 years max"
+    );
     ++tokenId;
     uint256 _tokenId = tokenId;
-    _depositFor(_tokenId, _value, unlockTime, _locked[_tokenId], DepositType.CREATE_LOCK_TYPE);
+    _depositFor(
+      _tokenId,
+      _value,
+      unlockTime,
+      _locked[_tokenId],
+      DepositType.CREATE_LOCK_TYPE
+    );
     // if the user wants to stake the NFT then we mint to the contract and
     // stake on behalf of the user
     if (_stakeNFT) {
@@ -281,7 +349,9 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
     return _locked[_tokenId].power;
   }
 
-  function tokenURI(uint256) public view virtual override returns (string memory) {
+  function tokenURI(
+    uint256
+  ) public view virtual override returns (string memory) {
     // todo
     return "";
   }

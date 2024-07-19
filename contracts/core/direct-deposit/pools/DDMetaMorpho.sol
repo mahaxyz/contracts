@@ -11,11 +11,10 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.21;
 
 import {DDBase, IDDPool} from "./DDBase.sol";
-import {AccessControlEnumerableUpgradeable} from
-  "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
+import {AccessControlEnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
 /**
@@ -26,7 +25,11 @@ import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 contract DDMetaMorpho is AccessControlEnumerableUpgradeable, DDBase {
   IERC4626 public vault;
 
-  function initialize(address _hub, address _zai, address _vault) external reinitializer(1) {
+  function initialize(
+    address _hub,
+    address _zai,
+    address _vault
+  ) external reinitializer(1) {
     __DDBBase_init(_zai, _hub);
     __AccessControl_init();
 

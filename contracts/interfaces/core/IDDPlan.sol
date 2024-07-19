@@ -11,7 +11,7 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.21;
 
 /**
  * @title DD Plan Interface
@@ -28,7 +28,9 @@ interface IDDPlan {
    * denomination
    * @return uint256 target assets the Hub should wind or unwind to in Dai
    */
-  function getTargetAssets(uint256 currentAssets) external view returns (uint256);
+  function getTargetAssets(
+    uint256 currentAssets
+  ) external view returns (uint256);
 
   /**
    * @notice Reports whether the plan is active
