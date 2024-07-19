@@ -11,21 +11,21 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.21;
 
 import {ZaiStablecoin} from "../../contracts/core/ZaiStablecoin.sol";
 import {DDHub, IDDHub} from "../../contracts/core/direct-deposit/DDHub.sol";
 import {DDOperatorPlan, IDDPlan} from "../../contracts/core/direct-deposit/plans/DDOperatorPlan.sol";
 import {DDMetaMorpho, IDDPool} from "../../contracts/core/direct-deposit/pools/DDMetaMorpho.sol";
 
-import {BaseMorphoTest} from "./BaseMorphoTest.t.sol";
+import {BaseMorphoTest} from "./base/BaseMorphoTest.t.sol";
 
 contract DDHubTest is BaseMorphoTest {
   DDHub public hub;
   DDMetaMorpho public samplePool;
   IDDPlan public samplePlan;
 
-  function setUp() public {
+  function setUp() public override {
     setUpMorpho();
 
     hub = new DDHub();
@@ -44,7 +44,7 @@ contract DDHubTest is BaseMorphoTest {
     zai.grantManagerRole(address(hub));
   }
 
-  function test_values() public view {
+  function test_values() public {
     assertEq(address(hub.zai()), address(zai), "!zai");
     assertEq(hub.feeCollector(), feeDestination, "!feeDestination");
   }

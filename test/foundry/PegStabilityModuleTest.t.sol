@@ -11,13 +11,13 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.21;
 
 import {ZaiStablecoin} from "../../contracts/core/ZaiStablecoin.sol";
 import {PegStabilityModule} from "../../contracts/core/psm/PegStabilityModule.sol";
-import {BaseTest} from "./BaseTest.t.sol";
+import {BaseZaiTest} from "./base/BaseZaiTest.t.sol";
 
-contract PegStabilityModuleTest is BaseTest {
+contract PegStabilityModuleTest is BaseZaiTest {
   PegStabilityModule public psmUSDC;
   PegStabilityModule public psmDAI;
 

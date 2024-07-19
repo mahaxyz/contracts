@@ -11,15 +11,15 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.21;
 
-import {ZaiStablecoin} from "../../contracts/core/ZaiStablecoin.sol";
-import {MockLayerZero} from "../../contracts/tests/MockLayerZero.sol";
-import {Test, console} from "../../lib/forge-std/src/Test.sol";
+import {ZaiStablecoin} from "../../../contracts/core/ZaiStablecoin.sol";
+import {MockLayerZero} from "../../../contracts/tests/MockLayerZero.sol";
+import {Test, console} from "../../../lib/forge-std/src/Test.sol";
 
-import {MockERC20} from "../../contracts/tests/MockERC20.sol";
+import {MockERC20} from "../../../contracts/tests/MockERC20.sol";
 
-abstract contract BaseTest is Test {
+abstract contract BaseZaiTest is Test {
   ZaiStablecoin public zai;
 
   MockERC20 public usdc;

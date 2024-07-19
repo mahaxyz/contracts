@@ -11,11 +11,11 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.21;
 
-import {BaseTest} from "./BaseTest.t.sol";
+import {BaseZaiTest} from "./base/BaseZaiTest.t.sol";
 
-contract ZaiStablecoinTest is BaseTest {
+contract ZaiStablecoinTest is BaseZaiTest {
   function setUp() public {
     setUpBase();
   }
