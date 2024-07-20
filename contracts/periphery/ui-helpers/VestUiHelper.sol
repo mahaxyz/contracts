@@ -35,23 +35,17 @@ contract VestUiHelper {
     omnichainStakingLp = OmnichainStakingLP(payable(_omnichainStakingLp));
   }
 
-  function getLockDetails(
-    address _userAddress
-  ) external view returns (LockedBalanceWithApr[] memory) {
-    (
-      uint256[] memory tokenIds,
-      ILocker.LockedBalance[] memory lockedBalances
-    ) = omnichainStaking.getLockedNftDetails(_userAddress);
+  function getLockDetails(address _userAddress) external view returns (LockedBalanceWithApr[] memory) {
+    (uint256[] memory tokenIds, ILocker.LockedBalance[] memory lockedBalances) =
+      omnichainStaking.getLockedNftDetails(_userAddress);
 
     uint256 rewardRate = omnichainStaking.rewardRate();
     uint256 totalSupply = omnichainStaking.totalSupply();
 
     uint256 totalTokenIds = tokenIds.length;
-    LockedBalanceWithApr[] memory lockDetails = new LockedBalanceWithApr[](
-      totalTokenIds
-    );
+    LockedBalanceWithApr[] memory lockDetails = new LockedBalanceWithApr[](totalTokenIds);
 
-    for (uint256 i; i < totalTokenIds; ) {
+    for (uint256 i; i < totalTokenIds;) {
       LockedBalanceWithApr memory lock;
       ILocker.LockedBalance memory lockedBalance = lockedBalances[i];
 
@@ -82,23 +76,17 @@ contract VestUiHelper {
     return lockDetails;
   }
 
-  function getLPLockDetails(
-    address _userAddress
-  ) external view returns (LockedBalanceWithApr[] memory) {
-    (
-      uint256[] memory tokenIds,
-      ILocker.LockedBalance[] memory lockedBalances
-    ) = omnichainStakingLp.getLockedNftDetails(_userAddress);
+  function getLPLockDetails(address _userAddress) external view returns (LockedBalanceWithApr[] memory) {
+    (uint256[] memory tokenIds, ILocker.LockedBalance[] memory lockedBalances) =
+      omnichainStakingLp.getLockedNftDetails(_userAddress);
 
     uint256 rewardRate = omnichainStakingLp.rewardRate();
     uint256 totalSupply = omnichainStakingLp.totalSupply();
 
     uint256 totalTokenIds = tokenIds.length;
-    LockedBalanceWithApr[] memory lockDetails = new LockedBalanceWithApr[](
-      totalTokenIds
-    );
+    LockedBalanceWithApr[] memory lockDetails = new LockedBalanceWithApr[](totalTokenIds);
 
-    for (uint256 i; i < totalTokenIds; ) {
+    for (uint256 i; i < totalTokenIds;) {
       LockedBalanceWithApr memory lock;
       ILocker.LockedBalance memory lockedBalance = lockedBalances[i];
 

@@ -59,9 +59,7 @@ interface ILocker is IERC721Enumerable {
    * @param _tokenId The NFT ID
    * @return The LockedBalance struct containing lock details
    */
-  function locked(
-    uint256 _tokenId
-  ) external view returns (LockedBalance memory);
+  function locked(uint256 _tokenId) external view returns (LockedBalance memory);
 
   /**
    * @notice Get the end time of the lock for a specific NFT
@@ -98,11 +96,7 @@ interface ILocker is IERC721Enumerable {
    * @param _stakeNFT Whether the NFT should be staked
    * @return The ID of the created NFT
    */
-  function createLock(
-    uint256 _value,
-    uint256 _lockDuration,
-    bool _stakeNFT
-  ) external returns (uint256);
+  function createLock(uint256 _value, uint256 _lockDuration, bool _stakeNFT) external returns (uint256);
 
   /**
    * @notice Increase the amount of tokens locked in a specific NFT
@@ -125,12 +119,7 @@ interface ILocker is IERC721Enumerable {
    * @param _stakeNFT Whether the NFT should be staked
    * @return The ID of the created NFT
    */
-  function createLockFor(
-    uint256 _value,
-    uint256 _lockDuration,
-    address _to,
-    bool _stakeNFT
-  ) external returns (uint256);
+  function createLockFor(uint256 _value, uint256 _lockDuration, address _to, bool _stakeNFT) external returns (uint256);
 
   /**
    * @notice Withdraw tokens from a specific NFT
@@ -159,21 +148,10 @@ interface ILocker is IERC721Enumerable {
     uint256 ts
   );
 
-  event Withdraw(
-    address indexed provider,
-    uint256 tokenId,
-    uint256 value,
-    uint256 ts
-  );
+  event Withdraw(address indexed provider, uint256 tokenId, uint256 value, uint256 ts);
   event Supply(uint256 prevSupply, uint256 supply);
 
   event TokenAddressSet(address indexed oldToken, address indexed newToken);
-  event StakingAddressSet(
-    address indexed oldStaking,
-    address indexed newStaking
-  );
-  event StakingBonusAddressSet(
-    address indexed oldStakingBonus,
-    address indexed newStakingBonus
-  );
+  event StakingAddressSet(address indexed oldStaking, address indexed newStaking);
+  event StakingBonusAddressSet(address indexed oldStakingBonus, address indexed newStakingBonus);
 }

@@ -19,7 +19,8 @@ import {IDDPlan} from "../../interfaces/core/IDDPlan.sol";
 import {IDDPool} from "../../interfaces/core/IDDPool.sol";
 import {DDEventsLib} from "../../interfaces/events/DDEventsLib.sol";
 import {Constants} from "./Constants.sol";
-import {AccessControlEnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
+import {AccessControlEnumerableUpgradeable} from
+  "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
@@ -30,11 +31,7 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
  * @notice This is the main contract responsible for managing pools.
  * @dev Has permissions to mint/burn ZAI
  */
-contract DDHub is
-  IDDHub,
-  AccessControlEnumerableUpgradeable,
-  ReentrancyGuardUpgradeable
-{
+contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpgradeable {
   /// @inheritdoc IDDHub
   IZaiStablecoin public zai;
 
@@ -67,9 +64,7 @@ contract DDHub is
   }
 
   /// @inheritdoc IDDHub
-  function poolInfos(
-    IDDPool pool
-  ) external view returns (PoolInfo memory info) {
+  function poolInfos(IDDPool pool) external view returns (PoolInfo memory info) {
     info = _poolInfos[pool];
   }
 
@@ -92,34 +87,19 @@ contract DDHub is
   }
 
   /// @inheritdoc IDDHub
-  function registerPool(
-    IDDPool pool,
-    IDDPlan plan,
-    uint256 debtCeiling
-  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-    PoolInfo memory info = PoolInfo({
-      plan: plan,
-      isLive: true,
-      debt: 0,
-      debtCeiling: debtCeiling
-    });
+  function registerPool(IDDPool pool, IDDPlan plan, uint256 debtCeiling) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    PoolInfo memory info = PoolInfo({plan: plan, isLive: true, debt: 0, debtCeiling: debtCeiling});
     _poolInfos[pool] = info;
   }
 
   /// @inheritdoc IDDHub
-  function reduceDebtCeiling(
-    IDDPool pool,
-    uint256 amountToReduce
-  ) external onlyRole(RISK_ROLE) {
+  function reduceDebtCeiling(IDDPool pool, uint256 amountToReduce) external onlyRole(RISK_ROLE) {
     PoolInfo storage info = _poolInfos[pool];
     info.debtCeiling -= amountToReduce;
   }
 
   /// @inheritdoc IDDHub
-  function setDebtCeiling(
-    IDDPool pool,
-    uint256 amount
-  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function setDebtCeiling(IDDPool pool, uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
     PoolInfo storage info = _poolInfos[pool];
     info.debtCeiling = amount;
   }
@@ -130,9 +110,7 @@ contract DDHub is
   }
 
   /// @inheritdoc IDDHub
-  function setGlobalDebtCeiling(
-    uint256 amount
-  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function setGlobalDebtCeiling(uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
     globalDebtCeiling = amount;
   }
 
@@ -143,9 +121,7 @@ contract DDHub is
   }
 
   /// @inheritdoc IDDHub
-  function evaluatePoolAction(
-    IDDPool pool
-  ) public view returns (uint256 toSupply, uint256 toWithdraw) {
+  function evaluatePoolAction(IDDPool pool) public view returns (uint256 toSupply, uint256 toWithdraw) {
     PoolInfo memory info = _poolInfos[pool];
 
     uint256 currentAssets = pool.assetBalance(); // Should return DAI owned by D3MPool
@@ -156,11 +132,7 @@ contract DDHub is
     // wrong is going with the third party and we are entering in the ilegal situation of having less assets than
     // registered
     // It's adding up `WAD` due possible rounding errors
-    if (
-      !info.isLive ||
-      info.plan.active() ||
-      currentAssets + Constants.WAD < info.debt
-    ) {
+    if (!info.isLive || info.plan.active() || currentAssets + Constants.WAD < info.debt) {
       toWithdraw = maxWithdraw;
     } else {
       uint256 maxDebt = info.debtCeiling; //vat.Line();
@@ -245,10 +217,7 @@ contract DDHub is
       zai.burn(address(this), toWithdraw);
       emit DDEventsLib.Unwind(pool, toWithdraw);
     } else if (toSupply > 0) {
-      require(
-        info.debt + toSupply <= Constants.SAFEMAX,
-        "D3MHub/wind-overflow"
-      );
+      require(info.debt + toSupply <= Constants.SAFEMAX, "D3MHub/wind-overflow");
       zai.mint(address(this), toSupply);
       pool.deposit(toSupply);
       emit DDEventsLib.Wind(pool, toSupply);

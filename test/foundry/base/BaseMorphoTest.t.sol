@@ -16,8 +16,9 @@ pragma solidity 0.8.21;
 import "../../../lib/metamorpho/test/forge/helpers/BaseTest.sol";
 
 import {ZaiStablecoin} from "../../../contracts/core/ZaiStablecoin.sol";
-import {MockLayerZero} from "../../../contracts/tests/MockLayerZero.sol";
+
 import {MockERC20} from "../../../contracts/tests/MockERC20.sol";
+import {MockLayerZero} from "../../../contracts/tests/MockLayerZero.sol";
 import {BaseZaiTest} from "./BaseZaiTest.t.sol";
 
 contract BaseMorphoTest is BaseZaiTest {
@@ -39,13 +40,7 @@ contract BaseMorphoTest is BaseZaiTest {
   address morphoOwner = makeAddr("morphoOwner");
   address morphoFeeRecipient = makeAddr("morphoFeeRecipient");
 
-  IMorpho morpho =
-    IMorpho(
-      deployCode(
-        "lib/morpho-blue/out/Morpho.sol/Morpho.json",
-        abi.encode(morphoOwner)
-      )
-    );
+  IMorpho morpho = IMorpho(deployCode("lib/morpho-blue/out/Morpho.sol/Morpho.json", abi.encode(morphoOwner)));
 
   OracleMock oracle = new OracleMock();
   IrmMock irm = new IrmMock();
@@ -121,16 +116,7 @@ contract BaseMorphoTest is BaseZaiTest {
 
   function _setupMetaMorpho() private {
     vault = IMetaMorpho(
-      address(
-        new MetaMorpho(
-          governance,
-          address(morpho),
-          1 weeks,
-          address(zai),
-          "MetaMorpho USDz Vault",
-          "MMV-ZAI"
-        )
-      )
+      address(new MetaMorpho(governance, address(morpho), 1 weeks, address(zai), "MetaMorpho USDz Vault", "MMV-ZAI"))
     );
 
     vm.startPrank(governance);

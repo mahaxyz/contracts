@@ -46,11 +46,7 @@ library PSMEventsLib {
    * @param newRate The new rate of ZAI/Collateral
    * @param sender The address that called the update function
    */
-  event RateUpdated(
-    uint256 indexed oldRate,
-    uint256 indexed newRate,
-    address sender
-  );
+  event RateUpdated(uint256 indexed oldRate, uint256 indexed newRate, address sender);
 
   /**
    * @notice Emitted when a user redeems ZAI
@@ -108,9 +104,5 @@ library PSMEventsLib {
    * @param _oldFeeDestination The old fee destination
    * @param sender The address that called the update function
    */
-  event FeeDestinationUpdated(
-    address indexed _newFeeDestination,
-    address indexed _oldFeeDestination,
-    address sender
-  );
+  event FeeDestinationUpdated(address indexed _newFeeDestination, address indexed _oldFeeDestination, address sender);
 }

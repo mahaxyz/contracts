@@ -27,21 +27,13 @@ contract OmnichainStakingToken is OmnichainStakingBase {
     address _distributor
   ) external reinitializer(5) {
     super.__OmnichainStakingBase_init(
-      "ZERO Voting Power",
-      "ZEROvp",
-      _locker,
-      _zeroToken,
-      _poolVoter,
-      _rewardsDuration,
-      _distributor
+      "ZERO Voting Power", "ZEROvp", _locker, _zeroToken, _poolVoter, _rewardsDuration, _distributor
     );
 
     _transferOwnership(_owner);
   }
 
-  function _getTokenPower(
-    uint256 amount
-  ) internal pure override returns (uint256 power) {
+  function _getTokenPower(uint256 amount) internal pure override returns (uint256 power) {
     power = amount;
   }
 }

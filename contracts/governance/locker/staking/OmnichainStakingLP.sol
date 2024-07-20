@@ -35,13 +35,7 @@ contract OmnichainStakingLP is OmnichainStakingBase {
     address _distributor
   ) external reinitializer(5) {
     super.__OmnichainStakingBase_init(
-      "ZERO LP Voting Power",
-      "ZEROvp-LP",
-      _locker,
-      _zeroToken,
-      _poolVoter,
-      _rewardsDuration,
-      _distributor
+      "ZERO LP Voting Power", "ZEROvp-LP", _locker, _zeroToken, _poolVoter, _rewardsDuration, _distributor
     );
 
     oracleLP = ILPOracle(_lpOracle);
@@ -58,9 +52,7 @@ contract OmnichainStakingLP is OmnichainStakingBase {
    * Calculate voting power based on how much the LP token is worth in ZERO terms
    * @param amount The LP token amount
    */
-  function _getTokenPower(
-    uint256 amount
-  ) internal view override returns (uint256 power) {
+  function _getTokenPower(uint256 amount) internal view override returns (uint256 power) {
     uint256 lpPrice = oracleLP.getPrice();
     uint256 zeroPrice = oracleZERO.latestAnswer().toUint256();
     require(zeroPrice > 0 && lpPrice > 0, "!price");

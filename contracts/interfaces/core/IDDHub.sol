@@ -53,9 +53,7 @@ interface IDDHub {
    * @return toSupply The amount of ZAI to supply
    * @return toWithdraw The amount of ZAI to withdraw
    */
-  function evaluatePoolAction(
-    IDDPool pool
-  ) external view returns (uint256 toSupply, uint256 toWithdraw);
+  function evaluatePoolAction(IDDPool pool) external view returns (uint256 toSupply, uint256 toWithdraw);
 
   /**
    * @notice The ZAI stablecoin contract
@@ -97,12 +95,7 @@ interface IDDHub {
    * @param _zai The ZAI stablecoin contract
    * @param _governance The governance contract for ownership
    */
-  function initialize(
-    address _feeCollector,
-    uint256 _globalDebtCeiling,
-    address _zai,
-    address _governance
-  ) external;
+  function initialize(address _feeCollector, uint256 _globalDebtCeiling, address _zai, address _governance) external;
 
   /**
    * @notice Registers a pool
@@ -110,11 +103,7 @@ interface IDDHub {
    * @param plan The plan to use for the pool
    * @param debtCeiling The debt ceiling for the pool
    */
-  function registerPool(
-    IDDPool pool,
-    IDDPlan plan,
-    uint256 debtCeiling
-  ) external;
+  function registerPool(IDDPool pool, IDDPlan plan, uint256 debtCeiling) external;
 
   /**
    * @notice Checks if a pool is registered

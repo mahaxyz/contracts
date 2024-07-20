@@ -16,5 +16,5 @@ pragma solidity 0.8.21;
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract UiHelper {
-  // todo
+// todo
 }

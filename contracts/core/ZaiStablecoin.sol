@@ -29,13 +29,7 @@ import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20P
  * @notice Represents the ZAI stablecoin. It is minted either by governance or by troves.
  * @dev This is a OFT compatible token.
  */
-contract ZaiStablecoin is
-  ERC20FlashMint,
-  ERC20Permit,
-  OFT,
-  AccessControlEnumerable,
-  IZaiStablecoin
-{
+contract ZaiStablecoin is ERC20FlashMint, ERC20Permit, OFT, AccessControlEnumerable, IZaiStablecoin {
   /// @inheritdoc IZaiStablecoin
   bytes32 public MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
@@ -47,11 +41,7 @@ contract ZaiStablecoin is
   constructor(
     address _layerZeroEndpoint,
     address _delegate
-  )
-    OFT("Zai Stablecoin", "USDz", _layerZeroEndpoint, _delegate)
-    Ownable(msg.sender)
-    ERC20Permit("Zai Stablecoin")
-  {
+  ) OFT("Zai Stablecoin", "USDz", _layerZeroEndpoint, _delegate) Ownable(msg.sender) ERC20Permit("Zai Stablecoin") {
     _mint(msg.sender, 1e18);
     _burn(msg.sender, 1e18);
     _grantRole(DEFAULT_ADMIN_ROLE, address(this));
@@ -73,18 +63,12 @@ contract ZaiStablecoin is
   }
 
   /// @inheritdoc IZaiStablecoin
-  function mint(
-    address _account,
-    uint256 _amount
-  ) external onlyRole(MANAGER_ROLE) {
+  function mint(address _account, uint256 _amount) external onlyRole(MANAGER_ROLE) {
     _mint(_account, _amount);
   }
 
   /// @inheritdoc IZaiStablecoin
-  function burn(
-    address _account,
-    uint256 _amount
-  ) external onlyRole(MANAGER_ROLE) {
+  function burn(address _account, uint256 _amount) external onlyRole(MANAGER_ROLE) {
     _burn(_account, _amount);
   }
 }

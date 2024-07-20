@@ -14,56 +14,21 @@
 pragma solidity 0.8.21;
 
 interface IPoolVoter {
-  event GaugeCreated(
-    address indexed gauge,
-    address creator,
-    address indexed bribe,
-    address indexed pool
-  );
+  event GaugeCreated(address indexed gauge, address creator, address indexed bribe, address indexed pool);
   event Voted(address indexed voter, uint256 tokenId, int256 weight);
   event Abstained(uint256 tokenId, int256 weight);
-  event Deposit(
-    address indexed lp,
-    address indexed gauge,
-    uint256 tokenId,
-    uint256 amount
-  );
-  event Withdraw(
-    address indexed lp,
-    address indexed gauge,
-    uint256 tokenId,
-    uint256 amount
-  );
-  event NotifyReward(
-    address indexed sender,
-    address indexed reward,
-    uint256 amount
-  );
-  event DistributeReward(
-    address indexed sender,
-    address indexed gauge,
-    uint256 amount
-  );
+  event Deposit(address indexed lp, address indexed gauge, uint256 tokenId, uint256 amount);
+  event Withdraw(address indexed lp, address indexed gauge, uint256 tokenId, uint256 amount);
+  event NotifyReward(address indexed sender, address indexed reward, uint256 amount);
+  event DistributeReward(address indexed sender, address indexed gauge, uint256 amount);
   event Attach(address indexed owner, address indexed gauge, uint256 tokenId);
   event Detach(address indexed owner, address indexed gauge, uint256 tokenId);
   event Whitelisted(address indexed whitelister, address indexed token);
 
-  event StakingTokenUpdated(
-    address indexed oldStaking,
-    address indexed newStaking
-  );
-  event RewardTokenUpdated(
-    address indexed oldReward,
-    address indexed newReward
-  );
-  event LzEndpointUpdated(
-    address indexed oldLzEndpoint,
-    address indexed newLzEndpoint
-  );
-  event MainnetEmissionsUpdated(
-    address indexed oldMainnetEmissions,
-    address indexed newMainnetEmissions
-  );
+  event StakingTokenUpdated(address indexed oldStaking, address indexed newStaking);
+  event RewardTokenUpdated(address indexed oldReward, address indexed newReward);
+  event LzEndpointUpdated(address indexed oldLzEndpoint, address indexed newLzEndpoint);
+  event MainnetEmissionsUpdated(address indexed oldMainnetEmissions, address indexed newMainnetEmissions);
 
   error ResetNotAllowed();
 
@@ -71,10 +36,7 @@ interface IPoolVoter {
 
   function poke(address _who) external;
 
-  function vote(
-    address[] calldata _poolVote,
-    uint256[] calldata _weights
-  ) external;
+  function vote(address[] calldata _poolVote, uint256[] calldata _weights) external;
 
   function length() external view returns (uint256);
 
