@@ -1,7 +1,7 @@
 # MAHA Contracts
 
 [![Foundry Build](https://github.com/mahaxyz/contracts/actions/workflows/foundry.yml/badge.svg)](https://github.com/mahaxyz/contracts/actions/workflows/foundry.yml)
-[![codecov](https://codecov.io/github/mahaxyz/contracts/graph/badge.svg?token=1F8SF7LANW)](https://codecov.io/github/mahaxyz/contracts)
+[![codecov](https://codecov.io/gh/mahaxyz/contracts/graph/badge.svg?token=N2WZ1HFD9P)](https://codecov.io/gh/mahaxyz/contracts)
 [![NPM Version](https://img.shields.io/npm/v/%40mahaxyz%2Fcontracts)](https://www.npmjs.com/package/@mahaxyz/contracts)
 
 This repo contains all the smart contracts code that is used for the MAHA.xyz protocol. The MAHA protocol governs ZAI. A decentralized stablecoin that allows users to execute leverage on assets within the ethersphere
