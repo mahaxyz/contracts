@@ -17,7 +17,6 @@ import "../../../lib/metamorpho/test/forge/helpers/BaseTest.sol";
 
 import {ZaiStablecoin} from "../../../contracts/core/ZaiStablecoin.sol";
 import {MockLayerZero} from "../../../contracts/tests/MockLayerZero.sol";
-// import {Morpho} from "../../../lib/metamorpho/lib/morpho-blue/src/Morpho.sol";
 import {MockERC20} from "../../../contracts/tests/MockERC20.sol";
 import {BaseZaiTest} from "./BaseZaiTest.t.sol";
 
@@ -28,33 +27,37 @@ contract BaseMorphoTest is BaseZaiTest {
   using MorphoBalancesLib for IMorpho;
   using MorphoLib for IMorpho;
 
-  address internal OWNER = makeAddr("Owner");
-  address internal SUPPLIER = makeAddr("Supplier");
-  address internal BORROWER = makeAddr("Borrower");
-  address internal REPAYER = makeAddr("Repayer");
-  address internal ONBEHALF = makeAddr("OnBehalf");
-  address internal RECEIVER = makeAddr("Receiver");
-  address internal ALLOCATOR = makeAddr("Allocator");
-  address internal CURATOR = makeAddr("Curator");
-  address internal GUARDIAN = makeAddr("Guardian");
-  address internal FEE_RECIPIENT = makeAddr("FeeRecipient");
-  address internal SKIM_RECIPIENT = makeAddr("SkimRecipient");
-  address internal MORPHO_OWNER = makeAddr("MorphoOwner");
-  address internal MORPHO_FEE_RECIPIENT = makeAddr("MorphoFeeRecipient");
+  address internal supplier = makeAddr("Supplier");
+  address internal borrower = makeAddr("Borrower");
+  address internal repayer = makeAddr("Repayer");
+  address internal onBehalf = makeAddr("OnBehalf");
+  address internal receiver = makeAddr("Receiver");
+  address internal allocator = makeAddr("Allocator");
+  address internal curator = makeAddr("Curator");
+  address internal guardian = makeAddr("Guardian");
+  address internal skimRecipient = makeAddr("SkimRecipient");
+  address internal morphoOwner = makeAddr("MorphoOwner");
+  address internal morphoFeeRecipient = makeAddr("MorphoFeeRecipient");
 
   IMetaMorpho vault;
 
-  IMorpho internal morpho;
+  IMorpho internal morpho =
+    IMorpho(
+      deployCode(
+        "lib/morpho-blue/out/Morpho.sol/Morpho.json",
+        abi.encode(morphoOwner)
+      )
+    );
   OracleMock internal oracle = new OracleMock();
   IrmMock internal irm = new IrmMock();
 
   MarketParams[] internal allMarkets;
   MarketParams internal idleParams;
 
-  function _setupToken() internal {
-    MockLayerZero lz = new MockLayerZero();
-    zai = new ZaiStablecoin(address(lz), address(0x1));
-    usdc = new MockERC20("USD Coin", "USDC", 8);
+  function setUpMorpho() public {
+    setUpBase();
+    _setupMorpoBlue();
+    _setupMetaMorpho();
   }
 
   function _setupMorpoBlueMarkets() internal {
@@ -66,58 +69,10 @@ contract BaseMorphoTest is BaseZaiTest {
 
     irm.setApr(0.5 ether); // 50%.
 
-    idleParams = MarketParams({
-      loanToken: address(zai),
-      collateralToken: address(0),
-      oracle: address(0),
-      irm: address(irm),
-      lltv: 0
-    });
-
-    vm.startPrank(MORPHO_OWNER);
-    morpho.enableIrm(address(irm));
-    morpho.setFeeRecipient(MORPHO_FEE_RECIPIENT);
-
-    morpho.enableLltv(0);
-    vm.stopPrank();
-
-    morpho.createMarket(idleParams);
-
-    for (uint256 i; i < NB_MARKETS; ++i) {
-      uint256 lltv = 0.8 ether / (i + 1);
-
-      MarketParams memory marketParams = MarketParams({
-        loanToken: address(zai),
-        collateralToken: address(usdc),
-        oracle: address(oracle),
-        irm: address(irm),
-        lltv: lltv
-      });
-
-      vm.prank(MORPHO_OWNER);
-      morpho.enableLltv(lltv);
-
-      morpho.createMarket(marketParams);
-
-      allMarkets.push(marketParams);
-    }
-
-    allMarkets.push(idleParams); // Must be pushed last.
-
-    vm.startPrank(SUPPLIER);
-    zai.approve(address(morpho), type(uint256).max);
-    usdc.approve(address(morpho), type(uint256).max);
-    vm.stopPrank();
-
-    vm.prank(BORROWER);
-    zai.approve(address(morpho), type(uint256).max);
-
-    vm.prank(REPAYER);
-    usdc.approve(address(morpho), type(uint256).max);
+    _setupMorpoBlue();
   }
 
   function _setupMorpoBlue() internal {
-    // morpho = IMorpho(new Morpho(MORPHO_OWNER));
     idleParams = MarketParams({
       loanToken: address(zai),
       collateralToken: address(0),
@@ -126,9 +81,9 @@ contract BaseMorphoTest is BaseZaiTest {
       lltv: 0
     });
 
-    vm.startPrank(MORPHO_OWNER);
+    vm.startPrank(morphoOwner);
     morpho.enableIrm(address(irm));
-    morpho.setFeeRecipient(MORPHO_FEE_RECIPIENT);
+    morpho.setFeeRecipient(morphoFeeRecipient);
 
     morpho.enableLltv(0);
     vm.stopPrank();
@@ -140,13 +95,13 @@ contract BaseMorphoTest is BaseZaiTest {
 
       MarketParams memory marketParams = MarketParams({
         loanToken: address(zai),
-        collateralToken: address(usdc),
+        collateralToken: address(weth),
         oracle: address(oracle),
         irm: address(irm),
         lltv: lltv
       });
 
-      vm.prank(MORPHO_OWNER);
+      vm.prank(morphoOwner);
       morpho.enableLltv(lltv);
       morpho.createMarket(marketParams);
 
@@ -155,15 +110,15 @@ contract BaseMorphoTest is BaseZaiTest {
 
     allMarkets.push(idleParams); // Must be pushed last.
 
-    vm.startPrank(SUPPLIER);
+    vm.startPrank(supplier);
     zai.approve(address(morpho), type(uint256).max);
-    usdc.approve(address(morpho), type(uint256).max);
+    weth.approve(address(morpho), type(uint256).max);
     vm.stopPrank();
 
-    vm.prank(BORROWER);
-    usdc.approve(address(morpho), type(uint256).max);
+    vm.prank(borrower);
+    weth.approve(address(morpho), type(uint256).max);
 
-    vm.prank(REPAYER);
+    vm.prank(repayer);
     zai.approve(address(morpho), type(uint256).max);
   }
 
@@ -171,7 +126,7 @@ contract BaseMorphoTest is BaseZaiTest {
     vault = IMetaMorpho(
       address(
         new MetaMorpho(
-          OWNER,
+          governance,
           address(morpho),
           1 weeks,
           address(zai),
@@ -181,44 +136,43 @@ contract BaseMorphoTest is BaseZaiTest {
       )
     );
 
-    vm.startPrank(OWNER);
-    vault.setCurator(CURATOR);
-    vault.setIsAllocator(ALLOCATOR, true);
-    vault.setFeeRecipient(FEE_RECIPIENT);
-    vault.setSkimRecipient(SKIM_RECIPIENT);
+    vm.startPrank(governance);
+    vault.setCurator(curator);
+    vault.setIsAllocator(allocator, true);
+    vault.setFeeRecipient(feeDestination);
+    vault.setSkimRecipient(skimRecipient);
     vm.stopPrank();
 
     _setCap(idleParams, type(uint184).max);
 
     zai.approve(address(vault), type(uint256).max);
-    usdc.approve(address(vault), type(uint256).max);
+    weth.approve(address(vault), type(uint256).max);
 
-    vm.startPrank(SUPPLIER);
+    vm.startPrank(supplier);
     zai.approve(address(vault), type(uint256).max);
-    usdc.approve(address(vault), type(uint256).max);
+    weth.approve(address(vault), type(uint256).max);
     vm.stopPrank();
 
-    vm.startPrank(ONBEHALF);
+    vm.startPrank(onBehalf);
     zai.approve(address(vault), type(uint256).max);
-    usdc.approve(address(vault), type(uint256).max);
+    weth.approve(address(vault), type(uint256).max);
     vm.stopPrank();
 
     for (uint256 i; i < NB_MARKETS; ++i) {
       MarketParams memory marketParams = allMarkets[i];
 
       // Create some debt on the market to accrue interest.
+      zai.mint(supplier, MAX_TEST_ASSETS);
 
-      zai.mint(SUPPLIER, MAX_TEST_ASSETS);
-
-      vm.prank(SUPPLIER);
-      morpho.supply(marketParams, MAX_TEST_ASSETS, 0, ONBEHALF, hex"");
+      vm.prank(supplier);
+      morpho.supply(marketParams, MAX_TEST_ASSETS, 0, onBehalf, hex"");
 
       uint256 collateral = uint256(MAX_TEST_ASSETS).wDivUp(marketParams.lltv);
-      usdc.mint(BORROWER, collateral);
+      weth.mint(borrower, collateral);
 
-      vm.startPrank(BORROWER);
-      morpho.supplyCollateral(marketParams, collateral, BORROWER, hex"");
-      morpho.borrow(marketParams, MAX_TEST_ASSETS, 0, BORROWER, BORROWER);
+      vm.startPrank(borrower);
+      morpho.supplyCollateral(marketParams, collateral, borrower, hex"");
+      morpho.borrow(marketParams, MAX_TEST_ASSETS, 0, borrower, borrower);
       vm.stopPrank();
     }
 
@@ -226,66 +180,8 @@ contract BaseMorphoTest is BaseZaiTest {
     _sortSupplyQueueIdleLast();
   }
 
-  function setUpMorpho() public {
-    _setupToken();
-    _setupMorpoBlue();
-    _setupMorpoBlueMarkets();
-    _setupMetaMorpho();
-  }
-
   function _idle() internal view returns (uint256) {
     return morpho.expectedSupplyAssets(idleParams, address(vault));
-  }
-
-  function _setTimelock(uint256 newTimelock) internal {
-    uint256 timelock = vault.timelock();
-    if (newTimelock == timelock) return;
-
-    // block.timestamp defaults to 1 which may lead to an unrealistic state: block.timestamp < timelock.
-    if (block.timestamp < timelock) vm.warp(block.timestamp + timelock);
-
-    PendingUint192 memory pendingTimelock = vault.pendingTimelock();
-    if (pendingTimelock.validAt == 0 || newTimelock != pendingTimelock.value) {
-      vm.prank(OWNER);
-      vault.submitTimelock(newTimelock);
-    }
-
-    if (newTimelock > timelock) return;
-
-    vm.warp(block.timestamp + timelock);
-
-    vault.acceptTimelock();
-
-    assertEq(vault.timelock(), newTimelock, "_setTimelock");
-  }
-
-  function _setGuardian(address newGuardian) internal {
-    address guardian = vault.guardian();
-    if (newGuardian == guardian) return;
-
-    PendingAddress memory pendingGuardian = vault.pendingGuardian();
-    if (pendingGuardian.validAt == 0 || newGuardian != pendingGuardian.value) {
-      vm.prank(OWNER);
-      vault.submitGuardian(newGuardian);
-    }
-
-    if (guardian == address(0)) return;
-
-    vm.warp(block.timestamp + vault.timelock());
-
-    vault.acceptGuardian();
-
-    assertEq(vault.guardian(), newGuardian, "_setGuardian");
-  }
-
-  function _setFee(uint256 newFee) internal {
-    uint256 fee = vault.fee();
-    if (newFee == fee) return;
-
-    vm.prank(OWNER);
-    vault.setFee(newFee);
-
-    assertEq(vault.fee(), newFee, "_setFee");
   }
 
   function _setCap(MarketParams memory marketParams, uint256 newCap) internal {
@@ -296,7 +192,7 @@ contract BaseMorphoTest is BaseZaiTest {
 
     PendingUint192 memory pendingCap = vault.pendingCap(id);
     if (pendingCap.validAt == 0 || newCap != pendingCap.value) {
-      vm.prank(CURATOR);
+      vm.prank(curator);
       vault.submitCap(marketParams, newCap);
     }
 
@@ -315,7 +211,7 @@ contract BaseMorphoTest is BaseZaiTest {
           newSupplyQueue[k] = vault.supplyQueue(k);
         }
         newSupplyQueue[vault.supplyQueueLength()] = id;
-        vm.prank(ALLOCATOR);
+        vm.prank(allocator);
         vault.setSupplyQueue(newSupplyQueue);
       }
     }
@@ -340,7 +236,7 @@ contract BaseMorphoTest is BaseZaiTest {
       mstore(supplyQueue, supplyIndex)
     }
 
-    vm.prank(ALLOCATOR);
+    vm.prank(allocator);
     vault.setSupplyQueue(supplyQueue);
   }
 }

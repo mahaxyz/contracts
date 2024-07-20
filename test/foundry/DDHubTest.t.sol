@@ -44,7 +44,7 @@ contract DDHubTest is BaseMorphoTest {
     zai.grantManagerRole(address(hub));
   }
 
-  function test_values() public {
+  function test_values() public view {
     assertEq(address(hub.zai()), address(zai), "!zai");
     assertEq(hub.feeCollector(), feeDestination, "!feeDestination");
   }

@@ -26,11 +26,11 @@ abstract contract BaseZaiTest is Test {
   MockERC20 public dai;
   MockERC20 public weth;
 
-  address governance = address(0x1);
-  address shark = address(0x2);
-  address whale = address(0x3);
-  address ant = address(0x4);
-  address feeDestination = address(0x5);
+  address governance = makeAddr("governance");
+  address shark = makeAddr("shark");
+  address whale = makeAddr("whale");
+  address ant = makeAddr("ant");
+  address feeDestination = makeAddr("feeDestination");
 
   function setUpBase() internal {
     MockLayerZero lz = new MockLayerZero();
@@ -39,5 +39,7 @@ abstract contract BaseZaiTest is Test {
     usdc = new MockERC20("USD Coin", "USDC", 8);
     dai = new MockERC20("DAI", "DAI", 18);
     weth = new MockERC20("Wrapped Ether", "WETH", 18);
+
+    zai.grantManagerRole(address(this));
   }
 }
