@@ -179,13 +179,13 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
    */
   function _wipe(IDDPool pool) internal {
     uint256 amount = pool.maxWithdraw();
-    if (amount > 0) {
-      pool.withdraw(amount);
-      zai.burn(address(this), amount);
-      emit DDEventsLib.Unwind(pool, amount);
-    } else {
+    if (amount == 0) {
       revert NoOp(pool);
     }
+
+    pool.withdraw(amount);
+    zai.burn(address(this), amount);
+    emit DDEventsLib.BurnDebt(pool, amount);
   }
 
   function _sweepFees(IDDPool pool) internal {
@@ -221,14 +221,14 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
       pool.withdraw(toWithdraw);
       info.debt -= toWithdraw;
       zai.burn(address(this), toWithdraw);
-      emit DDEventsLib.Unwind(pool, toWithdraw);
+      emit DDEventsLib.BurnDebt(pool, toWithdraw);
     } else if (toSupply > 0) {
       require(info.debt + toSupply <= Constants.SAFEMAX, "D3MHub/wind-overflow");
 
       info.debt += toSupply;
       zai.mint(address(this), toSupply);
       pool.deposit(toSupply);
-      emit DDEventsLib.Wind(pool, toSupply);
+      emit DDEventsLib.MintDebt(pool, toSupply);
     } else {
       revert NoOp(pool);
     }

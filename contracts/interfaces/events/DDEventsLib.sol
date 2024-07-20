@@ -24,7 +24,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  */
 library DDEventsLib {
   // --- Events ---
-  event Wind(IDDPool indexed pool, uint256 amt);
-  event Unwind(IDDPool indexed pool, uint256 amt);
+  event BurnDebt(IDDPool indexed pool, uint256 amt);
+  event MintDebt(IDDPool indexed pool, uint256 amt);
   event Fees(IDDPool indexed pool, uint256 amt);
 }

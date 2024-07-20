@@ -20,6 +20,7 @@ import {DDMetaMorpho, IDDPool} from "../../contracts/core/direct-deposit/pools/D
 
 import {BaseMorphoTest} from "./base/BaseMorphoTest.t.sol";
 
+// todo test multiple pools
 // todo test multiple hubs
 
 contract DDHubTest is BaseMorphoTest {
@@ -209,5 +210,89 @@ contract DDHubTest is BaseMorphoTest {
     hub.exec(pool);
 
     assertEq(zai.balanceOf(address(morpho)), 100 ether);
+  }
+
+  function test_showMintZaiAfterTargetAssetsIncreased() public {
+    _setupPool();
+
+    // zai mint event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(0), address(hub), 1000 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 1000 ether);
+
+    vm.startPrank(governance);
+    plan.setTargetAssets(1500 ether);
+    hub.setGlobalDebtCeiling(2000 ether);
+    hub.setDebtCeiling(pool, 2000 ether);
+    vm.stopPrank();
+
+    // zai mint event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(0), address(hub), 500 ether + 1);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 1500 ether + 1);
+  }
+
+  function test_showMintZaiAfterPoolDebtIncreased() public {
+    _setupPool();
+
+    // zai mint event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(0), address(hub), 1000 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 1000 ether);
+
+    vm.startPrank(governance);
+    plan.setTargetAssets(2000 ether);
+    hub.setGlobalDebtCeiling(2000 ether);
+    hub.setDebtCeiling(pool, 1500 ether);
+    vm.stopPrank();
+
+    // zai mint event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(0), address(hub), 500 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 1500 ether);
+  }
+
+  function test_showMintZaiAfterGlobalDebtIncreased() public {
+    _setupPool();
+
+    // zai mint event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(0), address(hub), 1000 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 1000 ether);
+
+    vm.startPrank(governance);
+    plan.setTargetAssets(2000 ether);
+    hub.setGlobalDebtCeiling(1500 ether);
+    hub.setDebtCeiling(pool, 2000 ether);
+    vm.stopPrank();
+
+    // zai mint event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(0), address(hub), 500 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 1500 ether);
   }
 }
