@@ -20,6 +20,8 @@ import {Test, console} from "../../../lib/forge-std/src/Test.sol";
 import {MockERC20} from "../../../contracts/tests/MockERC20.sol";
 
 abstract contract BaseZaiTest is Test {
+  event Transfer(address indexed from, address indexed to, uint256 value);
+
   ZaiStablecoin public zai;
 
   MockERC20 public usdc;
@@ -34,7 +36,8 @@ abstract contract BaseZaiTest is Test {
 
   function _setUpBase() internal {
     MockLayerZero lz = new MockLayerZero();
-    zai = new ZaiStablecoin(address(lz), address(0x1));
+
+    zai = new ZaiStablecoin(address(lz), governance);
 
     usdc = new MockERC20("USD Coin", "USDC", 8);
     dai = new MockERC20("DAI", "DAI", 18);
@@ -46,5 +49,6 @@ abstract contract BaseZaiTest is Test {
     vm.label(address(weth), "weth");
 
     zai.grantManagerRole(address(this));
+    zai.grantManagerRole(governance);
   }
 }

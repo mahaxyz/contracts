@@ -24,8 +24,6 @@ import {BaseMorphoTest} from "./BaseMorphoTest.sol";
 // todo test multiple hubs
 
 abstract contract BaseDDHubTest is BaseMorphoTest {
-  event Transfer(address indexed from, address indexed to, uint256 value);
-
   DDHub internal hub;
   DDMetaMorpho internal pool;
   DDOperatorPlan internal plan;

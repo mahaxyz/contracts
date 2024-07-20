@@ -8,6 +8,7 @@
     "clean": "rimraf artifacts cache coverage",
     "docs": "hardhat docgen",
     "coverage": "yarn build:blue && forge coverage --report lcov",
+    "coverage:html": "yarn coverage && genhtml lcov.info --output-dir coverage --rc lcov_branch_coverage=1 --ignore-errors corrupt,corrupt --ignore-errors inconsistent",
     "test": "yarn test:forge",
     "compile": "hardhat compile && forge build",
     "prepublishOnly": "npm run compile && npm run docs && npm run test"
