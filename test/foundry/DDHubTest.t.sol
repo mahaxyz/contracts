@@ -94,4 +94,16 @@ contract DDHubTest is BaseMorphoTest {
 
     assertEq(zai.balanceOf(address(morpho)), 900 ether);
   }
+
+  function test_shouldMintZaiToGlobalDebtLimit() public {
+    _setupPool();
+
+    vm.prank(governance);
+    hub.setGlobalDebtCeiling(10 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 10 ether);
+  }
 }
