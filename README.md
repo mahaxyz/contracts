@@ -6,14 +6,6 @@
 
 This repo contains all the smart contracts code that is used for the MAHA.xyz protocol. The MAHA protocol governs ZAI. A decentralized stablecoin that allows users to execute leverage on assets within the ethersphere
 
-The ZAI direct deposit and peg stability modules are written in less than 600 lines of code.
-
-## Documentation
-
-- [docs.maha.xyz](https://docs.maha.xyz/) - Contains a high level overview of the entire protocol including architecture documentation.
-- [wiki pages](https://github.com/mahaxyz/contracts/wiki) - The wiki pages contains the technical documentation for each contract and what they do.
-- [test folders](./test) - The unit tests for the protocol are also documented and can be browsed through for insights about how each test works.
-
 ## Tests
 
 There are two test suites that this repository uses.
@@ -40,6 +32,16 @@ The below command is an example of how to execute the [deploy-zai.ts](./deploy/d
 ```
 npx hardhat deploy --tags ZAIStablecoin --network mainnet
 ```
+
+## Documentation
+
+![data-flow](./dataflow-simple.png)
+
+The ZAI stablecoin is very minimal. With the core modules (direct deposit and peg stability modules) itself consisting of just 400 lines of code. The crux of the stablecoin is two modules known as the [Peg-stability Module](./contracts/core/psm/) and the [Direct Deposit Module](./contracts/core/direct-deposit/). The following links give more information about the various components and how they work.
+
+- [docs.maha.xyz](https://docs.maha.xyz/) - Contains a high level overview of the entire protocol including architecture documentation.
+- [wiki pages](https://github.com/mahaxyz/contracts/wiki) - The wiki pages contains the technical documentation for each contract and what they do.
+- [test folders](./test) - The unit tests for the protocol are also documented and can be browsed through for insights about how each test works.
 
 ---
 
