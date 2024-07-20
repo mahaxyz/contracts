@@ -4,7 +4,19 @@
 [![codecov](https://codecov.io/gh/mahaxyz/contracts/graph/badge.svg?token=N2WZ1HFD9P)](https://codecov.io/gh/mahaxyz/contracts)
 [![NPM Version](https://img.shields.io/npm/v/%40mahaxyz%2Fcontracts)](https://www.npmjs.com/package/@mahaxyz/contracts)
 
-This repo contains all the smart contracts code that is used for the MAHA.xyz protocol. The MAHA protocol governs ZAI. A decentralized stablecoin that allows users to execute leverage on assets within the ethersphere
+This repo contains all the smart contracts code that is used for the MAHA.xyz protocol. The MAHA protocol governs ZAI. A decentralized stablecoin that allows users to execute leverage on assets within the ethersphere.
+
+To use the contracts in your solidity project or integrate with your frontend (using ethers v6), you can use the following npm package.
+
+```
+yarn add --dev @mahaxyz/contracts
+```
+
+or
+
+```
+npm install --save-dev @mahaxyz/contracts
+```
 
 ## Tests
 
