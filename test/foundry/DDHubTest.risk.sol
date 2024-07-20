@@ -13,20 +13,33 @@
 
 pragma solidity 0.8.21;
 
-import {IDDHub} from "../core/IDDHub.sol";
-import {IDDPlan} from "../core/IDDPlan.sol";
-import {IDDPool} from "../core/IDDPool.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./base/BaseDDHubTest.sol";
 
-/**
- * @title DDEventsLib
- * @author maha.xyz
- * @notice This library defines events for the Direct Deposit contract
- */
-library DDEventsLib {
-  // --- Events ---
-  event BurnDebt(IDDPool indexed pool, uint256 amt);
-  event MintDebt(IDDPool indexed pool, uint256 amt);
-  event Fees(IDDPool indexed pool, uint256 amt);
-  event PoolInfoUpdated(IDDPool indexed pool, IDDHub.PoolInfo info);
+contract DDHubTestSimple is BaseDDHubTest {
+  function setUp() public {
+    _setUpHub();
+    _setupPool();
+  }
+
+  function test_reduceDebtCeiling() public {
+    IDDHub.PoolInfo memory poolInfo = hub.poolInfos(pool);
+    assertEq(poolInfo.debtCeiling, 1000 ether);
+
+    vm.prank(riskManager);
+    hub.reduceDebtCeiling(pool, 300 ether);
+
+    poolInfo = hub.poolInfos(pool);
+    assertEq(poolInfo.debtCeiling, 700 ether);
+  }
+
+  function test_shutdownPool() public {
+    IDDHub.PoolInfo memory poolInfo = hub.poolInfos(pool);
+    assertEq(poolInfo.isLive, true);
+
+    vm.prank(riskManager);
+    hub.shutdownPool(pool);
+
+    poolInfo = hub.poolInfos(pool);
+    assertEq(poolInfo.isLive, false);
+  }
 }

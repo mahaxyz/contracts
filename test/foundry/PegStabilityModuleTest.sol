@@ -15,7 +15,7 @@ pragma solidity 0.8.21;
 
 import {ZaiStablecoin} from "../../contracts/core/ZaiStablecoin.sol";
 import {PegStabilityModule} from "../../contracts/core/psm/PegStabilityModule.sol";
-import {BaseZaiTest} from "./base/BaseZaiTest.t.sol";
+import {BaseZaiTest} from "./base/BaseZaiTest.sol";
 
 contract PegStabilityModuleTest is BaseZaiTest {
   PegStabilityModule public psmUSDC;

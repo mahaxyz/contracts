@@ -93,21 +93,22 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
   /// @inheritdoc IDDHub
   function registerPool(IDDPool pool, IDDPlan plan, uint256 debtCeiling) external onlyRole(DEFAULT_ADMIN_ROLE) {
     PoolInfo memory info = PoolInfo({plan: plan, isLive: true, debt: 0, debtCeiling: debtCeiling});
-    _poolInfos[pool] = info;
-
+    _updatePoolInfo(pool, info);
     zai.approve(address(pool), type(uint256).max);
   }
 
   /// @inheritdoc IDDHub
   function reduceDebtCeiling(IDDPool pool, uint256 amountToReduce) external onlyRole(RISK_ROLE) {
-    PoolInfo storage info = _poolInfos[pool];
+    PoolInfo memory info = _poolInfos[pool];
     info.debtCeiling -= amountToReduce;
+    _updatePoolInfo(pool, info);
   }
 
   /// @inheritdoc IDDHub
   function setDebtCeiling(IDDPool pool, uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
-    PoolInfo storage info = _poolInfos[pool];
+    PoolInfo memory info = _poolInfos[pool];
     info.debtCeiling = amount;
+    _updatePoolInfo(pool, info);
   }
 
   /// @inheritdoc IDDHub
@@ -122,8 +123,13 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
 
   /// @inheritdoc IDDHub
   function shutdownPool(IDDPool pool) external onlyRole(RISK_ROLE) {
-    PoolInfo storage info = _poolInfos[pool];
+    PoolInfo memory info = _poolInfos[pool];
     info.isLive = false;
+    _updatePoolInfo(pool, info);
+  }
+
+  function sweepFees(IDDPool pool) external {
+    _sweepFees(pool);
   }
 
   /// @inheritdoc IDDHub
@@ -177,7 +183,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
    * @notice Unwinds a pool. Withdraws all ZAI (or max withdrawable ZAI) and burns it to the ground.
    * @param pool The pool to unwind for
    */
-  function _wipe(IDDPool pool) internal {
+  function _wipe(IDDPool pool) private {
     uint256 amount = pool.maxWithdraw();
     if (amount == 0) {
       revert NoOp(pool);
@@ -188,7 +194,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     emit DDEventsLib.BurnDebt(pool, amount);
   }
 
-  function _sweepFees(IDDPool pool) internal {
+  function _sweepFees(IDDPool pool) private {
     PoolInfo memory info = _poolInfos[pool];
     uint256 balanceBefore = pool.assetBalance();
 
@@ -210,7 +216,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     emit DDEventsLib.Fees(pool, fees);
   }
 
-  function _exec(IDDPool pool, PoolInfo memory info) internal {
+  function _exec(IDDPool pool, PoolInfo memory info) private {
     // collect all the fees
     _sweepFees(pool);
 
@@ -233,10 +239,11 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
       revert NoOp(pool);
     }
 
-    _poolInfos[pool] = info;
+    _updatePoolInfo(pool, info);
   }
 
-  function sweepFees(IDDPool pool) external {
-    _sweepFees(pool);
+  function _updatePoolInfo(IDDPool _pool, PoolInfo memory _info) private {
+    _poolInfos[_pool] = _info;
+    emit DDEventsLib.PoolInfoUpdated(_pool, _info);
   }
 }

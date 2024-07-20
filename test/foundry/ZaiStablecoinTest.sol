@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {BaseZaiTest} from "./base/BaseZaiTest.t.sol";
+import {BaseZaiTest} from "./base/BaseZaiTest.sol";
 
 contract ZaiStablecoinTest is BaseZaiTest {
   function setUp() public {

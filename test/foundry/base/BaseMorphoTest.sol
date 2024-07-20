@@ -19,7 +19,7 @@ import {ZaiStablecoin} from "../../../contracts/core/ZaiStablecoin.sol";
 
 import {MockERC20} from "../../../contracts/tests/MockERC20.sol";
 import {MockLayerZero} from "../../../contracts/tests/MockLayerZero.sol";
-import {BaseZaiTest} from "./BaseZaiTest.t.sol";
+import {BaseZaiTest} from "./BaseZaiTest.sol";
 
 contract BaseMorphoTest is BaseZaiTest {
   using MarketParamsLib for MarketParams;
