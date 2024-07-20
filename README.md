@@ -37,7 +37,9 @@ npx hardhat deploy --tags ZAIStablecoin --network mainnet
 
 ![data-flow](./dataflow-simple.png)
 
-The ZAI stablecoin is very minimal. With the core modules (direct deposit and peg stability modules) itself consisting of just 400 lines of code. The crux of the stablecoin is two modules known as the [Peg-stability Module](./contracts/core/psm/) and the [Direct Deposit Module](./contracts/core/direct-deposit/). The following links give more information about the various components and how they work.
+The ZAI stablecoin is incredibly minimal. With the [core](./contracts/core/) modules written in under 400 lines of code. At the crux of the stablecoin is the [Peg-stability Module](./contracts/core/psm/) and the [Direct Deposit Module](./contracts/core/direct-deposit/). These module control the stability and the growth of ZAI.
+
+The following links give more information about the various components and go more in-depth.
 
 - [docs.maha.xyz](https://docs.maha.xyz/) - Contains a high level overview of the entire protocol including architecture documentation.
 - [wiki pages](https://github.com/mahaxyz/contracts/wiki) - The wiki pages contains the technical documentation for each contract and what they do.
