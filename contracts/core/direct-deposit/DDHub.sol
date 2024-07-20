@@ -22,6 +22,7 @@ import {Constants} from "./Constants.sol";
 import {AccessControlEnumerableUpgradeable} from
   "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 
+import "../../../lib/forge-std/src/console.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
@@ -189,20 +190,19 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
 
   function _sweepFees(IDDPool pool) internal {
     PoolInfo memory info = _poolInfos[pool];
-    uint256 balance = pool.assetBalance();
-    uint256 balanceBefore = zai.balanceOf(address(pool));
+    uint256 balanceBefore = pool.assetBalance();
 
-    require(balance >= info.debt, "invaraint balance >= debt");
+    require(balanceBefore + 1 wei >= info.debt, "invaraint balance >= debt");
 
     // calculate fees
-    if (balance <= info.debt) return;
-    uint256 fees = balance - info.debt;
+    if (balanceBefore <= info.debt) return;
+    uint256 fees = balanceBefore - info.debt;
 
     // withdraw the generated fees
     pool.withdraw(fees);
 
     // invariant check
-    uint256 balanceAfter = zai.balanceOf(address(pool));
+    uint256 balanceAfter = pool.assetBalance();
     require(fees == balanceBefore - balanceAfter, "invaraint fees");
 
     // send the fees to the fee collector
@@ -219,16 +219,24 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
 
     if (toWithdraw > 0) {
       pool.withdraw(toWithdraw);
+      info.debt -= toWithdraw;
       zai.burn(address(this), toWithdraw);
       emit DDEventsLib.Unwind(pool, toWithdraw);
     } else if (toSupply > 0) {
       require(info.debt + toSupply <= Constants.SAFEMAX, "D3MHub/wind-overflow");
 
+      info.debt += toSupply;
       zai.mint(address(this), toSupply);
       pool.deposit(toSupply);
       emit DDEventsLib.Wind(pool, toSupply);
     } else {
       revert NoOp(pool);
     }
+
+    _poolInfos[pool] = info;
+  }
+
+  function sweepFees(IDDPool pool) external {
+    _sweepFees(pool);
   }
 }

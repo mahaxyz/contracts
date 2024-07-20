@@ -7,7 +7,7 @@
     "test:forge": "yarn build:blue && FOUNDRY_PROFILE=test forge test",
     "clean": "rimraf artifacts cache coverage",
     "docs": "hardhat docgen",
-    "coverage": "forge coverage --report lcov",
+    "coverage": "yarn build:blue && forge coverage --report lcov",
     "test": "yarn test:forge",
     "compile": "hardhat compile && forge build",
     "prepublishOnly": "npm run compile && npm run docs && npm run test"

@@ -13,10 +13,10 @@
 
 pragma solidity 0.8.21;
 
+import {IMetaMorpho} from "../../../../lib/metamorpho/src/interfaces/IMetaMorpho.sol";
 import {DDBase, IDDPool} from "./DDBase.sol";
 import {AccessControlEnumerableUpgradeable} from
   "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
-import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
 /**
  * @title MetaMorpho Direct Deposit Module
@@ -24,13 +24,13 @@ import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
  * @notice A direct deposit module that manages a morpho vault
  */
 contract DDMetaMorpho is AccessControlEnumerableUpgradeable, DDBase {
-  IERC4626 public vault;
+  IMetaMorpho public vault;
 
   function initialize(address _hub, address _zai, address _vault) external reinitializer(1) {
     __DDBBase_init(_zai, _hub);
     __AccessControl_init();
 
-    vault = IERC4626(_vault);
+    vault = IMetaMorpho(_vault);
 
     require(_hub != address(0), "DDMetaMorpho/zero-address");
     require(_zai != address(0), "DDMetaMorpho/zero-address");

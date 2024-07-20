@@ -23,6 +23,8 @@ import {BaseMorphoTest} from "./base/BaseMorphoTest.t.sol";
 // todo test multiple hubs
 
 contract DDHubTest is BaseMorphoTest {
+  event Transfer(address indexed from, address indexed to, uint256 value);
+
   DDHub hub;
   DDMetaMorpho pool;
   DDOperatorPlan plan;
@@ -45,10 +47,6 @@ contract DDHubTest is BaseMorphoTest {
     pool = new DDMetaMorpho();
     pool.initialize(address(hub), address(zai), address(vault));
 
-    vm.label(address(hub), "DDHub");
-    vm.label(address(pool), "DDOperatorPlan");
-    vm.label(address(plan), "DDMetaMorpho");
-
     zai.grantManagerRole(address(hub));
 
     bytes32 executorRole = hub.EXECUTOR_ROLE();
@@ -59,6 +57,10 @@ contract DDHubTest is BaseMorphoTest {
 
     vm.prank(governance);
     plan.grantRole(opeartorRole, governance);
+
+    vm.label(address(hub), "DDHub");
+    vm.label(address(pool), "DDOperatorPlan");
+    vm.label(address(plan), "DDMetaMorpho");
   }
 
   function _setupPool() internal {
@@ -92,6 +94,10 @@ contract DDHubTest is BaseMorphoTest {
     vm.prank(governance);
     plan.setTargetAssets(900 ether);
 
+    // zai mint event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(0), address(hub), 900 ether);
+
     vm.prank(executor);
     hub.exec(pool);
 
@@ -104,6 +110,10 @@ contract DDHubTest is BaseMorphoTest {
     vm.prank(governance);
     hub.setGlobalDebtCeiling(10 ether);
 
+    // zai mint event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(0), address(hub), 10 ether);
+
     vm.prank(executor);
     hub.exec(pool);
 
@@ -115,6 +125,35 @@ contract DDHubTest is BaseMorphoTest {
 
     vm.prank(governance);
     hub.setDebtCeiling(pool, 100 ether);
+
+    // zai mint event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(0), address(hub), 100 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 100 ether);
+  }
+
+  function test_shouldWithdrawZaiAfterTargetAssetsReduced() public {
+    _setupPool();
+
+    // zai mint event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(0), address(hub), 1000 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 1000 ether);
+
+    vm.prank(governance);
+    hub.setDebtCeiling(pool, 100 ether);
+
+    // zai burn event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(hub), address(0), 900 ether);
 
     vm.prank(executor);
     hub.exec(pool);
