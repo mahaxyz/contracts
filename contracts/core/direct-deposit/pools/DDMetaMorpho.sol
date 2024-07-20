@@ -45,6 +45,7 @@ contract DDMetaMorpho is AccessControlEnumerableUpgradeable, DDBase {
   /// https://github.com/morpho-org/metamorpho/blob/fcf3c41d9c113514c9af0bbf6298e88a1060b220/src/MetaMorpho.sol#L531
   /// @inheritdoc IDDPool
   function deposit(uint256 wad) external override onlyHub {
+    zai.transferFrom(msg.sender, address(this), wad);
     vault.deposit(wad, address(this));
   }
 

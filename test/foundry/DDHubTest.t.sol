@@ -20,10 +20,14 @@ import {DDMetaMorpho, IDDPool} from "../../contracts/core/direct-deposit/pools/D
 
 import {BaseMorphoTest} from "./base/BaseMorphoTest.t.sol";
 
+// todo test multiple hubs
+
 contract DDHubTest is BaseMorphoTest {
-  DDHub public hub;
-  DDMetaMorpho public samplePool;
-  IDDPlan public samplePlan;
+  DDHub hub;
+  DDMetaMorpho pool;
+  DDOperatorPlan plan;
+
+  address executor = makeAddr("executor");
 
   function setUp() public {
     _setUpMorpho();
@@ -37,11 +41,32 @@ contract DDHubTest is BaseMorphoTest {
       governance // address _governance
     );
 
-    samplePlan = new DDOperatorPlan(0, governance);
-    samplePool = new DDMetaMorpho();
-    samplePool.initialize(address(hub), address(zai), address(vault));
+    plan = new DDOperatorPlan(0, governance);
+    pool = new DDMetaMorpho();
+    pool.initialize(address(hub), address(zai), address(vault));
+
+    vm.label(address(hub), "DDHub");
+    vm.label(address(pool), "DDOperatorPlan");
+    vm.label(address(plan), "DDMetaMorpho");
 
     zai.grantManagerRole(address(hub));
+
+    bytes32 executorRole = hub.EXECUTOR_ROLE();
+    bytes32 opeartorRole = plan.OPERATOR_ROLE();
+
+    vm.prank(governance);
+    hub.grantRole(executorRole, executor);
+
+    vm.prank(governance);
+    plan.grantRole(opeartorRole, governance);
+  }
+
+  function _setupPool() internal {
+    vm.prank(governance);
+    hub.registerPool(pool, plan, 1000 ether);
+
+    vm.prank(governance);
+    plan.setTargetAssets(900 ether);
   }
 
   function test_values() public view {
@@ -50,17 +75,23 @@ contract DDHubTest is BaseMorphoTest {
   }
 
   function test_registerPool() public {
-    assertEq(hub.isPool(address(samplePool)), false);
+    assertEq(hub.isPool(address(pool)), false);
+    _setupPool();
+    assertEq(hub.isPool(address(pool)), true);
 
-    vm.prank(governance);
-    hub.registerPool(samplePool, samplePlan, 1000 ether);
-
-    assertEq(hub.isPool(address(samplePool)), true);
-
-    IDDHub.PoolInfo memory poolInfo = hub.poolInfos(samplePool);
-    assertEq(address(poolInfo.plan), address(samplePlan), "!plan");
+    IDDHub.PoolInfo memory poolInfo = hub.poolInfos(pool);
+    assertEq(address(poolInfo.plan), address(plan), "!plan");
     assertEq(poolInfo.debtCeiling, 1000 ether, "!debtCeiling");
     assertEq(poolInfo.isLive, true, "!isLive");
     assertEq(poolInfo.debt, 0, "!totalDebt");
+  }
+
+  function test_shouldMintZaiToPlanDebtLimit() public {
+    _setupPool();
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 900 ether);
   }
 }

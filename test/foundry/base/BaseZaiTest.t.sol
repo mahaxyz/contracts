@@ -40,6 +40,11 @@ abstract contract BaseZaiTest is Test {
     dai = new MockERC20("DAI", "DAI", 18);
     weth = new MockERC20("Wrapped Ether", "WETH", 18);
 
+    vm.label(address(zai), "zai");
+    vm.label(address(usdc), "usdc");
+    vm.label(address(dai), "dai");
+    vm.label(address(weth), "weth");
+
     zai.grantManagerRole(address(this));
   }
 }

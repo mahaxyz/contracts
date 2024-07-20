@@ -24,10 +24,10 @@ import {AccessControlDefaultAdminRules} from
 contract DDOperatorPlan is AccessControlDefaultAdminRules, IDDPlan {
   uint256 public enabled;
   uint256 public targetAssets;
-  bytes32 public OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
+  bytes32 public immutable OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
   constructor(uint48 _initialDelay, address _governance) AccessControlDefaultAdminRules(_initialDelay, _governance) {
-    // nothing
+    enabled = 1;
   }
 
   function setTargetAssets(uint256 value) external onlyRole(OPERATOR_ROLE) {

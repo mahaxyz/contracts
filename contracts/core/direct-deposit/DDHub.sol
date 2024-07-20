@@ -60,6 +60,9 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     feeCollector = _feeCollector;
     globalDebtCeiling = _globalDebtCeiling;
 
+    RISK_ROLE = keccak256("RISK_ROLE");
+    EXECUTOR_ROLE = keccak256("EXECUTOR_ROLE");
+
     _grantRole(DEFAULT_ADMIN_ROLE, _governance);
   }
 
@@ -90,6 +93,8 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
   function registerPool(IDDPool pool, IDDPlan plan, uint256 debtCeiling) external onlyRole(DEFAULT_ADMIN_ROLE) {
     PoolInfo memory info = PoolInfo({plan: plan, isLive: true, debt: 0, debtCeiling: debtCeiling});
     _poolInfos[pool] = info;
+
+    zai.approve(address(pool), type(uint256).max);
   }
 
   /// @inheritdoc IDDHub
@@ -121,7 +126,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
   }
 
   /// @inheritdoc IDDHub
-  function evaluatePoolAction(IDDPool pool) public view returns (uint256 toSupply, uint256 toWithdraw) {
+  function evaluatePoolAction(IDDPool pool) public view returns (uint256 toWithdraw, uint256 toSupply) {
     PoolInfo memory info = _poolInfos[pool];
 
     uint256 currentAssets = pool.assetBalance(); // Should return DAI owned by D3MPool
@@ -132,7 +137,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     // wrong is going with the third party and we are entering in the ilegal situation of having less assets than
     // registered
     // It's adding up `WAD` due possible rounding errors
-    if (!info.isLive || info.plan.active() || currentAssets + Constants.WAD < info.debt) {
+    if (!info.isLive || !info.plan.active() || currentAssets + Constants.WAD < info.debt) {
       toWithdraw = maxWithdraw;
     } else {
       uint256 maxDebt = info.debtCeiling; //vat.Line();
@@ -218,6 +223,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
       emit DDEventsLib.Unwind(pool, toWithdraw);
     } else if (toSupply > 0) {
       require(info.debt + toSupply <= Constants.SAFEMAX, "D3MHub/wind-overflow");
+
       zai.mint(address(this), toSupply);
       pool.deposit(toSupply);
       emit DDEventsLib.Wind(pool, toSupply);
