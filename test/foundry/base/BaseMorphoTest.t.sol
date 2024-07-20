@@ -27,19 +27,19 @@ contract BaseMorphoTest is BaseZaiTest {
   using MorphoBalancesLib for IMorpho;
   using MorphoLib for IMorpho;
 
-  address internal supplier = makeAddr("supplier");
-  address internal borrower = makeAddr("borrower");
-  address internal repayer = makeAddr("repayer");
-  address internal onBehalf = makeAddr("onBehalf");
-  address internal receiver = makeAddr("receiver");
-  address internal allocator = makeAddr("allocator");
-  address internal curator = makeAddr("curator");
-  address internal guardian = makeAddr("guardian");
-  address internal skimRecipient = makeAddr("skimRecipient");
-  address internal morphoOwner = makeAddr("morphoOwner");
-  address internal morphoFeeRecipient = makeAddr("morphoFeeRecipient");
+  address supplier = makeAddr("supplier");
+  address borrower = makeAddr("borrower");
+  address repayer = makeAddr("repayer");
+  address onBehalf = makeAddr("onBehalf");
+  address receiver = makeAddr("receiver");
+  address allocator = makeAddr("allocator");
+  address curator = makeAddr("curator");
+  address guardian = makeAddr("guardian");
+  address skimRecipient = makeAddr("skimRecipient");
+  address morphoOwner = makeAddr("morphoOwner");
+  address morphoFeeRecipient = makeAddr("morphoFeeRecipient");
 
-  IMorpho internal morpho =
+  IMorpho morpho =
     IMorpho(
       deployCode(
         "lib/morpho-blue/out/Morpho.sol/Morpho.json",
@@ -47,11 +47,11 @@ contract BaseMorphoTest is BaseZaiTest {
       )
     );
 
-  OracleMock internal oracle = new OracleMock();
-  IrmMock internal irm = new IrmMock();
+  OracleMock oracle = new OracleMock();
+  IrmMock irm = new IrmMock();
   IMetaMorpho vault;
-  MarketParams[] internal allMarkets;
-  MarketParams internal idleParams;
+  MarketParams[] allMarkets;
+  MarketParams idleParams;
 
   function _setUpMorpho() internal {
     _setUpBase();
