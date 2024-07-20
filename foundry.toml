@@ -14,7 +14,6 @@
   solc = "0.8.21"
   src = "contracts"
   test = "test"
-  # fs_permissions = [{ access = "read", path = "./lib/morpho-blue/out/Morpho.sol"}]
   fs_permissions = [
     { access = "read", path = "./lib/morpho-blue/out/"}
   ]

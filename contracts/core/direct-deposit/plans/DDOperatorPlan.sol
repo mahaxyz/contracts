@@ -22,13 +22,11 @@ import {AccessControlDefaultAdminRules} from
  * @notice An operator sets the desired target assets for a simple vault
  */
 contract DDOperatorPlan is AccessControlDefaultAdminRules, IDDPlan {
-  uint256 public enabled;
+  uint256 public enabled = 1;
   uint256 public targetAssets;
   bytes32 public immutable OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
-  constructor(uint48 _initialDelay, address _governance) AccessControlDefaultAdminRules(_initialDelay, _governance) {
-    enabled = 1;
-  }
+  constructor(uint48 _initialDelay, address _governance) AccessControlDefaultAdminRules(_initialDelay, _governance) {}
 
   function setTargetAssets(uint256 value) external onlyRole(OPERATOR_ROLE) {
     targetAssets = value;

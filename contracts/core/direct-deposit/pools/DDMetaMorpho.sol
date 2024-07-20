@@ -15,20 +15,18 @@ pragma solidity 0.8.21;
 
 import {IMetaMorpho} from "../../../../lib/metamorpho/src/interfaces/IMetaMorpho.sol";
 import {DDBase, IDDPool} from "./DDBase.sol";
-import {AccessControlEnumerableUpgradeable} from
-  "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 /**
  * @title MetaMorpho Direct Deposit Module
  * @author maha.xyz
  * @notice A direct deposit module that manages a morpho vault
  */
-contract DDMetaMorpho is AccessControlEnumerableUpgradeable, DDBase {
+contract DDMetaMorpho is Initializable, DDBase {
   IMetaMorpho public vault;
 
   function initialize(address _hub, address _zai, address _vault) external reinitializer(1) {
     __DDBBase_init(_zai, _hub);
-    __AccessControl_init();
 
     vault = IMetaMorpho(_vault);
 
@@ -38,8 +36,6 @@ contract DDMetaMorpho is AccessControlEnumerableUpgradeable, DDBase {
     require(vault.asset() == _zai, "DDMetaMorpho/vault-asset-is-not-zai");
 
     zai.approve(_vault, type(uint256).max);
-
-    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 
   /// https://github.com/morpho-org/metamorpho/blob/fcf3c41d9c113514c9af0bbf6298e88a1060b220/src/MetaMorpho.sol#L531
