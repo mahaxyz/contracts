@@ -149,7 +149,57 @@ contract DDHubTest is BaseMorphoTest {
     assertEq(zai.balanceOf(address(morpho)), 1000 ether);
 
     vm.prank(governance);
+    plan.setTargetAssets(100 ether);
+
+    // zai burn event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(hub), address(0), 900 ether - 1);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 100 ether + 1);
+  }
+
+  function test_shouldWithdrawZaiAfterPoolDebtReduced() public {
+    _setupPool();
+
+    // zai mint event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(0), address(hub), 1000 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 1000 ether);
+
+    vm.prank(governance);
     hub.setDebtCeiling(pool, 100 ether);
+
+    // zai burn event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(hub), address(0), 900 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 100 ether);
+  }
+
+  function test_shouldWithdrawZaiAfterGlobalDebtReduced() public {
+    _setupPool();
+
+    // zai mint event
+    vm.expectEmit(address(zai));
+    emit Transfer(address(0), address(hub), 1000 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 1000 ether);
+
+    vm.prank(governance);
+    hub.setGlobalDebtCeiling(100 ether);
 
     // zai burn event
     vm.expectEmit(address(zai));
