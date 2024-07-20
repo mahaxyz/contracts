@@ -26,7 +26,7 @@ contract DDHubTest is BaseMorphoTest {
   IDDPlan public samplePlan;
 
   function setUp() public {
-    setUpMorpho();
+    _setUpMorpho();
 
     hub = new DDHub();
 

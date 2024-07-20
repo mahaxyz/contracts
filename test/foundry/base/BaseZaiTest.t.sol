@@ -32,7 +32,7 @@ abstract contract BaseZaiTest is Test {
   address ant = makeAddr("ant");
   address feeDestination = makeAddr("feeDestination");
 
-  function setUpBase() internal {
+  function _setUpBase() internal {
     MockLayerZero lz = new MockLayerZero();
     zai = new ZaiStablecoin(address(lz), address(0x1));
 

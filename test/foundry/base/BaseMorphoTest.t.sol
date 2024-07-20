@@ -27,19 +27,17 @@ contract BaseMorphoTest is BaseZaiTest {
   using MorphoBalancesLib for IMorpho;
   using MorphoLib for IMorpho;
 
-  address internal supplier = makeAddr("Supplier");
-  address internal borrower = makeAddr("Borrower");
-  address internal repayer = makeAddr("Repayer");
-  address internal onBehalf = makeAddr("OnBehalf");
-  address internal receiver = makeAddr("Receiver");
-  address internal allocator = makeAddr("Allocator");
-  address internal curator = makeAddr("Curator");
-  address internal guardian = makeAddr("Guardian");
-  address internal skimRecipient = makeAddr("SkimRecipient");
-  address internal morphoOwner = makeAddr("MorphoOwner");
-  address internal morphoFeeRecipient = makeAddr("MorphoFeeRecipient");
-
-  IMetaMorpho vault;
+  address internal supplier = makeAddr("supplier");
+  address internal borrower = makeAddr("borrower");
+  address internal repayer = makeAddr("repayer");
+  address internal onBehalf = makeAddr("onBehalf");
+  address internal receiver = makeAddr("receiver");
+  address internal allocator = makeAddr("allocator");
+  address internal curator = makeAddr("curator");
+  address internal guardian = makeAddr("guardian");
+  address internal skimRecipient = makeAddr("skimRecipient");
+  address internal morphoOwner = makeAddr("morphoOwner");
+  address internal morphoFeeRecipient = makeAddr("morphoFeeRecipient");
 
   IMorpho internal morpho =
     IMorpho(
@@ -48,31 +46,30 @@ contract BaseMorphoTest is BaseZaiTest {
         abi.encode(morphoOwner)
       )
     );
+
   OracleMock internal oracle = new OracleMock();
   IrmMock internal irm = new IrmMock();
-
+  IMetaMorpho vault;
   MarketParams[] internal allMarkets;
   MarketParams internal idleParams;
 
-  function setUpMorpho() public {
-    setUpBase();
+  function _setUpMorpho() internal {
+    _setUpBase();
     _setupMorpoBlue();
     _setupMetaMorpho();
+
+    vm.label(address(morpho), "morpho");
+    vm.label(address(oracle), "oracle");
+    vm.label(address(irm), "irm");
   }
 
-  function _setupMorpoBlueMarkets() internal {
-    vm.label(address(morpho), "Morpho");
-    vm.label(address(oracle), "Oracle");
-    vm.label(address(irm), "Irm");
-
+  function _setupMorpoBlue() private {
     oracle.setPrice(ORACLE_PRICE_SCALE);
-
     irm.setApr(0.5 ether); // 50%.
-
-    _setupMorpoBlue();
+    _setupMorpoBlueMarkets();
   }
 
-  function _setupMorpoBlue() internal {
+  function _setupMorpoBlueMarkets() private {
     idleParams = MarketParams({
       loanToken: address(zai),
       collateralToken: address(0),
@@ -122,7 +119,7 @@ contract BaseMorphoTest is BaseZaiTest {
     zai.approve(address(morpho), type(uint256).max);
   }
 
-  function _setupMetaMorpho() internal {
+  function _setupMetaMorpho() private {
     vault = IMetaMorpho(
       address(
         new MetaMorpho(
@@ -184,7 +181,7 @@ contract BaseMorphoTest is BaseZaiTest {
     return morpho.expectedSupplyAssets(idleParams, address(vault));
   }
 
-  function _setCap(MarketParams memory marketParams, uint256 newCap) internal {
+  function _setCap(MarketParams memory marketParams, uint256 newCap) private {
     Id id = marketParams.id();
     uint256 cap = vault.config(id).cap;
     bool isEnabled = vault.config(id).enabled;
@@ -217,7 +214,7 @@ contract BaseMorphoTest is BaseZaiTest {
     }
   }
 
-  function _sortSupplyQueueIdleLast() internal {
+  function _sortSupplyQueueIdleLast() private {
     Id[] memory supplyQueue = new Id[](vault.supplyQueueLength());
 
     uint256 supplyIndex;

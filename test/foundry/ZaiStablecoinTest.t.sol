@@ -17,7 +17,7 @@ import {BaseZaiTest} from "./base/BaseZaiTest.t.sol";
 
 contract ZaiStablecoinTest is BaseZaiTest {
   function setUp() public {
-    setUpBase();
+    _setUpBase();
   }
 
   function test_NameAndSymbol() public view {

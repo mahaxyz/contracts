@@ -22,7 +22,7 @@ contract PegStabilityModuleTest is BaseZaiTest {
   PegStabilityModule public psmDAI;
 
   function setUp() public {
-    setUpBase();
+    _setUpBase();
 
     psmUSDC = new PegStabilityModule();
     psmUSDC.initialize(
