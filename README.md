@@ -51,6 +51,10 @@ npx hardhat deploy --tags ZAIStablecoin --network mainnet
 
 The ZAI stablecoin is incredibly minimal. With the [core](./contracts/core/) modules written in under 400 lines of code. At the crux of the stablecoin is the [Peg-stability Module](./contracts/core/psm/) and the [Direct Deposit Module](./contracts/core/direct-deposit/). These module control the stability and the growth of ZAI.
 
+![incentive-flow](./incentiveflow-simple.png)
+
+The incentive model is designed in such a way that there's a postive feedback loop for the growth of ZAI based on how much borrowing demand and interest fees ZAI generates.
+
 The following links give more information about the various components and go more in-depth.
 
 - [docs.maha.xyz](https://docs.maha.xyz/) - Contains a high level overview of the entire protocol including architecture documentation.
