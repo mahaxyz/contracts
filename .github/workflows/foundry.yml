@@ -25,6 +25,5 @@ jobs:
         id: build
 
       - name: Run Forge tests
-        run: |
-          forge test -vvv
+        run: yarn test:forge
         id: test

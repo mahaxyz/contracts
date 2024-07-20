@@ -66,7 +66,7 @@ contract DDHubTest is BaseMorphoTest {
     hub.registerPool(pool, plan, 1000 ether);
 
     vm.prank(governance);
-    plan.setTargetAssets(900 ether);
+    plan.setTargetAssets(1000 ether);
   }
 
   function test_values() public view {
@@ -86,8 +86,11 @@ contract DDHubTest is BaseMorphoTest {
     assertEq(poolInfo.debt, 0, "!totalDebt");
   }
 
-  function test_shouldMintZaiToPlanDebtLimit() public {
+  function test_shouldMintZaiToPlanTargetAssets() public {
     _setupPool();
+
+    vm.prank(governance);
+    plan.setTargetAssets(900 ether);
 
     vm.prank(executor);
     hub.exec(pool);
@@ -105,5 +108,17 @@ contract DDHubTest is BaseMorphoTest {
     hub.exec(pool);
 
     assertEq(zai.balanceOf(address(morpho)), 10 ether);
+  }
+
+  function test_shouldMintZaiToPoolDebtLimit() public {
+    _setupPool();
+
+    vm.prank(governance);
+    hub.setDebtCeiling(pool, 100 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    assertEq(zai.balanceOf(address(morpho)), 100 ether);
   }
 }
