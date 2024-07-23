@@ -16,44 +16,35 @@
 pragma solidity 0.8.21;
 
 import {IZaiStablecoin} from "../interfaces/IZaiStablecoin.sol";
-import {ERC20, OFT} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC20FlashMint} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20FlashMint.sol";
-import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
+import {ERC20, ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
 /**
  * @title Zai Stablecoin "USDz"
  * @author maha.xyz
- * @notice Represents the ZAI stablecoin. It is minted either by governance or by troves.
- * @dev This is a OFT compatible token.
+ * @notice Represents the ZAI stablecoin.
  */
-contract ZaiStablecoin is ERC20FlashMint, ERC20Permit, OFT, AccessControlEnumerable, IZaiStablecoin {
+contract ZaiStablecoin is ERC20FlashMint, ERC20Permit, AccessControlEnumerable, IZaiStablecoin {
   /// @inheritdoc IZaiStablecoin
   bytes32 public MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
   /**
-   * Initializes the stablecoin and sets the LZ endpoint
-   * @param _layerZeroEndpoint the layerzero endpoint
-   * @param _delegate the layerzero delegate
+   * Initializes the stablecoin
    */
-  constructor(
-    address _layerZeroEndpoint,
-    address _delegate
-  ) OFT("Zai Stablecoin", "USDz", _layerZeroEndpoint, _delegate) Ownable(msg.sender) ERC20Permit("Zai Stablecoin") {
+  constructor() ERC20("Zai Stablecoin", "USDz") ERC20Permit("Zai Stablecoin") {
     _mint(msg.sender, 1e18);
     _burn(msg.sender, 1e18);
-    _grantRole(DEFAULT_ADMIN_ROLE, address(this));
+    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 
   /// @inheritdoc IZaiStablecoin
-  function grantManagerRole(address _account) external onlyOwner {
+  function grantManagerRole(address _account) external onlyRole(DEFAULT_ADMIN_ROLE) {
     _grantRole(MANAGER_ROLE, _account);
   }
 
   /// @inheritdoc IZaiStablecoin
-  function revokeManagerRole(address _account) external onlyOwner {
+  function revokeManagerRole(address _account) external onlyRole(DEFAULT_ADMIN_ROLE) {
     _revokeRole(MANAGER_ROLE, _account);
   }
 
