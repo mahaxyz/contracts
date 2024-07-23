@@ -1,5 +1,5 @@
 // import
-import { ZeroAddress, ethers } from "ethers";
+import { ethers } from "ethers";
 import { getCreate2Address } from "./create2";
 
 // declare deployment parameters
@@ -10,10 +10,7 @@ const constructorTypes = contractArtifact.abi
   ?.inputs.map((t) => t.type);
 
 export const factoryAddress = "0xc07c1980C87bfD5de0DC77f90Ce6508c1C0795C3";
-const constructorArgs: any[] = [
-  "0x1a44076050125825900e736c501f859c50fE728c",
-  "0xe5159e75ba5f1C9E386A3ad2FC7eA75c14629572",
-];
+const constructorArgs: any[] = [];
 
 console.log("constructor parameters", constructorTypes, constructorArgs);
 
@@ -32,10 +29,7 @@ const job = () => {
       constructorArgs: constructorArgs,
     });
 
-    if (
-      computedAddress.startsWith("0x0000") &&
-      computedAddress.endsWith("0000")
-    ) {
+    if (computedAddress.startsWith("0x690000")) {
       console.log("found the right salt hash");
       console.log("salt", salt, computedAddress);
       break;

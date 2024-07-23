@@ -2,10 +2,7 @@ import hre, { ethers } from "hardhat";
 import { buildBytecode } from "./create2";
 
 async function main() {
-  const constructorArgs: any[] = [
-    "0x1a44076050125825900e736c501f859c50fE728c",
-    "0xe5159e75ba5f1C9E386A3ad2FC7eA75c14629572",
-  ];
+  const constructorArgs: any[] = [];
 
   const [wallet] = await hre.ethers.getSigners();
 
@@ -18,13 +15,9 @@ async function main() {
   const factory = await hre.ethers.getContractFactory("ZaiStablecoin");
 
   const salt =
-    "0xcaf0534451ba5639c1d8c0dc6b1a98c11290ec6170f4bd4393463523460ecc59";
+    "0xbfbe43cf56a21dc5a9a6273a76377c16bbcd057f6bbf23d6a4619baa8d1a8004";
 
-  const bytecode = buildBytecode(
-    ["address", "address"],
-    constructorArgs,
-    factory.bytecode
-  );
+  const bytecode = buildBytecode([], constructorArgs, factory.bytecode);
 
   const txPopulated = await deployer.deploy.populateTransaction(
     bytecode,
