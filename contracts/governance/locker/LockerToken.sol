@@ -11,18 +11,12 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.21;
 
 import {BaseLocker} from "./BaseLocker.sol";
 
-abstract contract LockerToken is BaseLocker {
-    // function init(address _token, address _staking) external initializer {
-    //     __BaseLocker_init(
-    //         "Locked ZERO Tokens",
-    //         "T-ZERO",
-    //         _token,
-    //         _staking,
-    //         4 * 365 * 86400
-    //     );
-    // }
+contract LockerToken is BaseLocker {
+  function init(address _token, address _staking) external initializer {
+    __BaseLocker_init("Locked MAHA Tokens", "T-MAHA", _token, _staking, 4 * 365 * 86_400);
+  }
 }

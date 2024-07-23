@@ -1,0 +1,6 @@
+# sample regex patterns
+ignore:
+  - "contracts/tests"
+  - "contracts/governance"
+  - "contracts/periphery"
+  - "test"

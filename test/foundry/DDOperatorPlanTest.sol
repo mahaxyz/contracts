@@ -11,26 +11,29 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.21;
 
-import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
-import {IDDPool} from "../../interfaces/core/IDDPool.sol";
-import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
+import "../../contracts/core/direct-deposit/plans/DDOperatorPlan.sol";
+import {BaseZaiTest} from "./base/BaseZaiTest.sol";
 
-abstract contract DDBBase is IDDPool {
-    /// @inheritdoc IDDPool
-    IZaiStablecoin public zai;
+contract DDOperatorPlanTest is BaseZaiTest {
+  DDOperatorPlan private plan;
 
-    /// @inheritdoc IDDPool
-    address public hub;
+  function setUp() public {
+    _setUpBase();
+    plan = new DDOperatorPlan(0, governance);
 
-    function __DDBBase_init(address _zai, address _hub) internal {
-        zai = IZaiStablecoin(_zai);
-        hub = _hub;
-    }
+    assertEq(plan.active(), true);
+    assertEq(plan.enabled(), 1);
+  }
 
-    modifier onlyHub() {
-        if (msg.sender != hub) revert NotAuthorized();
-        _;
-    }
+  function test_planDisable() public {
+    assertEq(plan.active(), true);
+
+    vm.prank(governance);
+    plan.disable();
+
+    assertEq(plan.active(), false);
+    assertEq(plan.enabled(), 0);
+  }
 }

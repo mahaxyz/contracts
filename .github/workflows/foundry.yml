@@ -1,0 +1,29 @@
+name: Foundry
+
+on:
+  push:
+
+env:
+  FOUNDRY_PROFILE: ci
+
+jobs:
+  check:
+    name: Foundry project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: ./.github/actions/install
+
+      - name: Run Forge build
+        run: |
+          forge --version
+          forge build
+        id: build
+
+      - name: Run Forge tests
+        run: yarn test:forge
+        id: test

@@ -25,16 +25,17 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Install lcov
+        run: sudo apt-get -y install lcov
+        shell: bash
+
       - uses: ./.github/actions/install
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Run hardhat coverage
-        run: yarn compile --force && yarn coverage
-
-      - name: Run gas report
-        run: REPORT_GAS=true npx hardhat test
+      - name: Run coverage
+        run: yarn compile && yarn coverage:html
 
       # Deploy to gh pages
       - name: Upload artifact
@@ -45,3 +46,8 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
