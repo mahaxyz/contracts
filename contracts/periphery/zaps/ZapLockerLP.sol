@@ -76,7 +76,7 @@ contract ZapLockerLP {
     if (wethAmount > 0) weth.transferFrom(msg.sender, me, wethAmount);
 
     // odos should be able to swap into LP tokens directly.
-    (bool success, ) = odos.call(odosSwapData);
+    (bool success,) = odos.call(odosSwapData);
     if (!success) revert OdosSwapFailed();
 
     // stake the LP tokens that we get back from odos
@@ -93,7 +93,7 @@ contract ZapLockerLP {
     uint256 wethB = weth.balanceOf(address(this));
 
     if (eth > 0) {
-      (bool ethSendSuccess, ) = msg.sender.call{value: eth}("");
+      (bool ethSendSuccess,) = msg.sender.call{value: eth}("");
       if (!ethSendSuccess) revert EthSendFailed();
     }
 
