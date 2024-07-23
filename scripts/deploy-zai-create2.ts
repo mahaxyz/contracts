@@ -2,7 +2,7 @@ import hre, { ethers } from "hardhat";
 import { buildBytecode } from "./create2";
 
 async function main() {
-  const constructorArgs: any[] = [];
+  const constructorArgs: any[] = ["0xe5159e75ba5f1C9E386A3ad2FC7eA75c14629572"];
 
   const [wallet] = await hre.ethers.getSigners();
 

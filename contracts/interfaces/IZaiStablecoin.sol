@@ -18,7 +18,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 interface IZaiStablecoin is IERC20 {
   /**
    * @notice Used to mint ZAI
-   * @dev This is only callable by verified minters approved by governance
+   * @dev This is only callable by verified managers approved by governance
    * @param _account The address to mint to
    * @param _amount The amount to mint
    */
@@ -31,7 +31,7 @@ interface IZaiStablecoin is IERC20 {
 
   /**
    * @notice Used to burn ZAI
-   * @dev This is only callable by verified minters approved by governance
+   * @dev This is only callable by verified managers approved by governance
    * @param _account The address to burn from
    * @param _amount The amount to burn
    */

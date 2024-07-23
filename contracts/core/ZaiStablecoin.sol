@@ -32,10 +32,10 @@ contract ZaiStablecoin is ERC20FlashMint, ERC20Permit, AccessControlEnumerable, 
   /**
    * Initializes the stablecoin
    */
-  constructor() ERC20("Zai Stablecoin", "USDz") ERC20Permit("Zai Stablecoin") {
+  constructor(address _owner) ERC20("Zai Stablecoin", "USDz") ERC20Permit("Zai Stablecoin") {
     _mint(msg.sender, 1e18);
     _burn(msg.sender, 1e18);
-    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    _grantRole(DEFAULT_ADMIN_ROLE, _owner);
   }
 
   /// @inheritdoc IZaiStablecoin

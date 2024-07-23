@@ -34,7 +34,7 @@ abstract contract BaseZaiTest is Test {
   address feeDestination = makeAddr("feeDestination");
 
   function _setUpBase() internal {
-    zai = new ZaiStablecoin();
+    zai = new ZaiStablecoin(address(this));
 
     usdc = new MockERC20("USD Coin", "USDC", 8);
     dai = new MockERC20("DAI", "DAI", 18);
