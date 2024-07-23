@@ -18,7 +18,7 @@ import {IERC20, IWETH} from "../../interfaces/IWETH.sol";
 
 /**
  * @title ZapLockerLP
- * @dev This contract allows users to perform a Zap operation by swapping ETH for Zero tokens, adding liquidity to Nile LP, and locking LP tokens.
+ * @dev This contract allows users to perform a Zap operation by swapping ETH for Zero tokens, adding liquidity to Nile LP, and locks the LP tokens.
  */
 contract ZapLockerLP {
     address public odos;
