@@ -7,6 +7,8 @@
     "test:forge": "yarn build:blue && FOUNDRY_PROFILE=test forge test",
     "clean": "rimraf artifacts cache coverage",
     "docs": "hardhat docgen",
+    "format": "forge fmt",
+    "format:check": "forge fmt --check",
     "coverage": "yarn build:blue && forge coverage --report lcov",
     "coverage:html": "yarn coverage && lcov --remove lcov.info test contracts/governance contracts/periphery --ignore-errors inconsistent -o lcov.info && genhtml lcov.info --output-dir coverage --rc lcov_branch_coverage=1",
     "test": "yarn test:forge",
