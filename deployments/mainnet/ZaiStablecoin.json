@@ -1,8 +1,14 @@
 {
-  "address": "0x69000bb053EA517D72Bd401c6Bc561Fa8b1D00c7",
+  "address": "0x6900057428C99Fb373397D657Beb40D92D8aC97f",
   "abi": [
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "constructor"
     },
@@ -997,6 +1003,8 @@
       "type": "function"
     }
   ],
-  "args": [],
+  "args": [
+    "0xe5159e75ba5f1C9E386A3ad2FC7eA75c14629572"
+  ],
   "numDeployments": 1
 }
