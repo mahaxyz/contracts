@@ -5,7 +5,7 @@
   "scripts": {
     "build:blue": "cd lib/morpho-blue/ && yarn build:forge && cd ../..",
     "test:forge": "yarn build:blue && FOUNDRY_PROFILE=test forge test",
-    "clean": "rimraf artifacts cache coverage",
+    "clean": "rimraf abi types docs artifacts cache coverage forge-build",
     "docs": "hardhat docgen",
     "format": "forge fmt",
     "format:check": "forge fmt --check",
