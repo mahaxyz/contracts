@@ -29,7 +29,7 @@ const job = () => {
       constructorArgs: constructorArgs,
     });
 
-    if (computedAddress.startsWith("0x690000")) {
+    if (computedAddress.startsWith("0x69000")) {
       console.log("found the right salt hash");
       console.log("salt", salt, computedAddress);
       break;
