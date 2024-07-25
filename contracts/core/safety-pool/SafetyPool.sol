@@ -23,9 +23,6 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
   bytes32 public immutable MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
   /// @inheritdoc ISafetyPool
-  IERC20 public stablecoin;
-
-  /// @inheritdoc ISafetyPool
   uint256 public withdrawalDelay;
 
   /// @inheritdoc ISafetyPool
@@ -48,9 +45,7 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
     __MultiStakingRewardsERC4626_init(
       _name, _symbol, _stablecoin, _governance, _rewardToken1, _rewardToken2, _rewardsDuration
     );
-
     withdrawalDelay = _withdrawalDelay;
-    stablecoin = IERC20(_stablecoin);
   }
 
   /// @inheritdoc ISafetyPool
@@ -70,7 +65,7 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
 
   /// @inheritdoc ISafetyPool
   function coverBadDebt(uint256 amount) external onlyRole(MANAGER_ROLE) {
-    stablecoin.transfer(msg.sender, amount);
+    IERC20(asset()).transfer(msg.sender, amount);
     emit SafetyPoolEvents.BadDebtCovered(amount, msg.sender);
   }
 

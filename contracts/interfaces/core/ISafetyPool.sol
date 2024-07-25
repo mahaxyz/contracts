@@ -44,7 +44,5 @@ interface ISafetyPool {
 
   function withdrawalTimestamp(address who) external view returns (uint256);
 
-  function stablecoin() external view returns (IERC20);
-
   function cancelWithdrawal() external;
 }
