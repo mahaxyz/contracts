@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/mahaxyz/contracts/compare/v1.0.1...v1.0.2) (2024-07-25)
+
+
+### Bug Fixes
+
+* merged develop into master branch ([#4](https://github.com/mahaxyz/contracts/issues/4)) ([7369164](https://github.com/mahaxyz/contracts/commit/736916426ae3e0a505c3d176df663fd42a9d5087))
+
 ## [1.0.1](https://github.com/mahaxyz/contracts/compare/v1.0.0...v1.0.1) (2024-07-14)
 
 
