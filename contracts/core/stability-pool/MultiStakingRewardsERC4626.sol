@@ -31,25 +31,25 @@ contract MultiStakingRewardsERC4626 is
   bytes32 public DISTRIBUTOR_ROLE;
 
   /// @notice Time at which distribution ends
-  mapping(IERC20 reward => uint256 periodFinish) public periodFinish;
+  mapping(IERC20 reward => uint256) public periodFinish;
 
   /// @notice Reward per second given to the staking contract, split among the staked tokens
-  mapping(IERC20 reward => uint256 rewardRate) public rewardRate;
+  mapping(IERC20 reward => uint256) public rewardRate;
 
   /// @notice Duration of the reward distribution
   uint256 public rewardsDuration;
 
   /// @notice Last time `rewardPerTokenStored` was updated
-  mapping(IERC20 reward => uint256 lastUpdateTime) public lastUpdateTime;
+  mapping(IERC20 reward => uint256) public lastUpdateTime;
 
   /// @notice Helps to compute the amount earned by someone
   /// Cumulates rewards accumulated for one token since the beginning.
   /// Stored as a uint so it is actually a float times the base of the reward token
-  mapping(IERC20 reward => uint256 rewardPerTokenStored) public rewardPerTokenStored;
+  mapping(IERC20 reward => uint256) public rewardPerTokenStored;
 
   /// @notice Stores for each account the `rewardPerToken`: we do the difference
   /// between the current and the old value to compute what has been earned by an account
-  mapping(IERC20 reward => mapping(address who => uint256 userRewardPerTokenPaid)) public userRewardPerTokenPaid;
+  mapping(IERC20 reward => mapping(address who => uint256)) public userRewardPerTokenPaid;
 
   /// @notice Stores for each account the accumulated rewards
   mapping(IERC20 reward => mapping(address who => uint256 rewards)) public rewards;
