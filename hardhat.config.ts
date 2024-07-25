@@ -71,6 +71,11 @@ const config: HardhatUserConfig = {
       accounts: defaultAccount,
       saveDeployments: true,
     },
+    sepolia: {
+      url: `https://rpc2.sepolia.org`,
+      accounts: defaultAccount,
+      saveDeployments: true,
+    },
   },
   namedAccounts: {
     deployer: 0,
@@ -78,6 +83,7 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       mainnet: process.env.ETHERSCAN_KEY || "",
+      sepolia: process.env.ETHERSCAN_KEY || "",
     },
   },
 };

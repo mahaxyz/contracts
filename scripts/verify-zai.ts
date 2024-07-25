@@ -3,12 +3,9 @@ import hre from "hardhat";
 import contractArtifact from "../artifacts/contracts/core/ZaiStablecoin.sol/ZaiStablecoin.json";
 
 async function main() {
-  const constructorArguments = [
-    "0x1a44076050125825900e736c501f859c50fE728c",
-    "0xe5159e75ba5f1C9E386A3ad2FC7eA75c14629572",
-  ];
+  const constructorArguments = ["0xe5159e75ba5f1C9E386A3ad2FC7eA75c14629572"];
 
-  const address = "";
+  const address = "0x6900057428C99Fb373397D657Beb40D92D8aC97f";
 
   hre.deployments.save("ZaiStablecoin", {
     address: address,

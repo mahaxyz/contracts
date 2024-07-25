@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2019",
+    "target": "es2020",
     "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
@@ -10,7 +10,14 @@
     "declaration": true,
     "declarationDir": "./types"
   },
-  "include": ["./scripts", "./test-suites","./typechain", "./tasks", "./helpers","./deploy"],
+  "include": [
+    "./scripts",
+    "./test-suites",
+    "./types",
+    "./tasks",
+    "./helpers",
+    "./deploy"
+  ],
   "files": [
     "./hardhat.config.ts",
     "node_modules/@nomiclabs/hardhat-etherscan/src/type-extensions.ts",

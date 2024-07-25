@@ -14,7 +14,6 @@
 pragma solidity 0.8.21;
 
 import {ZaiStablecoin} from "../../../contracts/core/ZaiStablecoin.sol";
-import {MockLayerZero} from "../../../contracts/tests/MockLayerZero.sol";
 import {Test, console} from "../../../lib/forge-std/src/Test.sol";
 
 import {MockERC20} from "../../../contracts/tests/MockERC20.sol";
@@ -35,9 +34,7 @@ abstract contract BaseZaiTest is Test {
   address feeDestination = makeAddr("feeDestination");
 
   function _setUpBase() internal {
-    MockLayerZero lz = new MockLayerZero();
-
-    zai = new ZaiStablecoin(address(lz), governance);
+    zai = new ZaiStablecoin(address(this));
 
     usdc = new MockERC20("USD Coin", "USDC", 8);
     dai = new MockERC20("DAI", "DAI", 18);
