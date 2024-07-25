@@ -20,10 +20,10 @@ import {IERC20, MultiStakingRewardsERC4626} from "../utils/MultiStakingRewardsER
 
 contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
   /// @inheritdoc ISafetyPool
-  IERC20 public stablecoin;
+  bytes32 public immutable MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
   /// @inheritdoc ISafetyPool
-  bytes32 public MANAGER_ROLE;
+  IERC20 public stablecoin;
 
   /// @inheritdoc ISafetyPool
   uint256 public withdrawalDelay;
@@ -51,7 +51,6 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
 
     withdrawalDelay = _withdrawalDelay;
     stablecoin = IERC20(_stablecoin);
-    MANAGER_ROLE = keccak256("MANAGER_ROLE");
   }
 
   /// @inheritdoc ISafetyPool

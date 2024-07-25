@@ -23,12 +23,13 @@ import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/ut
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
-/// @title StakingRewards
+/// @title ERC4262 Staking Rewards
 /// @author Forked form SetProtocol
 /// https://github.com/SetProtocol/index-coop-contracts/blob/master/contracts/staking/StakingRewards.sol
-/// @notice The `StakingRewards` contracts allows to stake an ERC20 token to receive as reward another ERC20
-/// @dev This contracts is managed by the reward distributor and implements the staking interface
-contract MultiStakingRewardsERC4626 is
+/// @notice The `MultiStakingRewardsERC4626` contracts allows to stake an ERC20 token and receieve multiple other ERC20
+/// rewards
+/// @dev This contracts is designed to be used via a proxy and follows the ERC4626 standard.
+abstract contract MultiStakingRewardsERC4626 is
   AccessControlEnumerableUpgradeable,
   ERC4626Upgradeable,
   ReentrancyGuardUpgradeable,
@@ -38,7 +39,7 @@ contract MultiStakingRewardsERC4626 is
   using SafeERC20 for IERC20;
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  bytes32 public DISTRIBUTOR_ROLE;
+  bytes32 public immutable DISTRIBUTOR_ROLE = keccak256("DISTRIBUTOR_ROLE");
 
   /// @inheritdoc IMultiStakingRewardsERC4626
   mapping(IERC20 reward => uint256) public periodFinish;
@@ -96,8 +97,6 @@ contract MultiStakingRewardsERC4626 is
     rewardToken1 = IERC20(_rewardToken1);
     rewardToken2 = IERC20(_rewardToken2);
 
-    DISTRIBUTOR_ROLE = keccak256("DISTRIBUTOR_ROLE");
-
     _grantRole(DEFAULT_ADMIN_ROLE, _governance);
   }
 
@@ -122,8 +121,6 @@ contract MultiStakingRewardsERC4626 is
     return (balanceOf(account) * (rewardPerToken(token) - userRewardPerTokenPaid[token][account])) / 1e18
       + rewards[token][account];
   }
-
-  // ======================== Mutative functions forked ==========================
 
   /// @inheritdoc ERC4626Upgradeable
   function _withdraw(
@@ -167,11 +164,9 @@ contract MultiStakingRewardsERC4626 is
     if (reward > 0) {
       rewards[token][who] = 0;
       token.safeTransfer(who, reward);
-      // emit RewardPaid(msg.sender, reward);
+      emit RewardClaimed(token, reward, who, msg.sender);
     }
   }
-
-  // ====================== Restricted Functions =================================
 
   /// @inheritdoc IMultiStakingRewardsERC4626
   function notifyRewardAmount(IERC20 token, uint256 reward) external onlyRole(DISTRIBUTOR_ROLE) nonReentrant {
@@ -192,10 +187,10 @@ contract MultiStakingRewardsERC4626 is
     // very high values of `rewardRate` in the earned and `rewardsPerToken` functions;
     // Reward + leftover must be less than 2^256 / 10^18 to avoid overflow.
     uint256 balance = token.balanceOf(address(this));
-    require(rewardRate[token] <= balance / rewardsDuration, "91");
+    require(rewardRate[token] <= balance / rewardsDuration, "not enough balance");
 
     lastUpdateTime[token] = block.timestamp;
     periodFinish[token] = block.timestamp + rewardsDuration; // Change the duration
-      // emit RewardAdded(reward);
+    emit RewardAdded(token, reward, msg.sender);
   }
 }

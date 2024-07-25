@@ -5,6 +5,9 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IMultiStakingRewardsERC4626 {
+  event RewardAdded(IERC20 indexed reward, uint256 indexed amount, address caller);
+  event RewardClaimed(IERC20 indexed reward, uint256 indexed amount, address indexed who, address caller);
+
   function DISTRIBUTOR_ROLE() external view returns (bytes32);
 
   /// @notice Time at which distribution ends

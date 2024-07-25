@@ -109,15 +109,15 @@ contract ZaiFeeCollectorCron is OwnableUpgradeable {
     // send all rewardToken to the destination
     uint256 amt = rewardToken.balanceOf(address(this));
 
-    uint256 treasuryAmt = amt / 4; // give 25% to the treasury
+    uint256 treasuryAmt = amt / 10; // give 10% to the treasury
     uint256 zaiMahaAmt = amt / 4; // 25% to ZAI/MAHA staking
-    uint256 zaiSafetyPoolAmt = amt / 4; // 25% to ZAI stability pool
-    uint256 zaiUsdcAmt = amt - treasuryAmt - zaiMahaAmt - zaiSafetyPoolAmt; // 25% to ZAI/USDC staking
+    uint256 zaiSafetyPoolAmt = amt / 10; // give 10% to ZAI stability pool
+    uint256 zaiUsdcAmt = amt - treasuryAmt - zaiMahaAmt - zaiSafetyPoolAmt; // 65% to ZAI/USDC staking
 
     rewardToken.transfer(treasury, treasuryAmt);
     stakerMahaZai.notifyRewardAmount(zaiMahaAmt);
     stakerUsdcZai.notifyRewardAmount(zaiUsdcAmt);
-    safetyPoolZai.notifyRewardAmount(weth, zaiSafetyPoolAmt);
+    safetyPoolZai.notifyRewardAmount(rewardToken, zaiSafetyPoolAmt);
 
     // emit events
     emit RevenueCollected(amt);
