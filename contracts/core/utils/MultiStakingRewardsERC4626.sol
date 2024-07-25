@@ -86,6 +86,9 @@ contract MultiStakingRewardsERC4626 is
     __ERC4626_init_unchained(IERC20(_stakingToken));
     __AccessControlEnumerable_init();
 
+    require(_rewardToken1 != address(0), "reward token 1 is 0x0");
+    require(_rewardToken2 != address(0), "reward token 2 is 0x0");
+
     // We are not checking the compatibility of the reward token between the distributor and this contract here
     // because it is checked by the `RewardsDistributor` when activating the staking contract
     // Parameters
