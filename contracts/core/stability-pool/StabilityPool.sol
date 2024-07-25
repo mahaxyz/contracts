@@ -16,7 +16,7 @@ pragma solidity 0.8.21;
 import {IStabilityPool} from "../../interfaces/core/IStabilityPool.sol";
 import {StabilityPoolEvents} from "../../interfaces/events/StabilityPoolEvents.sol";
 
-import {IERC20, MultiStakingRewardsERC4626} from "./MultiStakingRewardsERC4626.sol";
+import {IERC20, MultiStakingRewardsERC4626} from "../utils/MultiStakingRewardsERC4626.sol";
 
 contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
   /// @inheritdoc IStabilityPool
