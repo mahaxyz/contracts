@@ -20,6 +20,8 @@ import {ERC4626Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC2
 import {IMultiStakingRewardsERC4626} from "../../interfaces/core/IMultiStakingRewardsERC4626.sol";
 import {MulticallUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/MulticallUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+
+import {IERC20Permit} from "@openzeppelin/contracts/interfaces/IERC20Permit.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
@@ -68,8 +70,6 @@ abstract contract MultiStakingRewardsERC4626 is
   /// @inheritdoc IMultiStakingRewardsERC4626
   IERC20 public rewardToken2;
 
-  // ============================ Constructor ====================================
-
   /// @notice Initializes the staking contract with a first set of parameters
   /// @param _rewardToken1 First ERC20 token given as reward
   /// @param _rewardToken2 Second ERC20 token given as reward
@@ -100,8 +100,6 @@ abstract contract MultiStakingRewardsERC4626 is
     _grantRole(DEFAULT_ADMIN_ROLE, _governance);
   }
 
-  // ============================ View functions =================================
-
   /// @inheritdoc IMultiStakingRewardsERC4626
   function lastTimeRewardApplicable(IERC20 token) public view returns (uint256) {
     return Math.min(block.timestamp, periodFinish[token]);
@@ -122,6 +120,18 @@ abstract contract MultiStakingRewardsERC4626 is
       + rewards[token][account];
   }
 
+  /// @inheritdoc IMultiStakingRewardsERC4626
+  function approveUnderlyingWithPermit(
+    address spender,
+    uint256 value,
+    uint256 deadline,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) external {
+    IERC20Permit(asset()).permit(msg.sender, address(this), value, deadline, v, r, s);
+  }
+
   /// @inheritdoc ERC4626Upgradeable
   function _withdraw(
     address caller,
@@ -137,6 +147,15 @@ abstract contract MultiStakingRewardsERC4626 is
     super._withdraw(caller, receiver, owner, assets, shares);
   }
 
+  /// @inheritdoc ERC4626Upgradeable
+  function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal virtual override {
+    _updateReward(rewardToken1, caller);
+    _updateReward(rewardToken2, caller);
+
+    // continues the call to the erc4626 deposit
+    super._deposit(caller, receiver, assets, shares);
+  }
+
   /// @notice Called frequently to update the staking parameters associated to an address
   /// @param account Address of the account to update
   function _updateReward(IERC20 token, address account) internal {
@@ -146,15 +165,6 @@ abstract contract MultiStakingRewardsERC4626 is
       rewards[token][account] = earned(token, account);
       userRewardPerTokenPaid[token][account] = rewardPerTokenStored[token];
     }
-  }
-
-  /// @inheritdoc ERC4626Upgradeable
-  function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal virtual override {
-    _updateReward(rewardToken1, caller);
-    _updateReward(rewardToken2, caller);
-
-    // continues the call to the erc4626 deposit
-    super._deposit(caller, receiver, assets, shares);
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
