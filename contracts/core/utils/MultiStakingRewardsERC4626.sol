@@ -101,26 +101,6 @@ contract MultiStakingRewardsERC4626 is
     _grantRole(DEFAULT_ADMIN_ROLE, _governance);
   }
 
-  // ============================ Modifiers ======================================
-
-  /// @notice Checks to see if the calling address is the zero address
-  /// @param account Address to check
-  modifier zeroCheck(address account) {
-    require(account != address(0), "0");
-    _;
-  }
-
-  /// @notice Called frequently to update the staking parameters associated to an address
-  /// @param account Address of the account to update
-  function _updateReward(IERC20 token, address account) internal {
-    rewardPerTokenStored[token] = rewardPerToken(token);
-    lastUpdateTime[token] = lastTimeRewardApplicable(token);
-    if (account != address(0)) {
-      rewards[token][account] = earned(token, account);
-      userRewardPerTokenPaid[token][account] = rewardPerTokenStored[token];
-    }
-  }
-
   // ============================ View functions =================================
 
   /// @inheritdoc IMultiStakingRewardsERC4626
@@ -158,6 +138,17 @@ contract MultiStakingRewardsERC4626 is
 
     // continues the call to the erc4626 withdraw
     super._withdraw(caller, receiver, owner, assets, shares);
+  }
+
+  /// @notice Called frequently to update the staking parameters associated to an address
+  /// @param account Address of the account to update
+  function _updateReward(IERC20 token, address account) internal {
+    rewardPerTokenStored[token] = rewardPerToken(token);
+    lastUpdateTime[token] = lastTimeRewardApplicable(token);
+    if (account != address(0)) {
+      rewards[token][account] = earned(token, account);
+      userRewardPerTokenPaid[token][account] = rewardPerTokenStored[token];
+    }
   }
 
   /// @inheritdoc ERC4626Upgradeable
