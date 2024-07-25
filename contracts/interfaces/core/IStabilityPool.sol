@@ -24,6 +24,8 @@ interface IStabilityPool {
   function coverBadDebt(uint256 amount) external;
 
   function initialize(
+    string memory _name,
+    string memory _symbol,
     address _zai,
     uint256 withdrawalDelay,
     address _governance,
@@ -42,7 +44,7 @@ interface IStabilityPool {
 
   function withdrawalTimestamp(address who) external view returns (uint256);
 
-  function zai() external view returns (IERC20);
+  function stablecoin() external view returns (IERC20);
 
   function cancelWithdrawal() external;
 }

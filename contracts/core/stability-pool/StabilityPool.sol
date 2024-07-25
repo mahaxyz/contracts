@@ -20,7 +20,7 @@ import {IERC20, MultiStakingRewardsERC4626} from "../utils/MultiStakingRewardsER
 
 contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
   /// @inheritdoc IStabilityPool
-  IERC20 public zai;
+  IERC20 public stablecoin;
 
   /// @inheritdoc IStabilityPool
   bytes32 public MANAGER_ROLE;
@@ -36,7 +36,9 @@ contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
 
   /// @inheritdoc IStabilityPool
   function initialize(
-    address _zai,
+    string memory _name,
+    string memory _symbol,
+    address _stablecoin,
     uint256 _withdrawalDelay,
     address _governance,
     address _rewardToken1,
@@ -44,17 +46,11 @@ contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
     uint256 _rewardsDuration
   ) external reinitializer(1) {
     __MultiStakingRewardsERC4626_init(
-      "Stability Pool ZAI",
-      "sZAI",
-      _zai, // address _stakingToken,
-      _governance, // address _governance,
-      _rewardToken1, // address _rewardToken1,
-      _rewardToken2, // address _rewardToken2,
-      _rewardsDuration // uint256 _rewardsDuration
+      _name, _symbol, _stablecoin, _governance, _rewardToken1, _rewardToken2, _rewardsDuration
     );
 
     withdrawalDelay = _withdrawalDelay;
-    zai = IERC20(_zai);
+    stablecoin = IERC20(_stablecoin);
     MANAGER_ROLE = keccak256("MANAGER_ROLE");
   }
 
@@ -75,7 +71,7 @@ contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
 
   /// @inheritdoc IStabilityPool
   function coverBadDebt(uint256 amount) external onlyRole(MANAGER_ROLE) {
-    zai.transfer(msg.sender, amount);
+    stablecoin.transfer(msg.sender, amount);
     emit StabilityPoolEvents.BadDebtCovered(amount, msg.sender);
   }
 
