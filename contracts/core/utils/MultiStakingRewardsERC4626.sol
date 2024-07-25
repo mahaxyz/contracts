@@ -145,6 +145,7 @@ contract MultiStakingRewardsERC4626 is
 
   // ======================== Mutative functions forked ==========================
 
+  /// @inheritdoc ERC4626Upgradeable
   function _withdraw(
     address caller,
     address receiver,
@@ -154,12 +155,17 @@ contract MultiStakingRewardsERC4626 is
   ) internal virtual override {
     _updateReward(rewardToken1, owner);
     _updateReward(rewardToken2, owner);
+
+    // continues the call to the erc4626 withdraw
     super._withdraw(caller, receiver, owner, assets, shares);
   }
 
+  /// @inheritdoc ERC4626Upgradeable
   function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal virtual override {
     _updateReward(rewardToken1, caller);
     _updateReward(rewardToken2, caller);
+
+    // continues the call to the erc4626 deposit
     super._deposit(caller, receiver, assets, shares);
   }
 
