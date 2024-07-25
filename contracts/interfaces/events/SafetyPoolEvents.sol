@@ -14,11 +14,11 @@
 pragma solidity 0.8.21;
 
 /**
- * @title StabilityPoolEvents
+ * @title SafetyPoolEvents
  * @author maha.xyz
- * @notice This library defines events for the StabilityPool contract
+ * @notice This library defines events for the SafetyPool contract
  */
-library StabilityPoolEvents {
+library SafetyPoolEvents {
   // --- Events ---
   event BadDebtCovered(uint256 indexed amt, address indexed caller);
   event WithdrawalQueueUpdated(uint256 indexed amt, uint256 indexed unlockTime, address indexed caller);

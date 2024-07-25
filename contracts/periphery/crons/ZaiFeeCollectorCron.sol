@@ -27,7 +27,7 @@ contract ZaiFeeCollectorCron is OwnableUpgradeable {
   address public odos;
   address[] public tokens;
 
-  IMultiStakingRewardsERC4626 public stabilityPoolZai;
+  IMultiStakingRewardsERC4626 public safetyPoolZai;
   IRewardDistributor public stakerMahaZai;
   IRewardDistributor public stakerUsdcZai;
 
@@ -47,7 +47,7 @@ contract ZaiFeeCollectorCron is OwnableUpgradeable {
     address _gelatoooooo,
     address _stakerMahaZai,
     address _stakerUsdcZai,
-    address _stabilityPoolZai,
+    address _safetyPoolZai,
     address _governance
   ) public reinitializer(1) {
     __Ownable_init(msg.sender);
@@ -55,7 +55,7 @@ contract ZaiFeeCollectorCron is OwnableUpgradeable {
     weth = IWETH(_weth);
     rewardToken = IERC20(_rewardToken);
     gelatoooooo = _gelatoooooo;
-    stabilityPoolZai = IMultiStakingRewardsERC4626(_stabilityPoolZai);
+    safetyPoolZai = IMultiStakingRewardsERC4626(_safetyPoolZai);
     stakerMahaZai = IRewardDistributor(_stakerMahaZai);
     stakerUsdcZai = IRewardDistributor(_stakerUsdcZai);
 
@@ -64,7 +64,7 @@ contract ZaiFeeCollectorCron is OwnableUpgradeable {
 
     rewardToken.approve(_stakerMahaZai, type(uint256).max);
     rewardToken.approve(_stakerUsdcZai, type(uint256).max);
-    rewardToken.approve(_stabilityPoolZai, type(uint256).max);
+    rewardToken.approve(_safetyPoolZai, type(uint256).max);
 
     _transferOwnership(_governance);
   }
@@ -111,19 +111,19 @@ contract ZaiFeeCollectorCron is OwnableUpgradeable {
 
     uint256 treasuryAmt = amt / 4; // give 25% to the treasury
     uint256 zaiMahaAmt = amt / 4; // 25% to ZAI/MAHA staking
-    uint256 zaiStabilityPoolAmt = amt / 4; // 25% to ZAI stability pool
-    uint256 zaiUsdcAmt = amt - treasuryAmt - zaiMahaAmt - zaiStabilityPoolAmt; // 25% to ZAI/USDC staking
+    uint256 zaiSafetyPoolAmt = amt / 4; // 25% to ZAI stability pool
+    uint256 zaiUsdcAmt = amt - treasuryAmt - zaiMahaAmt - zaiSafetyPoolAmt; // 25% to ZAI/USDC staking
 
     rewardToken.transfer(treasury, treasuryAmt);
     stakerMahaZai.notifyRewardAmount(zaiMahaAmt);
     stakerUsdcZai.notifyRewardAmount(zaiUsdcAmt);
-    stabilityPoolZai.notifyRewardAmount(weth, zaiStabilityPoolAmt);
+    safetyPoolZai.notifyRewardAmount(weth, zaiSafetyPoolAmt);
 
     // emit events
     emit RevenueCollected(amt);
     emit RevenueDistributed(treasury, treasuryAmt);
     emit RevenueDistributed(address(stakerMahaZai), zaiMahaAmt);
-    emit RevenueDistributed(address(stabilityPoolZai), zaiStabilityPoolAmt);
+    emit RevenueDistributed(address(safetyPoolZai), zaiSafetyPoolAmt);
     emit RevenueDistributed(address(stakerUsdcZai), zaiUsdcAmt);
   }
 

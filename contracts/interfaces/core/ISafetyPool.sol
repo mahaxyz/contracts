@@ -16,11 +16,11 @@ pragma solidity 0.8.21;
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 /**
- * @title Stability Pool
+ * @title Safety Pool
  * @author maha.xyz
  * @notice This is the main contract responsible for paying for bad debt.
  */
-interface IStabilityPool {
+interface ISafetyPool {
   function coverBadDebt(uint256 amount) external;
 
   function initialize(

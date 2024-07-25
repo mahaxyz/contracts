@@ -13,28 +13,28 @@
 
 pragma solidity 0.8.21;
 
-import {IStabilityPool} from "../../interfaces/core/IStabilityPool.sol";
-import {StabilityPoolEvents} from "../../interfaces/events/StabilityPoolEvents.sol";
+import {ISafetyPool} from "../../interfaces/core/ISafetyPool.sol";
+import {SafetyPoolEvents} from "../../interfaces/events/SafetyPoolEvents.sol";
 
 import {IERC20, MultiStakingRewardsERC4626} from "../utils/MultiStakingRewardsERC4626.sol";
 
-contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
-  /// @inheritdoc IStabilityPool
+contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
+  /// @inheritdoc ISafetyPool
   IERC20 public stablecoin;
 
-  /// @inheritdoc IStabilityPool
+  /// @inheritdoc ISafetyPool
   bytes32 public MANAGER_ROLE;
 
-  /// @inheritdoc IStabilityPool
+  /// @inheritdoc ISafetyPool
   uint256 public withdrawalDelay;
 
-  /// @inheritdoc IStabilityPool
+  /// @inheritdoc ISafetyPool
   mapping(address => uint256) public withdrawalTimestamp;
 
-  /// @inheritdoc IStabilityPool
+  /// @inheritdoc ISafetyPool
   mapping(address => uint256) public withdrawalAmount;
 
-  /// @inheritdoc IStabilityPool
+  /// @inheritdoc ISafetyPool
   function initialize(
     string memory _name,
     string memory _symbol,
@@ -54,25 +54,25 @@ contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
     MANAGER_ROLE = keccak256("MANAGER_ROLE");
   }
 
-  /// @inheritdoc IStabilityPool
+  /// @inheritdoc ISafetyPool
   function queueWithdrawal(uint256 shares) external {
     require(shares <= balanceOf(msg.sender), "insufficient balance");
     withdrawalTimestamp[msg.sender] = block.timestamp + withdrawalDelay;
     withdrawalAmount[msg.sender] = shares;
-    emit StabilityPoolEvents.WithdrawalQueueUpdated(shares, withdrawalTimestamp[msg.sender], msg.sender);
+    emit SafetyPoolEvents.WithdrawalQueueUpdated(shares, withdrawalTimestamp[msg.sender], msg.sender);
   }
 
-  /// @inheritdoc IStabilityPool
+  /// @inheritdoc ISafetyPool
   function cancelWithdrawal() external {
     withdrawalTimestamp[msg.sender] = 0;
     withdrawalAmount[msg.sender] = 0;
-    emit StabilityPoolEvents.WithdrawalQueueUpdated(0, 0, msg.sender);
+    emit SafetyPoolEvents.WithdrawalQueueUpdated(0, 0, msg.sender);
   }
 
-  /// @inheritdoc IStabilityPool
+  /// @inheritdoc ISafetyPool
   function coverBadDebt(uint256 amount) external onlyRole(MANAGER_ROLE) {
     stablecoin.transfer(msg.sender, amount);
-    emit StabilityPoolEvents.BadDebtCovered(amount, msg.sender);
+    emit SafetyPoolEvents.BadDebtCovered(amount, msg.sender);
   }
 
   function _withdraw(address caller, address receiver, address owner, uint256 assets, uint256 shares) internal override {
@@ -87,6 +87,6 @@ contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
 
     super._withdraw(caller, receiver, owner, assets, shares);
 
-    emit StabilityPoolEvents.WithdrawalQueueUpdated(0, 0, caller);
+    emit SafetyPoolEvents.WithdrawalQueueUpdated(0, 0, caller);
   }
 }
