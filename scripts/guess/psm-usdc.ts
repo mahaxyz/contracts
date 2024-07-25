@@ -1,9 +1,9 @@
 // import
 import { ethers } from "ethers";
-import { getCreate2Address } from "./create2";
+import { getCreate2Address } from "../create2/create2";
 
 // declare deployment parameters
-import contractArtifact from "../artifacts/contracts/core/ZaiStablecoin.sol/ZaiStablecoin.json";
+import contractArtifact from "../../artifacts/contracts/core/ZaiStablecoin.sol/ZaiStablecoin.json";
 
 const constructorTypes = contractArtifact.abi
   .find((v) => v.type === "constructor")
