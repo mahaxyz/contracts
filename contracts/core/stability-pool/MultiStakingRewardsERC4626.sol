@@ -140,7 +140,13 @@ contract MultiStakingRewardsERC4626 is
 
   // ======================== Mutative functions forked ==========================
 
-  function _withdraw(address caller, address receiver, address owner, uint256 assets, uint256 shares) internal override {
+  function _withdraw(
+    address caller,
+    address receiver,
+    address owner,
+    uint256 assets,
+    uint256 shares
+  ) internal virtual override {
     _updateReward(rewardToken1, caller);
     _updateReward(rewardToken2, caller);
     super._withdraw(caller, receiver, owner, assets, shares);
