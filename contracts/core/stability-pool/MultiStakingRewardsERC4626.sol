@@ -1,8 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.7;
+// ███╗   ███╗ █████╗ ██╗  ██╗ █████╗
+// ████╗ ████║██╔══██╗██║  ██║██╔══██╗
+// ██╔████╔██║███████║███████║███████║
+// ██║╚██╔╝██║██╔══██║██╔══██║██╔══██║
+// ██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║
+// ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
 
-// import "./StakingRewardsEvents.sol";
+// Website: https://maha.xyz
+// Discord: https://discord.gg/mahadao
+// Twitter: https://twitter.com/mahaxyz_
+
+pragma solidity 0.8.21;
 
 import {AccessControlEnumerableUpgradeable} from
   "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
@@ -147,8 +156,8 @@ contract MultiStakingRewardsERC4626 is
     uint256 assets,
     uint256 shares
   ) internal virtual override {
-    _updateReward(rewardToken1, caller);
-    _updateReward(rewardToken2, caller);
+    _updateReward(rewardToken1, owner);
+    _updateReward(rewardToken2, owner);
     super._withdraw(caller, receiver, owner, assets, shares);
   }
 
