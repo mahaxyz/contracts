@@ -23,7 +23,14 @@ import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 interface IStabilityPool {
   function coverBadDebt(uint256 amount) external;
 
-  function initialize(address _zai, uint256 withdrawalDelay, address _govenrance) external;
+  function initialize(
+    address _zai,
+    uint256 withdrawalDelay,
+    address _governance,
+    address _rewardToken1,
+    address _rewardToken2,
+    uint256 _rewardsDuration
+  ) external;
 
   function MANAGER_ROLE() external returns (bytes32);
 

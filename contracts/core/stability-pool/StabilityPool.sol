@@ -19,11 +19,9 @@ import {AccessControlEnumerableUpgradeable} from
 import {IStabilityPool} from "../../interfaces/core/IStabilityPool.sol";
 import {StabilityPoolEvents} from "../../interfaces/events/StabilityPoolEvents.sol";
 
-import {
-  ERC4626Upgradeable, IERC20
-} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
+import {IERC20, MultiStakingRewardsERC4626} from "./MultiStakingRewardsERC4626.sol";
 
-contract StabilityPool is AccessControlEnumerableUpgradeable, ERC4626Upgradeable, IStabilityPool {
+contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
   /// @inheritdoc IStabilityPool
   IERC20 public zai;
 
@@ -40,16 +38,27 @@ contract StabilityPool is AccessControlEnumerableUpgradeable, ERC4626Upgradeable
   mapping(address => uint256) public withdrawalAmount;
 
   /// @inheritdoc IStabilityPool
-  function initialize(address _zai, uint256 withdrawalDelay, address _govenrance) external reinitializer(1) {
-    __AccessControlEnumerable_init();
-    __ERC20_init("Stability Pool ZAI", "sZAI");
-    __ERC4626_init_unchained(zai);
+  function initialize(
+    address _zai,
+    uint256 withdrawalDelay,
+    address _governance,
+    address _rewardToken1,
+    address _rewardToken2,
+    uint256 _rewardsDuration
+  ) external reinitializer(1) {
+    _MultiStakingRewardsERC4626_init(
+      "Stability Pool ZAI",
+      "sZAI",
+      _zai, // address _stakingToken,
+      _governance, // address _governance,
+      _rewardToken1, // address _rewardToken1,
+      _rewardToken2, // address _rewardToken2,
+      _rewardsDuration // uint256 _rewardsDuration
+    );
 
     WITHDRAWAL_DELAY = withdrawalDelay;
     zai = IERC20(_zai);
     MANAGER_ROLE = keccak256("MANAGER_ROLE");
-
-    _grantRole(DEFAULT_ADMIN_ROLE, _govenrance);
   }
 
   /// @inheritdoc IStabilityPool
