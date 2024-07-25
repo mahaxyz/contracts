@@ -54,6 +54,7 @@ contract StabilityPool is AccessControlEnumerableUpgradeable, ERC4626Upgradeable
 
   /// @inheritdoc IStabilityPool
   function queueWithdrawal(uint256 shares) external {
+    require(shares <= balanceOf(msg.sender), "insufficient balance");
     withdrawalTimestamp[msg.sender] = block.timestamp + WITHDRAWAL_DELAY;
     withdrawalAmount[msg.sender] = shares;
     emit StabilityPoolEvents.WithdrawalQueueUpdated(shares, withdrawalTimestamp[msg.sender], msg.sender);
@@ -73,15 +74,17 @@ contract StabilityPool is AccessControlEnumerableUpgradeable, ERC4626Upgradeable
   }
 
   function _withdraw(address caller, address receiver, address owner, uint256 assets, uint256 shares) internal override {
-    require(withdrawalTimestamp[caller] <= block.timestamp, "withdrawal not ready");
-    withdrawalTimestamp[msg.sender] = 0;
+    uint256 amount = withdrawalAmount[caller];
 
-    uint256 amount = withdrawalAmount[msg.sender];
-    withdrawalAmount[msg.sender] = 0;
-    require(shares == amount, "invalid shares");
+    require(withdrawalTimestamp[caller] <= block.timestamp, "withdrawal not ready");
+    require(withdrawalTimestamp[caller] > 0, "no withdrawal qeued");
+    require(shares == amount && amount > 0, "invalid shares");
+
+    withdrawalTimestamp[caller] = 0;
+    withdrawalAmount[caller] = 0;
 
     super._withdraw(caller, receiver, owner, assets, shares);
 
-    emit StabilityPoolEvents.WithdrawalQueueUpdated(0, 0, msg.sender);
+    emit StabilityPoolEvents.WithdrawalQueueUpdated(0, 0, caller);
   }
 }
