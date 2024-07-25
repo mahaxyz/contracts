@@ -62,12 +62,5 @@ interface IMultiStakingRewardsERC4626 {
   /// @dev This reward will be distributed during `rewardsDuration` set previously
   function notifyRewardAmount(IERC20 token, uint256 reward) external;
 
-  function approveUnderlyingWithPermit(
-    address spender,
-    uint256 value,
-    uint256 deadline,
-    uint8 v,
-    bytes32 r,
-    bytes32 s
-  ) external;
+  function approveUnderlyingWithPermit(uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 }

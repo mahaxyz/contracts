@@ -121,14 +121,7 @@ abstract contract MultiStakingRewardsERC4626 is
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  function approveUnderlyingWithPermit(
-    address spender,
-    uint256 value,
-    uint256 deadline,
-    uint8 v,
-    bytes32 r,
-    bytes32 s
-  ) external {
+  function approveUnderlyingWithPermit(uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external {
     IERC20Permit(asset()).permit(msg.sender, address(this), value, deadline, v, r, s);
   }
 
