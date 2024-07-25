@@ -63,7 +63,7 @@ contract MultiStakingRewardsERC4626 is
   /// @param _rewardToken1 First ERC20 token given as reward
   /// @param _rewardToken2 Second ERC20 token given as reward
   /// @param _rewardsDuration Duration of the staking contract
-  function _MultiStakingRewardsERC4626_init(
+  function __MultiStakingRewardsERC4626_init(
     string memory name,
     string memory symbol,
     address _stakingToken,
@@ -161,17 +161,6 @@ contract MultiStakingRewardsERC4626 is
       token.safeTransfer(who, reward);
       // emit RewardPaid(msg.sender, reward);
     }
-  }
-
-  /// @notice Exits someone
-  /// @dev This function lets the caller withdraw its staking and claim rewards
-  // Attention here, there may be reentrancy attacks because of the following call
-  // to an external contract done before other things are modified, yet since the `rewardToken`
-  // is mostly going to be a trusted contract controlled by governance (namely the ANGLE token),
-  // this is not an issue. If the `rewardToken` changes to an untrusted contract, this need to be updated.
-  function exit() external {
-    // withdraw(balanceOf(msg.sender));
-    // getReward();
   }
 
   // ====================== Restricted Functions =================================

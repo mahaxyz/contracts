@@ -32,17 +32,17 @@ interface IStabilityPool {
     uint256 _rewardsDuration
   ) external;
 
-  function MANAGER_ROLE() external returns (bytes32);
+  function MANAGER_ROLE() external view returns (bytes32);
 
   function queueWithdrawal(uint256 shares) external;
 
-  function WITHDRAWAL_DELAY() external returns (uint256);
+  function withdrawalDelay() external view returns (uint256);
 
-  function withdrawalAmount(address who) external returns (uint256);
+  function withdrawalAmount(address who) external view returns (uint256);
 
-  function withdrawalTimestamp(address who) external returns (uint256);
+  function withdrawalTimestamp(address who) external view returns (uint256);
 
-  function zai() external returns (IERC20);
+  function zai() external view returns (IERC20);
 
   function cancelWithdrawal() external;
 }

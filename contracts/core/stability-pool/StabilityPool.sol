@@ -13,9 +13,6 @@
 
 pragma solidity 0.8.21;
 
-import {AccessControlEnumerableUpgradeable} from
-  "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
-
 import {IStabilityPool} from "../../interfaces/core/IStabilityPool.sol";
 import {StabilityPoolEvents} from "../../interfaces/events/StabilityPoolEvents.sol";
 
@@ -29,7 +26,7 @@ contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
   bytes32 public MANAGER_ROLE;
 
   /// @inheritdoc IStabilityPool
-  uint256 public WITHDRAWAL_DELAY;
+  uint256 public withdrawalDelay;
 
   /// @inheritdoc IStabilityPool
   mapping(address => uint256) public withdrawalTimestamp;
@@ -40,13 +37,13 @@ contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
   /// @inheritdoc IStabilityPool
   function initialize(
     address _zai,
-    uint256 withdrawalDelay,
+    uint256 _withdrawalDelay,
     address _governance,
     address _rewardToken1,
     address _rewardToken2,
     uint256 _rewardsDuration
   ) external reinitializer(1) {
-    _MultiStakingRewardsERC4626_init(
+    __MultiStakingRewardsERC4626_init(
       "Stability Pool ZAI",
       "sZAI",
       _zai, // address _stakingToken,
@@ -56,7 +53,7 @@ contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
       _rewardsDuration // uint256 _rewardsDuration
     );
 
-    WITHDRAWAL_DELAY = withdrawalDelay;
+    withdrawalDelay = _withdrawalDelay;
     zai = IERC20(_zai);
     MANAGER_ROLE = keccak256("MANAGER_ROLE");
   }
@@ -64,7 +61,7 @@ contract StabilityPool is MultiStakingRewardsERC4626, IStabilityPool {
   /// @inheritdoc IStabilityPool
   function queueWithdrawal(uint256 shares) external {
     require(shares <= balanceOf(msg.sender), "insufficient balance");
-    withdrawalTimestamp[msg.sender] = block.timestamp + WITHDRAWAL_DELAY;
+    withdrawalTimestamp[msg.sender] = block.timestamp + withdrawalDelay;
     withdrawalAmount[msg.sender] = shares;
     emit StabilityPoolEvents.WithdrawalQueueUpdated(shares, withdrawalTimestamp[msg.sender], msg.sender);
   }
