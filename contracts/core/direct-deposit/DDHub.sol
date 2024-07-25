@@ -56,6 +56,9 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     address _zai,
     address _governance
   ) external reinitializer(1) {
+    __ReentrancyGuard_init();
+    __AccessControlEnumerable_init();
+
     zai = IZaiStablecoin(_zai);
     feeCollector = _feeCollector;
     globalDebtCeiling = _globalDebtCeiling;
