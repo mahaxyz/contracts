@@ -87,6 +87,7 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
   function mint(address dest, uint256 shares) external nonReentrant {
     uint256 amount = toCollateralAmountWithFee(shares, mintFeeBps);
 
+    require(amount > 0, "amount too low");
     require(collateral.balanceOf(address(this)) + amount <= supplyCap, "supply cap exceeded");
     require(debt + shares <= debtCap, "debt cap exceeded");
 
@@ -100,6 +101,8 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
   /// @inheritdoc IPegStabilityModule
   function redeem(address dest, uint256 shares) external nonReentrant {
     uint256 amount = toCollateralAmountWithFeeInverse(shares, redeemFeeBps);
+
+    require(amount > 0, "amount too low");
 
     zai.transferFrom(msg.sender, address(this), shares);
     zai.burn(address(this), shares);
