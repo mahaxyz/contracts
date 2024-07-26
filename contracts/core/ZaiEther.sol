@@ -20,7 +20,7 @@ import {StablecoinBase} from "./StablecoinBase.sol";
 /**
  * @title Zai Ether "ETHz"
  * @author maha.xyz
- * @notice Represents the ZAI ether-coin.
+ * @notice Represents ZAI ether.
  */
 contract ZaiEther is StablecoinBase {
   constructor(address _owner) StablecoinBase("ZAI Ether", "ETHz", _owner) {
