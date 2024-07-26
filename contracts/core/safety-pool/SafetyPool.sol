@@ -73,8 +73,7 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
     uint256 amount = withdrawalAmount[caller];
 
     require(withdrawalTimestamp[caller] <= block.timestamp, "withdrawal not ready");
-    require(withdrawalTimestamp[caller] > 0, "no withdrawal qeued");
-    require(shares == amount && amount > 0, "invalid shares");
+    require(shares == amount && amount > 0, "invalid withdrawal");
 
     withdrawalTimestamp[caller] = 0;
     withdrawalAmount[caller] = 0;
