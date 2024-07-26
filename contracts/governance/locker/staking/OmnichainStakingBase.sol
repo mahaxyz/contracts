@@ -20,8 +20,7 @@ import {IOmnichainStaking} from "../../../interfaces/governance/IOmnichainStakin
 import {IPoolVoter} from "../../../interfaces/governance/IPoolVoter.sol";
 import {IWETH} from "../../../interfaces/governance/IWETH.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {ERC20VotesUpgradeable} from
-  "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20VotesUpgradeable.sol";
+import {ERC20VotesUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20VotesUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -112,7 +111,7 @@ abstract contract OmnichainStakingBase is
     require(msg.sender == address(locker), "only locker");
 
     if (data.length > 0) {
-      (, from,) = abi.decode(data, (bool, address, uint256));
+      (, from, ) = abi.decode(data, (bool, address, uint256));
     }
 
     updateRewardFor(from);
@@ -137,14 +136,18 @@ abstract contract OmnichainStakingBase is
    * @return lockedTokenIds The array of locked NFT IDs.
    * @return tokenDetails The array of locked NFT details.
    */
-  function getLockedNftDetails(address _user) external view returns (uint256[] memory, ILocker.LockedBalance[] memory) {
+  function getLockedNftDetails(
+    address _user
+  ) external view returns (uint256[] memory, ILocker.LockedBalance[] memory) {
     uint256 tokenIdsLength = lockedTokenIdNfts[_user].length;
     uint256[] memory lockedTokenIds = lockedTokenIdNfts[_user];
 
     uint256[] memory tokenIds = new uint256[](tokenIdsLength);
-    ILocker.LockedBalance[] memory tokenDetails = new ILocker.LockedBalance[](tokenIdsLength);
+    ILocker.LockedBalance[] memory tokenDetails = new ILocker.LockedBalance[](
+      tokenIdsLength
+    );
 
-    for (uint256 i; i < tokenIdsLength;) {
+    for (uint256 i; i < tokenIdsLength; ) {
       tokenDetails[i] = locker.locked(lockedTokenIds[i]);
       tokenIds[i] = lockedTokenIds[i];
 
@@ -156,7 +159,12 @@ abstract contract OmnichainStakingBase is
     return (tokenIds, tokenDetails);
   }
 
-  function onERC721Received(address to, address from, uint256 tokenId, bytes calldata data) external returns (bytes4) {
+  function onERC721Received(
+    address to,
+    address from,
+    uint256 tokenId,
+    bytes calldata data
+  ) external returns (bytes4) {
     return _onERC721ReceivedInternal(to, from, tokenId, data);
   }
 
@@ -172,7 +180,10 @@ abstract contract OmnichainStakingBase is
     }
 
     delete lockedByToken[tokenId];
-    lockedTokenIdNfts[_msgSender()] = deleteAnElement(lockedTokenIdNfts[_msgSender()], tokenId);
+    lockedTokenIdNfts[_msgSender()] = deleteAnElement(
+      lockedTokenIdNfts[_msgSender()],
+      tokenId
+    );
 
     // reset and burn voting power
     _burn(msg.sender, tokenPower[tokenId]);
@@ -187,7 +198,10 @@ abstract contract OmnichainStakingBase is
    * @param tokenId The ID of the NFT for which to update the lock duration.
    * @param newLockDuration The new lock duration in seconds.
    */
-  function increaseLockDuration(uint256 tokenId, uint256 newLockDuration) external {
+  function increaseLockDuration(
+    uint256 tokenId,
+    uint256 newLockDuration
+  ) external {
     require(newLockDuration > 0, "!newLockAmount");
 
     require(msg.sender == lockedByToken[tokenId], "!tokenId");
@@ -252,7 +266,11 @@ abstract contract OmnichainStakingBase is
    * @return The amount of rewards earned.
    */
   function earned(address account) public view returns (uint256) {
-    return (balanceOf(account) * (rewardPerToken() - userRewardPerTokenPaid[account])) / 1e18 + rewards[account];
+    return
+      (balanceOf(account) *
+        (rewardPerToken() - userRewardPerTokenPaid[account])) /
+      1e18 +
+      rewards[account];
   }
 
   /**
@@ -260,7 +278,9 @@ abstract contract OmnichainStakingBase is
    * @return The last time rewards were applicable.
    */
   function lastTimeRewardApplicable() public view returns (uint256) {
-    uint256 time = block.timestamp < periodFinish ? block.timestamp : periodFinish;
+    uint256 time = block.timestamp < periodFinish
+      ? block.timestamp
+      : periodFinish;
     return time;
   }
 
@@ -278,12 +298,15 @@ abstract contract OmnichainStakingBase is
     }
 
     uint256 timeElapsed = lastTimeRewardApplicable() - lastUpdateTime;
-    uint256 rewardPerTokenChange = (timeElapsed * rewardRate * 1e18) / totalSupply();
+    uint256 rewardPerTokenChange = (timeElapsed * rewardRate * 1e18) /
+      totalSupply();
 
     return rewardPerTokenStored + rewardPerTokenChange;
   }
 
-  function notifyRewardAmount(uint256 reward) external updateReward(address(0)) {
+  function notifyRewardAmount(
+    uint256 reward
+  ) external updateReward(address(0)) {
     require(msg.sender == distributor, "!distributor");
     rewardsToken.transferFrom(msg.sender, address(this), reward);
 
@@ -300,15 +323,24 @@ abstract contract OmnichainStakingBase is
     // very high values of rewardRate in the earned and rewardsPerToken functions;
     // Reward + leftover must be less than 2^256 / 10^18 to avoid overflow.
     uint256 balance = rewardsToken.balanceOf(address(this));
-    require(rewardRate <= balance / rewardsDuration, "Provided reward too high");
+    require(
+      rewardRate <= balance / rewardsDuration,
+      "Provided reward too high"
+    );
 
     lastUpdateTime = block.timestamp;
     periodFinish = block.timestamp + rewardsDuration;
     emit RewardAdded(reward);
   }
 
-  function recoverERC20(address tokenAddress, uint256 tokenAmount) external onlyOwner {
-    require(tokenAddress != address(rewardsToken), "Cannot withdraw the staking token");
+  function recoverERC20(
+    address tokenAddress,
+    uint256 tokenAmount
+  ) external onlyOwner {
+    require(
+      tokenAddress != address(rewardsToken),
+      "Cannot withdraw the staking token"
+    );
     IERC20(tokenAddress).transfer(owner(), tokenAmount);
     emit Recovered(tokenAddress, tokenAmount);
   }
@@ -366,7 +398,7 @@ abstract contract OmnichainStakingBase is
     if (reward > 0) {
       rewards[msg.sender] = 0;
       IWETH(address(rewardsToken)).withdraw(reward);
-      (bool ethSendSuccess,) = msg.sender.call{value: reward}("");
+      (bool ethSendSuccess, ) = msg.sender.call{value: reward}("");
       require(ethSendSuccess, "eth send failed");
       emit RewardPaid(msg.sender, reward);
     }
@@ -382,7 +414,11 @@ abstract contract OmnichainStakingBase is
   /**
    * @dev Prevents transfers of voting power.
    */
-  function transferFrom(address, address, uint256) public pure override returns (bool) {
+  function transferFrom(
+    address,
+    address,
+    uint256
+  ) public pure override returns (bool) {
     revert("transferFrom disabled");
   }
 
@@ -392,7 +428,10 @@ abstract contract OmnichainStakingBase is
    * @param element The element to delete.
    * @return The updated array.
    */
-  function deleteAnElement(uint256[] memory elements, uint256 element) internal pure returns (uint256[] memory) {
+  function deleteAnElement(
+    uint256[] memory elements,
+    uint256 element
+  ) internal pure returns (uint256[] memory) {
     uint256 length = elements.length;
     uint256 count;
 
@@ -429,5 +468,11 @@ abstract contract OmnichainStakingBase is
     _;
   }
 
-  function _getTokenPower(uint256 amount) internal view virtual returns (uint256 power);
+  function _getTokenPower(
+    uint256 amount
+  ) internal view virtual returns (uint256 power);
+
+  function totalVotes() external view returns (uint256 power) {
+    return totalSupply();
+  }
 }

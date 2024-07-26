@@ -13,8 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {AccessControlEnumerableUpgradeable} from
-  "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
+import {AccessControlEnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 import {ERC4626Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
 import {IMultiStakingRewardsERC4626} from "../../interfaces/core/IMultiStakingRewardsERC4626.sol";
@@ -60,10 +59,12 @@ abstract contract MultiStakingRewardsERC4626 is
   mapping(IERC20 reward => uint256) public rewardPerTokenStored;
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  mapping(IERC20 reward => mapping(address who => uint256)) public userRewardPerTokenPaid;
+  mapping(IERC20 reward => mapping(address who => uint256))
+    public userRewardPerTokenPaid;
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  mapping(IERC20 reward => mapping(address who => uint256 rewards)) public rewards;
+  mapping(IERC20 reward => mapping(address who => uint256 rewards))
+    public rewards;
 
   /// @inheritdoc IMultiStakingRewardsERC4626
   IERC20 public rewardToken1;
@@ -102,7 +103,9 @@ abstract contract MultiStakingRewardsERC4626 is
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  function lastTimeRewardApplicable(IERC20 token) public view returns (uint256) {
+  function lastTimeRewardApplicable(
+    IERC20 token
+  ) public view returns (uint256) {
     return Math.min(block.timestamp, periodFinish[token]);
   }
 
@@ -111,19 +114,35 @@ abstract contract MultiStakingRewardsERC4626 is
     if (totalSupply() == 0) {
       return rewardPerTokenStored[token];
     }
-    return rewardPerTokenStored[token]
-      + (((lastTimeRewardApplicable(token) - lastUpdateTime[token]) * rewardRate[token] * 1e18) / totalSupply());
+    return
+      rewardPerTokenStored[token] +
+      (((lastTimeRewardApplicable(token) - lastUpdateTime[token]) *
+        rewardRate[token] *
+        1e18) / totalSupply());
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
   function earned(IERC20 token, address account) public view returns (uint256) {
-    return (balanceOf(account) * (rewardPerToken(token) - userRewardPerTokenPaid[token][account])) / 1e18
-      + rewards[token][account];
+    return _earned(token, account, balanceOf(account));
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  function approveUnderlyingWithPermit(uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external {
-    IERC20Permit(asset()).permit(msg.sender, address(this), value, deadline, v, r, s);
+  function approveUnderlyingWithPermit(
+    uint256 val,
+    uint256 deadline,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) external {
+    IERC20Permit(asset()).permit(
+      msg.sender,
+      address(this),
+      val,
+      deadline,
+      v,
+      r,
+      s
+    );
   }
 
   /// @inheritdoc ERC4626Upgradeable
@@ -134,20 +153,43 @@ abstract contract MultiStakingRewardsERC4626 is
     uint256 assets,
     uint256 shares
   ) internal virtual override {
-    _updateReward(rewardToken1, owner);
-    _updateReward(rewardToken2, owner);
+    _updateRewardDual(rewardToken1, rewardToken2, caller);
 
     // continues the call to the erc4626 withdraw
     super._withdraw(caller, receiver, owner, assets, shares);
   }
 
   /// @inheritdoc ERC4626Upgradeable
-  function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal virtual override {
-    _updateReward(rewardToken1, caller);
-    _updateReward(rewardToken2, caller);
+  function _deposit(
+    address caller,
+    address receiver,
+    uint256 assets,
+    uint256 shares
+  ) internal virtual override {
+    _updateRewardDual(rewardToken1, rewardToken2, caller);
 
     // continues the call to the erc4626 deposit
     super._deposit(caller, receiver, assets, shares);
+  }
+
+  function _earned(
+    IERC20 token,
+    address account,
+    uint256 balance
+  ) internal view returns (uint256) {
+    return
+      (balance *
+        (rewardPerToken(token) - userRewardPerTokenPaid[token][account])) /
+      1e18 +
+      rewards[token][account];
+  }
+
+  function _boostedBalance(
+    address account,
+    uint256 balance
+  ) internal view returns (uint256) {
+    // todo add staking boost
+    return balance;
   }
 
   /// @notice Called frequently to update the staking parameters associated to an address
@@ -158,6 +200,25 @@ abstract contract MultiStakingRewardsERC4626 is
     if (account != address(0)) {
       rewards[token][account] = earned(token, account);
       userRewardPerTokenPaid[token][account] = rewardPerTokenStored[token];
+    }
+  }
+
+  function _updateRewardDual(
+    IERC20 token1,
+    IERC20 token2,
+    address account
+  ) internal {
+    rewardPerTokenStored[token1] = rewardPerToken(token1);
+    lastUpdateTime[token1] = lastTimeRewardApplicable(token1);
+    rewardPerTokenStored[token2] = rewardPerToken(token2);
+    lastUpdateTime[token2] = lastTimeRewardApplicable(token2);
+
+    if (account != address(0)) {
+      uint256 bal = balanceOf(account);
+      rewards[token1][account] = _earned(token1, account, bal);
+      rewards[token2][account] = _earned(token2, account, bal);
+      userRewardPerTokenPaid[token1][account] = rewardPerTokenStored[token1];
+      userRewardPerTokenPaid[token2][account] = rewardPerTokenStored[token2];
     }
   }
 
@@ -173,7 +234,10 @@ abstract contract MultiStakingRewardsERC4626 is
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  function notifyRewardAmount(IERC20 token, uint256 reward) external onlyRole(DISTRIBUTOR_ROLE) nonReentrant {
+  function notifyRewardAmount(
+    IERC20 token,
+    uint256 reward
+  ) external onlyRole(DISTRIBUTOR_ROLE) nonReentrant {
     _updateReward(token, address(0));
     token.safeTransferFrom(msg.sender, address(this), reward);
     if (block.timestamp >= periodFinish[token]) {
@@ -191,7 +255,10 @@ abstract contract MultiStakingRewardsERC4626 is
     // very high values of `rewardRate` in the earned and `rewardsPerToken` functions;
     // Reward + leftover must be less than 2^256 / 10^18 to avoid overflow.
     uint256 balance = token.balanceOf(address(this));
-    require(rewardRate[token] <= balance / rewardsDuration, "not enough balance");
+    require(
+      rewardRate[token] <= balance / rewardsDuration,
+      "not enough balance"
+    );
 
     lastUpdateTime[token] = block.timestamp;
     periodFinish[token] = block.timestamp + rewardsDuration; // Change the duration
