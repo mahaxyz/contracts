@@ -82,7 +82,7 @@ abstract contract MultiStakingRewardsERC4626 is
     address _rewardToken1,
     address _rewardToken2,
     uint256 _rewardsDuration
-  ) internal {
+  ) internal onlyInitializing {
     __ERC20_init(name, symbol);
     __ERC4626_init_unchained(IERC20(_stakingToken));
     __AccessControlEnumerable_init();
