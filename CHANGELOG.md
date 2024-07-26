@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/mahaxyz/contracts/compare/v1.0.3...v1.0.4) (2024-07-26)
+
+
+### Bug Fixes
+
+* fixed the safety pool contract ([1fcf431](https://github.com/mahaxyz/contracts/commit/1fcf431011d7b924090b4f6ff72c82060b507a9b))
+
 ## [1.0.3](https://github.com/mahaxyz/contracts/compare/v1.0.2...v1.0.3) (2024-07-26)
 
 
