@@ -28,6 +28,10 @@ contract SafetyPoolTest is BaseZaiTest {
       "Safety Pool", "sZAI", address(zai), 10 days, governance, address(usdc), address(maha), 7 days
     );
 
+    bytes32 role = safetyPool.MANAGER_ROLE();
+    vm.prank(governance);
+    safetyPool.grantRole(role, governance);
+
     vm.prank(whale);
     zai.approve(address(safetyPool), type(uint256).max);
   }
@@ -65,12 +69,33 @@ contract SafetyPoolTest is BaseZaiTest {
     vm.stopPrank();
   }
 
-  function test_slashing() public {
+  function test_coverBadDebt() public {
+    vm.prank(whale);
+    safetyPool.mint(100 ether, whale);
+
+    vm.prank(governance);
+    safetyPool.coverBadDebt(1 ether);
+    assertEq(1 ether, zai.balanceOf(governance)); // 1 zai
+    assertEq(99 ether, zai.balanceOf(address(safetyPool))); // 99 zai
+
+    vm.startPrank(whale);
+
+    // user should be slashed by 1%
+
+    safetyPool.queueWithdrawal(10 ether);
+    vm.warp(block.timestamp + 10 days + 1);
+    safetyPool.redeem(10 ether, ant, whale);
+
+    assertEq(99 ether / 10, zai.balanceOf(ant)); // 9.9 zai
+    assertEq(900 ether, zai.balanceOf(whale)); // 900 zai
+    assertEq(891 ether / 10, zai.balanceOf(address(safetyPool))); // 89.1 zai
+
+    vm.stopPrank();
+  }
+
+  function test_cancelWithdrawal() public {
     vm.startPrank(whale);
     safetyPool.deposit(100 ether, whale);
-
-    vm.expectRevert(bytes("invalid withdrawal"));
-    safetyPool.withdraw(100 ether, ant, whale);
 
     safetyPool.queueWithdrawal(100 ether);
 
@@ -79,16 +104,12 @@ contract SafetyPoolTest is BaseZaiTest {
 
     vm.warp(block.timestamp + 10 days + 1);
 
-    vm.expectRevert(bytes("invalid withdrawal"));
-    safetyPool.withdraw(10 ether, ant, whale);
-
     vm.expectEmit(address(safetyPool));
     emit SafetyPoolEvents.WithdrawalQueueUpdated(0, 0, whale);
-    safetyPool.withdraw(100 ether, ant, whale);
+    safetyPool.cancelWithdrawal();
 
-    assertEq(100 ether, zai.balanceOf(ant));
-    assertEq(900 ether, zai.balanceOf(whale));
-    assertEq(0, zai.balanceOf(address(safetyPool)));
+    vm.expectRevert(bytes("invalid withdrawal"));
+    safetyPool.withdraw(100 ether, ant, whale);
 
     vm.stopPrank();
   }
