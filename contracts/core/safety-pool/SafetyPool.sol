@@ -70,16 +70,15 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
   }
 
   function _withdraw(address caller, address receiver, address owner, uint256 assets, uint256 shares) internal override {
-    uint256 amount = withdrawalAmount[caller];
+    uint256 amount = withdrawalAmount[owner];
 
-    require(withdrawalTimestamp[caller] <= block.timestamp, "withdrawal not ready");
+    require(withdrawalTimestamp[owner] <= block.timestamp, "withdrawal not ready");
     require(shares == amount && amount > 0, "invalid withdrawal");
 
-    withdrawalTimestamp[caller] = 0;
-    withdrawalAmount[caller] = 0;
+    withdrawalTimestamp[owner] = 0;
+    withdrawalAmount[owner] = 0;
+    emit SafetyPoolEvents.WithdrawalQueueUpdated(0, 0, owner);
 
     super._withdraw(caller, receiver, owner, assets, shares);
-
-    emit SafetyPoolEvents.WithdrawalQueueUpdated(0, 0, caller);
   }
 }
