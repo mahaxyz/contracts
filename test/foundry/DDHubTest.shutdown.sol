@@ -13,10 +13,37 @@
 
 pragma solidity 0.8.21;
 
-import {BaseLocker} from "./BaseLocker.sol";
+import "./base/BaseDDHubTest.sol";
 
-contract LockerToken is BaseLocker {
-  function init(address _token, address _staking) external initializer {
-    __BaseLocker_init("Locked MAHA Tokens", "MAHAX", _token, _staking, 4 * 365 * 86_400);
+contract DDHubTestShutdown is BaseDDHubTest {
+  function setUp() public {
+    _setUpHub();
+    _setupPool();
+
+    // fund metamorpho with 1000 zai
+    vm.prank(executor);
+    hub.exec(pool);
+  }
+
+  function test_shutdownViaPlanDisabled() public {
+    vm.prank(governance);
+    plan.disable();
+
+    vm.expectEmit(address(hub));
+    emit DDEventsLib.BurnDebt(pool, 1000 ether - 1);
+
+    vm.prank(executor);
+    hub.exec(pool);
+  }
+
+  function test_shutdownViaShutdownPoolCall() public {
+    vm.prank(riskManager);
+    hub.shutdownPool(pool);
+
+    vm.expectEmit(address(hub));
+    emit DDEventsLib.BurnDebt(pool, 1000 ether - 1);
+
+    vm.prank(executor);
+    hub.exec(pool);
   }
 }

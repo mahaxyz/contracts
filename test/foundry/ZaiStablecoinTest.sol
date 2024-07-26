@@ -23,7 +23,7 @@ contract ZaiStablecoinTest is BaseZaiTest {
   }
 
   function test_nameAndSymbol() public view {
-    assertEq(zai.name(), "Zai Stablecoin");
+    assertEq(zai.name(), "ZAI Stablecoin");
     assertEq(zai.symbol(), "USDz");
   }
 

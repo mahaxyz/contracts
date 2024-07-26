@@ -13,8 +13,13 @@
 
 pragma solidity 0.8.21;
 
-interface IRewardDistributor {
-  // used to notify a gauge/bribe of a given reward, this can create griefing attacks by extending rewards
-  // TODO: rework to weekly resets, _updatePeriod as per v1 bribes
-  function notifyRewardAmount(uint256 amount) external returns (bool);
+/**
+ * @title SafetyPoolEvents
+ * @author maha.xyz
+ * @notice This library defines events for the SafetyPool contract
+ */
+library SafetyPoolEvents {
+  // --- Events ---
+  event BadDebtCovered(uint256 indexed amt, address indexed caller);
+  event WithdrawalQueueUpdated(uint256 indexed amt, uint256 indexed unlockTime, address indexed caller);
 }
