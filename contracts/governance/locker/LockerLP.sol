@@ -17,6 +17,6 @@ import {BaseLocker} from "./BaseLocker.sol";
 
 contract LockerLP is BaseLocker {
   function init(address _token, address _staking) external initializer {
-    __BaseLocker_init("Locked MAHA/ZAI LP", "LP-MAHA", _token, _staking, 365 * 86_400);
+    __BaseLocker_init("Locked MAHA/ETH LP", "MAHAETHX", _token, _staking, 365 * 86_400);
   }
 }

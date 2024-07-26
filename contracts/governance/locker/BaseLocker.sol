@@ -31,7 +31,6 @@ import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgradeable, ILocker {
   uint256 internal WEEK;
   uint256 internal MAXTIME;
-  uint256 internal MULTIPLIER;
   uint256 public supply;
   string public version;
   uint8 public decimals;
@@ -56,7 +55,6 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
     decimals = 18;
     WEEK = 1 weeks;
     MAXTIME = _maxTime;
-    MULTIPLIER = 1 ether;
     staking = IOmnichainStaking(_staking);
     _underlying = IERC20(_token);
     _setApprovalForAll(address(this), _staking, true);
