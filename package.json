@@ -10,7 +10,9 @@
     "format": "forge fmt",
     "format:check": "forge fmt --check",
     "coverage": "yarn build:blue && forge coverage --report lcov",
-    "coverage:html": "yarn coverage && lcov --remove lcov.info test contracts/governance contracts/periphery --ignore-errors inconsistent -o lcov.info && genhtml lcov.info --output-dir coverage --rc lcov_branch_coverage=1",
+    "coverage:lcov": "yarn coverage && lcov --remove lcov.info test contracts/governance contracts/periphery --ignore-errors inconsistent -o lcov.info",
+    "coverage:html": "yarn coverage:lcov && genhtml lcov.info --output-dir coverage --rc lcov_branch_coverage=1",
+    "coverage:html:mac": "yarn coverage:lcov && genhtml lcov.info --output-dir coverage --rc branch_coverage=1 --ignore-errors inconsistent --ignore-errors corrupt",
     "test": "yarn test:forge",
     "compile": "hardhat compile && forge build",
     "prepublishOnly": "npm run compile && npm run docs && npm run test"

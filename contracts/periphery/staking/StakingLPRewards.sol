@@ -13,10 +13,20 @@
 
 pragma solidity 0.8.21;
 
-import {BaseLocker} from "./BaseLocker.sol";
+import {MultiStakingRewardsERC4626} from "../../core/utils/MultiStakingRewardsERC4626.sol";
 
-contract LockerToken is BaseLocker {
-  function init(address _token, address _staking) external initializer {
-    __BaseLocker_init("Locked MAHA Tokens", "MAHAX", _token, _staking, 4 * 365 * 86_400);
+contract StakingLPRewards is MultiStakingRewardsERC4626 {
+  function initialize(
+    string memory _name,
+    string memory _symbol,
+    address _stakingToken,
+    address _governance,
+    address _rewardToken1,
+    address _rewardToken2,
+    uint256 _rewardsDuration
+  ) external reinitializer(1) {
+    __MultiStakingRewardsERC4626_init(
+      _name, _symbol, _stakingToken, _governance, _rewardToken1, _rewardToken2, _rewardsDuration
+    );
   }
 }

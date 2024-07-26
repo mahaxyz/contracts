@@ -24,6 +24,7 @@ abstract contract BaseZaiTest is Test {
   ZaiStablecoin public zai;
 
   MockERC20 public usdc;
+  MockERC20 public maha;
   MockERC20 public dai;
   MockERC20 public weth;
 
@@ -38,6 +39,7 @@ abstract contract BaseZaiTest is Test {
 
     usdc = new MockERC20("USD Coin", "USDC", 8);
     dai = new MockERC20("DAI", "DAI", 18);
+    maha = new MockERC20("MahaDAO", "MAHA", 18);
     weth = new MockERC20("Wrapped Ether", "WETH", 18);
 
     vm.label(address(zai), "zai");
