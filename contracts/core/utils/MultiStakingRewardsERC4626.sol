@@ -31,6 +31,7 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 /// @notice The `MultiStakingRewardsERC4626` contracts allows to stake an ERC20 token and receieve multiple other ERC20
 /// rewards
 /// @dev This contracts is designed to be used via a proxy and follows the ERC4626 standard.
+/// @dev This contracts needs at least two reward tokens to be used
 abstract contract MultiStakingRewardsERC4626 is
   AccessControlEnumerableUpgradeable,
   ERC4626Upgradeable,

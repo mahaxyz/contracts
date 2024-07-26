@@ -135,13 +135,12 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
   function evaluatePoolAction(IDDPool pool) public view returns (uint256 toWithdraw, uint256 toSupply) {
     PoolInfo memory info = _poolInfos[pool];
 
-    uint256 currentAssets = pool.assetBalance(); // Should return DAI owned by D3MPool
+    uint256 currentAssets = pool.assetBalance(); // Should return ZAI owned by pools
     uint256 maxWithdraw = Math.min(pool.maxWithdraw(), Constants.SAFEMAX);
 
-    // Determine if it needs to fully unwind due to D3M ilk being caged (but not culled), plan is not active or
-    // something
-    // wrong is going with the third party and we are entering in the ilegal situation of having less assets than
-    // registered
+    // Determine if it needs to fully unwind due to DDM being shutdown, plan is not active or
+    // something wrong is going with the third party and we are entering in the
+    // illegal situation of having less assets than what is registered
     // It's adding up `WAD` due possible rounding errors
     if (!info.isLive || !info.plan.active() || currentAssets + Constants.WAD < info.debt) {
       toWithdraw = maxWithdraw;
@@ -228,7 +227,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
       zai.burn(address(this), toWithdraw);
       emit DDEventsLib.BurnDebt(pool, toWithdraw);
     } else if (toSupply > 0) {
-      require(info.debt + toSupply <= Constants.SAFEMAX, "D3MHub/wind-overflow");
+      require(info.debt + toSupply <= Constants.SAFEMAX, "DDHub/wind-overflow");
 
       info.debt += toSupply;
       zai.mint(address(this), toSupply);

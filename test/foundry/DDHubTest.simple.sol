@@ -85,6 +85,20 @@ contract DDHubTestSimple is BaseDDHubTest {
     assertEq(zai.balanceOf(address(morpho)), 100 ether);
   }
 
+  function test_shouldRevertWithNoOp() public {
+    _setupPool();
+
+    vm.prank(governance);
+    hub.setDebtCeiling(pool, 100 ether);
+
+    vm.prank(executor);
+    hub.exec(pool);
+
+    vm.expectRevert();
+    vm.prank(executor);
+    hub.exec(pool);
+  }
+
   function test_shouldWithdrawZaiAfterTargetAssetsReduced() public {
     _setupPool();
 

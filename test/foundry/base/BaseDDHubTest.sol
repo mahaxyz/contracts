@@ -14,7 +14,7 @@
 pragma solidity 0.8.21;
 
 import {ZaiStablecoin} from "../../../contracts/core/ZaiStablecoin.sol";
-import {DDHub, IDDHub} from "../../../contracts/core/direct-deposit/DDHub.sol";
+import {DDEventsLib, DDHub, IDDHub} from "../../../contracts/core/direct-deposit/DDHub.sol";
 import {DDOperatorPlan, IDDPlan} from "../../../contracts/core/direct-deposit/plans/DDOperatorPlan.sol";
 import {DDMetaMorpho, IDDPool} from "../../../contracts/core/direct-deposit/pools/DDMetaMorpho.sol";
 
