@@ -117,7 +117,8 @@ abstract contract MultiStakingRewardsERC4626 is
 
   /// @inheritdoc IMultiStakingRewardsERC4626
   function earned(IERC20 token, address account) public view returns (uint256) {
-    return _earned(token, account, balanceOf(account));
+    uint256 bal = _boostedBalance(account, balanceOf(account));
+    return _earned(token, account, bal);
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
@@ -174,7 +175,7 @@ abstract contract MultiStakingRewardsERC4626 is
     lastUpdateTime[token2] = lastTimeRewardApplicable(token2);
 
     if (account != address(0)) {
-      uint256 bal = balanceOf(account);
+      uint256 bal = _boostedBalance(account, balanceOf(account));
       rewards[token1][account] = _earned(token1, account, bal);
       rewards[token2][account] = _earned(token2, account, bal);
       userRewardPerTokenPaid[token1][account] = rewardPerTokenStored[token1];
