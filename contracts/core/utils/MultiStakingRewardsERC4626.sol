@@ -18,6 +18,7 @@ import {AccessControlEnumerableUpgradeable} from
 import {ERC4626Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
 import {IMultiStakingRewardsERC4626} from "../../interfaces/core/IMultiStakingRewardsERC4626.sol";
+import {IOmnichainStaking} from "../../interfaces/governance/IOmnichainStaking.sol";
 import {MulticallUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/MulticallUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 
@@ -71,10 +72,9 @@ abstract contract MultiStakingRewardsERC4626 is
   /// @inheritdoc IMultiStakingRewardsERC4626
   IERC20 public rewardToken2;
 
+  IOmnichainStaking public staking;
+
   /// @notice Initializes the staking contract with a first set of parameters
-  /// @param _rewardToken1 First ERC20 token given as reward
-  /// @param _rewardToken2 Second ERC20 token given as reward
-  /// @param _rewardsDuration Duration of the staking contract
   function __MultiStakingRewardsERC4626_init(
     string memory name,
     string memory symbol,
@@ -82,10 +82,11 @@ abstract contract MultiStakingRewardsERC4626 is
     address _governance,
     address _rewardToken1,
     address _rewardToken2,
-    uint256 _rewardsDuration
+    uint256 _rewardsDuration,
+    address _staking
   ) internal onlyInitializing {
     __ERC20_init(name, symbol);
-    __ERC4626_init_unchained(IERC20(_stakingToken));
+    __ERC4626_init(IERC20(_stakingToken));
     __AccessControlEnumerable_init();
 
     require(_rewardToken1 != address(0), "reward token 1 is 0x0");
@@ -97,6 +98,7 @@ abstract contract MultiStakingRewardsERC4626 is
     rewardsDuration = _rewardsDuration;
     rewardToken1 = IERC20(_rewardToken1);
     rewardToken2 = IERC20(_rewardToken2);
+    staking = IOmnichainStaking(_staking);
 
     _grantRole(DEFAULT_ADMIN_ROLE, _governance);
   }
