@@ -14,7 +14,6 @@
 pragma solidity 0.8.21;
 
 import {IMultiStakingRewardsERC4626} from "../../interfaces/core/IMultiStakingRewardsERC4626.sol";
-import {IRewardDistributor} from "../../interfaces/governance/IRewardDistributor.sol";
 import {IWETH} from "../../interfaces/governance/IWETH.sol";
 
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
