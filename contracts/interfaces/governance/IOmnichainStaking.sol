@@ -29,19 +29,14 @@ interface IOmnichainStaking is IVotes {
 
   function rewardRate() external view returns (uint256);
 
-  function getLockedNftDetails(
-    address _user
-  ) external view returns (uint256[] memory, ILocker.LockedBalance[] memory);
+  function getLockedNftDetails(address _user) external view returns (uint256[] memory, ILocker.LockedBalance[] memory);
 
   function getTokenPower(uint256 amount) external view returns (uint256 power);
 
   error InvalidUnstaker(address, address);
 
   event LpOracleSet(address indexed oldLpOracle, address indexed newLpOracle);
-  event ZeroAggregatorSet(
-    address indexed oldZeroAggregator,
-    address indexed newZeroAggregator
-  );
+  event ZeroAggregatorSet(address indexed oldZeroAggregator, address indexed newZeroAggregator);
   event RewardPaid(address indexed user, uint256 reward);
   event RewardAdded(uint256 reward);
   event Recovered(address token, uint256 amount);
