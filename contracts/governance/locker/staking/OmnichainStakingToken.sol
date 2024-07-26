@@ -25,9 +25,9 @@ contract OmnichainStakingToken is OmnichainStakingBase {
     uint256 _rewardsDuration,
     address _owner,
     address _distributor
-  ) external reinitializer(5) {
+  ) external reinitializer(1) {
     super.__OmnichainStakingBase_init(
-      "ZERO Voting Power", "ZEROvp", _locker, _zeroToken, _poolVoter, _rewardsDuration, _distributor
+      "MAHA Voting Power", "MAHAvp", _locker, _zeroToken, _poolVoter, _rewardsDuration, _distributor
     );
 
     _transferOwnership(_owner);

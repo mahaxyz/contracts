@@ -28,8 +28,8 @@ contract ZaiFeeCollectorCron is OwnableUpgradeable {
   address[] public tokens;
 
   IMultiStakingRewardsERC4626 public safetyPoolZai;
-  IRewardDistributor public stakerMahaZai;
-  IRewardDistributor public stakerUsdcZai;
+  IMultiStakingRewardsERC4626 public stakerMahaZai;
+  IMultiStakingRewardsERC4626 public stakerUsdcZai;
 
   IWETH public weth;
   IERC20 public rewardToken;
@@ -56,8 +56,8 @@ contract ZaiFeeCollectorCron is OwnableUpgradeable {
     rewardToken = IERC20(_rewardToken);
     gelatoooooo = _gelatoooooo;
     safetyPoolZai = IMultiStakingRewardsERC4626(_safetyPoolZai);
-    stakerMahaZai = IRewardDistributor(_stakerMahaZai);
-    stakerUsdcZai = IRewardDistributor(_stakerUsdcZai);
+    stakerMahaZai = IMultiStakingRewardsERC4626(_stakerMahaZai);
+    stakerUsdcZai = IMultiStakingRewardsERC4626(_stakerUsdcZai);
 
     setTokens(_tokens);
     setOdos(_odos);
@@ -115,8 +115,8 @@ contract ZaiFeeCollectorCron is OwnableUpgradeable {
     uint256 zaiUsdcAmt = amt - treasuryAmt - zaiMahaAmt - zaiSafetyPoolAmt; // 65% to ZAI/USDC staking
 
     rewardToken.transfer(treasury, treasuryAmt);
-    stakerMahaZai.notifyRewardAmount(zaiMahaAmt);
-    stakerUsdcZai.notifyRewardAmount(zaiUsdcAmt);
+    stakerMahaZai.notifyRewardAmount(rewardToken, zaiMahaAmt);
+    stakerUsdcZai.notifyRewardAmount(rewardToken, zaiUsdcAmt);
     safetyPoolZai.notifyRewardAmount(rewardToken, zaiSafetyPoolAmt);
 
     // emit events
