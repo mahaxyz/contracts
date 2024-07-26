@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/mahaxyz/contracts/compare/v1.0.2...v1.0.3) (2024-07-26)
+
+
+### Features
+
+* added stability pool ([#6](https://github.com/mahaxyz/contracts/issues/6)) ([a885685](https://github.com/mahaxyz/contracts/commit/a8856851c92fa901ebd010199d6f240a5989b1a6))
+
 ## [1.0.2](https://github.com/mahaxyz/contracts/compare/v1.0.1...v1.0.2) (2024-07-25)
 
 
