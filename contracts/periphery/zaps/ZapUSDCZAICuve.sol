@@ -61,7 +61,7 @@ contract ZapUSDCZAICuve {
     usdc.transferFrom(msg.sender, me, usdcAmount);
 
     // convert 50% usdc for zai
-    psm.mint(address(this), usdcAmount * 1e10 / 2);
+    psm.mint(address(this), usdcAmount * 1e12 / 2);
 
     // add liquidity
     // odos should be able to swap into LP tokens directly.
