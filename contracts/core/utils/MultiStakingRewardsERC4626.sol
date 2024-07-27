@@ -79,10 +79,10 @@ abstract contract MultiStakingRewardsERC4626 is
   IOmnichainStaking public staking;
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  mapping(address who => uint256 boostedBalance) public boostedBalance;
-
-  /// @inheritdoc IMultiStakingRewardsERC4626
   uint256 public boostedTotalSupply;
+
+  /// @dev Boosted balances that are used to compute the rewards
+  mapping(address who => uint256 boostedBalance) internal _boostedBalances;
 
   /// @notice Initializes the staking contract with a first set of parameters
   function __MultiStakingRewardsERC4626_init(
@@ -197,7 +197,7 @@ abstract contract MultiStakingRewardsERC4626 is
     }
 
     _boostedBalance = Math.min(balance, _boostedBalance);
-    _boostedTotalSupply = boostedTotalSupply + _boostedBalance - boostedBalance[account];
+    _boostedTotalSupply = boostedTotalSupply + _boostedBalance - _boostedBalances[account];
     return (_boostedBalance, _boostedTotalSupply);
   }
 
@@ -219,14 +219,12 @@ abstract contract MultiStakingRewardsERC4626 is
   ) internal virtual override {
     _updateRewardDual(rewardToken1, rewardToken2, caller);
     super._withdraw(caller, receiver, owner, assets, shares);
-    _updateRewardDual(rewardToken1, rewardToken2, caller);
   }
 
   /// @inheritdoc ERC4626Upgradeable
   function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal virtual override {
     _updateRewardDual(rewardToken1, rewardToken2, caller);
     super._deposit(caller, receiver, assets, shares);
-    _updateRewardDual(rewardToken1, rewardToken2, caller);
   }
 
   function _earned(
@@ -249,7 +247,7 @@ abstract contract MultiStakingRewardsERC4626 is
     lastUpdateTime[token] = lastTimeRewardApplicable(token);
 
     if (account != address(0)) {
-      boostedBalance[account] = _boostedBalance;
+      _boostedBalances[account] = _boostedBalance;
       rewards[token][account] = _earned(token, account, _boostedBalance, _boostedTotalSupply);
       userRewardPerTokenPaid[token][account] = rewardPerTokenStored[token];
     }
@@ -265,7 +263,7 @@ abstract contract MultiStakingRewardsERC4626 is
     lastUpdateTime[token2] = lastTimeRewardApplicable(token2);
 
     if (account != address(0)) {
-      boostedBalance[account] = _boostedBalance;
+      _boostedBalances[account] = _boostedBalance;
 
       rewards[token1][account] = _earned(token1, account, _boostedBalance, _boostedTotalSupply);
       rewards[token2][account] = _earned(token2, account, _boostedBalance, _boostedTotalSupply);

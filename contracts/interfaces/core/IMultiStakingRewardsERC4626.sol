@@ -45,8 +45,6 @@ interface IMultiStakingRewardsERC4626 {
 
   function boostedTotalSupply() external view returns (uint256);
 
-  function boostedBalance(address who) external view returns (uint256);
-
   /**
    * @notice Gets the boosted balance for an account
    * @dev Code taken from

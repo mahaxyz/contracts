@@ -33,17 +33,17 @@ contract MultiStakingRewardsERC4626Test is BaseZaiTest {
     maha.approve(address(staker), 100 ether);
     weth.approve(address(staker), 100 ether);
 
+    zai.mint(whale, 100 ether);
+    vm.prank(whale);
+    zai.approve(address(staker), 100 ether);
+
     staker.grantRole(staker.DISTRIBUTOR_ROLE(), address(this));
   }
 
   function test_deposit() public {
-    zai.mint(whale, 100 ether);
-
     // supply into the pool
-    vm.startPrank(whale);
-    zai.approve(address(staker), 100 ether);
+    vm.prank(whale);
     staker.mint(100 ether, whale);
-    vm.stopPrank();
 
     // notify rewards
     staker.notifyRewardAmount(maha, 100 ether);
@@ -55,8 +55,47 @@ contract MultiStakingRewardsERC4626Test is BaseZaiTest {
     assertApproxEqAbs(staker.rewardRate(maha), 1_157_407_407_407_407, 1e6);
     assertApproxEqAbs(staker.rewardRate(weth), 115_740_740_740_740, 1e6);
 
-    (uint256 boostedBalance, uint256 boostedTotalSupply) = staker.getBoostedBalance(maha);
-    assertEq(staker.boostedBalance(whale), 100 ether);
     assertEq(staker.boostedTotalSupply(), 100 ether);
+
+    (uint256 boostedBalance, uint256 boostedTotalSupply) = staker.getBoostedBalance(whale);
+    assertEq(boostedBalance, 100 ether);
+    assertEq(boostedTotalSupply, 100 ether);
+  }
+
+  function test_claimReward() public {
+    // supply into the pool
+    vm.prank(whale);
+    staker.mint(100 ether, whale);
+
+    // notify rewards
+    staker.notifyRewardAmount(maha, 100 ether);
+
+    assertApproxEqAbs(staker.rewardRate(maha), 1_157_407_407_407_407, 1e6);
+    assertEq(staker.rewardRate(weth), 0);
+
+    assertEq(staker.boostedTotalSupply(), 100 ether);
+
+    vm.warp(block.timestamp + 2 days);
+
+    staker.getReward(whale, maha);
+    assertApproxEqAbs(maha.balanceOf(whale), 100 ether, 1e8);
+
+    (uint256 boostedBalance, uint256 boostedTotalSupply) = staker.getBoostedBalance(whale);
+    assertEq(boostedBalance, 100 ether);
+    assertEq(boostedTotalSupply, 100 ether);
+  }
+
+  function test_withdraw() public {
+    // supply into the pool
+    vm.prank(whale);
+    staker.mint(100 ether, whale);
+
+    vm.prank(whale);
+    staker.redeem(10 ether, whale, whale);
+
+    assertEq(zai.balanceOf(whale), 10 ether);
+    (uint256 boostedBalance, uint256 boostedTotalSupply) = staker.getBoostedBalance(whale);
+    assertEq(boostedBalance, 90 ether);
+    assertEq(boostedTotalSupply, 90 ether);
   }
 }
