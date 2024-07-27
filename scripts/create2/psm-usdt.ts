@@ -20,13 +20,13 @@ async function main() {
   const initData = impl.interface.encodeFunctionData("initialize", implArgs);
 
   const constructorArgs: any[] = [
-    "0x401139484880aD01Db2E75cA11d26FD7045e13f4",
+    "0xC17596890598282dE86028B24C0C4885a9261874",
     "0x69000f2f879ee598ddf16c6c33cfc4f2d983b6bd",
     initData,
   ];
   const salt =
-    "0x471a78fa81e1c16f74411acf0ca44ca98b2257604cc0ae51c54cbd9f939131c8";
-  const address = "0x69000a93c8acf8126d6ef5b1054c2695744ca4ee";
+    "0x7e8fb0add4a06b3338408ee58cad371d97539af6e9ae9671213152017b6e43f4";
+  const address = "0x690006c6bcd62d06b935050729b3004e962ba708";
 
   const [wallet] = await hre.ethers.getSigners();
   const deployer = await hre.ethers.getContractAt(
@@ -44,19 +44,20 @@ async function main() {
     bytecode,
     ethers.id(salt)
   );
+
   const tx = await wallet.sendTransaction(txPopulated);
 
   const txR = await tx.wait(1);
   console.log(txR?.logs);
 
   if (network.name !== "hardhat") {
-    await hre.deployments.save("PegStabilityModule-USDC", {
+    await hre.deployments.save("PegStabilityModule-USDT", {
       address: address,
       args: implArgs,
       abi: impl.interface.format(true),
     });
 
-    await hre.deployments.save("PegStabilityModule-USDC-Proxy", {
+    await hre.deployments.save("PegStabilityModule-USDT-Proxy", {
       address: address,
       args: constructorArgs,
       abi: factory.interface.format(true),

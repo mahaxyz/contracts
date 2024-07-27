@@ -12,7 +12,7 @@ const constructorTypes = contractArtifact.abi
   ?.inputs.map((t) => t.type);
 
 const impl = new ethers.Contract(
-  "0x401139484880aD01Db2E75cA11d26FD7045e13f4",
+  "0xC17596890598282dE86028B24C0C4885a9261874",
   implArtificat.abi
 );
 
@@ -30,7 +30,7 @@ const initData = impl.interface.encodeFunctionData("initialize", [
 
 const factoryAddress = "0xc07c1980C87bfD5de0DC77f90Ce6508c1C0795C3";
 const constructorArgs: any[] = [
-  "0x401139484880aD01Db2E75cA11d26FD7045e13f4", // implementation
+  "0xC17596890598282dE86028B24C0C4885a9261874", // implementation
   "0x69000f2f879ee598ddf16c6c33cfc4f2d983b6bd", // proxyadmin
   initData, // init data
 ];
@@ -41,7 +41,7 @@ const job = () => {
   let i = 0;
 
   while (true) {
-    const salt = ethers.id("" + i);
+    const salt = ethers.id("#" + i);
     // Calculate contract address
     const computedAddress = getCreate2Address({
       salt: salt,
