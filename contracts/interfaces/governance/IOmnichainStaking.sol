@@ -23,7 +23,7 @@ interface IOmnichainStaking is IVotes {
 
   function unstakeToken(uint256 tokenId) external;
 
-  // function totalSupply() external view returns (uint256);
+  function totalVotes() external view returns (uint256);
 
   // function balanceOf(address account) external view returns (uint256);
 

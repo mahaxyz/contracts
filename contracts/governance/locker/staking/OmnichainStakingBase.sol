@@ -63,10 +63,6 @@ abstract contract OmnichainStakingBase is
   /// @notice Account that distributes staking rewards
   address public distributor;
 
-  constructor() {
-    _disableInitializers();
-  }
-
   /**
    * @dev Initializes the contract with the provided token lockers.
    * @param _locker The address of the token locker contract.
@@ -430,4 +426,8 @@ abstract contract OmnichainStakingBase is
   }
 
   function _getTokenPower(uint256 amount) internal view virtual returns (uint256 power);
+
+  function totalVotes() external view returns (uint256 power) {
+    return totalSupply();
+  }
 }

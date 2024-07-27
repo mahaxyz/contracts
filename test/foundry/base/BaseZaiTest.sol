@@ -16,7 +16,7 @@ pragma solidity 0.8.21;
 import {ZaiStablecoin} from "../../../contracts/core/ZaiStablecoin.sol";
 import {Test, console} from "../../../lib/forge-std/src/Test.sol";
 
-import {MockERC20} from "../../../contracts/tests/MockERC20.sol";
+import {MockERC20} from "../mocks/MockERC20.sol";
 
 abstract contract BaseZaiTest is Test {
   event Transfer(address indexed from, address indexed to, uint256 value);

@@ -13,21 +13,28 @@
 
 pragma solidity 0.8.21;
 
-import {MultiStakingRewardsERC4626} from "../../core/utils/MultiStakingRewardsERC4626.sol";
+import {OmnichainStakingBase} from "../../../contracts/governance/locker/staking/OmnichainStakingBase.sol";
 
-contract StakingLPRewards is MultiStakingRewardsERC4626 {
-  function initialize(
-    string memory _name,
-    string memory _symbol,
-    address _stakingToken,
-    address _governance,
-    address _rewardToken1,
-    address _rewardToken2,
-    uint256 _rewardsDuration,
-    address _staking
-  ) external reinitializer(1) {
-    __MultiStakingRewardsERC4626_init(
-      _name, _symbol, _stakingToken, _governance, _rewardToken1, _rewardToken2, _rewardsDuration, _staking
-    );
+contract MockOmnichainStaking is OmnichainStakingBase {
+  function init() external reinitializer(1) {
+    super.__OmnichainStakingBase_init("TEST", "TESTvp", address(this), address(this), address(this), 0, address(0));
+  }
+
+  function mint(address _to, uint256 _amount) external {
+    _mint(_to, _amount);
+    _delegate(_to, _to);
+  }
+
+  function burn(address _to, uint256 _amount) external {
+    _burn(_to, _amount);
+    _delegate(_to, _to);
+  }
+
+  function underlying() external view returns (address) {
+    return address(this);
+  }
+
+  function _getTokenPower(uint256 amount) internal pure override returns (uint256 power) {
+    power = amount;
   }
 }
