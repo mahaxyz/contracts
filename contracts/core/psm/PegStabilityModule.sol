@@ -19,7 +19,7 @@ import {PSMEventsLib} from "../../interfaces/events/PSMEventsLib.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
+import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @title Peg Stability Module
@@ -27,7 +27,13 @@ import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
  * @notice Used to mint ZAI with collateral at a pre-defined rate
  * @dev https://docs.maha.xyz/mechanics/peg-mechanics/peg-stablility-module-psm
  */
-contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, IPegStabilityModule {
+contract PegStabilityModule is
+  OwnableUpgradeable,
+  ReentrancyGuardUpgradeable,
+  IPegStabilityModule
+{
+  using SafeERC20 for IERC20;
+
   /// @inheritdoc IPegStabilityModule
   IStablecoin public zai;
 
@@ -89,10 +95,13 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
     uint256 amount = toCollateralAmountWithFee(shares, mintFeeBps);
 
     require(amount > 0, "amount too low");
-    require(collateral.balanceOf(address(this)) + amount <= supplyCap, "supply cap exceeded");
+    require(
+      collateral.balanceOf(address(this)) + amount <= supplyCap,
+      "supply cap exceeded"
+    );
     require(debt + shares <= debtCap, "debt cap exceeded");
 
-    collateral.transferFrom(msg.sender, address(this), amount);
+    collateral.safeTransferFrom(msg.sender, address(this), amount);
     zai.mint(dest, shares);
 
     debt += shares;
@@ -107,14 +116,14 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
 
     zai.transferFrom(msg.sender, address(this), shares);
     zai.burn(address(this), shares);
-    collateral.transfer(dest, amount);
+    collateral.safeTransfer(dest, amount);
 
     debt -= shares;
     emit PSMEventsLib.Redeem(dest, shares, amount, debt, supplyCap, msg.sender);
   }
 
   function sweepFees() external {
-    collateral.transfer(feeDestination, feesCollected());
+    collateral.safeTransfer(feeDestination, feesCollected());
   }
 
   /// @inheritdoc IPegStabilityModule
@@ -128,7 +137,10 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
   }
 
   /// @inheritdoc IPegStabilityModule
-  function updateFees(uint256 _mintFeeBps, uint256 _redeemFeeBps) external onlyOwner {
+  function updateFees(
+    uint256 _mintFeeBps,
+    uint256 _redeemFeeBps
+  ) external onlyOwner {
     _updateFees(_mintFeeBps, _redeemFeeBps);
   }
 
@@ -143,18 +155,24 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
   }
 
   /// @inheritdoc IPegStabilityModule
-  function toCollateralAmountWithFee(uint256 _amount, uint256 _fee) public view returns (uint256) {
+  function toCollateralAmountWithFee(
+    uint256 _amount,
+    uint256 _fee
+  ) public view returns (uint256) {
     return (toCollateralAmount(_amount) * (MAX_FEE_BPS + _fee)) / MAX_FEE_BPS;
   }
 
   /// @inheritdoc IPegStabilityModule
-  function toCollateralAmountWithFeeInverse(uint256 _amount, uint256 _fee) public view returns (uint256) {
+  function toCollateralAmountWithFeeInverse(
+    uint256 _amount,
+    uint256 _fee
+  ) public view returns (uint256) {
     return (toCollateralAmount(_amount) * (MAX_FEE_BPS - _fee)) / MAX_FEE_BPS;
   }
 
   /// @inheritdoc IPegStabilityModule
   function feesCollected() public view returns (uint256) {
-    return collateral.balanceOf(address(this)) - debt;
+    return collateral.balanceOf(address(this)) - toCollateralAmount(debt);
   }
 
   function _updateCaps(uint256 _supplyCap, uint256 _debtCap) internal {
@@ -164,7 +182,13 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
     supplyCap = _supplyCap;
     debtCap = _debtCap;
 
-    emit PSMEventsLib.SupplyCapUpdated(_supplyCap, _debtCap, oldSupplyCap, olsDebtCap, msg.sender);
+    emit PSMEventsLib.SupplyCapUpdated(
+      _supplyCap,
+      _debtCap,
+      oldSupplyCap,
+      olsDebtCap,
+      msg.sender
+    );
   }
 
   /**
@@ -184,7 +208,11 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
   function _updateFeeDestination(address _feeDestination) internal {
     address oldFeeDestination = feeDestination;
     feeDestination = _feeDestination;
-    emit PSMEventsLib.FeeDestinationUpdated(_feeDestination, oldFeeDestination, msg.sender);
+    emit PSMEventsLib.FeeDestinationUpdated(
+      _feeDestination,
+      oldFeeDestination,
+      msg.sender
+    );
   }
 
   /**
@@ -197,6 +225,12 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
     uint256 oldRedeemFeeBps = redeemFeeBps;
     mintFeeBps = _mintFeeBps;
     redeemFeeBps = _redeemFeeBps;
-    emit PSMEventsLib.FeesUpdated(_mintFeeBps, _redeemFeeBps, oldMintFeeBps, oldRedeemFeeBps, msg.sender);
+    emit PSMEventsLib.FeesUpdated(
+      _mintFeeBps,
+      _redeemFeeBps,
+      oldMintFeeBps,
+      oldRedeemFeeBps,
+      msg.sender
+    );
   }
 }
