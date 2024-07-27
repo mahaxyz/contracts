@@ -47,11 +47,7 @@ contract XERC20Lockbox is Initializable, IXERC20Lockbox {
    * @param _erc20 The address of the ERC20 contract
    * @param _isNative Whether the ERC20 token is the native gas token of this chain or not
    */
-  function initialize(
-    address _xerc20,
-    address _erc20,
-    bool _isNative
-  ) public initializer {
+  function initialize(address _xerc20, address _erc20, bool _isNative) public initializer {
     XERC20 = IXERC20(_xerc20);
     ERC20 = IERC20(_erc20);
     IS_NATIVE = _isNative;
@@ -102,7 +98,7 @@ contract XERC20Lockbox is Initializable, IXERC20Lockbox {
     XERC20.burn(msg.sender, _amount);
 
     if (IS_NATIVE) {
-      (bool _success, ) = payable(_to).call{value: _amount}("");
+      (bool _success,) = payable(_to).call{value: _amount}("");
       if (!_success) revert IXERC20Lockbox_WithdrawFailed();
     } else {
       ERC20.safeTransfer(_to, _amount);

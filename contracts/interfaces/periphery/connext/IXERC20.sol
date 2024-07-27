@@ -41,9 +41,9 @@ interface IXERC20 {
   error IXERC20_NotFactory();
 
   /**
-   * @notice Reverts when mint or burn value is 0
+   * @notice Reverts when limits are too high
    */
-  error IXERC20_INVALID_0_VALUE();
+  error IXERC20_LimitsTooHigh();
 
   /**
    * @notice Contains the full minting and burning data for a particular bridge

@@ -14,13 +14,15 @@
 pragma solidity 0.8.21;
 
 import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
+
+import {ConnextErrors} from "../../interfaces/errors/ConnextErrors.sol";
+import {ConnextEvents} from "../../interfaces/events/ConnextEvents.sol";
 import {IL1Bridge} from "../../interfaces/periphery/IL1Bridge.sol";
 import {IXERC20} from "../../interfaces/periphery/connext/IXERC20.sol";
 import {IXERC20Lockbox} from "../../interfaces/periphery/connext/IXERC20Lockbox.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
 
 contract L1BridgeCollateral is IL1Bridge, ReentrancyGuardUpgradeable {
   using SafeERC20 for IERC20;
@@ -48,26 +50,22 @@ contract L1BridgeCollateral is IL1Bridge, ReentrancyGuardUpgradeable {
     IERC20 _zai,
     IERC20 _xZai,
     IPegStabilityModule _psm,
-    IERC20 _wETH,
+    IERC20 _collateral,
     IXERC20Lockbox _xZaiLockbox,
     address _connext
   ) public initializer {
     // Verify non-zero addresses on inputs
     if (
-      address(_zai) == address(0) ||
-      address(_xZai) == address(0) ||
-      address(_psm) == address(0) ||
-      address(_wETH) == address(0) ||
-      address(_xZaiLockbox) == address(0) ||
-      address(_connext) == address(0)
+      address(_zai) == address(0) || address(_xZai) == address(0) || address(_psm) == address(0)
+        || address(_collateral) == address(0) || address(_xZaiLockbox) == address(0) || address(_connext) == address(0)
     ) {
-      revert InvalidZeroInput();
+      revert ConnextErrors.InvalidZeroInput();
     }
 
     zai = _zai;
     xZAI = _xZai;
     psm = _psm;
-    collateral = _wETH;
+    collateral = _collateral;
     xZaiLockbox = _xZaiLockbox;
     connext = _connext;
 
@@ -86,14 +84,14 @@ contract L1BridgeCollateral is IL1Bridge, ReentrancyGuardUpgradeable {
   ) external nonReentrant returns (bytes memory) {
     // Only allow incoming messages from the Connext contract or bridge admin role
     if (msg.sender != address(connext)) {
-      revert InvalidSender(address(connext), msg.sender);
+      revert ConnextErrors.InvalidSender(address(connext), msg.sender);
     }
 
     // Check that the token received is collateral
-    if (_asset != address(collateral)) revert InvalidTokenReceived();
+    if (_asset != address(collateral)) revert ConnextErrors.InvalidTokenReceived();
 
     // Check that the amount sent is greater than 0
-    if (_amount == 0) revert InvalidZeroInput();
+    if (_amount == 0) revert ConnextErrors.InvalidZeroInput();
 
     // Get the amount of collateral
     uint256 ethAmount = collateral.balanceOf(address(this));
@@ -114,14 +112,13 @@ contract L1BridgeCollateral is IL1Bridge, ReentrancyGuardUpgradeable {
     xZaiLockbox.deposit(zaiAmount);
 
     // Get the amount of xZAI that was minted
-    uint256 xZaiAmount = xZAI.balanceOf(address(this)) -
-      xZaiBalanceBeforeDeposit;
+    uint256 xZaiAmount = xZAI.balanceOf(address(this)) - xZaiBalanceBeforeDeposit;
 
     // Burn it - it was already minted on the L2
     IXERC20(address(xZAI)).burn(address(this), xZaiAmount);
 
     // Emit the event
-    emit ZaiMinted(_transferId, _amount, _origin, _originSender, zaiAmount);
+    emit ConnextEvents.ZaiMinted(_transferId, _amount, _origin, _originSender, zaiAmount);
 
     // Return 0 for success
     return new bytes(0);

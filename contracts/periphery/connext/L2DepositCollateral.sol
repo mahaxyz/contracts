@@ -13,42 +13,34 @@
 
 pragma solidity 0.8.21;
 
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {ConnextErrors} from "../../interfaces/errors/ConnextErrors.sol";
+import {ConnextEvents} from "../../interfaces/events/ConnextEvents.sol";
+import {IL2Deposit} from "../../interfaces/periphery/IL2Deposit.sol";
 import {IConnext} from "../../interfaces/periphery/connext/IConnext.sol";
 import {IXERC20} from "../../interfaces/periphery/connext/IXERC20.sol";
-import {IL2Deposit} from "../../interfaces/periphery/IL2Deposit.sol";
 import {IXERC20Lockbox} from "../../interfaces/periphery/connext/IXERC20Lockbox.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @author  Renzo
  * @title   xRenzoDeposit Contract
- * @dev     Tokens are sent to this contract via deposit, xezETH is minted for the user,
+ * @dev     Tokens are sent to this contract via deposit, xZAI is minted for the user,
  *          and funds are batched and bridged down to the L1 for depositing into the Renzo Protocol.
- *          Any ezETH minted on the L1 will be locked in the lockbox for unwrapping at a later time with xezETH.
- * @notice  Allows L2 minting of xezETH tokens in exchange for deposited assets
+ *          Any ZAI minted on the L1 will be locked in the lockbox for unwrapping at a later time with xZAI.
+ * @notice  Allows L2 minting of xZAI tokens in exchange for deposited assets
  */
-contract L2DepositCollateral is
-  OwnableUpgradeable,
-  ReentrancyGuardUpgradeable,
-  IL2Deposit
-{
+contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, IL2Deposit {
   using SafeERC20 for IERC20;
-
-  /// @notice The last timestamp the price was updated
-  uint256 public lastPriceTimestamp;
-
-  /// @notice The last price that was updated - denominated in ETH with 18 decimal precision
-  uint256 public lastPrice;
 
   uint256 public rate;
 
-  /// @notice The xezETH token address
-  IERC20 public xezETH;
+  /// @notice The xZAI token address
+  IERC20 public xZAI;
 
-  /// @notice The deposit token address - this is what users will deposit to mint xezETH
+  /// @notice The deposit token address - this is what users will deposit to mint xZAI
   IERC20 public depositToken;
 
   /// @notice The collateral token address - this is what the deposit token will be swapped into and bridged to L1
@@ -79,7 +71,7 @@ contract L2DepositCollateral is
   uint8 public constant EXPECTED_DECIMALS = 18;
 
   /// @dev - Fee basis point, 100 basis point = 1 %
-  uint32 public constant FEE_BASIS = 10000;
+  uint32 public constant FEE_BASIS = 10_000;
 
   // bridge fee in basis points 100 basis points = 1%
   uint256 public bridgeFeeShare;
@@ -93,8 +85,7 @@ contract L2DepositCollateral is
   /**
    * @notice  Initializes the contract with initial vars
    * @dev     All tokens are expected to have 18 decimals
-   * @param   _currentPrice  Initializes it with an initial price of ezETH to ETH
-   * @param   _xezETH  L2 ezETH token
+   * @param   _xZAI  L2 ZAI token
    * @param   _depositToken  WETH on L2
    * @param   _collateralToken  nextWETH on L2
    * @param   _connext  Connext contract
@@ -102,8 +93,7 @@ contract L2DepositCollateral is
    * @param   _receiver Renzo Receiver middleware contract for price feed
    */
   function initialize(
-    uint256 _currentPrice,
-    IERC20 _xezETH,
+    IERC20 _xZAI,
     IERC20 _depositToken,
     IERC20 _collateralToken,
     IConnext _connext,
@@ -119,24 +109,15 @@ contract L2DepositCollateral is
 
     // Verify valid non zero values
     if (
-      _currentPrice == 0 ||
-      address(_xezETH) == address(0) ||
-      address(_depositToken) == address(0) ||
-      address(_collateralToken) == address(0) ||
-      address(_connext) == address(0) ||
-      _swapKey == 0 ||
-      _bridgeDestinationDomain == 0 ||
-      _bridgeTargetAddress == address(0)
+      address(_xZAI) == address(0) || address(_depositToken) == address(0) || address(_collateralToken) == address(0)
+        || address(_connext) == address(0) || _swapKey == 0 || _bridgeDestinationDomain == 0
+        || _bridgeTargetAddress == address(0)
     ) {
-      revert InvalidZeroInput();
+      revert ConnextErrors.InvalidZeroInput();
     }
 
-    // Initialize the price and timestamp
-    lastPrice = _currentPrice;
-    lastPriceTimestamp = block.timestamp;
-
-    // Set xezETH address
-    xezETH = _xezETH;
+    // Set xZAI address
+    xZAI = _xZAI;
 
     // Set the depoist token
     depositToken = _depositToken;
@@ -167,46 +148,38 @@ contract L2DepositCollateral is
     // set bridge Fee Share 0.05% where 100 basis point = 1%
     bridgeFeeShare = 5;
 
-    //set sweep batch size to 32 ETH
+    // set sweep batch size to 32 ETH
     sweepBatchSize = 32 ether;
   }
 
   /**
-   * @notice  Accepts deposit for the user in depositToken and mints xezETH
-   * @dev     This funcion allows anyone to call and deposit collateral for xezETH
-   *          ezETH will be immediately minted based on the current price
+   * @notice  Accepts deposit for the user in depositToken and mints xZAI
+   * @dev     This funcion allows anyone to call and deposit collateral for xZAI
+   *          ZAI will be immediately minted based on the current price
    *          Funds will be held until sweep() is called.
    *          User calling this function should first approve the tokens to be pulled via transferFrom
    * @param   _amountIn  Amount of tokens to deposit
-   * @param   _minOut  Minimum number of xezETH to accept to ensure slippage minimums
+   * @param   _minOut  Minimum number of xZAI to accept to ensure slippage minimums
    * @param   _deadline  latest timestamp to accept this transaction
-   * @return  uint256  Amount of xezETH minted to calling account
+   * @return  uint256  Amount of xZAI minted to calling account
    */
-  function deposit(
-    uint256 _amountIn,
-    uint256 _minOut,
-    uint256 _deadline
-  ) external nonReentrant returns (uint256) {
+  function deposit(uint256 _amountIn, uint256 _minOut, uint256 _deadline) external nonReentrant returns (uint256) {
     if (_amountIn == 0) {
-      revert InvalidZeroInput();
+      revert ConnextErrors.InvalidZeroInput();
     }
     depositToken.safeTransferFrom(msg.sender, address(this), _amountIn);
     return _deposit(_amountIn, _minOut, _deadline);
   }
 
   /**
-   * @notice  Internal function to trade deposit tokens for nextWETH and mint xezETH
+   * @notice  Internal function to trade deposit tokens for nextWETH and mint xZAI
    * @dev     Deposit Tokens should be available in the contract before calling this function
    * @param   _amountIn  Amount of tokens deposited
-   * @param   _minOut  Minimum number of xezETH to accept to ensure slippage minimums
+   * @param   _minOut  Minimum number of xZAI to accept to ensure slippage minimums
    * @param   _deadline  latest timestamp to accept this transaction
-   * @return  uint256  Amount of xezETH minted to calling account
+   * @return  uint256  Amount of xZAI minted to calling account
    */
-  function _deposit(
-    uint256 _amountIn,
-    uint256 _minOut,
-    uint256 _deadline
-  ) internal returns (uint256) {
+  function _deposit(uint256 _amountIn, uint256 _minOut, uint256 _deadline) internal returns (uint256) {
     // calculate bridgeFee for deposit amount
     uint256 bridgeFee = getBridgeFeeShare(_amountIn);
 
@@ -217,23 +190,23 @@ contract L2DepositCollateral is
     // Trade deposit tokens for nextWETH
     uint256 amountOut = _trade(_amountIn, _deadline);
     if (amountOut == 0) {
-      revert InvalidZeroOutput();
+      revert ConnextErrors.InvalidZeroOutput();
     }
 
-    // // Calculate the amount of xezETH to mint - assumes 18 decimals for price and token
-    uint256 xezETHAmount = (1e18 * amountOut) / rate;
+    // // Calculate the amount of xZAI to mint - assumes 18 decimals for price and token
+    uint256 xZAIAmount = (1e18 * amountOut) / rate;
 
-    // Check that the user will get the minimum amount of xezETH
-    if (xezETHAmount < _minOut) {
-      revert InsufficientOutputAmount();
+    // Check that the user will get the minimum amount of xZAI
+    if (xZAIAmount < _minOut) {
+      revert ConnextErrors.InsufficientOutputAmount();
     }
 
-    // Mint xezETH to the user
-    IXERC20(address(xezETH)).mint(msg.sender, xezETHAmount);
+    // Mint xZAI to the user
+    IXERC20(address(xZAI)).mint(msg.sender, xZAIAmount);
 
     // Emit the event and return amount minted
-    emit Deposit(msg.sender, _amountIn, xezETHAmount);
-    return xezETHAmount;
+    emit ConnextEvents.Deposit(msg.sender, _amountIn, xZAIAmount);
+    return xZAIAmount;
   }
 
   /**
@@ -249,65 +222,22 @@ contract L2DepositCollateral is
   }
 
   /**
-   * @notice  Updates the price feed
-   * @dev     This function will receive the price feed and timestamp from the L1 through CCIPReceiver middleware contract.
-   *          It should verify the origin of the call and only allow permissioned source to call.
-   * @param   _price The price of ezETH sent via L1.
-   * @param   _timestamp The timestamp at which L1 sent the price.
-   */
-  function updatePrice(uint256 _price, uint256 _timestamp) external override {
-    if (msg.sender != receiver) revert InvalidSender(receiver, msg.sender);
-    _updatePrice(_price, _timestamp);
-  }
-
-  /**
-   * @notice  Updates the price feed from the Owner account
-   * @dev     Sets the last price and timestamp
-   * @param   price  price of ezETH to ETH - 18 decimal precision
-   */
-  function updatePriceByOwner(uint256 price) external onlyOwner {
-    return _updatePrice(price, block.timestamp);
-  }
-
-  /**
-   * @notice  Internal function to update price
-   * @dev     Sanity checks input values and updates prices
-   * @param   _price  Current price of ezETH to ETH - 18 decimal precision
-   * @param   _timestamp  The timestamp of the price update
-   */
-  function _updatePrice(uint256 _price, uint256 _timestamp) internal {
-    // Update values and emit event
-    lastPrice = _price;
-    lastPriceTimestamp = _timestamp;
-
-    emit PriceUpdated(_price, _timestamp);
-  }
-
-  /**
    * @notice  Trades deposit asset for nextWETH
-   * @dev     Note that min out is not enforced here since the asset will be priced to ezETH by the calling function
+   * @dev     Note that min out is not enforced here since the asset will be priced to ZAI by the calling function
    * @param   _amountIn  Amount of deposit tokens to trade for collateral asset
    * @return  _deadline Deadline for the trade to prevent stale requests
    */
-  function _trade(
-    uint256 _amountIn,
-    uint256 _deadline
-  ) internal returns (uint256) {
+  function _trade(uint256 _amountIn, uint256 _deadline) internal returns (uint256) {
     // Approve the deposit asset to the connext contract
     depositToken.safeIncreaseAllowance(address(connext), _amountIn);
 
-    // We will accept any amount of tokens out here... The caller of this function should verify the amount meets minimums
+    // We will accept any amount of tokens out here... The caller of this function should verify the amount meets
+    // minimums
     uint256 minOut = 0;
 
     // Swap the tokens
-    uint256 amountNextWETH = connext.swapExact(
-      swapKey,
-      _amountIn,
-      address(depositToken),
-      address(collateralToken),
-      minOut,
-      _deadline
-    );
+    uint256 amountNextWETH =
+      connext.swapExact(swapKey, _amountIn, address(depositToken), address(collateralToken), minOut, _deadline);
 
     // Subtract the bridge router fee
     if (bridgeRouterFeeBps > 0) {
@@ -331,19 +261,19 @@ contract L2DepositCollateral is
     }
 
     IERC20(address(depositToken)).safeTransfer(msg.sender, feeCollected);
-    emit SweeperBridgeFeeCollected(msg.sender, feeCollected);
+    emit ConnextEvents.SweeperBridgeFeeCollected(msg.sender, feeCollected);
   }
 
   /**
    * @notice  This function will take the balance of nextWETH in the contract and bridge it down to the L1
-   * @dev     The L1 contract will unwrap, deposit in Renzo, and lock up the ezETH in the lockbox on L1
+   * @dev     The L1 contract will unwrap, deposit in Renzo, and lock up the ZAI in the lockbox on L1
    *          This function should only be callable by permissioned accounts
    *          The caller will estimate and pay the gas for the bridge call
    */
   function sweep() public payable nonReentrant {
     // Verify the caller is whitelisted
     if (!allowedBridgeSweepers[msg.sender]) {
-      revert UnauthorizedBridgeSweeper();
+      revert ConnextErrors.UnauthorizedBridgeSweeper();
     }
 
     // Get the balance of nextWETH in the contract
@@ -351,7 +281,7 @@ contract L2DepositCollateral is
 
     // If there is no balance, return
     if (balance == 0) {
-      revert InvalidZeroOutput();
+      revert ConnextErrors.InvalidZeroOutput();
     }
 
     // Approve it to the connext contract
@@ -374,27 +304,17 @@ contract L2DepositCollateral is
     _recoverBridgeFee();
 
     // Emit the event
-    emit BridgeSwept(
-      bridgeDestinationDomain,
-      bridgeTargetAddress,
-      msg.sender,
-      balance
-    );
+    emit ConnextEvents.BridgeSwept(bridgeDestinationDomain, bridgeTargetAddress, msg.sender, balance);
   }
 
   /**
    * @notice  Allows the owner to set addresses that are allowed to call the bridge() function
-   * @dev     .
    * @param   _sweeper  Address of the proposed sweeping account
    * @param   _allowed  bool to allow or disallow the address
    */
-  function setAllowedBridgeSweeper(
-    address _sweeper,
-    bool _allowed
-  ) external onlyOwner {
+  function setAllowedBridgeSweeper(address _sweeper, bool _allowed) external onlyOwner {
     allowedBridgeSweepers[_sweeper] = _allowed;
-
-    emit BridgeSweeperAddressUpdated(_sweeper, _allowed);
+    emit ConnextEvents.BridgeSweeperAddressUpdated(_sweeper, _allowed);
   }
 
   /**
@@ -414,30 +334,27 @@ contract L2DepositCollateral is
    * @param   _amount  amount of ERC20 token
    * @param   _to  destination address
    */
-  function recoverERC20(
-    address _token,
-    uint256 _amount,
-    address _to
-  ) external onlyOwner {
+  function recoverERC20(address _token, uint256 _amount, address _to) external onlyOwner {
     IERC20(_token).safeTransfer(_to, _amount);
   }
 
-  /******************************
+  /**
+   *
    *  Admin/OnlyOwner functions
-   *****************************/
-
+   *
+   */
   function setRate(uint256 _rate) external onlyOwner {
-    emit RateUpdated(rate, _rate);
+    emit ConnextEvents.RateUpdated(rate, _rate);
     rate = _rate;
   }
 
   /**
-   * @notice This function sets/updates the Receiver Price Feed Middleware for ezETH
+   * @notice This function sets/updates the Receiver Price Feed Middleware for ZAI
    * @dev This should be permissioned call (onlyOnwer), can be set to address(0) for not configured
    * @param _receiver Receiver address
    */
   function setReceiverPriceFeed(address _receiver) external onlyOwner {
-    emit ReceiverPriceFeedUpdated(_receiver, receiver);
+    emit ConnextEvents.ReceiverPriceFeedUpdated(_receiver, receiver);
     receiver = _receiver;
   }
 
@@ -447,8 +364,8 @@ contract L2DepositCollateral is
    * @param _newShare new Bridge fee share in basis points where 100 basis points = 1%
    */
   function updateBridgeFeeShare(uint256 _newShare) external onlyOwner {
-    if (_newShare > 100) revert InvalidBridgeFeeShare(_newShare);
-    emit BridgeFeeShareUpdated(bridgeFeeShare, _newShare);
+    if (_newShare > 100) revert ConnextErrors.InvalidBridgeFeeShare(_newShare);
+    emit ConnextEvents.BridgeFeeShareUpdated(bridgeFeeShare, _newShare);
     bridgeFeeShare = _newShare;
   }
 
@@ -458,8 +375,8 @@ contract L2DepositCollateral is
    * @param _newBatchSize new batch size for sweeping
    */
   function updateSweepBatchSize(uint256 _newBatchSize) external onlyOwner {
-    if (_newBatchSize < 32 ether) revert InvalidSweepBatchSize(_newBatchSize);
-    emit SweepBatchSizeUpdated(sweepBatchSize, _newBatchSize);
+    if (_newBatchSize < 32 ether) revert ConnextErrors.InvalidSweepBatchSize(_newBatchSize);
+    emit ConnextEvents.SweepBatchSizeUpdated(sweepBatchSize, _newBatchSize);
     sweepBatchSize = _newBatchSize;
   }
 }
