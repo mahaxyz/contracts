@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.5](https://github.com/mahaxyz/contracts/compare/v1.0.4...v1.0.5) (2024-07-27)
+
+
+### Features
+
+* Added a staking boost for all stakers ([#9](https://github.com/mahaxyz/contracts/issues/9)) ([6999407](https://github.com/mahaxyz/contracts/commit/699940720212e00c1187e0fdcc468f963fb314b7))
+
+
+### Bug Fixes
+
+* renamed IZaiStablecoin to IStablecoin ([5bb7c35](https://github.com/mahaxyz/contracts/commit/5bb7c350dba0a48aefe43cf12a0b79a48c976bb7))
+
 ## [1.0.4](https://github.com/mahaxyz/contracts/compare/v1.0.3...v1.0.4) (2024-07-26)
 
 
