@@ -26,13 +26,16 @@ import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC2
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
-/// @title ERC4262 Staking Rewards
-/// @author Forked form SetProtocol
-/// https://github.com/SetProtocol/index-coop-contracts/blob/master/contracts/staking/StakingRewards.sol
-/// @notice The `MultiStakingRewardsERC4626` contracts allows to stake an ERC20 token and receieve multiple other ERC20
-/// rewards
-/// @dev This contracts is designed to be used via a proxy and follows the ERC4626 standard.
-/// @dev This contracts needs at least two reward tokens to be used
+/**
+ * @title ERC4262 Staking Rewards
+ * @author maha.xyz
+ * @dev Forked form SetProtocol
+ * @notice The `MultiStakingRewardsERC4626` contracts allows to stake an ERC20 token and
+ * receieve multiple other ERC20 rewards.
+ * https://github.com/SetProtocol/index-coop-contracts/blob/master/contracts/staking/StakingRewards.sol
+ * @dev This contracts is designed to be used via a proxy and follows the ERC4626 standard.
+ * @dev This contracts needs at least two reward tokens to be used
+ */
 abstract contract MultiStakingRewardsERC4626 is
   AccessControlEnumerableUpgradeable,
   ERC4626Upgradeable,
@@ -230,6 +233,14 @@ abstract contract MultiStakingRewardsERC4626 is
     super._deposit(caller, receiver, assets, shares);
   }
 
+  /**
+   * @notice Computes the amount earned by an account
+   * @dev Takes into account the boosted balance and the boosted total supply
+   * @param token_ The token for which the rewards are computed
+   * @param account_ The account for which the rewards are computed
+   * @param boostedBalance_ The boosted balance of the account
+   * @param boostedTotalSupply_ The boosted total supply
+   */
   function _earned(
     IERC20 token_,
     address account_,
@@ -240,8 +251,11 @@ abstract contract MultiStakingRewardsERC4626 is
       / 1e18 + rewards[token_][account_];
   }
 
-  /// @notice Called frequently to update the staking parameters associated to an address
-  /// @param account Address of the account to update
+  /**
+   * @notice Called frequently to update the staking parameters associated to an address
+   * @param token The token for which the rewards are updated
+   * @param account The account for which the rewards are updated
+   */
   function _updateReward(IERC20 token, address account) internal {
     _updatingVotingPower(account);
 
@@ -260,6 +274,12 @@ abstract contract MultiStakingRewardsERC4626 is
     }
   }
 
+  /**
+   * @notice Called frequently to update the staking parameters associated to an address
+   * @param token1 The first token for which the rewards are updated
+   * @param token2 The second token for which the rewards are updated
+   * @param account The account for which the rewards are updated
+   */
   function _updateRewardDual(IERC20 token1, IERC20 token2, address account) internal {
     _updatingVotingPower(account);
 
@@ -283,12 +303,22 @@ abstract contract MultiStakingRewardsERC4626 is
     }
   }
 
+  /**
+   * @notice Updates the voting power of an account
+   * @param account The account for which the voting power is updated
+   */
   function _updatingVotingPower(address account) internal {
     (uint256 votingBalance, uint256 votingTotal) = _getVotingPower(account);
     _votingPower[account] = votingBalance;
     _totalVotingPower = votingTotal;
   }
 
+  /**
+   * @notice Computes the boosted balance and the boosted total supply of an account
+   * @param account The account for which the boosted balance and the boosted total supply are computed
+   * @return boostedBalance_ The boosted balance of the account
+   * @return boostedTotalSupply_ The boosted total supply
+   */
   function _calculateBoostedBalance(address account)
     internal
     view
@@ -311,6 +341,12 @@ abstract contract MultiStakingRewardsERC4626 is
     return (boostedBalance_, boostedTotalSupply_);
   }
 
+  /**
+   * @notice Computes the voting power of an account
+   * @param account The account for which the voting power is requested
+   * @return votingBalance The voting power of the account
+   * @return votingTotal The total voting power
+   */
   function _getVotingPower(address account) internal view returns (uint256 votingBalance, uint256 votingTotal) {
     if (account == address(0) || address(staking) == address(0)) return (0, _totalVotingPower);
     votingBalance = staking.getVotes(account);
