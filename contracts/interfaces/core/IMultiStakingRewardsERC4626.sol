@@ -47,6 +47,19 @@ interface IMultiStakingRewardsERC4626 {
 
   function boostedBalance(address who) external view returns (uint256);
 
+  /**
+   * @notice Gets the boosted balance for an account
+   * @dev Code taken from
+   * https://github.com/curvefi/curve-dao-contracts/blob/master/contracts/gauges/LiquidityGaugeV5.vy#L191-L213
+   */
+  function getBoostedBalance(address account)
+    external
+    view
+    returns (uint256 _boostedBalance, uint256 _boostedTotalSupply);
+
+  /**
+   * @notice Gets the staking contract that returns the voting power of an account
+   */
   function staking() external view returns (IOmnichainStaking);
 
   /// @notice Queries the last timestamp at which a reward was distributed

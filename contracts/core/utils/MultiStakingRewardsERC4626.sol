@@ -111,6 +111,10 @@ abstract contract MultiStakingRewardsERC4626 is
     staking = IOmnichainStaking(_staking);
 
     _grantRole(DEFAULT_ADMIN_ROLE, _governance);
+
+    if (boostedTotalSupply == 0) {
+      boostedTotalSupply = totalSupply();
+    }
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
@@ -125,112 +129,13 @@ abstract contract MultiStakingRewardsERC4626 is
 
   /// @inheritdoc IMultiStakingRewardsERC4626
   function earned(IERC20 token, address account) public view returns (uint256) {
-    (uint256 _boostedBalance, uint256 _boostedTotalSupply) = _getBoostedBalance(account);
+    (uint256 _boostedBalance, uint256 _boostedTotalSupply) = getBoostedBalance(account);
     return _earned(token, account, _boostedBalance, _boostedTotalSupply);
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
   function approveUnderlyingWithPermit(uint256 val, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external {
     IERC20Permit(asset()).permit(msg.sender, address(this), val, deadline, v, r, s);
-  }
-
-  function _rewardPerToken(IERC20 _token, uint256 _boostedTotalSupply) public view returns (uint256) {
-    if (_boostedTotalSupply == 0) {
-      return rewardPerTokenStored[_token];
-    }
-    return rewardPerTokenStored[_token]
-      + (((lastTimeRewardApplicable(_token) - lastUpdateTime[_token]) * rewardRate[_token] * 1e18) / _boostedTotalSupply);
-  }
-
-  /// @inheritdoc ERC4626Upgradeable
-  function _withdraw(
-    address caller,
-    address receiver,
-    address owner,
-    uint256 assets,
-    uint256 shares
-  ) internal virtual override {
-    _updateRewardDual(rewardToken1, rewardToken2, caller);
-    super._withdraw(caller, receiver, owner, assets, shares);
-  }
-
-  /// @inheritdoc ERC4626Upgradeable
-  function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal virtual override {
-    _updateRewardDual(rewardToken1, rewardToken2, caller);
-    super._deposit(caller, receiver, assets, shares);
-  }
-
-  function _earned(
-    IERC20 token,
-    address account,
-    uint256 _boostedBalance,
-    uint256 _boostedTotalSupply
-  ) internal view returns (uint256) {
-    return (_boostedBalance * (_rewardPerToken(token, _boostedTotalSupply) - userRewardPerTokenPaid[token][account]))
-      / 1e18 + rewards[token][account];
-  }
-
-  /**
-   * @notice Gets the boosted balance for an account
-   * @dev Code taken from
-   * https://github.com/curvefi/curve-dao-contracts/blob/master/contracts/gauges/LiquidityGaugeV5.vy#L191-L213
-   */
-  function _getBoostedBalance(address account)
-    internal
-    view
-    returns (uint256 _boostedBalance, uint256 _boostedTotalSupply)
-  {
-    uint256 balance = balanceOf(account);
-    uint256 totalSupply = totalSupply();
-
-    if (staking == IOmnichainStaking(address(0))) {
-      return (balance, totalSupply);
-    }
-
-    uint256 votingBalance = staking.getVotes(account);
-    uint256 votingTotal = staking.totalVotes();
-
-    _boostedBalance = balance * TOKENLESS_PRODUCTION / 100;
-    if (votingTotal > 0) {
-      _boostedBalance += totalSupply * votingBalance / votingTotal * (100 - TOKENLESS_PRODUCTION) / 100;
-    }
-
-    _boostedBalance = Math.min(balance, _boostedBalance);
-    _boostedTotalSupply = boostedTotalSupply + _boostedBalance - boostedBalance[account];
-    return (_boostedBalance, _boostedTotalSupply);
-  }
-
-  /// @notice Called frequently to update the staking parameters associated to an address
-  /// @param account Address of the account to update
-  function _updateReward(IERC20 token, address account) internal {
-    rewardPerTokenStored[token] = _rewardPerToken(token, boostedTotalSupply);
-    lastUpdateTime[token] = lastTimeRewardApplicable(token);
-
-    if (account != address(0)) {
-      (uint256 _boostedBalance, uint256 _boostedTotalSupply) = _getBoostedBalance(account);
-      boostedBalance[account] = _boostedBalance;
-      rewards[token][account] = _earned(token, account, _boostedBalance, _boostedTotalSupply);
-      userRewardPerTokenPaid[token][account] = rewardPerTokenStored[token];
-    }
-  }
-
-  function _updateRewardDual(IERC20 token1, IERC20 token2, address account) internal {
-    rewardPerTokenStored[token1] = _rewardPerToken(token1, boostedTotalSupply);
-    lastUpdateTime[token1] = lastTimeRewardApplicable(token1);
-    rewardPerTokenStored[token2] = _rewardPerToken(token2, boostedTotalSupply);
-    lastUpdateTime[token2] = lastTimeRewardApplicable(token2);
-
-    if (account != address(0)) {
-      (uint256 _boostedBalance, uint256 _boostedTotalSupply) = _getBoostedBalance(account);
-      boostedBalance[account] = _boostedBalance;
-
-      rewards[token1][account] = _earned(token1, account, _boostedBalance, _boostedTotalSupply);
-      rewards[token2][account] = _earned(token2, account, _boostedBalance, _boostedTotalSupply);
-      userRewardPerTokenPaid[token1][account] = rewardPerTokenStored[token1];
-      userRewardPerTokenPaid[token2][account] = rewardPerTokenStored[token2];
-
-      emit UpdateLiquidityLimit(account, _boostedBalance, _boostedTotalSupply);
-    }
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
@@ -268,5 +173,106 @@ abstract contract MultiStakingRewardsERC4626 is
     lastUpdateTime[token] = block.timestamp;
     periodFinish[token] = block.timestamp + rewardsDuration; // Change the duration
     emit RewardAdded(token, reward, msg.sender);
+  }
+
+  /// @inheritdoc IMultiStakingRewardsERC4626
+  function getBoostedBalance(address account)
+    public
+    view
+    returns (uint256 _boostedBalance, uint256 _boostedTotalSupply)
+  {
+    uint256 balance = balanceOf(account);
+    uint256 totalSupply = totalSupply();
+
+    if (staking == IOmnichainStaking(address(0))) {
+      return (balance, totalSupply);
+    }
+
+    uint256 votingBalance = staking.getVotes(account);
+    uint256 votingTotal = staking.totalVotes();
+
+    _boostedBalance = balance * TOKENLESS_PRODUCTION / 100;
+    if (votingTotal > 0) {
+      _boostedBalance += totalSupply * votingBalance / votingTotal * (100 - TOKENLESS_PRODUCTION) / 100;
+    }
+
+    _boostedBalance = Math.min(balance, _boostedBalance);
+    _boostedTotalSupply = boostedTotalSupply + _boostedBalance - boostedBalance[account];
+    return (_boostedBalance, _boostedTotalSupply);
+  }
+
+  function _rewardPerToken(IERC20 _token, uint256 _boostedTotalSupply) public view returns (uint256) {
+    if (_boostedTotalSupply == 0) {
+      return rewardPerTokenStored[_token];
+    }
+    return rewardPerTokenStored[_token]
+      + (((lastTimeRewardApplicable(_token) - lastUpdateTime[_token]) * rewardRate[_token] * 1e18) / _boostedTotalSupply);
+  }
+
+  /// @inheritdoc ERC4626Upgradeable
+  function _withdraw(
+    address caller,
+    address receiver,
+    address owner,
+    uint256 assets,
+    uint256 shares
+  ) internal virtual override {
+    _updateRewardDual(rewardToken1, rewardToken2, caller);
+    super._withdraw(caller, receiver, owner, assets, shares);
+    _updateRewardDual(rewardToken1, rewardToken2, caller);
+  }
+
+  /// @inheritdoc ERC4626Upgradeable
+  function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal virtual override {
+    _updateRewardDual(rewardToken1, rewardToken2, caller);
+    super._deposit(caller, receiver, assets, shares);
+    _updateRewardDual(rewardToken1, rewardToken2, caller);
+  }
+
+  function _earned(
+    IERC20 token,
+    address account,
+    uint256 _boostedBalance,
+    uint256 _boostedTotalSupply
+  ) internal view returns (uint256) {
+    return (_boostedBalance * (_rewardPerToken(token, _boostedTotalSupply) - userRewardPerTokenPaid[token][account]))
+      / 1e18 + rewards[token][account];
+  }
+
+  /// @notice Called frequently to update the staking parameters associated to an address
+  /// @param account Address of the account to update
+  function _updateReward(IERC20 token, address account) internal {
+    (uint256 _boostedBalance, uint256 _boostedTotalSupply) = getBoostedBalance(account);
+    boostedTotalSupply = _boostedTotalSupply;
+
+    rewardPerTokenStored[token] = _rewardPerToken(token, boostedTotalSupply);
+    lastUpdateTime[token] = lastTimeRewardApplicable(token);
+
+    if (account != address(0)) {
+      boostedBalance[account] = _boostedBalance;
+      rewards[token][account] = _earned(token, account, _boostedBalance, _boostedTotalSupply);
+      userRewardPerTokenPaid[token][account] = rewardPerTokenStored[token];
+    }
+  }
+
+  function _updateRewardDual(IERC20 token1, IERC20 token2, address account) internal {
+    (uint256 _boostedBalance, uint256 _boostedTotalSupply) = getBoostedBalance(account);
+    boostedTotalSupply = _boostedTotalSupply;
+
+    rewardPerTokenStored[token1] = _rewardPerToken(token1, boostedTotalSupply);
+    lastUpdateTime[token1] = lastTimeRewardApplicable(token1);
+    rewardPerTokenStored[token2] = _rewardPerToken(token2, boostedTotalSupply);
+    lastUpdateTime[token2] = lastTimeRewardApplicable(token2);
+
+    if (account != address(0)) {
+      boostedBalance[account] = _boostedBalance;
+
+      rewards[token1][account] = _earned(token1, account, _boostedBalance, _boostedTotalSupply);
+      rewards[token2][account] = _earned(token2, account, _boostedBalance, _boostedTotalSupply);
+      userRewardPerTokenPaid[token1][account] = rewardPerTokenStored[token1];
+      userRewardPerTokenPaid[token2][account] = rewardPerTokenStored[token2];
+
+      emit UpdateLiquidityLimit(account, _boostedBalance, _boostedTotalSupply);
+    }
   }
 }

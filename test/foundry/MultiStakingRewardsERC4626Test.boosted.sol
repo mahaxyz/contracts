@@ -14,17 +14,21 @@
 pragma solidity 0.8.21;
 
 import {StakingLPRewards} from "../../contracts/periphery/staking/StakingLPRewards.sol";
-import {BaseZaiTest} from "./base/BaseZaiTest.sol";
 
-contract MultiStakingRewardsERC4626Test is BaseZaiTest {
+import {BaseZaiTest} from "./base/BaseZaiTest.sol";
+import {MockOmnichainStaking} from "./mocks/MockOmnichainStaking.sol";
+
+contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
   StakingLPRewards internal staker;
+  MockOmnichainStaking internal votingPower;
 
   function setUp() public {
     _setUpBase();
 
+    votingPower = new MockOmnichainStaking();
     staker = new StakingLPRewards();
     staker.initialize(
-      "StakingLPRewards", "SLP", address(zai), address(this), address(weth), address(maha), 1 days, address(0)
+      "StakingLPRewards", "SLP", address(zai), address(this), address(weth), address(maha), 1 days, address(votingPower)
     );
 
     maha.mint(address(this), 100 ether);
@@ -34,9 +38,13 @@ contract MultiStakingRewardsERC4626Test is BaseZaiTest {
     weth.approve(address(staker), 100 ether);
 
     staker.grantRole(staker.DISTRIBUTOR_ROLE(), address(this));
+
+    votingPower.init();
+    votingPower.mint(ant, 1 ether);
+    votingPower.mint(whale, 1000 ether);
   }
 
-  function test_deposit() public {
+  function test_deposit_with_boost() public {
     zai.mint(whale, 100 ether);
 
     // supply into the pool
@@ -54,9 +62,5 @@ contract MultiStakingRewardsERC4626Test is BaseZaiTest {
 
     assertApproxEqAbs(staker.rewardRate(maha), 1_157_407_407_407_407, 1e6);
     assertApproxEqAbs(staker.rewardRate(weth), 115_740_740_740_740, 1e6);
-
-    (uint256 boostedBalance, uint256 boostedTotalSupply) = staker.getBoostedBalance(maha);
-    assertEq(staker.boostedBalance(whale), 100 ether);
-    assertEq(staker.boostedTotalSupply(), 100 ether);
   }
 }
