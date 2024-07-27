@@ -81,13 +81,20 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
     // supply into the pool
     vm.prank(whale);
     staker.mint(100 ether, whale);
+    staker.updateRewards(maha, whale);
 
-    assertEq(staker.totalBoostedSupply(), 100 ether);
+    assertEq(votingPower.totalSupply(), 0, "!voting.totalSupply");
+    assertEq(staker.totalBoostedSupply(), 20 ether, "!totalBoostedSupply");
+    assertEq(staker.boostedBalance(whale), 20 ether, "!boostedBalance");
+    assertEq(staker.votingPower(whale), 0 ether, "!votingPower");
 
     vm.prank(whale);
     staker.redeem(10 ether, whale, whale);
+    staker.updateRewards(maha, whale);
 
-    assertEq(staker.totalBoostedSupply(), 90 ether);
+    assertEq(staker.totalBoostedSupply(), 18 ether, "!totalBoostedSupply after redeem");
+    assertEq(staker.boostedBalance(whale), 18 ether, "!boostedBalance after redeem");
+    assertEq(staker.votingPower(whale), 0 ether, "!votingPower after redeem");
   }
 
   function test_boost_as_user_with_one_staker_participating() public {
@@ -113,7 +120,7 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
     assertEq(staker.balanceOf(ant), 90 ether, "!balanceOf after redeem");
     assertEq(staker.boostedBalance(ant), 18 ether, "!boostedBalance after redeem");
     assertEq(staker.totalBoostedSupply(), 18 ether, "!totalBoostedSupply after redeem");
-    assertEq(staker.totalVotingPower(ant), 0 ether, "!totalVotingPower after stake");
+    assertEq(staker.totalVotingPower(), 0 ether, "!totalVotingPower after stake");
     assertEq(staker.votingPower(ant), 0 ether, "!votingPower");
   }
 
@@ -126,38 +133,29 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
     assertEq(staker.balanceOf(ant), 90 ether, "!balanceOf after stake");
     assertEq(staker.boostedBalance(ant), 90 ether, "!boostedBalance after stake");
     assertEq(staker.totalBoostedSupply(), 90 ether, "!totalBoostedSupply after stake");
-    assertEq(staker.totalVotingPower(ant), 10 ether, "!totalVotingPower after stake");
+    assertEq(staker.totalVotingPower(), 10 ether, "!totalVotingPower after stake");
     assertEq(staker.votingPower(ant), 10 ether, "!votingPower after stake");
   }
 
   function test_boost_as_user_who_stakes_with_multiple_staker_participating() public {
-    _mint_voting_power();
-    assertEq(staker.totalBoostedSupply(), 0);
+    test_boost_as_user_who_stakes_with_one_staker_participating();
 
-    // supply into the pool
+    // get the whale to supply into the pool
     vm.prank(whale);
     staker.mint(100 ether, whale);
+    staker.updateRewards(maha, whale);
+    staker.updateRewards(maha, ant);
 
-    assertEq(staker.totalBoostedSupply(), 100 ether);
+    // staking power of the any should reduce a lot as the whale has a lot more voting power
+    assertEq(staker.balanceOf(ant), 90 ether, "!balanceOf after whale stake");
+    assertApproxEqAbs(staker.boostedBalance(ant), 19 ether, 1 ether, "!boostedBalance after whale stake");
+    assertApproxEqAbs(staker.totalBoostedSupply(), 119 ether, 1 ether, "!totalBoostedSupply after whale stake");
+    assertEq(staker.totalVotingPower(), 1010 ether, "!totalVotingPower after whale stake");
+    assertEq(staker.votingPower(ant), 10 ether, "!votingPower after whale stake");
 
-    vm.prank(whale);
-    staker.redeem(10 ether, whale, whale);
-
-    assertEq(staker.totalBoostedSupply(), 90 ether);
-  }
-
-  function test_boostedBalance_without_stakers() public {
-    assertEq(staker.boostedBalance(whale), 0);
-
-    // supply into the pool
-    vm.prank(whale);
-    staker.mint(100 ether, whale);
-
-    assertEq(staker.boostedBalance(whale), 100 ether);
-
-    vm.prank(whale);
-    staker.redeem(10 ether, whale, whale);
-
-    assertEq(staker.boostedBalance(whale), 90 ether);
+    // whale should have the most voting power
+    assertEq(staker.balanceOf(whale), 100 ether, "!balanceOf after whale stake");
+    assertEq(staker.boostedBalance(whale), 100 ether, "!boostedBalance after whale stake");
+    assertEq(staker.votingPower(whale), 1000 ether, "!votingPower after whale stake");
   }
 }

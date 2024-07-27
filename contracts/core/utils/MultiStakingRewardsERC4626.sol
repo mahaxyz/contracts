@@ -137,15 +137,13 @@ abstract contract MultiStakingRewardsERC4626 is
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  function totalBoostedSupply() external view returns (uint256) {
-    (, uint256 boostedTotalSupply_) = _calculateBoostedBalance(address(0));
-    return boostedTotalSupply_;
+  function totalBoostedSupply() external view returns (uint256 boostedTotalSupply_) {
+    (, boostedTotalSupply_) = _calculateBoostedBalance(address(0));
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  function boostedBalance(address who) external view returns (uint256) {
-    (uint256 boostedBalance_,) = _calculateBoostedBalance(who);
-    return boostedBalance_;
+  function boostedBalance(address who) external view returns (uint256 boostedBalance_) {
+    (boostedBalance_,) = _calculateBoostedBalance(who);
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
@@ -319,7 +317,7 @@ abstract contract MultiStakingRewardsERC4626 is
   }
 
   function _getVotingPower(address account) internal view returns (uint256 votingBalance, uint256 votingTotal) {
-    if (account == address(0)) return (0, _totalVotingPower);
+    if (account == address(0) || address(staking) == address(0)) return (0, _totalVotingPower);
     votingBalance = staking.getVotes(account);
     votingTotal = _totalVotingPower + votingBalance - _votingPower[account];
   }
