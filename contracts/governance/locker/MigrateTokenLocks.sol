@@ -40,6 +40,20 @@ contract MigrateTokenLocks is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pa
 
   uint256 internal immutable WEEK = 1 weeks;
 
+  function initialize(
+    address _maha,
+    address _locker,
+    address _governance,
+    bytes32 _merkleRoot
+  ) external reinitializer(1) {
+    __Ownable_init(_governance);
+    __ReentrancyGuard_init();
+    __Pausable_init();
+    maha = IERC20(_maha);
+    locker = IMahaLocker(_locker);
+    merkleRoot = _merkleRoot;
+  }
+
   function _migrateLock(
     uint256 _value,
     uint256 _startDate,
