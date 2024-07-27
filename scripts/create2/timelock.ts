@@ -1,4 +1,4 @@
-import hre, { ethers } from "hardhat";
+import hre, { ethers, network } from "hardhat";
 import { buildBytecode } from "./create2";
 
 async function main() {
@@ -7,19 +7,18 @@ async function main() {
     "0x6357EDbfE5aDA570005ceB8FAd3139eF5A8863CC",
     ["0x6357EDbfE5aDA570005ceB8FAd3139eF5A8863CC"],
   ];
+  const salt =
+    "0x69d6d41e98a79d76ddcc4edd70bfc8205509588f3b307cf950fdf68e6a18e006";
+  const address = "0x69000d5a9f4ca229227b90f61285f5866d139f11";
 
   const [wallet] = await hre.ethers.getSigners();
-
-  const Deployer = await hre.ethers.getContractFactory("Deployer");
-
-  const deployer = Deployer.attach(
-    "0xc07c1980C87bfD5de0DC77f90Ce6508c1C0795C3"
+  const deployerD = await hre.deployments.get("Deployer");
+  const deployer = await hre.ethers.getContractAt(
+    "Deployer",
+    deployerD.address
   );
 
   const factory = await hre.ethers.getContractFactory("MAHATimelockController");
-
-  const salt =
-    "0xa518fb0108ec6d1659ec04d98aac4d5c06a0cebfe1e4ef55247ca5e262d5f50f";
 
   const bytecode = buildBytecode(
     ["uint256", "address", "address[]"],
@@ -35,6 +34,19 @@ async function main() {
 
   const txR = await tx.wait(1);
   console.log(txR?.logs);
+
+  if (network.name !== "hardhat") {
+    await hre.deployments.save("MAHATimelockController", {
+      address: address,
+      args: constructorArgs,
+      abi: factory.interface.format(true),
+    });
+
+    await hre.run("verify:verify", {
+      address: address,
+      constructorArguments: constructorArgs,
+    });
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
