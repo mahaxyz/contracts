@@ -25,6 +25,7 @@ import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
  * @title Peg Stability Module
  * @author maha.xyz
  * @notice Used to mint ZAI with collateral at a pre-defined rate
+ * @dev https://docs.maha.xyz/mechanics/peg-mechanics/peg-stablility-module-psm
  */
 contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, IPegStabilityModule {
   /// @inheritdoc IPegStabilityModule

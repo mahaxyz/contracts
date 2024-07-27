@@ -18,6 +18,12 @@ import {SafetyPoolEvents} from "../../interfaces/events/SafetyPoolEvents.sol";
 
 import {IERC20, MultiStakingRewardsERC4626} from "../utils/MultiStakingRewardsERC4626.sol";
 
+/**
+ * @title The SafetyPool contract
+ * @author maha.xyz
+ * @notice Used to pay off any bad debt that may occur in the protocol
+ * @dev https://docs.maha.xyz/mechanics/safety-pool
+ */
 contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
   /// @inheritdoc ISafetyPool
   bytes32 public immutable MANAGER_ROLE = keccak256("MANAGER_ROLE");
