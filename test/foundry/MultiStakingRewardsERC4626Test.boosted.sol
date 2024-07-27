@@ -27,9 +27,11 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
 
     votingPower = new MockOmnichainStaking();
     staker = new StakingLPRewards();
+
     staker.initialize(
       "StakingLPRewards", "SLP", address(zai), address(this), address(weth), address(maha), 1 days, address(votingPower)
     );
+    votingPower.init();
 
     maha.mint(address(this), 100 ether);
     weth.mint(address(this), 100 ether);
@@ -39,19 +41,28 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
 
     staker.grantRole(staker.DISTRIBUTOR_ROLE(), address(this));
 
-    votingPower.init();
-    votingPower.mint(ant, 1 ether);
+    _mint_zai(whale);
+    _mint_zai(ant);
+    _mint_zai(shark);
+  }
+
+  function _mint_zai(address to) public {
+    zai.mint(to, 100 ether);
+    vm.prank(to);
+    zai.approve(address(staker), 100 ether);
+  }
+
+  function _mint_voting_power() public {
+    votingPower.mint(shark, 10 ether);
     votingPower.mint(whale, 1000 ether);
   }
 
   function test_deposit_with_boost() public {
-    zai.mint(whale, 100 ether);
+    _mint_voting_power();
 
     // supply into the pool
-    vm.startPrank(whale);
-    zai.approve(address(staker), 100 ether);
+    vm.prank(whale);
     staker.mint(100 ether, whale);
-    vm.stopPrank();
 
     // notify rewards
     staker.notifyRewardAmount(maha, 100 ether);
@@ -62,5 +73,91 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
 
     assertApproxEqAbs(staker.rewardRate(maha), 1_157_407_407_407_407, 1e6);
     assertApproxEqAbs(staker.rewardRate(weth), 115_740_740_740_740, 1e6);
+  }
+
+  function test_boost_without_stakers() public {
+    assertEq(staker.boostedTotalSupply(), 0);
+
+    // supply into the pool
+    vm.prank(whale);
+    staker.mint(100 ether, whale);
+
+    assertEq(staker.boostedTotalSupply(), 100 ether);
+
+    vm.prank(whale);
+    staker.redeem(10 ether, whale, whale);
+
+    assertEq(staker.boostedTotalSupply(), 90 ether);
+  }
+
+  function test_boost_as_user_with_one_staker_participating() public {
+    _mint_voting_power();
+    assertEq(staker.boostedTotalSupply(), 0);
+
+    // supply into the pool
+    vm.prank(ant);
+    staker.mint(100 ether, ant);
+
+    assertEq(staker.boostedTotalSupply(), 20 ether);
+    assertEq(staker.boostedBalance(ant), 20 ether);
+    assertEq(staker.balanceOf(ant), 100 ether);
+
+    vm.prank(ant);
+    staker.redeem(10 ether, whale, whale);
+
+    assertEq(staker.boostedTotalSupply(), 20 ether);
+    assertEq(staker.boostedBalance(ant), 20 ether);
+    assertEq(staker.balanceOf(ant), 100 ether);
+  }
+
+  function test_boost_as_user_with_one_staker_participating_and_stakes() public {
+    _mint_voting_power();
+    assertEq(staker.boostedTotalSupply(), 0);
+
+    // supply into the pool
+    vm.prank(ant);
+    staker.mint(100 ether, ant);
+
+    assertEq(staker.boostedTotalSupply(), 20 ether);
+    assertEq(staker.boostedBalance(ant), 20 ether);
+    assertEq(staker.balanceOf(ant), 100 ether);
+
+    vm.prank(ant);
+    staker.redeem(10 ether, whale, whale);
+
+    assertEq(staker.boostedTotalSupply(), 20 ether);
+    assertEq(staker.boostedBalance(ant), 20 ether);
+    assertEq(staker.balanceOf(ant), 100 ether);
+  }
+
+  function test_boost_with_multiple_stakers_participating() public {
+    _mint_voting_power();
+    assertEq(staker.boostedTotalSupply(), 0);
+
+    // supply into the pool
+    vm.prank(whale);
+    staker.mint(100 ether, whale);
+
+    assertEq(staker.boostedTotalSupply(), 100 ether);
+
+    vm.prank(whale);
+    staker.redeem(10 ether, whale, whale);
+
+    assertEq(staker.boostedTotalSupply(), 90 ether);
+  }
+
+  function test_boostedBalance_without_stakers() public {
+    assertEq(staker.boostedBalance(whale), 0);
+
+    // supply into the pool
+    vm.prank(whale);
+    staker.mint(100 ether, whale);
+
+    assertEq(staker.boostedBalance(whale), 100 ether);
+
+    vm.prank(whale);
+    staker.redeem(10 ether, whale, whale);
+
+    assertEq(staker.boostedBalance(whale), 90 ether);
   }
 }

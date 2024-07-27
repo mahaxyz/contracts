@@ -16,7 +16,7 @@ pragma solidity 0.8.21;
 import {StakingLPRewards} from "../../contracts/periphery/staking/StakingLPRewards.sol";
 import {BaseZaiTest} from "./base/BaseZaiTest.sol";
 
-contract MultiStakingRewardsERC4626Test is BaseZaiTest {
+contract MultiStakingRewardsERC4626SimpleTest is BaseZaiTest {
   StakingLPRewards internal staker;
 
   function setUp() public {
@@ -97,5 +97,35 @@ contract MultiStakingRewardsERC4626Test is BaseZaiTest {
     (uint256 boostedBalance, uint256 boostedTotalSupply) = staker.getBoostedBalance(whale);
     assertEq(boostedBalance, 90 ether);
     assertEq(boostedTotalSupply, 90 ether);
+  }
+
+  function test_boostedTotalSupply() public {
+    assertEq(staker.boostedTotalSupply(), 0);
+
+    // supply into the pool
+    vm.prank(whale);
+    staker.mint(100 ether, whale);
+
+    assertEq(staker.boostedTotalSupply(), 100 ether);
+
+    vm.prank(whale);
+    staker.redeem(10 ether, whale, whale);
+
+    assertEq(staker.boostedTotalSupply(), 90 ether);
+  }
+
+  function test_boostedBalance() public {
+    assertEq(staker.boostedBalance(whale), 0);
+
+    // supply into the pool
+    vm.prank(whale);
+    staker.mint(100 ether, whale);
+
+    assertEq(staker.boostedBalance(whale), 100 ether);
+
+    vm.prank(whale);
+    staker.redeem(10 ether, whale, whale);
+
+    assertEq(staker.boostedBalance(whale), 90 ether);
   }
 }

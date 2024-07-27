@@ -78,8 +78,8 @@ abstract contract MultiStakingRewardsERC4626 is
   /// @inheritdoc IMultiStakingRewardsERC4626
   IOmnichainStaking public staking;
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
-  uint256 public boostedTotalSupply;
+  /// @dev Boosted total supply that is used to compute the rewards
+  uint256 internal _boostedTotalSupply;
 
   /// @dev Boosted balances that are used to compute the rewards
   mapping(address who => uint256 boostedBalance) internal _boostedBalances;
@@ -112,8 +112,8 @@ abstract contract MultiStakingRewardsERC4626 is
 
     _grantRole(DEFAULT_ADMIN_ROLE, _governance);
 
-    if (boostedTotalSupply == 0) {
-      boostedTotalSupply = totalSupply();
+    if (_boostedTotalSupply == 0) {
+      _boostedTotalSupply = totalSupply();
     }
   }
 
@@ -124,13 +124,25 @@ abstract contract MultiStakingRewardsERC4626 is
 
   /// @inheritdoc IMultiStakingRewardsERC4626
   function rewardPerToken(IERC20 token) external view returns (uint256) {
-    return _rewardPerToken(token, boostedTotalSupply);
+    return _rewardPerToken(token, _boostedTotalSupply);
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
   function earned(IERC20 token, address account) public view returns (uint256) {
-    (uint256 _boostedBalance, uint256 _boostedTotalSupply) = getBoostedBalance(account);
-    return _earned(token, account, _boostedBalance, _boostedTotalSupply);
+    (uint256 boostedBalance_, uint256 boostedTotalSupply_) = getBoostedBalance(account);
+    return _earned(token, account, boostedBalance_, boostedTotalSupply_);
+  }
+
+  /// @inheritdoc IMultiStakingRewardsERC4626
+  function boostedTotalSupply() external view returns (uint256) {
+    (, uint256 boostedTotalSupply_) = getBoostedBalance(address(0));
+    return boostedTotalSupply_;
+  }
+
+  /// @inheritdoc IMultiStakingRewardsERC4626
+  function boostedBalance(address who) external view returns (uint256) {
+    (uint256 boostedBalance_,) = getBoostedBalance(who);
+    return boostedBalance_;
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
@@ -179,7 +191,7 @@ abstract contract MultiStakingRewardsERC4626 is
   function getBoostedBalance(address account)
     public
     view
-    returns (uint256 _boostedBalance, uint256 _boostedTotalSupply)
+    returns (uint256 boostedBalance_, uint256 boostedTotalSupply_)
   {
     uint256 balance = balanceOf(account);
     uint256 totalSupply = totalSupply();
@@ -191,22 +203,22 @@ abstract contract MultiStakingRewardsERC4626 is
     uint256 votingBalance = staking.getVotes(account);
     uint256 votingTotal = staking.totalVotes();
 
-    _boostedBalance = balance * TOKENLESS_PRODUCTION / 100;
+    boostedBalance_ = balance * TOKENLESS_PRODUCTION / 100;
     if (votingTotal > 0) {
-      _boostedBalance += totalSupply * votingBalance / votingTotal * (100 - TOKENLESS_PRODUCTION) / 100;
+      boostedBalance_ += totalSupply * votingBalance / votingTotal * (100 - TOKENLESS_PRODUCTION) / 100;
     }
 
-    _boostedBalance = Math.min(balance, _boostedBalance);
-    _boostedTotalSupply = boostedTotalSupply + _boostedBalance - _boostedBalances[account];
-    return (_boostedBalance, _boostedTotalSupply);
+    boostedBalance_ = Math.min(balance, boostedBalance_);
+    boostedTotalSupply_ = boostedTotalSupply_ + boostedBalance_ - _boostedBalances[account];
+    return (boostedBalance_, boostedTotalSupply_);
   }
 
-  function _rewardPerToken(IERC20 _token, uint256 _boostedTotalSupply) public view returns (uint256) {
-    if (_boostedTotalSupply == 0) {
+  function _rewardPerToken(IERC20 _token, uint256 boostedTotalSupply_) public view returns (uint256) {
+    if (boostedTotalSupply_ == 0) {
       return rewardPerTokenStored[_token];
     }
     return rewardPerTokenStored[_token]
-      + (((lastTimeRewardApplicable(_token) - lastUpdateTime[_token]) * rewardRate[_token] * 1e18) / _boostedTotalSupply);
+      + (((lastTimeRewardApplicable(_token) - lastUpdateTime[_token]) * rewardRate[_token] * 1e18) / boostedTotalSupply_);
   }
 
   /// @inheritdoc ERC4626Upgradeable
@@ -228,49 +240,51 @@ abstract contract MultiStakingRewardsERC4626 is
   }
 
   function _earned(
-    IERC20 token,
-    address account,
-    uint256 _boostedBalance,
-    uint256 _boostedTotalSupply
+    IERC20 token_,
+    address account_,
+    uint256 boostedBalance_,
+    uint256 boostedTotalSupply_
   ) internal view returns (uint256) {
-    return (_boostedBalance * (_rewardPerToken(token, _boostedTotalSupply) - userRewardPerTokenPaid[token][account]))
-      / 1e18 + rewards[token][account];
+    return (boostedBalance_ * (_rewardPerToken(token_, boostedTotalSupply_) - userRewardPerTokenPaid[token_][account_]))
+      / 1e18 + rewards[token_][account_];
   }
 
   /// @notice Called frequently to update the staking parameters associated to an address
   /// @param account Address of the account to update
   function _updateReward(IERC20 token, address account) internal {
-    (uint256 _boostedBalance, uint256 _boostedTotalSupply) = getBoostedBalance(account);
-    boostedTotalSupply = _boostedTotalSupply;
+    (uint256 boostedBalance_, uint256 boostedTotalSupply_) = getBoostedBalance(account);
+    _boostedTotalSupply = boostedTotalSupply_;
 
-    rewardPerTokenStored[token] = _rewardPerToken(token, boostedTotalSupply);
+    rewardPerTokenStored[token] = _rewardPerToken(token, boostedTotalSupply_);
     lastUpdateTime[token] = lastTimeRewardApplicable(token);
 
     if (account != address(0)) {
-      _boostedBalances[account] = _boostedBalance;
-      rewards[token][account] = _earned(token, account, _boostedBalance, _boostedTotalSupply);
+      _boostedBalances[account] = boostedBalance_;
+      rewards[token][account] = _earned(token, account, boostedBalance_, boostedTotalSupply_);
       userRewardPerTokenPaid[token][account] = rewardPerTokenStored[token];
+
+      emit UpdateLiquidityLimit(account, boostedBalance_, boostedTotalSupply_);
     }
   }
 
   function _updateRewardDual(IERC20 token1, IERC20 token2, address account) internal {
-    (uint256 _boostedBalance, uint256 _boostedTotalSupply) = getBoostedBalance(account);
-    boostedTotalSupply = _boostedTotalSupply;
+    (uint256 boostedBalance_, uint256 boostedTotalSupply_) = getBoostedBalance(account);
+    _boostedTotalSupply = boostedTotalSupply_;
 
-    rewardPerTokenStored[token1] = _rewardPerToken(token1, boostedTotalSupply);
+    rewardPerTokenStored[token1] = _rewardPerToken(token1, boostedTotalSupply_);
     lastUpdateTime[token1] = lastTimeRewardApplicable(token1);
-    rewardPerTokenStored[token2] = _rewardPerToken(token2, boostedTotalSupply);
+    rewardPerTokenStored[token2] = _rewardPerToken(token2, boostedTotalSupply_);
     lastUpdateTime[token2] = lastTimeRewardApplicable(token2);
 
     if (account != address(0)) {
-      _boostedBalances[account] = _boostedBalance;
+      _boostedBalances[account] = boostedBalance_;
 
-      rewards[token1][account] = _earned(token1, account, _boostedBalance, _boostedTotalSupply);
-      rewards[token2][account] = _earned(token2, account, _boostedBalance, _boostedTotalSupply);
+      rewards[token1][account] = _earned(token1, account, boostedBalance_, boostedTotalSupply_);
+      rewards[token2][account] = _earned(token2, account, boostedBalance_, boostedTotalSupply_);
       userRewardPerTokenPaid[token1][account] = rewardPerTokenStored[token1];
       userRewardPerTokenPaid[token2][account] = rewardPerTokenStored[token2];
 
-      emit UpdateLiquidityLimit(account, _boostedBalance, _boostedTotalSupply);
+      emit UpdateLiquidityLimit(account, boostedBalance_, boostedTotalSupply_);
     }
   }
 }
