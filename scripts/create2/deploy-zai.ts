@@ -6,9 +6,8 @@ async function main() {
 
   const [wallet] = await hre.ethers.getSigners();
 
-  const Deployer = await hre.ethers.getContractFactory("Deployer");
-
-  const deployer = Deployer.attach(
+  const deployer = await hre.ethers.getContractAt(
+    "Deployer",
     "0xc07c1980C87bfD5de0DC77f90Ce6508c1C0795C3"
   );
 

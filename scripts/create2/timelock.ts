@@ -12,10 +12,9 @@ async function main() {
   const address = "0x69000d5a9f4ca229227b90f61285f5866d139f11";
 
   const [wallet] = await hre.ethers.getSigners();
-  const deployerD = await hre.deployments.get("Deployer");
   const deployer = await hre.ethers.getContractAt(
     "Deployer",
-    deployerD.address
+    "0xc07c1980C87bfD5de0DC77f90Ce6508c1C0795C3"
   );
 
   const factory = await hre.ethers.getContractFactory("MAHATimelockController");

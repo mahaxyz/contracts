@@ -29,8 +29,8 @@ contract PegStabilityModuleTest is BaseZaiTest {
       address(zai), // address _zai,
       address(usdc), // address _collateral,
       governance, // address _governance,
-      1e8, // uint256 _newRate,
-      100_000 * 1e8, // uint256 _supplyCap,
+      1e6, // uint256 _newRate,
+      100_000 * 1e6, // uint256 _supplyCap,
       100_000 * 1e18, // uint256 _debtCap
       100, // supplyFeeBps 1%
       100, // redeemFeeBps 1%
@@ -57,28 +57,28 @@ contract PegStabilityModuleTest is BaseZaiTest {
 
   function test_values() public view {
     assertEq(address(psmUSDC.zai()), address(zai), "!psm");
-    assertEq(psmUSDC.supplyCap(), 100_000 * 1e8, "!supplyCap");
+    assertEq(psmUSDC.supplyCap(), 100_000 * 1e6, "!supplyCap");
     assertEq(psmUSDC.debtCap(), 100_000 ether, "!debtCap");
     assertEq(psmUSDC.debt(), 0, "!debt");
   }
 
   function test_toCollateralAmount() public view {
-    assertEq(psmUSDC.toCollateralAmount(1000 ether), 1000 * 1e8, "!usdc");
+    assertEq(psmUSDC.toCollateralAmount(1000 ether), 1000 * 1e6, "!usdc");
     assertEq(psmDAI.toCollateralAmount(1000 ether), 1000 ether, "!dai");
   }
 
   function test_mint() public {
     vm.startPrank(ant);
-    usdc.mint(ant, 2000 * 1e8);
+    usdc.mint(ant, 2000 * 1e6);
 
     assertEq(zai.totalSupply(), 0);
 
-    usdc.approve(address(psmUSDC), 2000 * 1e8);
+    usdc.approve(address(psmUSDC), 2000 * 1e6);
     psmUSDC.mint(ant, 1000 ether);
 
     assertEq(zai.totalSupply(), 1000 ether);
     assertEq(zai.balanceOf(ant), 1000 ether);
-    assertEq(usdc.balanceOf(address(psmUSDC)), 1010 * 1e8);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 1010 * 1e6);
     vm.stopPrank();
 
     vm.expectRevert();
@@ -87,14 +87,14 @@ contract PegStabilityModuleTest is BaseZaiTest {
 
   function test_redeemPartial() public {
     vm.startPrank(ant);
-    usdc.mint(ant, 2000 * 1e8);
-    usdc.approve(address(psmUSDC), 2000 * 1e8);
+    usdc.mint(ant, 2000 * 1e6);
+    usdc.approve(address(psmUSDC), 2000 * 1e6);
     psmUSDC.mint(ant, 1000 ether);
     zai.transfer(whale, 500 ether);
     vm.stopPrank();
 
     assertEq(zai.totalSupply(), 1000 ether);
-    assertEq(usdc.balanceOf(address(psmUSDC)), 1010 * 1e8);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 1010 * 1e6);
     assertEq(zai.balanceOf(whale), 500 ether);
 
     // as whale try to redeem
@@ -104,7 +104,7 @@ contract PegStabilityModuleTest is BaseZaiTest {
 
     // check balances
     assertEq(zai.totalSupply(), 700 ether);
-    assertEq(usdc.balanceOf(address(psmUSDC)), 713 * 1e8);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 713 * 1e6);
     assertEq(zai.balanceOf(whale), 200 ether);
 
     vm.expectRevert();
@@ -113,12 +113,12 @@ contract PegStabilityModuleTest is BaseZaiTest {
 
   function test_redeemFull() public {
     vm.startPrank(ant);
-    usdc.mint(ant, 2000 * 1e8);
-    usdc.approve(address(psmUSDC), 2000 * 1e8);
+    usdc.mint(ant, 2000 * 1e6);
+    usdc.approve(address(psmUSDC), 2000 * 1e6);
     psmUSDC.mint(ant, 1000 ether);
 
     assertEq(zai.totalSupply(), 1000 ether);
-    assertEq(usdc.balanceOf(address(psmUSDC)), 1010 * 1e8);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 1010 * 1e6);
     assertEq(zai.balanceOf(ant), 1000 ether);
 
     zai.approve(address(psmUSDC), 1000 ether);
@@ -126,7 +126,7 @@ contract PegStabilityModuleTest is BaseZaiTest {
 
     // check balances
     assertEq(zai.totalSupply(), 0);
-    assertEq(usdc.balanceOf(address(psmUSDC)), 20 * 1e8);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 20 * 1e6);
     assertEq(zai.balanceOf(ant), 0);
 
     vm.expectRevert();
@@ -135,8 +135,8 @@ contract PegStabilityModuleTest is BaseZaiTest {
 
   function test_sweepFees() public {
     vm.startPrank(ant);
-    usdc.mint(ant, 2000 * 1e8);
-    usdc.approve(address(psmUSDC), 2000 * 1e8);
+    usdc.mint(ant, 2000 * 1e6);
+    usdc.approve(address(psmUSDC), 2000 * 1e6);
     zai.approve(address(psmUSDC), 1000 ether);
     psmUSDC.mint(ant, 1000 ether);
 
@@ -144,11 +144,11 @@ contract PegStabilityModuleTest is BaseZaiTest {
 
     // check balances
     assertEq(zai.totalSupply(), 0);
-    assertEq(usdc.balanceOf(address(psmUSDC)), 20 * 1e8);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 20 * 1e6);
     assertEq(zai.balanceOf(ant), 0);
 
     psmUSDC.sweepFees();
 
-    assertEq(usdc.balanceOf(address(feeDestination)), 20 * 1e8);
+    assertEq(usdc.balanceOf(address(feeDestination)), 20 * 1e6);
   }
 }
