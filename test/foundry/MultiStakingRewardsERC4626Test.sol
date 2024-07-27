@@ -23,7 +23,9 @@ contract MultiStakingRewardsERC4626Test is BaseZaiTest {
     _setUpBase();
 
     staker = new StakingLPRewards();
-    staker.initialize("StakingLPRewards", "SLP", address(zai), address(this), address(weth), address(maha), 1 days);
+    staker.initialize(
+      "StakingLPRewards", "SLP", address(zai), address(this), address(weth), address(maha), 1 days, address(0)
+    );
 
     maha.mint(address(this), 100 ether);
     weth.mint(address(this), 100 ether);
