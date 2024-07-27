@@ -6,14 +6,23 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const psmImplD = await deployments.get("PegStabilityModule-impl");
+  const timelockD = await deployments.get("MAHATimelockController");
+
+  const admin = await deploy("ProxyAdmin", {
+    from: deployer,
+    contract: "ProxyAdmin",
+    args: [timelockD.address],
+    autoMine: true,
+    log: true,
+  });
 
   if (network.name !== "hardhat") {
     await hre.run("verify:verify", {
-      address: psmImpl.address,
+      address: admin.address,
+      constructorArguments: [timelockD.address],
     });
   }
 }
 
-main.tags = ["PegStabilityModule"];
+main.tags = ["ProxyAdmin"];
 export default main;
