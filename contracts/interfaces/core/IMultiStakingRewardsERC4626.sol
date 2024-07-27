@@ -13,8 +13,6 @@ interface IMultiStakingRewardsERC4626 {
 
   function DISTRIBUTOR_ROLE() external view returns (bytes32);
 
-  function TOKENLESS_PRODUCTION() external view returns (uint256);
-
   /// @notice Time at which distribution ends
   function periodFinish(IERC20 reward) external view returns (uint256);
 
@@ -54,7 +52,9 @@ interface IMultiStakingRewardsERC4626 {
   function boostedBalance(address who) external view returns (uint256);
   function votingPower(address who) external view returns (uint256);
 
-  function forceUpdateRewards(IERC20 token, address who) external;
+  function updatingVotingPower(address account) external;
+
+  function updateRewards(IERC20 token, address who) external;
 
   /**
    * @notice Gets the staking contract that returns the voting power of an account

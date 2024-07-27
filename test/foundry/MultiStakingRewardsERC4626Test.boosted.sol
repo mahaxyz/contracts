@@ -98,21 +98,22 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
     // supply into the pool
     vm.prank(ant);
     staker.mint(100 ether, ant);
-    staker.forceUpdateRewards(maha, ant);
+    staker.updateRewards(maha, ant);
 
-    assertEq(staker.totalSupply(), 100 ether, "!totalSupply");
+    assertEq(staker.balanceOf(ant), 100 ether, "!balanceOf");
     assertEq(staker.boostedBalance(ant), 20 ether, "!boostedBalance");
     assertEq(staker.totalBoostedSupply(), 20 ether, "!totalBoostedSupply");
-    assertEq(staker.balanceOf(ant), 100 ether, "!balanceOf");
+    assertEq(staker.totalSupply(), 100 ether, "!totalSupply");
     assertEq(staker.votingPower(ant), 0 ether, "!votingPower");
 
     vm.prank(ant);
     staker.redeem(10 ether, ant, ant);
-    staker.forceUpdateRewards(maha, ant);
+    staker.updateRewards(maha, ant);
 
-    assertEq(staker.totalBoostedSupply(), 18 ether, "!totalBoostedSupply after redeem");
-    assertEq(staker.boostedBalance(ant), 18 ether, "!boostedBalance after redeem");
     assertEq(staker.balanceOf(ant), 90 ether, "!balanceOf after redeem");
+    assertEq(staker.boostedBalance(ant), 18 ether, "!boostedBalance after redeem");
+    assertEq(staker.totalBoostedSupply(), 18 ether, "!totalBoostedSupply after redeem");
+    assertEq(staker.totalVotingPower(ant), 0 ether, "!totalVotingPower after stake");
     assertEq(staker.votingPower(ant), 0 ether, "!votingPower");
   }
 
@@ -120,14 +121,16 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
     test_boost_as_user_with_one_staker_participating();
 
     votingPower.mint(ant, 10 ether);
-    staker.forceUpdateRewards(maha, ant);
+    staker.updateRewards(maha, ant);
 
-    assertEq(staker.totalBoostedSupply(), 90 ether, "!totalBoostedSupply after stake");
-    assertEq(staker.boostedBalance(ant), 90 ether, "!boostedBalance after stake");
     assertEq(staker.balanceOf(ant), 90 ether, "!balanceOf after stake");
+    assertEq(staker.boostedBalance(ant), 90 ether, "!boostedBalance after stake");
+    assertEq(staker.totalBoostedSupply(), 90 ether, "!totalBoostedSupply after stake");
+    assertEq(staker.totalVotingPower(ant), 10 ether, "!totalVotingPower after stake");
+    assertEq(staker.votingPower(ant), 10 ether, "!votingPower after stake");
   }
 
-  function test_boost_with_multiple_stakers_participating() public {
+  function test_boost_as_user_who_stakes_with_multiple_staker_participating() public {
     _mint_voting_power();
     assertEq(staker.totalBoostedSupply(), 0);
 

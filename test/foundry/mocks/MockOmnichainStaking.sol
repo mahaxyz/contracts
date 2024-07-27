@@ -22,10 +22,12 @@ contract MockOmnichainStaking is OmnichainStakingBase {
 
   function mint(address _to, uint256 _amount) external {
     _mint(_to, _amount);
+    _delegate(_to, _to);
   }
 
   function burn(address _to, uint256 _amount) external {
     _burn(_to, _amount);
+    _delegate(_to, _to);
   }
 
   function underlying() external view returns (address) {

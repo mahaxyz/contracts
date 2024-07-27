@@ -46,9 +46,6 @@ abstract contract MultiStakingRewardsERC4626 is
   bytes32 public immutable DISTRIBUTOR_ROLE = keccak256("DISTRIBUTOR_ROLE");
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  uint256 public immutable TOKENLESS_PRODUCTION = 20;
-
-  /// @inheritdoc IMultiStakingRewardsERC4626
   mapping(IERC20 reward => uint256) public periodFinish;
 
   /// @inheritdoc IMultiStakingRewardsERC4626
@@ -152,15 +149,13 @@ abstract contract MultiStakingRewardsERC4626 is
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  function totalVotingPower() external view returns (uint256) {
-    (, uint256 supply) = _getVotingPower(address(0));
-    return supply;
+  function totalVotingPower() external view returns (uint256 supply) {
+    (, supply) = _getVotingPower(address(0));
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  function votingPower(address who) external view returns (uint256) {
-    (uint256 balance,) = _getVotingPower(who);
-    return balance;
+  function votingPower(address who) external view returns (uint256 balance) {
+    (balance,) = _getVotingPower(who);
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
@@ -183,6 +178,7 @@ abstract contract MultiStakingRewardsERC4626 is
   function notifyRewardAmount(IERC20 token, uint256 reward) external onlyRole(DISTRIBUTOR_ROLE) nonReentrant {
     _updateReward(token, address(0));
     token.safeTransferFrom(msg.sender, address(this), reward);
+
     if (block.timestamp >= periodFinish[token]) {
       // If no reward is currently being distributed, the new rate is just `reward / duration`
       rewardRate[token] = reward / rewardsDuration;
@@ -206,11 +202,11 @@ abstract contract MultiStakingRewardsERC4626 is
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
-  function forceUpdateRewards(IERC20 token, address who) external {
-    _updatingVotingPower(who);
+  function updateRewards(IERC20 token, address who) external {
     _updateReward(token, who);
   }
 
+  /// @inheritdoc IMultiStakingRewardsERC4626
   function updatingVotingPower(address account) external {
     _updatingVotingPower(account);
   }
@@ -272,6 +268,8 @@ abstract contract MultiStakingRewardsERC4626 is
   }
 
   function _updateRewardDual(IERC20 token1, IERC20 token2, address account) internal {
+    _updatingVotingPower(account);
+
     (uint256 boostedBalance_, uint256 boostedTotalSupply_) = _calculateBoostedBalance(account);
     _boostedTotalSupply = boostedTotalSupply_;
 
@@ -310,9 +308,9 @@ abstract contract MultiStakingRewardsERC4626 is
       return (balance, totalSupply);
     }
 
-    boostedBalance_ = balance * TOKENLESS_PRODUCTION / 100;
+    boostedBalance_ = balance / 5;
     if (_totalVotingPower > 0) {
-      boostedBalance_ += totalSupply * _votingPower[account] / _totalVotingPower * (100 - TOKENLESS_PRODUCTION) / 100;
+      boostedBalance_ += totalSupply * _votingPower[account] / _totalVotingPower * 4 / 5;
     }
 
     boostedBalance_ = Math.min(balance, boostedBalance_);
