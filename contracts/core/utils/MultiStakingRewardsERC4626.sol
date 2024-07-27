@@ -45,6 +45,8 @@ abstract contract MultiStakingRewardsERC4626 is
   /// @inheritdoc IMultiStakingRewardsERC4626
   bytes32 public immutable DISTRIBUTOR_ROLE = keccak256("DISTRIBUTOR_ROLE");
 
+  uint256 public immutable TOKENLESS_PRODUCTION = 20;
+
   /// @inheritdoc IMultiStakingRewardsERC4626
   mapping(IERC20 reward => uint256) public periodFinish;
 
@@ -73,6 +75,9 @@ abstract contract MultiStakingRewardsERC4626 is
   IERC20 public rewardToken2;
 
   IOmnichainStaking public staking;
+
+  mapping(address who => uint256 boostedBalance) public boostedBalance;
+  uint256 public boostedTotalSupply;
 
   /// @notice Initializes the staking contract with a first set of parameters
   function __MultiStakingRewardsERC4626_init(
@@ -110,17 +115,16 @@ abstract contract MultiStakingRewardsERC4626 is
 
   /// @inheritdoc IMultiStakingRewardsERC4626
   function rewardPerToken(IERC20 token) public view returns (uint256) {
-    if (totalSupply() == 0) {
+    if (boostedTotalSupply == 0) {
       return rewardPerTokenStored[token];
     }
     return rewardPerTokenStored[token]
-      + (((lastTimeRewardApplicable(token) - lastUpdateTime[token]) * rewardRate[token] * 1e18) / totalSupply());
+      + (((lastTimeRewardApplicable(token) - lastUpdateTime[token]) * rewardRate[token] * 1e18) / boostedTotalSupply);
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
   function earned(IERC20 token, address account) public view returns (uint256) {
-    uint256 bal = _boostedBalance(account, balanceOf(account));
-    return _earned(token, account, bal);
+    return _earned(token, account);
   }
 
   /// @inheritdoc IMultiStakingRewardsERC4626
@@ -150,13 +154,37 @@ abstract contract MultiStakingRewardsERC4626 is
     super._deposit(caller, receiver, assets, shares);
   }
 
-  function _earned(IERC20 token, address account, uint256 balance) internal view returns (uint256) {
-    return (balance * (rewardPerToken(token) - userRewardPerTokenPaid[token][account])) / 1e18 + rewards[token][account];
+  function _earned(IERC20 token, address account) internal view returns (uint256) {
+    return (boostedBalance[account] * (rewardPerToken(token) - userRewardPerTokenPaid[token][account])) / 1e18
+      + rewards[token][account];
   }
 
-  function _boostedBalance(address account, uint256 balance) internal view returns (uint256) {
-    // todo add staking boost
-    return balance;
+  function _updateBoostedBalance(address account) internal {
+    uint256 balance = balanceOf(account);
+    uint256 totalSupply = totalSupply();
+
+    if (staking == IOmnichainStaking(address(0))) {
+      boostedBalance[account] = balance;
+      boostedTotalSupply = totalSupply;
+      return;
+    }
+
+    uint256 votingBalance = staking.getVotes(account);
+    uint256 votingTotal = staking.totalVotes();
+
+    uint256 lim = balance * TOKENLESS_PRODUCTION / 100;
+    if (votingTotal > 0) {
+      lim += totalSupply * votingBalance / votingTotal * (100 - TOKENLESS_PRODUCTION) / 100;
+    }
+
+    lim = Math.min(balance, lim);
+
+    uint256 oldBal = boostedBalance[account];
+    boostedBalance[account] = lim;
+    uint256 workingSupply = boostedTotalSupply + lim - oldBal;
+    boostedTotalSupply = workingSupply;
+
+    emit UpdateLiquidityLimit(account, balance, totalSupply, lim, boostedTotalSupply);
   }
 
   /// @notice Called frequently to update the staking parameters associated to an address
@@ -177,9 +205,9 @@ abstract contract MultiStakingRewardsERC4626 is
     lastUpdateTime[token2] = lastTimeRewardApplicable(token2);
 
     if (account != address(0)) {
-      uint256 bal = _boostedBalance(account, balanceOf(account));
-      rewards[token1][account] = _earned(token1, account, bal);
-      rewards[token2][account] = _earned(token2, account, bal);
+      _updateBoostedBalance(account);
+      rewards[token1][account] = _earned(token1, account);
+      rewards[token2][account] = _earned(token2, account);
       userRewardPerTokenPaid[token1][account] = rewardPerTokenStored[token1];
       userRewardPerTokenPaid[token2][account] = rewardPerTokenStored[token2];
     }
