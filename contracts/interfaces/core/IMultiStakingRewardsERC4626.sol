@@ -4,12 +4,16 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+import {IOmnichainStaking} from "../governance/IOmnichainStaking.sol";
+
 interface IMultiStakingRewardsERC4626 {
   event RewardAdded(IERC20 indexed reward, uint256 indexed amount, address caller);
   event RewardClaimed(IERC20 indexed reward, uint256 indexed amount, address indexed who, address caller);
   event UpdateLiquidityLimit(address indexed account, uint256 boostedBalance, uint256 boostedTotalSupply);
 
   function DISTRIBUTOR_ROLE() external view returns (bytes32);
+
+  function TOKENLESS_PRODUCTION() external view returns (uint256);
 
   /// @notice Time at which distribution ends
   function periodFinish(IERC20 reward) external view returns (uint256);
@@ -36,7 +40,14 @@ interface IMultiStakingRewardsERC4626 {
   function rewards(IERC20 reward, address who) external view returns (uint256);
 
   function rewardToken2() external view returns (IERC20);
+
   function rewardToken1() external view returns (IERC20);
+
+  function boostedTotalSupply() external view returns (uint256);
+
+  function boostedBalance(address who) external view returns (uint256);
+
+  function staking() external view returns (IOmnichainStaking);
 
   /// @notice Queries the last timestamp at which a reward was distributed
   /// @dev Returns the current timestamp if a reward is being distributed and the end of the staking

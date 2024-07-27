@@ -45,6 +45,7 @@ abstract contract MultiStakingRewardsERC4626 is
   /// @inheritdoc IMultiStakingRewardsERC4626
   bytes32 public immutable DISTRIBUTOR_ROLE = keccak256("DISTRIBUTOR_ROLE");
 
+  /// @inheritdoc IMultiStakingRewardsERC4626
   uint256 public immutable TOKENLESS_PRODUCTION = 20;
 
   /// @inheritdoc IMultiStakingRewardsERC4626
@@ -74,9 +75,13 @@ abstract contract MultiStakingRewardsERC4626 is
   /// @inheritdoc IMultiStakingRewardsERC4626
   IERC20 public rewardToken2;
 
+  /// @inheritdoc IMultiStakingRewardsERC4626
   IOmnichainStaking public staking;
 
+  /// @inheritdoc IMultiStakingRewardsERC4626
   mapping(address who => uint256 boostedBalance) public boostedBalance;
+
+  /// @inheritdoc IMultiStakingRewardsERC4626
   uint256 public boostedTotalSupply;
 
   /// @notice Initializes the staking contract with a first set of parameters
