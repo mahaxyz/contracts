@@ -9,7 +9,7 @@ import {IOmnichainStaking} from "../governance/IOmnichainStaking.sol";
 interface IMultiStakingRewardsERC4626 {
   event RewardAdded(IERC20 indexed reward, uint256 indexed amount, address caller);
   event RewardClaimed(IERC20 indexed reward, uint256 indexed amount, address indexed who, address caller);
-  event UpdateLiquidityLimit(address indexed account, uint256 boostedBalance, uint256 boostedTotalSupply);
+  event UpdatedBoost(address indexed account, uint256 boostedBalance, uint256 boostedTotalSupply);
 
   function DISTRIBUTOR_ROLE() external view returns (bytes32);
 
@@ -43,19 +43,18 @@ interface IMultiStakingRewardsERC4626 {
 
   function rewardToken1() external view returns (IERC20);
 
-  function boostedTotalSupply() external view returns (uint256);
-
-  function boostedBalance(address who) external view returns (uint256);
+  function totalBoostedSupply() external view returns (uint256);
+  function totalVotingPower() external view returns (uint256);
 
   /**
    * @notice Gets the boosted balance for an account
    * @dev Code taken from
    * https://github.com/curvefi/curve-dao-contracts/blob/master/contracts/gauges/LiquidityGaugeV5.vy#L191-L213
    */
-  function getBoostedBalance(address account)
-    external
-    view
-    returns (uint256 _boostedBalance, uint256 _boostedTotalSupply);
+  function boostedBalance(address who) external view returns (uint256);
+  function votingPower(address who) external view returns (uint256);
+
+  function forceUpdateRewards(IERC20 token, address who) external;
 
   /**
    * @notice Gets the staking contract that returns the voting power of an account

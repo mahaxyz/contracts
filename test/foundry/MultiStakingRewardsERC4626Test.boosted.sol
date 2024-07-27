@@ -76,74 +76,71 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
   }
 
   function test_boost_without_stakers() public {
-    assertEq(staker.boostedTotalSupply(), 0);
+    assertEq(staker.totalBoostedSupply(), 0);
 
     // supply into the pool
     vm.prank(whale);
     staker.mint(100 ether, whale);
 
-    assertEq(staker.boostedTotalSupply(), 100 ether);
+    assertEq(staker.totalBoostedSupply(), 100 ether);
 
     vm.prank(whale);
     staker.redeem(10 ether, whale, whale);
 
-    assertEq(staker.boostedTotalSupply(), 90 ether);
+    assertEq(staker.totalBoostedSupply(), 90 ether);
   }
 
   function test_boost_as_user_with_one_staker_participating() public {
     _mint_voting_power();
-    assertEq(staker.boostedTotalSupply(), 0);
+    assertEq(staker.totalBoostedSupply(), 0);
+    assertEq(staker.totalSupply(), 0);
 
     // supply into the pool
     vm.prank(ant);
     staker.mint(100 ether, ant);
+    staker.forceUpdateRewards(maha, ant);
 
-    assertEq(staker.boostedTotalSupply(), 20 ether);
-    assertEq(staker.boostedBalance(ant), 20 ether);
-    assertEq(staker.balanceOf(ant), 100 ether);
+    assertEq(staker.totalSupply(), 100 ether, "!totalSupply");
+    assertEq(staker.boostedBalance(ant), 20 ether, "!boostedBalance");
+    assertEq(staker.totalBoostedSupply(), 20 ether, "!totalBoostedSupply");
+    assertEq(staker.balanceOf(ant), 100 ether, "!balanceOf");
+    assertEq(staker.votingPower(ant), 0 ether, "!votingPower");
 
     vm.prank(ant);
-    staker.redeem(10 ether, whale, whale);
+    staker.redeem(10 ether, ant, ant);
+    staker.forceUpdateRewards(maha, ant);
 
-    assertEq(staker.boostedTotalSupply(), 20 ether);
-    assertEq(staker.boostedBalance(ant), 20 ether);
-    assertEq(staker.balanceOf(ant), 100 ether);
+    assertEq(staker.totalBoostedSupply(), 18 ether, "!totalBoostedSupply after redeem");
+    assertEq(staker.boostedBalance(ant), 18 ether, "!boostedBalance after redeem");
+    assertEq(staker.balanceOf(ant), 90 ether, "!balanceOf after redeem");
+    assertEq(staker.votingPower(ant), 0 ether, "!votingPower");
   }
 
-  function test_boost_as_user_with_one_staker_participating_and_stakes() public {
-    _mint_voting_power();
-    assertEq(staker.boostedTotalSupply(), 0);
+  function test_boost_as_user_who_stakes_with_one_staker_participating() public {
+    test_boost_as_user_with_one_staker_participating();
 
-    // supply into the pool
-    vm.prank(ant);
-    staker.mint(100 ether, ant);
+    votingPower.mint(ant, 10 ether);
+    staker.forceUpdateRewards(maha, ant);
 
-    assertEq(staker.boostedTotalSupply(), 20 ether);
-    assertEq(staker.boostedBalance(ant), 20 ether);
-    assertEq(staker.balanceOf(ant), 100 ether);
-
-    vm.prank(ant);
-    staker.redeem(10 ether, whale, whale);
-
-    assertEq(staker.boostedTotalSupply(), 20 ether);
-    assertEq(staker.boostedBalance(ant), 20 ether);
-    assertEq(staker.balanceOf(ant), 100 ether);
+    assertEq(staker.totalBoostedSupply(), 90 ether, "!totalBoostedSupply after stake");
+    assertEq(staker.boostedBalance(ant), 90 ether, "!boostedBalance after stake");
+    assertEq(staker.balanceOf(ant), 90 ether, "!balanceOf after stake");
   }
 
   function test_boost_with_multiple_stakers_participating() public {
     _mint_voting_power();
-    assertEq(staker.boostedTotalSupply(), 0);
+    assertEq(staker.totalBoostedSupply(), 0);
 
     // supply into the pool
     vm.prank(whale);
     staker.mint(100 ether, whale);
 
-    assertEq(staker.boostedTotalSupply(), 100 ether);
+    assertEq(staker.totalBoostedSupply(), 100 ether);
 
     vm.prank(whale);
     staker.redeem(10 ether, whale, whale);
 
-    assertEq(staker.boostedTotalSupply(), 90 ether);
+    assertEq(staker.totalBoostedSupply(), 90 ether);
   }
 
   function test_boostedBalance_without_stakers() public {

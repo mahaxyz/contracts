@@ -55,11 +55,10 @@ contract MultiStakingRewardsERC4626SimpleTest is BaseZaiTest {
     assertApproxEqAbs(staker.rewardRate(maha), 1_157_407_407_407_407, 1e6);
     assertApproxEqAbs(staker.rewardRate(weth), 115_740_740_740_740, 1e6);
 
-    assertEq(staker.boostedTotalSupply(), 100 ether);
+    assertEq(staker.totalBoostedSupply(), 100 ether);
 
-    (uint256 boostedBalance, uint256 boostedTotalSupply) = staker.getBoostedBalance(whale);
-    assertEq(boostedBalance, 100 ether);
-    assertEq(boostedTotalSupply, 100 ether);
+    assertEq(staker.totalBoostedSupply(), 100 ether);
+    assertEq(staker.boostedBalance(whale), 100 ether);
   }
 
   function test_claimReward() public {
@@ -73,16 +72,15 @@ contract MultiStakingRewardsERC4626SimpleTest is BaseZaiTest {
     assertApproxEqAbs(staker.rewardRate(maha), 1_157_407_407_407_407, 1e6);
     assertEq(staker.rewardRate(weth), 0);
 
-    assertEq(staker.boostedTotalSupply(), 100 ether);
+    assertEq(staker.totalBoostedSupply(), 100 ether);
 
     vm.warp(block.timestamp + 2 days);
 
     staker.getReward(whale, maha);
     assertApproxEqAbs(maha.balanceOf(whale), 100 ether, 1e8);
 
-    (uint256 boostedBalance, uint256 boostedTotalSupply) = staker.getBoostedBalance(whale);
-    assertEq(boostedBalance, 100 ether);
-    assertEq(boostedTotalSupply, 100 ether);
+    assertEq(staker.totalBoostedSupply(), 100 ether);
+    assertEq(staker.boostedBalance(whale), 100 ether);
   }
 
   function test_withdraw() public {
@@ -94,24 +92,23 @@ contract MultiStakingRewardsERC4626SimpleTest is BaseZaiTest {
     staker.redeem(10 ether, whale, whale);
 
     assertEq(zai.balanceOf(whale), 10 ether);
-    (uint256 boostedBalance, uint256 boostedTotalSupply) = staker.getBoostedBalance(whale);
-    assertEq(boostedBalance, 90 ether);
-    assertEq(boostedTotalSupply, 90 ether);
+    assertEq(staker.totalBoostedSupply(), 90 ether);
+    assertEq(staker.boostedBalance(whale), 90 ether);
   }
 
-  function test_boostedTotalSupply() public {
-    assertEq(staker.boostedTotalSupply(), 0);
+  function test_totalBoostedSupply() public {
+    assertEq(staker.totalBoostedSupply(), 0);
 
     // supply into the pool
     vm.prank(whale);
     staker.mint(100 ether, whale);
 
-    assertEq(staker.boostedTotalSupply(), 100 ether);
+    assertEq(staker.totalBoostedSupply(), 100 ether);
 
     vm.prank(whale);
     staker.redeem(10 ether, whale, whale);
 
-    assertEq(staker.boostedTotalSupply(), 90 ether);
+    assertEq(staker.totalBoostedSupply(), 90 ether);
   }
 
   function test_boostedBalance() public {
