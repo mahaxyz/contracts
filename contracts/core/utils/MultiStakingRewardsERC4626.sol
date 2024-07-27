@@ -204,11 +204,6 @@ abstract contract MultiStakingRewardsERC4626 is
     _updateReward(token, who);
   }
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
-  function updatingVotingPower(address account) external {
-    _updatingVotingPower(account);
-  }
-
   function _rewardPerToken(IERC20 _token, uint256 boostedTotalSupply_) internal view returns (uint256) {
     if (boostedTotalSupply_ == 0) {
       return rewardPerTokenStored[_token];

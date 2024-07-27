@@ -11,6 +11,9 @@ interface IMultiStakingRewardsERC4626 {
   event RewardClaimed(IERC20 indexed reward, uint256 indexed amount, address indexed who, address caller);
   event UpdatedBoost(address indexed account, uint256 boostedBalance, uint256 boostedTotalSupply);
 
+  /**
+   * @notice Gets the role that is able to distribute rewards
+   */
   function DISTRIBUTOR_ROLE() external view returns (bytes32);
 
   /// @notice Time at which distribution ends
@@ -37,11 +40,24 @@ interface IMultiStakingRewardsERC4626 {
   /// @notice Stores for each account the accumulated rewards
   function rewards(IERC20 reward, address who) external view returns (uint256);
 
+  /**
+   * @notice Gets the second reward token for which the rewards are distributed
+   */
   function rewardToken2() external view returns (IERC20);
 
+  /**
+   * @notice Gets the first reward token for which the rewards are distributed
+   */
   function rewardToken1() external view returns (IERC20);
 
+  /**
+   * @notice Gets the total supply of boosted tokens
+   */
   function totalBoostedSupply() external view returns (uint256);
+
+  /**
+   * @notice Gets the total voting power of all the participants
+   */
   function totalVotingPower() external view returns (uint256);
 
   /**
@@ -50,10 +66,18 @@ interface IMultiStakingRewardsERC4626 {
    * https://github.com/curvefi/curve-dao-contracts/blob/master/contracts/gauges/LiquidityGaugeV5.vy#L191-L213
    */
   function boostedBalance(address who) external view returns (uint256);
+
+  /**
+   * @notice Gets the voting power for an account
+   * @param who The account for which the voting power is requested
+   */
   function votingPower(address who) external view returns (uint256);
 
-  function updatingVotingPower(address account) external;
-
+  /**
+   * @notice Updates the rewards for an account
+   * @param token The token for which the rewards are updated
+   * @param who The account for which the rewards are updated
+   */
   function updateRewards(IERC20 token, address who) external;
 
   /**
