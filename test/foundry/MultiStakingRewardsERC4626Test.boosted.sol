@@ -83,10 +83,13 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
     staker.mint(100 ether, whale);
     staker.updateRewards(maha, whale);
 
+    assertEq(staker.earned(maha, whale), 0, "!staker.earned");
     assertEq(votingPower.totalSupply(), 0, "!voting.totalSupply");
     assertEq(staker.totalBoostedSupply(), 20 ether, "!totalBoostedSupply");
     assertEq(staker.boostedBalance(whale), 20 ether, "!boostedBalance");
     assertEq(staker.votingPower(whale), 0 ether, "!votingPower");
+
+    staker.notifyRewardAmount(maha, 100 ether);
 
     vm.prank(whale);
     staker.redeem(10 ether, whale, whale);
@@ -95,6 +98,9 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
     assertEq(staker.totalBoostedSupply(), 18 ether, "!totalBoostedSupply after redeem");
     assertEq(staker.boostedBalance(whale), 18 ether, "!boostedBalance after redeem");
     assertEq(staker.votingPower(whale), 0 ether, "!votingPower after redeem");
+
+    vm.warp(block.timestamp + 2 days);
+    assertApproxEqAbs(staker.earned(maha, whale), 100 ether, 1e8, "!staker.earned");
   }
 
   function test_boost_as_user_with_one_staker_participating() public {
@@ -106,6 +112,8 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
     vm.prank(ant);
     staker.mint(100 ether, ant);
     staker.updateRewards(maha, ant);
+
+    staker.notifyRewardAmount(maha, 100 ether);
 
     assertEq(staker.balanceOf(ant), 100 ether, "!balanceOf");
     assertEq(staker.boostedBalance(ant), 20 ether, "!boostedBalance");
@@ -122,6 +130,9 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
     assertEq(staker.totalBoostedSupply(), 18 ether, "!totalBoostedSupply after redeem");
     assertEq(staker.totalVotingPower(), 0 ether, "!totalVotingPower after stake");
     assertEq(staker.votingPower(ant), 0 ether, "!votingPower");
+
+    vm.warp(block.timestamp + 2 days);
+    assertApproxEqAbs(staker.earned(maha, ant), 100 ether, 1e8, "!staker.earned");
   }
 
   function test_boost_as_user_who_stakes_with_one_staker_participating() public {
@@ -157,5 +168,29 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
     assertEq(staker.balanceOf(whale), 100 ether, "!balanceOf after whale stake");
     assertEq(staker.boostedBalance(whale), 100 ether, "!boostedBalance after whale stake");
     assertEq(staker.votingPower(whale), 1000 ether, "!votingPower after whale stake");
+
+    staker.notifyRewardAmount(weth, 100 ether);
+
+    vm.warp(block.timestamp + 2 days);
+    assertApproxEqAbs(staker.earned(weth, whale), 83 ether, 1 ether, "!staker.earned");
+  }
+
+  function test_boost_vs_unboosted_user() public {
+    // a user who has staked and a user who has not staked
+    votingPower.mint(ant, 1 ether);
+
+    // get the whale to supply into the pool
+    vm.prank(whale);
+    staker.mint(100 ether, whale);
+    vm.prank(ant);
+    staker.mint(20 ether, ant);
+
+    staker.notifyRewardAmount(maha, 100 ether);
+    staker.updateRewards(maha, whale);
+    staker.updateRewards(maha, ant);
+
+    vm.warp(block.timestamp + 2 days);
+    assertApproxEqAbs(staker.earned(maha, ant), 50 ether, 1e16, "!staker.earned ant");
+    assertApproxEqAbs(staker.earned(maha, whale), 50 ether, 1e16, "!staker.earned whale");
   }
 }
