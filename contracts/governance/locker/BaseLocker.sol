@@ -133,6 +133,7 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
     }
     emit Deposit(msg.sender, _tokenId, _value, lock.end, _type, block.timestamp);
     emit Supply(supplyBefore, supplyBefore + _value);
+    emit LockUpdated(lock, _tokenId, msg.sender);
   }
 
   function merge(uint256 _from, uint256 _to) external override {

@@ -54,32 +54,6 @@ contract MigrateTokenLocks is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pa
     merkleRoot = _merkleRoot;
   }
 
-  function _migrateLock(
-    uint256 _value,
-    uint256 _startDate,
-    uint256 _endDate,
-    uint256 _tokenId,
-    address _who,
-    uint256 _mahaReward,
-    bytes32[] memory proof
-  ) internal nonReentrant whenNotPaused returns (uint256) {
-    require(_endDate >= (block.timestamp + 2 * WEEK), "end date expired");
-    require(_tokenId != 0, "tokenId is 0");
-    require(!isTokenIdMigrated[_tokenId], "tokenId already migrated");
-    require(!isTokenIdBanned[_tokenId], "tokenId banned");
-    require(!isAddressBanned[_who], "owner banned");
-
-    bool _isLockvalid = isLockValid(_value, _startDate, _endDate, _who, _tokenId, _mahaReward, proof);
-    require(_isLockvalid, "Migrator: invalid lock");
-
-    uint256 newTokenId = locker.migrateTokenFor(_value, _startDate, _endDate, _who);
-    require(newTokenId > 0, "Migrator: migration failed");
-
-    isTokenIdMigrated[_tokenId] = true;
-    if (_mahaReward > 0) maha.transfer(_who, _mahaReward);
-    return newTokenId;
-  }
-
   function migrateLock(
     uint256 _value,
     uint256 _startDate,
@@ -142,5 +116,31 @@ contract MigrateTokenLocks is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pa
 
   function toggleBanOwner(address _who) external onlyOwner {
     isAddressBanned[_who] = !isAddressBanned[_who];
+  }
+
+  function _migrateLock(
+    uint256 _value,
+    uint256 _startDate,
+    uint256 _endDate,
+    uint256 _tokenId,
+    address _who,
+    uint256 _mahaReward,
+    bytes32[] memory proof
+  ) internal nonReentrant whenNotPaused returns (uint256) {
+    require(_endDate >= (block.timestamp + 2 * WEEK), "end date expired");
+    require(_tokenId != 0, "tokenId is 0");
+    require(!isTokenIdMigrated[_tokenId], "tokenId already migrated");
+    require(!isTokenIdBanned[_tokenId], "tokenId banned");
+    require(!isAddressBanned[_who], "owner banned");
+
+    bool _isLockvalid = isLockValid(_value, _startDate, _endDate, _who, _tokenId, _mahaReward, proof);
+    require(_isLockvalid, "Migrator: invalid lock");
+
+    uint256 newTokenId = locker.migrateTokenFor(_value, _startDate, _endDate, _who);
+    require(newTokenId > 0, "Migrator: migration failed");
+
+    isTokenIdMigrated[_tokenId] = true;
+    if (_mahaReward > 0) maha.transfer(_who, _mahaReward);
+    return newTokenId;
   }
 }

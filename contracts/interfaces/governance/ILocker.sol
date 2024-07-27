@@ -151,6 +151,7 @@ interface ILocker is IERC721Enumerable {
   event Withdraw(address indexed provider, uint256 tokenId, uint256 value, uint256 ts);
   event Supply(uint256 prevSupply, uint256 supply);
 
+  event LockUpdated(LockedBalance indexed lock, uint256 indexed tokenId, address caller);
   event TokenAddressSet(address indexed oldToken, address indexed newToken);
   event StakingAddressSet(address indexed oldStaking, address indexed newStaking);
   event StakingBonusAddressSet(address indexed oldStakingBonus, address indexed newStakingBonus);
