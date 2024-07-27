@@ -3,11 +3,14 @@
 
 pragma solidity ^0.8.0;
 
-import {AccessControl, AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
-import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import {IERC1155Receiver} from "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
-import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {
+  AccessControl, AccessControlEnumerable
+} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
+import {IERC1155Receiver} from "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
+import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 
 contract MAHATimelockController is AccessControlEnumerable, TimelockController {
   constructor(
@@ -21,28 +24,21 @@ contract MAHATimelockController is AccessControlEnumerable, TimelockController {
   function _grantRole(
     bytes32 role,
     address account
-  )
-    internal
-    virtual
-    override(AccessControlEnumerable, AccessControl)
-    returns (bool)
-  {
+  ) internal virtual override (AccessControlEnumerable, AccessControl) returns (bool) {
     return super._grantRole(role, account);
   }
 
   function _revokeRole(
     bytes32 role,
     address account
-  ) internal override(AccessControlEnumerable, AccessControl) returns (bool) {
+  ) internal override (AccessControlEnumerable, AccessControl) returns (bool) {
     return super._revokeRole(role, account);
   }
 
-  function supportsInterface(
-    bytes4 interfaceId
-  )
+  function supportsInterface(bytes4 interfaceId)
     public
     view
-    override(AccessControlEnumerable, TimelockController)
+    override (AccessControlEnumerable, TimelockController)
     returns (bool)
   {
     return super.supportsInterface(interfaceId);

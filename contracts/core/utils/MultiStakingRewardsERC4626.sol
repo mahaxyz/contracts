@@ -333,7 +333,7 @@ abstract contract MultiStakingRewardsERC4626 is
 
     boostedBalance_ = balance / 5;
     if (_totalVotingPower > 0) {
-      boostedBalance_ += totalSupply * _votingPower[account] / _totalVotingPower * 4 / 5;
+      boostedBalance_ += (totalSupply * _votingPower[account] / _totalVotingPower) * 4 / 5;
     }
 
     boostedBalance_ = Math.min(balance, boostedBalance_);

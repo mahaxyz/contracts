@@ -3,9 +3,9 @@
 
 pragma solidity ^0.8.20;
 
-import {ERC1967Utils} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {IERC1967} from "@openzeppelin/contracts/interfaces/IERC1967.sol";
+import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {ERC1967Utils} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol";
 
 /**
  * @dev Interface for {MAHAProxy}. In order to implement transparency, {MAHAProxy}
@@ -29,11 +29,7 @@ contract MAHAProxy is ERC1967Proxy {
    */
   error ProxyDeniedAdminAccess();
 
-  constructor(
-    address logic_,
-    address admin_,
-    bytes memory data_
-  ) payable ERC1967Proxy(logic_, data_) {
+  constructor(address logic_, address admin_, bytes memory data_) payable ERC1967Proxy(logic_, data_) {
     _admin = admin_;
     ERC1967Utils.changeAdmin(proxyAdmin());
   }
@@ -75,10 +71,7 @@ contract MAHAProxy is ERC1967Proxy {
    * - If `data` is empty, `msg.value` must be zero.
    */
   function _dispatchUpgradeToAndCall() private {
-    (address newImplementation, bytes memory data) = abi.decode(
-      msg.data[4:],
-      (address, bytes)
-    );
+    (address newImplementation, bytes memory data) = abi.decode(msg.data[4:], (address, bytes));
     ERC1967Utils.upgradeToAndCall(newImplementation, data);
   }
 }
