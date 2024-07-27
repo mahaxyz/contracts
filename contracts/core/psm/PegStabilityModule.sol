@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
+import {IStablecoin} from "../../interfaces/IStablecoin.sol";
 import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
 import {PSMEventsLib} from "../../interfaces/events/PSMEventsLib.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -28,7 +28,7 @@ import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
  */
 contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, IPegStabilityModule {
   /// @inheritdoc IPegStabilityModule
-  IZaiStablecoin public zai;
+  IStablecoin public zai;
 
   /// @inheritdoc IPegStabilityModule
   IERC20 public collateral;
@@ -69,7 +69,7 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
     uint256 _redeemFeeBps,
     address _feeDestination
   ) external reinitializer(1) {
-    zai = IZaiStablecoin(_zai);
+    zai = IStablecoin(_zai);
     collateral = IERC20(_collateral);
 
     __Ownable_init(_governance);

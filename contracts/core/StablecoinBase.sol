@@ -15,13 +15,13 @@
 
 pragma solidity 0.8.21;
 
-import {IZaiStablecoin} from "../interfaces/IZaiStablecoin.sol";
+import {IStablecoin} from "../interfaces/IStablecoin.sol";
 import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import {ERC20FlashMint} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20FlashMint.sol";
 import {ERC20, ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
-abstract contract StablecoinBase is ERC20FlashMint, ERC20Permit, AccessControlEnumerable, IZaiStablecoin {
-  /// @inheritdoc IZaiStablecoin
+abstract contract StablecoinBase is ERC20FlashMint, ERC20Permit, AccessControlEnumerable, IStablecoin {
+  /// @inheritdoc IStablecoin
   bytes32 public MANAGER_ROLE = keccak256("MANAGER_ROLE");
 
   /**
@@ -33,27 +33,27 @@ abstract contract StablecoinBase is ERC20FlashMint, ERC20Permit, AccessControlEn
     _grantRole(DEFAULT_ADMIN_ROLE, _owner);
   }
 
-  /// @inheritdoc IZaiStablecoin
+  /// @inheritdoc IStablecoin
   function grantManagerRole(address _account) external {
     grantRole(MANAGER_ROLE, _account);
   }
 
-  /// @inheritdoc IZaiStablecoin
+  /// @inheritdoc IStablecoin
   function revokeManagerRole(address _account) external {
     revokeRole(MANAGER_ROLE, _account);
   }
 
-  /// @inheritdoc IZaiStablecoin
+  /// @inheritdoc IStablecoin
   function isManager(address _account) external view returns (bool what) {
     what = hasRole(MANAGER_ROLE, _account);
   }
 
-  /// @inheritdoc IZaiStablecoin
+  /// @inheritdoc IStablecoin
   function mint(address _account, uint256 _amount) external onlyRole(MANAGER_ROLE) {
     _mint(_account, _amount);
   }
 
-  /// @inheritdoc IZaiStablecoin
+  /// @inheritdoc IStablecoin
   function burn(address _account, uint256 _amount) external onlyRole(MANAGER_ROLE) {
     _burn(_account, _amount);
   }

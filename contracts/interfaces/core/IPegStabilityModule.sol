@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {IZaiStablecoin} from "../IZaiStablecoin.sol";
+import {IStablecoin} from "../IStablecoin.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 /**
@@ -25,7 +25,7 @@ interface IPegStabilityModule {
   /**
    * @notice Returns the Zai stablecoin
    */
-  function zai() external returns (IZaiStablecoin);
+  function zai() external returns (IStablecoin);
 
   /**
    * @notice Returns the collateral token

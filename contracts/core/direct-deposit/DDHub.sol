@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
+import {IStablecoin} from "../../interfaces/IStablecoin.sol";
 import {IDDHub} from "../../interfaces/core/IDDHub.sol";
 import {IDDPlan} from "../../interfaces/core/IDDPlan.sol";
 import {IDDPool} from "../../interfaces/core/IDDPool.sol";
@@ -33,7 +33,7 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
  */
 contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpgradeable {
   /// @inheritdoc IDDHub
-  IZaiStablecoin public zai;
+  IStablecoin public zai;
 
   /// @inheritdoc IDDHub
   bytes32 public RISK_ROLE;
@@ -59,7 +59,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     __ReentrancyGuard_init();
     __AccessControlEnumerable_init();
 
-    zai = IZaiStablecoin(_zai);
+    zai = IStablecoin(_zai);
     feeCollector = _feeCollector;
     globalDebtCeiling = _globalDebtCeiling;
 
