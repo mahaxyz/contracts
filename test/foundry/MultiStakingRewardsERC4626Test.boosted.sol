@@ -15,8 +15,8 @@ pragma solidity 0.8.21;
 
 import {StakingLPRewards} from "../../contracts/periphery/staking/StakingLPRewards.sol";
 
+import {MockOmnichainStaking} from "../../contracts/mocks/MockOmnichainStaking.sol";
 import {BaseZaiTest} from "./base/BaseZaiTest.sol";
-import {MockOmnichainStaking} from "./mocks/MockOmnichainStaking.sol";
 
 contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
   StakingLPRewards internal staker;

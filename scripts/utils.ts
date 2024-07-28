@@ -1,72 +1,22 @@
-import { ethers } from "hardhat";
-import hre from "hardhat";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { Contract, ContractFactory } from "ethers";
+import { TransactionReceipt, TransactionResponse } from "ethers";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-export type IState = {
-    [key: string]: {
-      abi: string;
-      address: string;
-      txHash: string;
-      verification?: string;
-    };
-};
-
-const skipSave = false;
-const ETHERSCAN_URL = "https://sepolia.etherscan.io/";
-const state: IState = {};
-
-export async function getDeploymentNonce(signer: SignerWithAddress): Promise<number> {
-    return await (signer).getTransactionCount();
-}
-  
-export async function estimateDeploymentAddress(
-    address: string,
-    nonce: number
-): Promise<string> {
-    const rlp_encoded = ethers.utils.RLP.encode([
-        address,
-        ethers.BigNumber.from(nonce.toString()).toHexString(),
-    ]);
-    
-    const contract_address_long = ethers.utils.keccak256(rlp_encoded);
-    const contract_address = "0x".concat(contract_address_long.substring(26));
-    return ethers.utils.getAddress(contract_address);
-}
-
-function getFactory(name: string): Promise<ContractFactory> {
-  return ethers.getContractFactory(name);
-}
-
-function sleep(ms: number): Promise<void> {
+export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function deployContract<T extends Contract>(
-  name: string,
-  params: any[] = []
-): Promise<T> {
-  console.log(`- Deploying ${name}`);
-
-  const factory = await getFactory(name);
-  const contract = (await factory.deploy(...params, {})) as T;
-
-  console.log(`Contract ${name} at ${contract.address}`);
-
-  state[`${name}`] = {
-      abi: name,
-      address: contract.address,
-      txHash: contract.deployTransaction.hash,
-  };
-  await verify(`${contract.address}`, params);
-  sleep(3000);
-  return contract;
+export async function waitForTx(
+  tx: TransactionResponse
+): Promise<TransactionReceipt | null> {
+  console.log("waiting for tx", tx.hash);
+  return await tx.wait(1);
 }
 
 export async function verify(
+  hre: HardhatRuntimeEnvironment,
   contractAddress: string,
   constructorArguments: any[] = []
-){
+) {
   try {
     console.log(`- Verifying ${contractAddress}`);
 
@@ -74,8 +24,45 @@ export async function verify(
       address: contractAddress,
       constructorArguments: constructorArguments,
     });
-  } catch(error) {
+  } catch (error) {
     console.log("Verify Error: ", contractAddress);
     console.log(error);
   }
+}
+
+export async function deployProxy(
+  hre: HardhatRuntimeEnvironment,
+  implementation: string,
+  args: any[],
+  proxyAdmin: string,
+  name: string
+) {
+  const { deploy, save } = hre.deployments;
+  const { deployer } = await hre.getNamedAccounts();
+
+  const implementationD = await deploy(`${implementation}-Impl`, {
+    from: deployer,
+    contract: implementation,
+    args: args,
+    autoMine: true,
+    log: true,
+  });
+
+  // todo encodeData
+
+  const proxy = await deploy(`${name}-Proxy`, {
+    from: deployer,
+    contract: "MAHAProxy",
+    args: [implementationD.address, proxyAdmin, "0x"],
+    autoMine: true,
+    log: true,
+  });
+
+  await save(name, {
+    address: proxy.address,
+    abi: implementationD.abi,
+    args: args,
+  });
+
+  return proxyAdmin;
 }

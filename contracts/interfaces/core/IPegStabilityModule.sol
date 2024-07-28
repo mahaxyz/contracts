@@ -127,6 +127,18 @@ interface IPegStabilityModule {
   function toCollateralAmountWithFeeInverse(uint256 _amount, uint256 _fee) external view returns (uint256);
 
   /**
+   * @notice Calculates how much ZAI should be minted for a given amount of collateral
+   * @param amountAssetsIn The amount of collateral
+   */
+  function mintAmountIn(uint256 amountAssetsIn) external view returns (uint256 shares);
+
+  /**
+   * @notice Calculates how much ZAI should be redeemed for a given amount of collateral
+   * @param amountAssetsOut The amount of collateral
+   */
+  function redeemAmountOut(uint256 amountAssetsOut) external view returns (uint256 shares);
+
+  /**
    * @notice How much fees has been collected by the protocol
    * @return fees The amount of fees collected in ZAI
    */

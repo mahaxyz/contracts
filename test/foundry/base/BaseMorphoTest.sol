@@ -17,8 +17,8 @@ import "../../../lib/metamorpho/test/forge/helpers/BaseTest.sol";
 
 import {ZaiStablecoin} from "../../../contracts/core/ZaiStablecoin.sol";
 
-import {MockERC20} from "../mocks/MockERC20.sol";
-import {MockLayerZero} from "../mocks/MockLayerZero.sol";
+import {MockERC20} from "../../../contracts/mocks/MockERC20.sol";
+import {MockLayerZero} from "../../../contracts/mocks/MockLayerZero.sol";
 import {BaseZaiTest} from "./BaseZaiTest.sol";
 
 contract BaseMorphoTest is BaseZaiTest {
