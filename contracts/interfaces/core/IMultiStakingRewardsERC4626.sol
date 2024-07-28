@@ -150,11 +150,17 @@ interface IMultiStakingRewardsERC4626 {
   function earned(IERC20 token, address account) external view returns (uint256);
 
   /**
-   * @notice Triggers a payment of the reward earned to the msg.sender
+   * @notice Triggers a payment of the reward earned
    * @param who The account for which the rewards are paid
    * @param token The token for which the rewards are paid
    */
   function getReward(address who, IERC20 token) external;
+
+  /**
+   * @notice Triggers a payment of the rewards earned for both tokens
+   * @param who The account for which the rewards are paid
+   */
+  function getRewardDual(address who) external;
 
   /**
    * @notice Adds rewards to be distributed

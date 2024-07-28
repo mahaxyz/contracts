@@ -140,7 +140,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
         deployer, // address _governance,
         maha.target, // address _rewardToken1,
         usdc.target, // address _rewardToken2,
-        86400, // uint256 _rewardsDuration
+        86400 * 30, // uint256 _rewardsDuration
         ZeroAddress // address _stakingBoost
       )
     );
@@ -198,9 +198,23 @@ async function main(hre: HardhatRuntimeEnvironment) {
     await safetyPoolZai.notifyRewardAmount(usdc.target, 100n * e6)
   );
 
+  console.log("testing safety pool zap");
+  await waitForTx(
+    await zapSafetyPool.zapIntoSafetyPool(usdcPSM.target, 100n * e6)
+  );
+
+  console.log("granting safety pool rewards");
+  await waitForTx(
+    await safetyPoolZai.notifyRewardAmount(maha.target, 100n * e18)
+  );
+  await waitForTx(
+    await safetyPoolZai.notifyRewardAmount(usdc.target, 100n * e6)
+  );
+
   console.log("testing safety pool");
   await waitForTx(await safetyPoolZai.mint(100n * e18, deployer));
   await waitForTx(await safetyPoolZai.queueWithdrawal(10n * e18));
+  await waitForTx(await safetyPoolZai.getRewardDual(deployer));
   // await safetyPoolZai.redeem(10n * e18, deployer, deployer);
 
   console.log("testing safety pool zap");
