@@ -209,11 +209,6 @@ async function main(hre: HardhatRuntimeEnvironment) {
   await waitForTx(await safetyPoolZai.getRewardDual(deployer));
   // await safetyPoolZai.redeem(10n * e18, deployer, deployer);
 
-  console.log("testing safety pool zap");
-  await waitForTx(
-    await zapSafetyPool.zapIntoSafetyPool(usdcPSM.target, 100n * e6)
-  );
-
   if (network.name !== "hardhat") {
     console.log("verifying contracts");
     await hre.run("verify:verify", {
