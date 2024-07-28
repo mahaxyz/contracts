@@ -195,11 +195,6 @@ async function main(hre: HardhatRuntimeEnvironment) {
   await waitForTx(await usdcPSM.redeem(deployer, 100n * e18));
   await waitForTx(await daiPSM.redeem(deployer, 100n * e18));
 
-  console.log("testing safety pool zap");
-  await waitForTx(
-    await zapSafetyPool.zapIntoSafetyPool(usdcPSM.target, 100n * e6)
-  );
-
   console.log("granting safety pool rewards");
   await waitForTx(
     await safetyPoolZai.notifyRewardAmount(maha.target, 100n * e18)
