@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/mahaxyz/contracts/compare/v1.1.0...v1.1.1) (2024-07-28)
+
+
+### Bug Fixes
+
+* updated the sepolia addresses ([c13ccad](https://github.com/mahaxyz/contracts/commit/c13ccad04a366e4cd8d5bd6da22b3b8ea1177a3b))
+
 ## [1.1.0](https://github.com/mahaxyz/contracts/compare/v1.0.5...v1.1.0) (2024-07-28)
 
 
