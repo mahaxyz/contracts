@@ -147,13 +147,18 @@ async function main(hre: HardhatRuntimeEnvironment) {
   }
 
   console.log("done, initializing contracts...");
-  if (!zai.isManager(daiPSM.target))
+  if (!(await zai.isManager(daiPSM.target)))
     await waitForTx(await zai.grantManagerRole(daiPSM.target));
-  if (!zai.isManager(usdcPSM.target))
+  if (!(await zai.isManager(usdcPSM.target)))
     await waitForTx(await zai.grantManagerRole(usdcPSM.target));
-  if (!zai.isManager(deployer))
+  if (!(await zai.isManager(deployer)))
     await waitForTx(await zai.grantManagerRole(deployer));
-  if (!safetyPoolZai.hasRole(await safetyPoolZai.DISTRIBUTOR_ROLE(), deployer))
+  if (
+    !(await safetyPoolZai.hasRole(
+      await safetyPoolZai.DISTRIBUTOR_ROLE(),
+      deployer
+    ))
+  )
     await waitForTx(
       await safetyPoolZai.grantRole(
         await safetyPoolZai.DISTRIBUTOR_ROLE(),
@@ -189,14 +194,6 @@ async function main(hre: HardhatRuntimeEnvironment) {
   console.log("testing psm redeem");
   await waitForTx(await usdcPSM.redeem(deployer, 100n * e18));
   await waitForTx(await daiPSM.redeem(deployer, 100n * e18));
-
-  console.log("granting safety pool rewards");
-  await waitForTx(
-    await safetyPoolZai.notifyRewardAmount(maha.target, 100n * e18)
-  );
-  await waitForTx(
-    await safetyPoolZai.notifyRewardAmount(usdc.target, 100n * e6)
-  );
 
   console.log("testing safety pool zap");
   await waitForTx(
