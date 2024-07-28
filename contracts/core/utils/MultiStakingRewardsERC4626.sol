@@ -17,7 +17,7 @@ import {AccessControlEnumerableUpgradeable} from
   "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 import {ERC4626Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
-import {IMultiStakingRewardsERC4626} from "../../interfaces/core/IMultiStakingRewardsERC4626.sol";
+import {IMultiStakingRewardsERC4626, IMultiTokenRewards} from "../../interfaces/core/IMultiStakingRewardsERC4626.sol";
 import {IOmnichainStaking} from "../../interfaces/governance/IOmnichainStaking.sol";
 import {MulticallUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/MulticallUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
@@ -48,31 +48,31 @@ abstract contract MultiStakingRewardsERC4626 is
   /// @inheritdoc IMultiStakingRewardsERC4626
   bytes32 public immutable DISTRIBUTOR_ROLE = keccak256("DISTRIBUTOR_ROLE");
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   mapping(IERC20 reward => uint256) public periodFinish;
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   mapping(IERC20 reward => uint256) public rewardRate;
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   uint256 public rewardsDuration;
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   mapping(IERC20 reward => uint256) public lastUpdateTime;
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   mapping(IERC20 reward => uint256) public rewardPerTokenStored;
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   mapping(IERC20 reward => mapping(address who => uint256)) public userRewardPerTokenPaid;
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   mapping(IERC20 reward => mapping(address who => uint256 rewards)) public rewards;
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   IERC20 public rewardToken1;
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   IERC20 public rewardToken2;
 
   /// @inheritdoc IMultiStakingRewardsERC4626
@@ -123,17 +123,17 @@ abstract contract MultiStakingRewardsERC4626 is
     }
   }
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   function lastTimeRewardApplicable(IERC20 token) public view returns (uint256) {
     return Math.min(block.timestamp, periodFinish[token]);
   }
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   function rewardPerToken(IERC20 token) external view returns (uint256) {
     return _rewardPerToken(token, _boostedTotalSupply);
   }
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   function earned(IERC20 token, address account) public view returns (uint256) {
     (uint256 boostedBalance_, uint256 boostedTotalSupply_) = _calculateBoostedBalance(account);
     return _earned(token, account, boostedBalance_, boostedTotalSupply_);
@@ -164,7 +164,7 @@ abstract contract MultiStakingRewardsERC4626 is
     IERC20Permit(asset()).permit(msg.sender, address(this), val, deadline, v, r, s);
   }
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   function getReward(address who, IERC20 token) public nonReentrant {
     _updateReward(token, who);
     uint256 reward = rewards[token][who];
@@ -175,7 +175,7 @@ abstract contract MultiStakingRewardsERC4626 is
     }
   }
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   function getRewardDual(address who) public nonReentrant {
     _updateRewardDual(rewardToken1, rewardToken2, who);
 
@@ -194,7 +194,7 @@ abstract contract MultiStakingRewardsERC4626 is
     }
   }
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   function notifyRewardAmount(IERC20 token, uint256 reward) external onlyRole(DISTRIBUTOR_ROLE) nonReentrant {
     _updateReward(token, address(0));
     token.safeTransferFrom(msg.sender, address(this), reward);
@@ -221,7 +221,7 @@ abstract contract MultiStakingRewardsERC4626 is
     emit RewardAdded(token, reward, msg.sender);
   }
 
-  /// @inheritdoc IMultiStakingRewardsERC4626
+  /// @inheritdoc IMultiTokenRewards
   function updateRewards(IERC20 token, address who) external {
     _updateReward(token, who);
   }

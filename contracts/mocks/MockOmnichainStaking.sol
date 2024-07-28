@@ -17,7 +17,21 @@ import {OmnichainStakingBase} from "../governance/locker/staking/OmnichainStakin
 
 contract MockOmnichainStaking is OmnichainStakingBase {
   function init() external reinitializer(1) {
-    super.__OmnichainStakingBase_init("TEST", "TESTvp", address(this), address(this), address(this), 0, address(0));
+    super.__OmnichainStakingBase_init(
+      "TEST", "TESTvp", address(this), address(this), address(this), address(this), 0, address(0)
+    );
+  }
+
+  function initWithData(
+    address _locker,
+    address _weth,
+    address _rewardToken1,
+    uint256 _rewardsDuration,
+    address _distributor
+  ) external reinitializer(1) {
+    super.__OmnichainStakingBase_init(
+      "TEST", "TESTvp", _locker, _weth, _weth, _rewardToken1, _rewardsDuration, _distributor
+    );
   }
 
   function mint(address _to, uint256 _amount) external {

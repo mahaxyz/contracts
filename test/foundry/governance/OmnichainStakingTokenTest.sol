@@ -13,27 +13,14 @@
 
 pragma solidity 0.8.21;
 
-import {IAggregatorV3Interface} from "../../../interfaces/governance/IAggregatorV3Interface.sol";
-import {ILPOracle} from "../../../interfaces/governance/ILPOracle.sol";
-import {OmnichainStakingBase} from "./OmnichainStakingBase.sol";
+import "../base/BaseZaiTest.sol";
 
-contract OmnichainStakingToken is OmnichainStakingBase {
-  function init(
-    address _locker,
-    address _weth,
-    address _maha,
-    uint256 _rewardsDuration,
-    address _owner,
-    address _distributor
-  ) external reinitializer(1) {
-    super.__OmnichainStakingBase_init(
-      "MAHA Voting Power", "MAHAvp", _locker, _weth, _maha, _weth, _rewardsDuration, _distributor
-    );
-
-    _transferOwnership(_owner);
+contract OmnichainStakingTokenTest is BaseZaiTest {
+  function setUp() public {
+    _setUpBase();
   }
 
-  function _getTokenPower(uint256 amount) internal pure override returns (uint256 power) {
-    power = amount;
+  function test_setFeeCollector() public {
+    // todo
   }
 }

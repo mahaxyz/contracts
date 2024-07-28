@@ -1,5 +1,6 @@
 import hre, { ethers, network } from "hardhat";
 import { buildBytecode } from "./create2";
+import { waitForTx } from "../utils";
 
 async function main() {
   const constructorArgs: any[] = [
@@ -29,9 +30,8 @@ async function main() {
     bytecode,
     ethers.id(salt)
   );
-  const tx = await wallet.sendTransaction(txPopulated);
 
-  const txR = await tx.wait(1);
+  const txR = await waitForTx(await wallet.sendTransaction(txPopulated));
   console.log(txR?.logs);
 
   if (network.name !== "hardhat") {

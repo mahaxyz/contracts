@@ -22,24 +22,24 @@ contract OmnichainStakingLP is OmnichainStakingBase {
   using SafeCast for int256;
 
   ILPOracle public oracleLP;
-  IAggregatorV3Interface public oracleZERO;
+  IAggregatorV3Interface public oracleMAHA;
 
   function init(
     address _locker,
-    address _zeroToken,
-    address _poolVoter,
+    address _weth,
+    address _maha,
     uint256 _rewardsDuration,
     address _lpOracle,
-    address _zeroPythAggregator,
+    address _aggreagator,
     address _owner,
     address _distributor
   ) external reinitializer(1) {
     super.__OmnichainStakingBase_init(
-      "MAHA LP Voting Power", "MAHAvp-LP", _locker, _zeroToken, _poolVoter, _rewardsDuration, _distributor
+      "MAHA LP Voting Power", "MAHAvp-LP", _locker, _weth, _weth, _maha, _rewardsDuration, _distributor
     );
 
     oracleLP = ILPOracle(_lpOracle);
-    oracleZERO = IAggregatorV3Interface(_zeroPythAggregator);
+    oracleMAHA = IAggregatorV3Interface(_aggreagator);
 
     _transferOwnership(_owner);
   }
@@ -54,7 +54,7 @@ contract OmnichainStakingLP is OmnichainStakingBase {
    */
   function _getTokenPower(uint256 amount) internal view override returns (uint256 power) {
     uint256 lpPrice = oracleLP.getPrice();
-    uint256 zeroPrice = oracleZERO.latestAnswer().toUint256();
+    uint256 zeroPrice = oracleMAHA.latestAnswer().toUint256();
     require(zeroPrice > 0 && lpPrice > 0, "!price");
     power = ((lpPrice * amount) / zeroPrice);
   }
