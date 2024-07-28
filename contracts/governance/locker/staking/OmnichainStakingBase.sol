@@ -20,6 +20,8 @@ import {IWETH} from "../../../interfaces/governance/IWETH.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {ERC20VotesUpgradeable} from
   "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20VotesUpgradeable.sol";
+
+import {MulticallUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/MulticallUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
@@ -33,7 +35,8 @@ abstract contract OmnichainStakingBase is
   IOmnichainStaking,
   ERC20VotesUpgradeable,
   ReentrancyGuardUpgradeable,
-  OwnableUpgradeable
+  OwnableUpgradeable,
+  MulticallUpgradeable
 {
   using SafeERC20 for IERC20;
 
