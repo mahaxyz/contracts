@@ -120,13 +120,12 @@ interface IOmnichainStaking is IMultiTokenRewards, IVotes {
 
   /**
    * Admin only function to set the rewards distributor
-   *
    * @param what The new address for the rewards distributor
    */
   function setRewardDistributor(address what) external;
 
   /**
-   * @dev This is an ETH variant of the get rewards function. It unwraps the token and sends out
+   * @notice This is an ETH variant of the get rewards function. It unwraps the token and sends out
    * raw ETH to the user.
    */
   function getRewardETH(address who) external;
