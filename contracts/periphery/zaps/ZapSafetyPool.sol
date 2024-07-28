@@ -49,12 +49,12 @@ contract ZapSafetyPool {
 
   /**
    * @notice Allows a user to zap into the safety pool
-   * @param psm The Peg Stability Module
-   * @param asset The asset to zap
+   * @param psm The Peg Stability Module for the asset
    * @param amountIn The amount to zap
    */
-  function zapIntoSafetyPool(IPegStabilityModule psm, IERC20 asset, uint256 amountIn) external {
+  function zapIntoSafetyPool(IPegStabilityModule psm, uint256 amountIn) external {
     uint256 zaiToMint = psm.mintAmountIn(amountIn);
+    IERC20 asset = IERC20(psm.collateral());
 
     asset.safeTransferFrom(msg.sender, me, amountIn);
     psm.mint(me, zaiToMint);

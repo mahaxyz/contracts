@@ -1,6 +1,7 @@
-import { MaxUint256 } from "ethers";
+import { MaxUint256, ZeroAddress } from "ethers";
 import { network } from "hardhat";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { waitForTx } from "../scripts/utils";
 
 async function main(hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
@@ -67,6 +68,14 @@ async function main(hre: HardhatRuntimeEnvironment) {
     log: true,
   });
 
+  const zapSafetyPoolD = await deploy("ZapSafetyPool", {
+    from: deployer,
+    contract: "ZapSafetyPool",
+    args: [safetyPoolZaiD.address, zaiD.address],
+    autoMine: true,
+    log: true,
+  });
+
   const usdcPSM = await hre.ethers.getContractAt(
     "PegStabilityModule",
     usdcPSMD.address
@@ -80,6 +89,10 @@ async function main(hre: HardhatRuntimeEnvironment) {
     "SafetyPool",
     safetyPoolZaiD.address
   );
+  const zapSafetyPool = await hre.ethers.getContractAt(
+    "ZapSafetyPool",
+    zapSafetyPoolD.address
+  );
 
   const zai = await hre.ethers.getContractAt("ZaiStablecoin", zaiD.address);
   const usdc = await hre.ethers.getContractAt("MockERC20", mockUSDCD.address);
@@ -88,83 +101,103 @@ async function main(hre: HardhatRuntimeEnvironment) {
 
   console.log("initializing contracts...");
   if ((await usdcPSM.zai()) !== zai.target)
-    await usdcPSM.initialize(
-      zai.target, // address _zai,
-      usdc.target, // address _collateral,
-      deployer, // address _governance,
-      e6, // uint256 _newRate,
-      k100 * e6, // uint256 _supplyCap,
-      k100 * e18, // uint256 _debtCap,
-      0, // uint256 _mintFeeBps,
-      100, // uint256 _redeemFeeBps,
-      deployer // address _feeDestination
+    await waitForTx(
+      await usdcPSM.initialize(
+        zai.target, // address _zai,
+        usdc.target, // address _collateral,
+        deployer, // address _governance,
+        e6, // uint256 _newRate,
+        k100 * e6, // uint256 _supplyCap,
+        k100 * e18, // uint256 _debtCap,
+        0, // uint256 _mintFeeBps,
+        100, // uint256 _redeemFeeBps,
+        deployer // address _feeDestination
+      )
     );
 
   if ((await daiPSM.zai()) !== zai.target)
-    await daiPSM.initialize(
-      zai.target, // address _zai,
-      dai.target, // address _collateral,
-      deployer, // address _governance,
-      e18, // uint256 _newRate,
-      k100 * e18, // uint256 _supplyCap,
-      k100 * e18, // uint256 _debtCap,
-      0, // uint256 _mintFeeBps,
-      100, // uint256 _redeemFeeBps,
-      deployer // address _feeDestination
+    await waitForTx(
+      await daiPSM.initialize(
+        zai.target, // address _zai,
+        dai.target, // address _collateral,
+        deployer, // address _governance,
+        e18, // uint256 _newRate,
+        k100 * e18, // uint256 _supplyCap,
+        k100 * e18, // uint256 _debtCap,
+        0, // uint256 _mintFeeBps,
+        100, // uint256 _redeemFeeBps,
+        deployer // address _feeDestination
+      )
     );
 
   if ((await safetyPoolZai.asset()) !== zai.target) {
-    await safetyPoolZai.initialize(
-      "Staked ZAI", // string memory _name,
-      "sUSDz", // string memory _symbol,
-      zai.target, // address _stablecoin,
-      600, // uint256 _withdrawalDelay,
-      deployer, // address _governance,
-      maha.target, // address _rewardToken1,
-      usdc.target, // address _rewardToken2,
-      86400 // uint256 _rewardsDuration
+    await waitForTx(
+      await safetyPoolZai.initialize(
+        "Staked ZAI", // string memory _name,
+        "sUSDz", // string memory _symbol,
+        zai.target, // address _stablecoin,
+        600, // uint256 _withdrawalDelay,
+        deployer, // address _governance,
+        maha.target, // address _rewardToken1,
+        usdc.target, // address _rewardToken2,
+        86400, // uint256 _rewardsDuration
+        ZeroAddress // address _stakingBoost
+      )
     );
   }
 
   console.log("done, initializing contracts...");
-  await zai.grantManagerRole(daiPSM.target);
-  await zai.grantManagerRole(usdcPSM.target);
-  await zai.grantManagerRole(deployer);
-  await safetyPoolZai.grantRole(
-    await safetyPoolZai.DISTRIBUTOR_ROLE(),
-    deployer
+  await waitForTx(await zai.grantManagerRole(daiPSM.target));
+  await waitForTx(await zai.grantManagerRole(usdcPSM.target));
+  await waitForTx(await zai.grantManagerRole(deployer));
+  await waitForTx(
+    await safetyPoolZai.grantRole(
+      await safetyPoolZai.DISTRIBUTOR_ROLE(),
+      deployer
+    )
   );
 
   console.log("minting tokens...");
-  await usdc.mint(deployer, k100 * e6);
-  await dai.mint(deployer, k100 * e18);
-  await zai.mint(deployer, k100 * e18);
-  await maha.mint(deployer, k100 * e18);
+  await waitForTx(await usdc.mint(deployer, k100 * e6));
+  await waitForTx(await dai.mint(deployer, k100 * e18));
+  await waitForTx(await zai.mint(deployer, k100 * e18));
+  await waitForTx(await maha.mint(deployer, k100 * e18));
 
   console.log("giving approvals");
-  await usdc.approve(usdcPSM.target, MaxUint256);
-  await dai.approve(daiPSM.target, MaxUint256);
-  await zai.approve(usdcPSM.target, MaxUint256);
-  await zai.approve(daiPSM.target, MaxUint256);
-  await zai.approve(safetyPoolZai.target, MaxUint256);
-  await maha.approve(safetyPoolZai.target, MaxUint256);
-  await usdc.approve(safetyPoolZai.target, MaxUint256);
+  await waitForTx(await usdc.approve(usdcPSM.target, MaxUint256));
+  await waitForTx(await dai.approve(daiPSM.target, MaxUint256));
+  await waitForTx(await zai.approve(usdcPSM.target, MaxUint256));
+  await waitForTx(await zai.approve(daiPSM.target, MaxUint256));
+  await waitForTx(await zai.approve(safetyPoolZai.target, MaxUint256));
+  await waitForTx(await maha.approve(safetyPoolZai.target, MaxUint256));
+  await waitForTx(await usdc.approve(safetyPoolZai.target, MaxUint256));
+  await waitForTx(await usdc.approve(zapSafetyPool.target, MaxUint256));
 
   console.log("testing psm mint");
-  await usdcPSM.mint(deployer, 1000n * e18);
-  await daiPSM.mint(deployer, 1000n * e18);
+  await waitForTx(await usdcPSM.mint(deployer, 1000n * e18));
+  await waitForTx(await daiPSM.mint(deployer, 1000n * e18));
 
   console.log("testing psm redeem");
-  await usdcPSM.redeem(deployer, 100n * e18);
-  await daiPSM.redeem(deployer, 100n * e18);
+  await waitForTx(await usdcPSM.redeem(deployer, 100n * e18));
+  await waitForTx(await daiPSM.redeem(deployer, 100n * e18));
 
   console.log("granting safety pool rewards");
-  await safetyPoolZai.notifyRewardAmount(maha.target, 100n * e18);
-  await safetyPoolZai.notifyRewardAmount(usdc.target, 100n * e6);
+  await waitForTx(
+    await safetyPoolZai.notifyRewardAmount(maha.target, 100n * e18)
+  );
+  await waitForTx(
+    await safetyPoolZai.notifyRewardAmount(usdc.target, 100n * e6)
+  );
 
   console.log("testing safety pool");
-  await safetyPoolZai.mint(100n * e18, deployer);
-  await safetyPoolZai.queueWithdrawal(10n * e18);
+  await waitForTx(await safetyPoolZai.mint(100n * e18, deployer));
+  await waitForTx(await safetyPoolZai.queueWithdrawal(10n * e18));
+  // await safetyPoolZai.redeem(10n * e18, deployer, deployer);
+
+  console.log("testing safety pool zap");
+  await waitForTx(
+    await zapSafetyPool.zapIntoSafetyPool(usdcPSM.target, 100n * e6)
+  );
   // await safetyPoolZai.redeem(10n * e18, deployer, deployer);
 
   if (network.name !== "hardhat") {
