@@ -176,6 +176,25 @@ abstract contract MultiStakingRewardsERC4626 is
   }
 
   /// @inheritdoc IMultiTokenRewards
+  function getRewardDual(address who) public nonReentrant {
+    _updateRewardDual(rewardToken1, rewardToken2, who);
+
+    uint256 reward1 = rewards[rewardToken1][who];
+    if (reward1 > 0) {
+      rewards[rewardToken1][who] = 0;
+      rewardToken1.safeTransfer(who, reward1);
+      emit RewardClaimed(rewardToken1, reward1, who, msg.sender);
+    }
+
+    uint256 reward2 = rewards[rewardToken2][who];
+    if (reward2 > 0) {
+      rewards[rewardToken2][who] = 0;
+      rewardToken2.safeTransfer(who, reward2);
+      emit RewardClaimed(rewardToken2, reward2, who, msg.sender);
+    }
+  }
+
+  /// @inheritdoc IMultiTokenRewards
   function notifyRewardAmount(IERC20 token, uint256 reward) external onlyRole(DISTRIBUTOR_ROLE) nonReentrant {
     _updateReward(token, address(0));
     token.safeTransferFrom(msg.sender, address(this), reward);
@@ -223,13 +242,13 @@ abstract contract MultiStakingRewardsERC4626 is
     uint256 assets,
     uint256 shares
   ) internal virtual override {
-    _updateRewardDual(rewardToken1, rewardToken2, caller);
+    _updateRewardDual(rewardToken1, rewardToken2, owner);
     super._withdraw(caller, receiver, owner, assets, shares);
   }
 
   /// @inheritdoc ERC4626Upgradeable
   function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal virtual override {
-    _updateRewardDual(rewardToken1, rewardToken2, caller);
+    _updateRewardDual(rewardToken1, rewardToken2, receiver);
     super._deposit(caller, receiver, assets, shares);
   }
 

@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {OmnichainStakingBase} from "../../../contracts/governance/locker/staking/OmnichainStakingBase.sol";
+import {OmnichainStakingBase} from "../governance/locker/staking/OmnichainStakingBase.sol";
 
 contract MockOmnichainStaking is OmnichainStakingBase {
   function init() external reinitializer(1) {

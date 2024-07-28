@@ -126,4 +126,10 @@ interface IMultiTokenRewards {
    * @param reward Amount of reward tokens to distribute
    */
   function notifyRewardAmount(IERC20 token, uint256 reward) external;
+
+  /**
+   * @notice Triggers a payment of the rewards earned for both tokens
+   * @param who The account for which the rewards are paid
+   */
+  function getRewardDual(address who) external;
 }

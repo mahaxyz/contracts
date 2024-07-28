@@ -254,6 +254,25 @@ abstract contract OmnichainStakingBase is
   }
 
   /// @inheritdoc IMultiTokenRewards
+  function getRewardDual(address who) public nonReentrant {
+    _updateRewardDual(rewardToken1, rewardToken2, who);
+
+    uint256 reward1 = rewards[rewardToken1][who];
+    if (reward1 > 0) {
+      rewards[rewardToken1][who] = 0;
+      rewardToken1.safeTransfer(who, reward1);
+      emit RewardClaimed(rewardToken1, reward1, who, msg.sender);
+    }
+
+    uint256 reward2 = rewards[rewardToken2][who];
+    if (reward2 > 0) {
+      rewards[rewardToken2][who] = 0;
+      rewardToken2.safeTransfer(who, reward2);
+      emit RewardClaimed(rewardToken2, reward2, who, msg.sender);
+    }
+  }
+
+  /// @inheritdoc IMultiTokenRewards
   function getReward(address who, IERC20 token) public nonReentrant {
     _updateReward(token, who);
     uint256 reward = rewards[token][who];

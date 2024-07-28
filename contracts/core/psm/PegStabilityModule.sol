@@ -155,6 +155,16 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
   }
 
   /// @inheritdoc IPegStabilityModule
+  function mintAmountIn(uint256 amountAssetsIn) external view returns (uint256 shares) {
+    shares = (amountAssetsIn * 1e18 * MAX_FEE_BPS) / (MAX_FEE_BPS + mintFeeBps) / rate;
+  }
+
+  /// @inheritdoc IPegStabilityModule
+  function redeemAmountOut(uint256 amountAssetsOut) external view returns (uint256 shares) {
+    shares = (amountAssetsOut * 1e18 * MAX_FEE_BPS) / (MAX_FEE_BPS - redeemFeeBps) / rate;
+  }
+
+  /// @inheritdoc IPegStabilityModule
   function feesCollected() public view returns (uint256) {
     return collateral.balanceOf(address(this)) - toCollateralAmount(debt);
   }
