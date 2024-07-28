@@ -1,5 +1,6 @@
 import { MaxUint256 } from "ethers";
 import hre from "hardhat";
+import { waitForTx } from "./utils";
 
 async function main() {
   const { deployer } = await hre.getNamedAccounts();
@@ -23,17 +24,14 @@ async function main() {
   );
 
   console.log("giving approvals");
-  const tx1 = await collateral.approve(psmD.address, MaxUint256);
-  await tx1.wait(3);
-  const tx2 = await zai.approve(psmD.address, MaxUint256);
-  await tx2.wait(3);
+  await waitForTx(await collateral.approve(psmD.address, MaxUint256));
+  await waitForTx(await zai.approve(psmD.address, MaxUint256));
 
   console.log("testing psm mint", 100n * 10n ** 18n);
-  const tx3 = await psm.mint(deployer, 100n * 10n ** 18n);
-  await tx3.wait(3);
+  await waitForTx(await psm.mint(deployer, 100n * 10n ** 18n));
 
   console.log("testing psm redeem");
-  await psm.redeem(deployer, 1n * 10n ** 18n);
+  await waitForTx(await psm.redeem(deployer, 1n * 10n ** 18n));
 }
 
 // We recommend this pattern to be able to use async/await everywhere
