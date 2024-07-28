@@ -17,8 +17,12 @@ import {IVotes} from "@openzeppelin/contracts/governance/utils/IVotes.sol";
 import {IERC20, IMultiTokenRewards} from "../core/IMultiTokenRewards.sol";
 import {ILocker} from "./ILocker.sol";
 
-// An omni-chain staking contract that allows users to stake their veNFT
-// and get some voting power. Once staked the voting power is available cross-chain.
+/**
+ * @title OmnichainStaking interface
+ * @author maha.xyz
+ * @notice An omni-chain staking contract that allows users to stake their veNFT and get some
+ * voting power. Once staked the voting power is available cross-chain.
+ */
 interface IOmnichainStaking is IMultiTokenRewards, IVotes {
   event LpOracleSet(address indexed oldLpOracle, address indexed newLpOracle);
   event ZeroAggregatorSet(address indexed oldZeroAggregator, address indexed newZeroAggregator);
@@ -30,18 +34,35 @@ interface IOmnichainStaking is IMultiTokenRewards, IVotes {
 
   error InvalidUnstaker(address, address);
 
-  /// @notice Account that distributes staking rewards
+  /**
+   * @notice The address of the rewards distributor.
+   */
   function distributor() external view returns (address);
+
+  /**
+   * @notice The address of the WETH token.
+   */
   function weth() external view returns (IERC20);
+
+  /**
+   * @notice The address of the locker contract.
+   */
   function locker() external view returns (ILocker);
-  /// @notice used to keep track of voting powers for each nft id
+
+  /**
+   * @notice How much voting power a given NFT ID has.
+   * @param id The ID of the NFT.
+   */
   function power(uint256 id) external view returns (uint256);
 
-  /// @notice used to keep track of ownership of token lockers
+  /**
+   * @notice used to keep track of ownership of token lockers
+   * @param id The ID of the NFT.
+   */
   function lockedByToken(uint256 id) external view returns (address);
 
   /**
-   * @dev Gets the details of locked NFTs for a given user.
+   * @notice Gets the details of locked NFTs for a given user.
    * @param _user The address of the user.
    * @return lockedTokenIds The array of locked NFT IDs.
    * @return tokenDetails The array of locked NFT details.
@@ -49,7 +70,7 @@ interface IOmnichainStaking is IMultiTokenRewards, IVotes {
   function getLockedNftDetails(address _user) external view returns (uint256[] memory, ILocker.LockedBalance[] memory);
 
   /**
-   * @dev Receives an ERC721 token from the lockers and grants voting power accordingly.
+   * @notice Receives an ERC721 token from the lockers and grants voting power accordingly.
    * @param from The address sending the ERC721 token.
    * @param tokenId The ID of the ERC721 token.
    * @param data Additional data.
@@ -58,35 +79,43 @@ interface IOmnichainStaking is IMultiTokenRewards, IVotes {
   function onERC721Received(address to, address from, uint256 tokenId, bytes calldata data) external returns (bytes4);
 
   /**
-   * @dev Unstakes a regular token NFT and transfers it back to the user.
+   * @notice Unstakes a regular token NFT and transfers it back to the user.
    * @param tokenId The ID of the regular token NFT to unstake.
    */
   function unstakeToken(uint256 tokenId) external;
 
   /**
-   * @dev Updates the lock duration for a specific NFT.
+   * @notice Updates the lock duration for a specific NFT.
    * @param tokenId The ID of the NFT for which to update the lock duration.
    * @param newLockDuration The new lock duration in seconds.
    */
   function increaseLockDuration(uint256 tokenId, uint256 newLockDuration) external;
 
   /**
-   * @dev Updates the lock amount for a specific NFT.
+   * @notice Updates the lock amount for a specific NFT.
    * @param tokenId The ID of the NFT for which to update the lock amount.
    * @param newLockAmount The new lock amount in tokens.
    */
   function increaseLockAmount(uint256 tokenId, uint256 newLockAmount) external;
 
   /**
-   * Returns how much max voting power this locker will give out for the
+   * @notice Returns how much max voting power this locker will give out for the
    * given amount of tokens. This varies for the instance of locker.
-   *
    * @param amount The amount of tokens to give voting power for.
    */
   function getTokenPower(uint256 amount) external view returns (uint256 _power);
 
+  /**
+   * @notice The total number of NFTs staked in this contract for a user
+   * @param who The address of the user.
+   */
   function totalNFTStaked(address who) external view returns (uint256);
 
+  /**
+   * @dev Admin function to recover ERC20 tokens sent to this contract.
+   * @param tokenAddress The address of the ERC20 token to recover.
+   * @param tokenAmount The amount of tokens to recover.
+   */
   function recoverERC20(address tokenAddress, uint256 tokenAmount) external;
 
   /**
@@ -102,5 +131,8 @@ interface IOmnichainStaking is IMultiTokenRewards, IVotes {
    */
   function getRewardETH(address who) external;
 
+  /**
+   * @notice The total number of votes in this contract
+   */
   function totalVotes() external view returns (uint256);
 }
