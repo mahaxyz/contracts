@@ -20,14 +20,14 @@ import {OmnichainStakingBase} from "./OmnichainStakingBase.sol";
 contract OmnichainStakingToken is OmnichainStakingBase {
   function init(
     address _locker,
-    address _zeroToken,
-    address _poolVoter,
+    address _weth,
+    address _maha,
     uint256 _rewardsDuration,
     address _owner,
     address _distributor
   ) external reinitializer(1) {
     super.__OmnichainStakingBase_init(
-      "MAHA Voting Power", "MAHAvp", _locker, _zeroToken, _poolVoter, _rewardsDuration, _distributor
+      "MAHA Voting Power", "MAHAvp", _locker, _weth, _maha, _weth, _rewardsDuration, _distributor
     );
 
     _transferOwnership(_owner);

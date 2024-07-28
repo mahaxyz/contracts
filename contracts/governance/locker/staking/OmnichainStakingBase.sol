@@ -13,12 +13,10 @@
 
 pragma solidity 0.8.21;
 
-import {IAggregatorV3Interface} from "../../../interfaces/governance/IAggregatorV3Interface.sol";
-import {ILPOracle} from "../../../interfaces/governance/ILPOracle.sol";
 import {ILocker} from "../../../interfaces/governance/ILocker.sol";
 import {IMultiTokenRewards, IOmnichainStaking} from "../../../interfaces/governance/IOmnichainStaking.sol";
-import {IPoolVoter} from "../../../interfaces/governance/IPoolVoter.sol";
 import {IWETH} from "../../../interfaces/governance/IWETH.sol";
+
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {ERC20VotesUpgradeable} from
   "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20VotesUpgradeable.sol";
@@ -39,6 +37,7 @@ abstract contract OmnichainStakingBase is
 {
   using SafeERC20 for IERC20;
 
+  /// @inheritdoc IOmnichainStaking
   ILocker public locker;
 
   /// @inheritdoc IMultiTokenRewards
@@ -68,16 +67,18 @@ abstract contract OmnichainStakingBase is
   /// @inheritdoc IMultiTokenRewards
   IERC20 public rewardToken2;
 
+  /// @inheritdoc IOmnichainStaking
   IERC20 public weth;
 
-  // used to keep track of voting powers for each nft id
+  /// @inheritdoc IOmnichainStaking
   mapping(uint256 => uint256) public power;
 
-  // used to keep track of ownership of token lockers
+  /// @inheritdoc IOmnichainStaking
   mapping(uint256 => address) public lockedByToken;
+
   mapping(address => uint256[]) public lockedTokenIdNfts;
 
-  /// @notice Account that distributes staking rewards
+  /// @inheritdoc IOmnichainStaking
   address public distributor;
 
   /**
@@ -111,47 +112,12 @@ abstract contract OmnichainStakingBase is
     distributor = _distributor;
   }
 
-  /**
-   * @dev Receives an ERC721 token from the lockers and grants voting power accordingly.
-   * @param from The address sending the ERC721 token.
-   * @param tokenId The ID of the ERC721 token.
-   * @param data Additional data.
-   * @return ERC721 onERC721Received selector.
-   */
-  function _onERC721ReceivedInternal(
-    address,
-    address from,
-    uint256 tokenId,
-    bytes calldata data
-  ) internal returns (bytes4) {
-    require(msg.sender == address(locker), "only locker");
-
-    if (data.length > 0) {
-      (, from,) = abi.decode(data, (bool, address, uint256));
-    }
-
-    _updateRewardDual(rewardToken1, rewardToken2, from);
-
-    // track nft id
-    lockedByToken[tokenId] = from;
-    lockedTokenIdNfts[from].push(tokenId);
-
-    // set delegate if not set already
-    if (delegates(from) == address(0)) _delegate(from, from);
-
-    // mint voting power
-    power[tokenId] = _getTokenPower(locker.balanceOfNFT(tokenId));
-    _mint(from, power[tokenId]);
-
-    return this.onERC721Received.selector;
+  /// @inheritdoc IOmnichainStaking
+  function totalVotes() external view returns (uint256) {
+    return totalSupply();
   }
 
-  /**
-   * @dev Gets the details of locked NFTs for a given user.
-   * @param _user The address of the user.
-   * @return lockedTokenIds The array of locked NFT IDs.
-   * @return tokenDetails The array of locked NFT details.
-   */
+  /// @inheritdoc IOmnichainStaking
   function getLockedNftDetails(address _user) external view returns (uint256[] memory, ILocker.LockedBalance[] memory) {
     uint256 tokenIdsLength = lockedTokenIdNfts[_user].length;
     uint256[] memory lockedTokenIds = lockedTokenIdNfts[_user];
@@ -171,14 +137,12 @@ abstract contract OmnichainStakingBase is
     return (tokenIds, tokenDetails);
   }
 
+  /// @inheritdoc IOmnichainStaking
   function onERC721Received(address to, address from, uint256 tokenId, bytes calldata data) external returns (bytes4) {
     return _onERC721ReceivedInternal(to, from, tokenId, data);
   }
 
-  /**
-   * @dev Unstakes a regular token NFT and transfers it back to the user.
-   * @param tokenId The ID of the regular token NFT to unstake.
-   */
+  /// @inheritdoc IOmnichainStaking
   function unstakeToken(uint256 tokenId) external {
     _updateRewardDual(rewardToken1, rewardToken2, msg.sender);
     require(lockedByToken[tokenId] != address(0), "!tokenId");
@@ -197,11 +161,7 @@ abstract contract OmnichainStakingBase is
     locker.safeTransferFrom(address(this), msg.sender, tokenId);
   }
 
-  /**
-   * @dev Updates the lock duration for a specific NFT.
-   * @param tokenId The ID of the NFT for which to update the lock duration.
-   * @param newLockDuration The new lock duration in seconds.
-   */
+  /// @inheritdoc IOmnichainStaking
   function increaseLockDuration(uint256 tokenId, uint256 newLockDuration) external {
     require(newLockDuration > 0, "!newLockAmount");
 
@@ -214,11 +174,7 @@ abstract contract OmnichainStakingBase is
     _mint(msg.sender, power[tokenId]);
   }
 
-  /**
-   * @dev Updates the lock amount for a specific NFT.
-   * @param tokenId The ID of the NFT for which to update the lock amount.
-   * @param newLockAmount The new lock amount in tokens.
-   */
+  /// @inheritdoc IOmnichainStaking
   function increaseLockAmount(uint256 tokenId, uint256 newLockAmount) external {
     require(newLockAmount > 0, "!newLockAmount");
 
@@ -232,12 +188,7 @@ abstract contract OmnichainStakingBase is
     _mint(msg.sender, power[tokenId]);
   }
 
-  /**
-   * Returns how much max voting power this locker will give out for the
-   * given amount of tokens. This varies for the instance of locker.
-   *
-   * @param amount The amount of tokens to give voting power for.
-   */
+  /// @inheritdoc IOmnichainStaking
   function getTokenPower(uint256 amount) external view returns (uint256 _power) {
     _power = _getTokenPower(amount);
   }
@@ -252,6 +203,7 @@ abstract contract OmnichainStakingBase is
     return Math.min(block.timestamp, periodFinish[token]);
   }
 
+  /// @inheritdoc IOmnichainStaking
   function totalNFTStaked(address who) public view returns (uint256) {
     return lockedTokenIdNfts[who].length;
   }
@@ -290,31 +242,15 @@ abstract contract OmnichainStakingBase is
     emit RewardAdded(token, reward, msg.sender);
   }
 
+  /// @inheritdoc IOmnichainStaking
   function recoverERC20(address tokenAddress, uint256 tokenAmount) external onlyOwner {
     IERC20(tokenAddress).transfer(owner(), tokenAmount);
     emit Recovered(tokenAddress, tokenAmount);
   }
 
-  /**
-   * Admin only function to set the rewards distributor
-   *
-   * @param what The new address for the rewards distributor
-   */
+  /// @inheritdoc IOmnichainStaking
   function setRewardDistributor(address what) external onlyOwner {
     distributor = what;
-  }
-
-  /**
-   * Temporary fix to init the delegate variable for a given user. This is
-   * an admin only function as it's a temporary fix. This can be permissionless.
-   *
-   * @param who The who for whom delegate should be called.
-   */
-  function initDelegates(address[] memory who) external {
-    for (uint256 i = 0; i < who.length; i++) {
-      require(delegates(who[i]) == address(0), "delegate already set");
-      _delegate(who[i], who[i]);
-    }
   }
 
   /// @inheritdoc IMultiTokenRewards
@@ -364,6 +300,41 @@ abstract contract OmnichainStakingBase is
   }
 
   /**
+   * @dev Receives an ERC721 token from the lockers and grants voting power accordingly.
+   * @param from The address sending the ERC721 token.
+   * @param tokenId The ID of the ERC721 token.
+   * @param data Additional data.
+   * @return ERC721 onERC721Received selector.
+   */
+  function _onERC721ReceivedInternal(
+    address,
+    address from,
+    uint256 tokenId,
+    bytes calldata data
+  ) internal returns (bytes4) {
+    require(msg.sender == address(locker), "only locker");
+
+    if (data.length > 0) {
+      (, from,) = abi.decode(data, (bool, address, uint256));
+    }
+
+    _updateRewardDual(rewardToken1, rewardToken2, from);
+
+    // track nft id
+    lockedByToken[tokenId] = from;
+    lockedTokenIdNfts[from].push(tokenId);
+
+    // set delegate if not set already
+    if (delegates(from) == address(0)) _delegate(from, from);
+
+    // mint voting power
+    power[tokenId] = _getTokenPower(locker.balanceOfNFT(tokenId));
+    _mint(from, power[tokenId]);
+
+    return this.onERC721Received.selector;
+  }
+
+  /**
    * @dev Deletes an element from an array.
    * @param elements The array to delete from.
    * @param element The element to delete.
@@ -390,12 +361,6 @@ abstract contract OmnichainStakingBase is
     }
 
     return updatedArray;
-  }
-
-  function _getTokenPower(uint256 amount) internal view virtual returns (uint256 power);
-
-  function totalVotes() external view returns (uint256) {
-    return totalSupply();
   }
 
   /**
@@ -451,4 +416,6 @@ abstract contract OmnichainStakingBase is
     return rewardPerTokenStored[_token]
       + (((lastTimeRewardApplicable(_token) - lastUpdateTime[_token]) * rewardRate[_token] * 1e18) / totalSupply());
   }
+
+  function _getTokenPower(uint256 amount) internal view virtual returns (uint256 power);
 }

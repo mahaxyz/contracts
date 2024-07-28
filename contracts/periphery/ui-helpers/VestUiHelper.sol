@@ -35,89 +35,89 @@ contract VestUiHelper {
     omnichainStakingLp = OmnichainStakingLP(payable(_omnichainStakingLp));
   }
 
-  function getLockDetails(address _userAddress) external view returns (LockedBalanceWithApr[] memory) {
-    (uint256[] memory tokenIds, ILocker.LockedBalance[] memory lockedBalances) =
-      omnichainStaking.getLockedNftDetails(_userAddress);
+  // function getLockDetails(address _userAddress) external view returns (LockedBalanceWithApr[] memory) {
+  //   (uint256[] memory tokenIds, ILocker.LockedBalance[] memory lockedBalances) =
+  //     omnichainStaking.getLockedNftDetails(_userAddress);
 
-    uint256 rewardRate = omnichainStaking.rewardRate();
-    uint256 totalSupply = omnichainStaking.totalSupply();
+  //   uint256 rewardRate = omnichainStaking.rewardRate();
+  //   uint256 totalSupply = omnichainStaking.totalSupply();
 
-    uint256 totalTokenIds = tokenIds.length;
-    LockedBalanceWithApr[] memory lockDetails = new LockedBalanceWithApr[](totalTokenIds);
+  //   uint256 totalTokenIds = tokenIds.length;
+  //   LockedBalanceWithApr[] memory lockDetails = new LockedBalanceWithApr[](totalTokenIds);
 
-    for (uint256 i; i < totalTokenIds;) {
-      LockedBalanceWithApr memory lock;
-      ILocker.LockedBalance memory lockedBalance = lockedBalances[i];
+  //   for (uint256 i; i < totalTokenIds;) {
+  //     LockedBalanceWithApr memory lock;
+  //     ILocker.LockedBalance memory lockedBalance = lockedBalances[i];
 
-      uint256 vePower = omnichainStaking.getTokenPower(lockedBalance.amount);
+  //     uint256 vePower = omnichainStaking.getTokenPower(lockedBalance.amount);
 
-      uint256 scale = (lockedBalance.power != 0 && lockedBalance.amount != 0)
-        ? (lockedBalance.power * 1e18) / lockedBalance.amount
-        : 1e18;
+  //     uint256 scale = (lockedBalance.power != 0 && lockedBalance.amount != 0)
+  //       ? (lockedBalance.power * 1e18) / lockedBalance.amount
+  //       : 1e18;
 
-      uint256 poolRewardAnnual = rewardRate * 31_536_000;
-      uint256 apr = (poolRewardAnnual * 1000) / totalSupply;
-      uint256 aprScaled = (apr * scale) / 1000;
+  //     uint256 poolRewardAnnual = rewardRate * 31_536_000;
+  //     uint256 apr = (poolRewardAnnual * 1000) / totalSupply;
+  //     uint256 aprScaled = (apr * scale) / 1000;
 
-      lock.id = tokenIds[i];
-      lock.amount = lockedBalance.amount;
-      lock.start = lockedBalance.start;
-      lock.end = lockedBalance.end;
-      lock.power = vePower;
-      lock.apr = aprScaled;
+  //     lock.id = tokenIds[i];
+  //     lock.amount = lockedBalance.amount;
+  //     lock.start = lockedBalance.start;
+  //     lock.end = lockedBalance.end;
+  //     lock.power = vePower;
+  //     lock.apr = aprScaled;
 
-      lockDetails[i] = lock;
+  //     lockDetails[i] = lock;
 
-      unchecked {
-        ++i;
-      }
-    }
+  //     unchecked {
+  //       ++i;
+  //     }
+  //   }
 
-    return lockDetails;
-  }
+  //   return lockDetails;
+  // }
 
-  function getLPLockDetails(address _userAddress) external view returns (LockedBalanceWithApr[] memory) {
-    (uint256[] memory tokenIds, ILocker.LockedBalance[] memory lockedBalances) =
-      omnichainStakingLp.getLockedNftDetails(_userAddress);
+  // function getLPLockDetails(address _userAddress) external view returns (LockedBalanceWithApr[] memory) {
+  //   (uint256[] memory tokenIds, ILocker.LockedBalance[] memory lockedBalances) =
+  //     omnichainStakingLp.getLockedNftDetails(_userAddress);
 
-    uint256 rewardRate = omnichainStakingLp.rewardRate();
-    uint256 totalSupply = omnichainStakingLp.totalSupply();
+  //   uint256 rewardRate = omnichainStakingLp.rewardRate();
+  //   uint256 totalSupply = omnichainStakingLp.totalSupply();
 
-    uint256 totalTokenIds = tokenIds.length;
-    LockedBalanceWithApr[] memory lockDetails = new LockedBalanceWithApr[](totalTokenIds);
+  //   uint256 totalTokenIds = tokenIds.length;
+  //   LockedBalanceWithApr[] memory lockDetails = new LockedBalanceWithApr[](totalTokenIds);
 
-    for (uint256 i; i < totalTokenIds;) {
-      LockedBalanceWithApr memory lock;
-      ILocker.LockedBalance memory lockedBalance = lockedBalances[i];
+  //   for (uint256 i; i < totalTokenIds;) {
+  //     LockedBalanceWithApr memory lock;
+  //     ILocker.LockedBalance memory lockedBalance = lockedBalances[i];
 
-      uint256 vePower = omnichainStakingLp.getTokenPower(lockedBalance.amount);
+  //     uint256 vePower = omnichainStakingLp.getTokenPower(lockedBalance.amount);
 
-      uint256 scale = (lockedBalance.power != 0 && lockedBalance.amount != 0)
-        ? (lockedBalance.power * 1e18) / lockedBalance.amount
-        : 1e18;
+  //     uint256 scale = (lockedBalance.power != 0 && lockedBalance.amount != 0)
+  //       ? (lockedBalance.power * 1e18) / lockedBalance.amount
+  //       : 1e18;
 
-      uint256 priceConversion = zeroToETH();
+  //     uint256 priceConversion = zeroToETH();
 
-      uint256 poolRewardAnnual = rewardRate * 31_536_000;
-      uint256 apr = (priceConversion * (poolRewardAnnual * 1000)) / totalSupply;
-      uint256 aprScaled = (apr * scale) / 1000;
+  //     uint256 poolRewardAnnual = rewardRate * 31_536_000;
+  //     uint256 apr = (priceConversion * (poolRewardAnnual * 1000)) / totalSupply;
+  //     uint256 aprScaled = (apr * scale) / 1000;
 
-      lock.id = tokenIds[i];
-      lock.amount = lockedBalance.amount;
-      lock.start = lockedBalance.start;
-      lock.end = lockedBalance.end;
-      lock.power = vePower;
-      lock.apr = aprScaled;
+  //     lock.id = tokenIds[i];
+  //     lock.amount = lockedBalance.amount;
+  //     lock.start = lockedBalance.start;
+  //     lock.end = lockedBalance.end;
+  //     lock.power = vePower;
+  //     lock.apr = aprScaled;
 
-      lockDetails[i] = lock;
+  //     lockDetails[i] = lock;
 
-      unchecked {
-        ++i;
-      }
-    }
+  //     unchecked {
+  //       ++i;
+  //     }
+  //   }
 
-    return lockDetails;
-  }
+  //   return lockDetails;
+  // }
 
   function zeroToETH() public pure returns (uint256) {
     return 6_753_941;
