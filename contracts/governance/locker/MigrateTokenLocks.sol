@@ -63,7 +63,20 @@ contract MigrateTokenLocks is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pa
     uint256 _mahaReward,
     bytes32[] memory _proof
   ) external returns (uint256) {
-    return _migrateLock(_value, _startDate, _endDate, _tokenId, _who, _mahaReward, _proof);
+    return _migrateLock(_value, _startDate, _endDate, _tokenId, _who, _mahaReward, _proof, false);
+  }
+
+  function migrateLockAndStakeBonus(
+    uint256 _value,
+    uint256 _startDate,
+    uint256 _endDate,
+    uint256 _tokenId,
+    address _who,
+    uint256 _mahaReward,
+    bytes32[] memory _proof
+  ) external returns (uint256) {
+    require(_who == msg.sender);
+    return _migrateLock(_value, _startDate, _endDate, _tokenId, _who, _mahaReward, _proof, true);
   }
 
   function migrateLocks(
@@ -83,7 +96,8 @@ contract MigrateTokenLocks is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pa
         _tokenId[index],
         _who[index],
         _mahaReward[index],
-        proof[index]
+        proof[index],
+        false
       );
     }
   }
@@ -125,7 +139,8 @@ contract MigrateTokenLocks is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pa
     uint256 _tokenId,
     address _who,
     uint256 _mahaReward,
-    bytes32[] memory proof
+    bytes32[] memory proof,
+    bool stakeBonus
   ) internal nonReentrant whenNotPaused returns (uint256) {
     require(_endDate >= (block.timestamp + 2 * WEEK), "end date expired");
     require(_tokenId != 0, "tokenId is 0");
@@ -136,11 +151,19 @@ contract MigrateTokenLocks is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pa
     bool _isLockvalid = isLockValid(_value, _startDate, _endDate, _who, _tokenId, _mahaReward, proof);
     require(_isLockvalid, "Migrator: invalid lock");
 
+    if (stakeBonus) {
+      // if the user wants to stake their rewards also they'll get a 4x bonus
+      _value += _mahaReward * 4;
+      _endDate = block.timestamp + 1430 days;
+      _startDate = block.timestamp;
+    } else if (_mahaReward > 0) {
+      maha.transfer(_who, _mahaReward);
+    }
+
     uint256 newTokenId = locker.migrateTokenFor(_value, _startDate, _endDate, _who);
     require(newTokenId > 0, "Migrator: migration failed");
 
     isTokenIdMigrated[_tokenId] = true;
-    if (_mahaReward > 0) maha.transfer(_who, _mahaReward);
     return newTokenId;
   }
 }
