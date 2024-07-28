@@ -9,7 +9,7 @@ export async function waitForTx(
   tx: TransactionResponse
 ): Promise<TransactionReceipt | null> {
   console.log("waiting for tx", tx.hash);
-  return await tx.wait(2);
+  return await tx.wait(1);
 }
 
 export async function verify(

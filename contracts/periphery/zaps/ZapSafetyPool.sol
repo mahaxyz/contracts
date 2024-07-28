@@ -57,6 +57,7 @@ contract ZapSafetyPool {
     IERC20 asset = IERC20(psm.collateral());
 
     asset.safeTransferFrom(msg.sender, me, amountIn);
+    asset.approve(address(psm), amountIn);
     psm.mint(me, zaiToMint);
 
     safetyPool.deposit(zaiToMint, msg.sender);

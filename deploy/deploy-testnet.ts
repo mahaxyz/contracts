@@ -147,15 +147,19 @@ async function main(hre: HardhatRuntimeEnvironment) {
   }
 
   console.log("done, initializing contracts...");
-  await waitForTx(await zai.grantManagerRole(daiPSM.target));
-  await waitForTx(await zai.grantManagerRole(usdcPSM.target));
-  await waitForTx(await zai.grantManagerRole(deployer));
-  await waitForTx(
-    await safetyPoolZai.grantRole(
-      await safetyPoolZai.DISTRIBUTOR_ROLE(),
-      deployer
-    )
-  );
+  if (!zai.isManager(daiPSM.target))
+    await waitForTx(await zai.grantManagerRole(daiPSM.target));
+  if (!zai.isManager(usdcPSM.target))
+    await waitForTx(await zai.grantManagerRole(usdcPSM.target));
+  if (!zai.isManager(deployer))
+    await waitForTx(await zai.grantManagerRole(deployer));
+  if (!safetyPoolZai.hasRole(await safetyPoolZai.DISTRIBUTOR_ROLE(), deployer))
+    await waitForTx(
+      await safetyPoolZai.grantRole(
+        await safetyPoolZai.DISTRIBUTOR_ROLE(),
+        deployer
+      )
+    );
 
   console.log("minting tokens...");
   await waitForTx(await usdc.mint(deployer, k100 * e6));
@@ -164,14 +168,19 @@ async function main(hre: HardhatRuntimeEnvironment) {
   await waitForTx(await maha.mint(deployer, k100 * e18));
 
   console.log("giving approvals");
-  await waitForTx(await usdc.approve(usdcPSM.target, MaxUint256));
   await waitForTx(await dai.approve(daiPSM.target, MaxUint256));
-  await waitForTx(await zai.approve(usdcPSM.target, MaxUint256));
-  await waitForTx(await zai.approve(daiPSM.target, MaxUint256));
-  await waitForTx(await zai.approve(safetyPoolZai.target, MaxUint256));
   await waitForTx(await maha.approve(safetyPoolZai.target, MaxUint256));
   await waitForTx(await usdc.approve(safetyPoolZai.target, MaxUint256));
+  await waitForTx(await usdc.approve(usdcPSM.target, MaxUint256));
   await waitForTx(await usdc.approve(zapSafetyPool.target, MaxUint256));
+  await waitForTx(await zai.approve(daiPSM.target, MaxUint256));
+  await waitForTx(await zai.approve(safetyPoolZai.target, MaxUint256));
+  await waitForTx(await zai.approve(usdcPSM.target, MaxUint256));
+
+  console.log("testing safety pool zap");
+  await waitForTx(
+    await zapSafetyPool.zapIntoSafetyPool(usdcPSM.target, 100n * e6)
+  );
 
   console.log("testing psm mint");
   await waitForTx(await usdcPSM.mint(deployer, 1000n * e18));
@@ -198,9 +207,13 @@ async function main(hre: HardhatRuntimeEnvironment) {
   await waitForTx(
     await zapSafetyPool.zapIntoSafetyPool(usdcPSM.target, 100n * e6)
   );
-  // await safetyPoolZai.redeem(10n * e18, deployer, deployer);
 
   if (network.name !== "hardhat") {
+    console.log("verifying contracts");
+    await hre.run("verify:verify", {
+      address: zapSafetyPool.target,
+      constructorArguments: [safetyPoolZaiD.address, zaiD.address],
+    });
     await hre.run("verify:verify", {
       address: zaiD.address,
       constructorArguments: [deployer],
