@@ -37,7 +37,7 @@ abstract contract BaseZaiTest is Test {
   function _setUpBase() internal {
     zai = new ZaiStablecoin(address(this));
 
-    usdc = new MockERC20("USD Coin", "USDC", 8);
+    usdc = new MockERC20("USD Coin", "USDC", 6);
     dai = new MockERC20("DAI", "DAI", 18);
     maha = new MockERC20("MahaDAO", "MAHA", 18);
     weth = new MockERC20("Wrapped Ether", "WETH", 18);

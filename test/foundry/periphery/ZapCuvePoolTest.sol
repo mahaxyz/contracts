@@ -32,7 +32,7 @@ contract ZapCuvePoolTest is BaseZaiTest {
 
     IERC20[] memory tokens = new IERC20[](2);
     tokens[0] = zai;
-    tokens[0] = usdc;
+    tokens[1] = usdc;
     pool = new MockCurvePool("Curve Pool", "cZAI", tokens);
 
     safetyPool = new SafetyPool();
@@ -84,12 +84,11 @@ contract ZapCuvePoolTest is BaseZaiTest {
 
     vm.stopPrank();
 
-    assertEq(zai.balanceOf(address(safetyPool)), 100e18);
-    assertEq(usdc.balanceOf(address(psmUSDC)), 100e6);
-
+    assertEq(zai.balanceOf(address(pool)), 50e18);
+    assertEq(usdc.balanceOf(address(psmUSDC)), 50e6);
+    assertEq(usdc.balanceOf(address(pool)), 50e6);
     assertEq(zai.balanceOf(address(zap)), 0);
     assertEq(usdc.balanceOf(address(zap)), 0);
-
-    assertEq(safetyPool.balanceOf(whale), 100e18);
+    assertApproxEqAbs(safetyPool.balanceOf(whale), 50e18, 1e17);
   }
 }

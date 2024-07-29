@@ -63,6 +63,7 @@ contract ZapCuvePool {
     // give approvals
     zai.approve(address(pool), type(uint256).max);
     collateral.approve(address(pool), type(uint256).max);
+    collateral.approve(address(psm), type(uint256).max);
     pool.approve(_staking, type(uint256).max);
 
     me = address(this);
@@ -86,6 +87,7 @@ contract ZapCuvePool {
     uint256[] memory amounts = new uint256[](2);
     amounts[0] = zaiAmount;
     amounts[1] = collateralAmount / 2;
+
     pool.add_liquidity(amounts, minLpAmount, address(this));
 
     // we now have LP tokens; deposit into staking contract for the user
