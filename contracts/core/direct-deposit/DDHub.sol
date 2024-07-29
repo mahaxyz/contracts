@@ -22,7 +22,6 @@ import {Constants} from "./Constants.sol";
 import {AccessControlEnumerableUpgradeable} from
   "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 
-import "../../../lib/forge-std/src/console.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 

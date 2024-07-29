@@ -20,11 +20,11 @@ import {IERC20Metadata} from "@openzeppelin/contracts/interfaces/IERC20Metadata.
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
 /**
- * @title ZapLockerLP
+ * @title ZapCuvePool
  * @dev This contract allows users to perform a Zap operation by swapping collateral for zai tokens, adding liquidity to
  * curve LP, and staking the LP tokens.
  */
-contract ZapUSDCZAICuve {
+contract ZapCuvePool {
   IERC4626 public staking;
 
   ICurveStableSwapNG public pool;
@@ -35,7 +35,7 @@ contract ZapUSDCZAICuve {
 
   IPegStabilityModule public psm;
 
-  uint256 private decimalOffset;
+  uint256 public decimalOffset;
 
   address private me;
 
@@ -74,7 +74,7 @@ contract ZapUSDCZAICuve {
    * @param collateralAmount The amount of collateral to zap
    * @param minLpAmount The minimum amount of LP tokens to stake
    */
-  function zapUsdcIntoLP(uint256 collateralAmount, uint256 minLpAmount) external {
+  function zapIntoLP(uint256 collateralAmount, uint256 minLpAmount) external {
     // fetch tokens
     collateral.transferFrom(msg.sender, me, collateralAmount);
 
@@ -104,7 +104,7 @@ contract ZapUSDCZAICuve {
    * @param collateralAmount The amount of collateral to zap
    * @param minLpAmount The minimum amount of LP tokens to stake
    */
-  function zapZaiUsdcIntoLP(uint256 zaiAmount, uint256 collateralAmount, uint256 minLpAmount) external {
+  function zapWithZaiIntoLP(uint256 zaiAmount, uint256 collateralAmount, uint256 minLpAmount) external {
     // fetch tokens
     if (zaiAmount > 0) zai.transferFrom(msg.sender, me, zaiAmount);
     if (collateralAmount > 0) collateral.transferFrom(msg.sender, me, collateralAmount);
