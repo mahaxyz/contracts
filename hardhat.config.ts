@@ -9,6 +9,9 @@ import "solidity-coverage";
 import "solidity-docgen";
 import "hardhat-tracer";
 
+import "@typechain/hardhat";
+import "@nomicfoundation/hardhat-chai-matchers";
+
 import dotenv from "dotenv";
 dotenv.config();
 

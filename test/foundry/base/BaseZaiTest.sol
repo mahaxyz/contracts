@@ -16,7 +16,7 @@ pragma solidity 0.8.21;
 import {ZaiStablecoin} from "../../../contracts/core/ZaiStablecoin.sol";
 import {Test, console} from "../../../lib/forge-std/src/Test.sol";
 
-import {MockERC20} from "../../../contracts/tests/MockERC20.sol";
+import {MockERC20} from "../../../contracts/mocks/MockERC20.sol";
 
 abstract contract BaseZaiTest is Test {
   event Transfer(address indexed from, address indexed to, uint256 value);
@@ -37,7 +37,7 @@ abstract contract BaseZaiTest is Test {
   function _setUpBase() internal {
     zai = new ZaiStablecoin(address(this));
 
-    usdc = new MockERC20("USD Coin", "USDC", 8);
+    usdc = new MockERC20("USD Coin", "USDC", 6);
     dai = new MockERC20("DAI", "DAI", 18);
     maha = new MockERC20("MahaDAO", "MAHA", 18);
     weth = new MockERC20("Wrapped Ether", "WETH", 18);

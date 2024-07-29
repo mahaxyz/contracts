@@ -1,0 +1,18 @@
+{
+  "address": "0x6900064e7a3920c114e25b5fe4780f26520e3231",
+  "abi": [
+    "constructor(address)",
+    "error OwnableInvalidOwner(address)",
+    "error OwnableUnauthorizedAccount(address)",
+    "event OwnershipTransferred(address indexed,address indexed)",
+    "function UPGRADE_INTERFACE_VERSION() view returns (string)",
+    "function owner() view returns (address)",
+    "function renounceOwnership()",
+    "function transferOwnership(address)",
+    "function upgradeAndCall(address,address,bytes) payable"
+  ],
+  "args": [
+    "0x690002da1f2d828d72aa89367623df7a432e85a9"
+  ],
+  "numDeployments": 1
+}

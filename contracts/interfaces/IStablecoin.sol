@@ -15,7 +15,7 @@ pragma solidity 0.8.21;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface IZaiStablecoin is IERC20 {
+interface IStablecoin is IERC20 {
   /**
    * @notice Used to mint ZAI
    * @dev This is only callable by verified managers approved by governance

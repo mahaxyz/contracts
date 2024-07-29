@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {IZaiStablecoin} from "../IZaiStablecoin.sol";
+import {IStablecoin} from "../IStablecoin.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 /**
@@ -25,7 +25,7 @@ interface IPegStabilityModule {
   /**
    * @notice Returns the Zai stablecoin
    */
-  function zai() external returns (IZaiStablecoin);
+  function zai() external returns (IStablecoin);
 
   /**
    * @notice Returns the collateral token
@@ -125,6 +125,18 @@ interface IPegStabilityModule {
    * @param _fee The fee to be charged in BPS
    */
   function toCollateralAmountWithFeeInverse(uint256 _amount, uint256 _fee) external view returns (uint256);
+
+  /**
+   * @notice Calculates how much ZAI should be minted for a given amount of collateral
+   * @param amountAssetsIn The amount of collateral
+   */
+  function mintAmountIn(uint256 amountAssetsIn) external view returns (uint256 shares);
+
+  /**
+   * @notice Calculates how much ZAI should be redeemed for a given amount of collateral
+   * @param amountAssetsOut The amount of collateral
+   */
+  function redeemAmountOut(uint256 amountAssetsOut) external view returns (uint256 shares);
 
   /**
    * @notice How much fees has been collected by the protocol

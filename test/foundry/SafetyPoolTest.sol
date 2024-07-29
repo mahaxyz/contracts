@@ -25,7 +25,7 @@ contract SafetyPoolTest is BaseZaiTest {
 
     safetyPool = new SafetyPool();
     safetyPool.initialize(
-      "Safety Pool", "sZAI", address(zai), 10 days, governance, address(usdc), address(maha), 7 days
+      "Safety Pool", "sZAI", address(zai), 10 days, governance, address(usdc), address(maha), 7 days, address(0)
     );
 
     bytes32 role = safetyPool.MANAGER_ROLE();

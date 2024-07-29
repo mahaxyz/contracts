@@ -15,7 +15,7 @@
 
 pragma solidity 0.8.21;
 
-import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
+import {IStablecoin} from "../../interfaces/IStablecoin.sol";
 import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -27,11 +27,11 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  * @dev This uses the odos router to swap tokens
  */
 contract ZAIArbitrageBot {
-  IZaiStablecoin public zai;
+  IStablecoin public zai;
   IPegStabilityModule public psm;
 
   constructor(address _zai, address _psm) {
-    zai = IZaiStablecoin(_zai);
+    zai = IStablecoin(_zai);
     psm = IPegStabilityModule(_psm);
   }
 

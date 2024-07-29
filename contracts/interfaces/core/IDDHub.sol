@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {IZaiStablecoin} from "../IZaiStablecoin.sol";
+import {IStablecoin} from "../IStablecoin.sol";
 import {IDDPlan} from "./IDDPlan.sol";
 import {IDDPool} from "./IDDPool.sol";
 
@@ -58,7 +58,7 @@ interface IDDHub {
   /**
    * @notice The ZAI stablecoin contract
    */
-  function zai() external view returns (IZaiStablecoin);
+  function zai() external view returns (IStablecoin);
 
   /**
    * @notice The risk manager role
@@ -147,4 +147,10 @@ interface IDDHub {
    * @param pool The pool to shutdown
    */
   function shutdownPool(IDDPool pool) external;
+
+  /**
+   * @notice Sweeps fees from a specific pool
+   * @param pool The pool to sweep fees for
+   */
+  function sweepFees(IDDPool pool) external;
 }

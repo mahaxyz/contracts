@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {IZaiStablecoin} from "../IZaiStablecoin.sol";
+import {IStablecoin} from "../IStablecoin.sol";
 
 /**
  * @title IDDPool

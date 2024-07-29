@@ -31,7 +31,8 @@ interface ISafetyPool {
     address _governance,
     address _rewardToken1,
     address _rewardToken2,
-    uint256 _rewardsDuration
+    uint256 _rewardsDuration,
+    address _stakingBoost
   ) external;
 
   function MANAGER_ROLE() external view returns (bytes32);

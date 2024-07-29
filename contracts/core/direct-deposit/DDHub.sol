@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {IZaiStablecoin} from "../../interfaces/IZaiStablecoin.sol";
+import {IStablecoin} from "../../interfaces/IStablecoin.sol";
 import {IDDHub} from "../../interfaces/core/IDDHub.sol";
 import {IDDPlan} from "../../interfaces/core/IDDPlan.sol";
 import {IDDPool} from "../../interfaces/core/IDDPool.sol";
@@ -33,7 +33,7 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
  */
 contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpgradeable {
   /// @inheritdoc IDDHub
-  IZaiStablecoin public zai;
+  IStablecoin public zai;
 
   /// @inheritdoc IDDHub
   bytes32 public RISK_ROLE;
@@ -59,7 +59,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     __ReentrancyGuard_init();
     __AccessControlEnumerable_init();
 
-    zai = IZaiStablecoin(_zai);
+    zai = IStablecoin(_zai);
     feeCollector = _feeCollector;
     globalDebtCeiling = _globalDebtCeiling;
 
@@ -130,6 +130,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     _updatePoolInfo(pool, info);
   }
 
+  /// @inheritdoc IDDHub
   function sweepFees(IDDPool pool) external {
     _sweepFees(pool);
   }
@@ -141,11 +142,8 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     uint256 currentAssets = pool.assetBalance(); // Should return ZAI owned by pools
     uint256 maxWithdraw = Math.min(pool.maxWithdraw(), Constants.SAFEMAX);
 
-    // Determine if it needs to fully unwind due to DDM being shutdown, plan is not active or
-    // something wrong is going with the third party and we are entering in the
-    // illegal situation of having less assets than what is registered
-    // It's adding up `WAD` due possible rounding errors
-    if (!info.isLive || !info.plan.active() || currentAssets + Constants.WAD < info.debt) {
+    // Determine if it needs to fully unwind due to DDM being shutdown, plan is not active.
+    if (!info.isLive || !info.plan.active()) {
       toWithdraw = maxWithdraw;
     } else {
       uint256 maxDebt = info.debtCeiling; //vat.Line();
@@ -199,10 +197,9 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     PoolInfo memory info = _poolInfos[pool];
     uint256 balanceBefore = pool.assetBalance();
 
-    require(balanceBefore + 1 wei >= info.debt, "invaraint balance >= debt");
-
-    // calculate fees
+    require(balanceBefore + 1 wei >= info.debt, "invariant balance > debt");
     if (balanceBefore <= info.debt) return;
+
     uint256 fees = balanceBefore - info.debt;
 
     // withdraw the generated fees

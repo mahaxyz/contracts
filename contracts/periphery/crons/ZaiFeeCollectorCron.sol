@@ -109,9 +109,9 @@ contract ZaiFeeCollectorCron is OwnableUpgradeable {
     uint256 amt = rewardToken.balanceOf(address(this));
 
     uint256 treasuryAmt = amt / 10; // give 10% to the treasury
-    uint256 zaiMahaAmt = amt / 4; // 25% to ZAI/MAHA staking
+    uint256 zaiMahaAmt = amt / 5; // 20% to ZAI/MAHA staking
     uint256 zaiSafetyPoolAmt = amt / 10; // give 10% to ZAI stability pool
-    uint256 zaiUsdcAmt = amt - treasuryAmt - zaiMahaAmt - zaiSafetyPoolAmt; // 65% to ZAI/USDC staking
+    uint256 zaiUsdcAmt = amt - treasuryAmt - zaiMahaAmt - zaiSafetyPoolAmt; // 60% to ZAI/USDC staking
 
     rewardToken.transfer(treasury, treasuryAmt);
     stakerMahaZai.notifyRewardAmount(rewardToken, zaiMahaAmt);

@@ -1,6 +1,6 @@
 {
   "name": "@mahaxyz/contracts",
-  "version": "1.0.4",
+  "version": "1.2.0",
   "license": "GPL-3.0",
   "scripts": {
     "build:blue": "cd lib/morpho-blue/ && yarn build:forge && cd ../..",
@@ -10,7 +10,7 @@
     "format": "forge fmt",
     "format:check": "forge fmt --check",
     "coverage": "yarn build:blue && forge coverage --report lcov",
-    "coverage:lcov": "yarn coverage && lcov --remove lcov.info test contracts/governance contracts/periphery --ignore-errors inconsistent -o lcov.info",
+    "coverage:lcov": "yarn coverage && lcov --remove lcov.info test contracts/periphery --ignore-errors inconsistent -o lcov.info",
     "coverage:html": "yarn coverage:lcov && genhtml lcov.info --output-dir coverage --rc lcov_branch_coverage=1",
     "coverage:html:mac": "yarn coverage:lcov && genhtml lcov.info --output-dir coverage --rc branch_coverage=1 --ignore-errors inconsistent --ignore-errors corrupt",
     "test": "yarn test:forge",
@@ -19,11 +19,9 @@
   },
   "files": [
     "abi",
-    "artifacts",
     "contracts",
     "deployments",
     "docs",
-    "forge-build",
     "LICENSE",
     "README.md",
     "types"
@@ -43,8 +41,6 @@
   "homepage": "https://github.com/mahaxyz/contracts#readme",
   "devDependencies": {
     "@ethersproject/bignumber": "^5.6.2",
-    "@layerzerolabs/lz-evm-oapp-v2": "^2.3.29",
-    "@layerzerolabs/lz-evm-protocol-v2": "^2.3.29",
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.4",
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.10",

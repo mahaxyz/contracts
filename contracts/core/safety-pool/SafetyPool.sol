@@ -18,6 +18,12 @@ import {SafetyPoolEvents} from "../../interfaces/events/SafetyPoolEvents.sol";
 
 import {IERC20, MultiStakingRewardsERC4626} from "../utils/MultiStakingRewardsERC4626.sol";
 
+/**
+ * @title The SafetyPool contract
+ * @author maha.xyz
+ * @notice Used to pay off any bad debt that may occur in the protocol
+ * @dev https://docs.maha.xyz/mechanics/safety-pool
+ */
 contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
   /// @inheritdoc ISafetyPool
   bytes32 public immutable MANAGER_ROLE = keccak256("MANAGER_ROLE");
@@ -40,10 +46,11 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
     address _governance,
     address _rewardToken1,
     address _rewardToken2,
-    uint256 _rewardsDuration
+    uint256 _rewardsDuration,
+    address _stakingBoost
   ) external reinitializer(1) {
     __MultiStakingRewardsERC4626_init(
-      _name, _symbol, _stablecoin, _governance, _rewardToken1, _rewardToken2, _rewardsDuration
+      _name, _symbol, _stablecoin, _governance, _rewardToken1, _rewardToken2, _rewardsDuration, _stakingBoost
     );
     withdrawalDelay = _withdrawalDelay;
   }

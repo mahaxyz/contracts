@@ -6,18 +6,9 @@
     "esModuleInterop": true,
     "outDir": "dist",
     "noImplicitAny": false,
-    "resolveJsonModule": true,
-    "declaration": true,
-    "declarationDir": "./types"
+    "resolveJsonModule": true
   },
-  "include": [
-    "./scripts",
-    "./test-suites",
-    "./types",
-    "./tasks",
-    "./helpers",
-    "./deploy"
-  ],
+  "include": ["./types", "./scripts", "./deploy"],
   "files": [
     "./hardhat.config.ts",
     "node_modules/@nomiclabs/hardhat-etherscan/src/type-extensions.ts",
