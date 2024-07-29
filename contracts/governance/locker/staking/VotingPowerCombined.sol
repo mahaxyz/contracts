@@ -14,7 +14,6 @@
 pragma solidity 0.8.21;
 
 import {IOmnichainStaking} from "../../../interfaces/governance/IOmnichainStaking.sol";
-import {IPoolVoter} from "../../../interfaces/governance/IPoolVoter.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {IVotes} from "@openzeppelin/contracts/governance/utils/IVotes.sol";
 
@@ -23,19 +22,16 @@ import {IVotes} from "@openzeppelin/contracts/governance/utils/IVotes.sol";
 contract VotingPowerCombined is IVotes, OwnableUpgradeable {
   IOmnichainStaking public lpStaking;
   IOmnichainStaking public tokenStaking;
-  IPoolVoter public voter;
 
-  function init(address _owner, address _tokenStaking, address _lpStaking, address _voter) external reinitializer(1) {
+  function init(address _owner, address _tokenStaking, address _lpStaking) external reinitializer(1) {
     lpStaking = IOmnichainStaking(_lpStaking);
     tokenStaking = IOmnichainStaking(_tokenStaking);
-    voter = IPoolVoter(_voter);
     __Ownable_init(_owner);
   }
 
-  function setAddresses(address _tokenStaking, address _lpStaking, address _voter) external onlyOwner {
+  function setAddresses(address _tokenStaking, address _lpStaking) external onlyOwner {
     lpStaking = IOmnichainStaking(_lpStaking);
     tokenStaking = IOmnichainStaking(_tokenStaking);
-    voter = IPoolVoter(_voter);
   }
 
   function getVotes(address account) external view returns (uint256) {
@@ -70,14 +66,6 @@ contract VotingPowerCombined is IVotes, OwnableUpgradeable {
       return lpStaking.getPastVotes(account, timepoint);
     }
     return lpStaking.getPastVotes(account, timepoint) + tokenStaking.getPastVotes(account, timepoint);
-  }
-
-  function reset(address _who) external {
-    require(
-      msg.sender == _who || msg.sender == address(lpStaking) || msg.sender == address(tokenStaking),
-      "invalid reset performed"
-    );
-    if (address(voter) != address(0)) voter.reset(_who);
   }
 
   function getPastTotalSupply(uint256 timepoint) external view returns (uint256) {
