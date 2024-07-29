@@ -196,11 +196,11 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     PoolInfo memory info = _poolInfos[pool];
     uint256 balanceBefore = pool.assetBalance();
 
-    require(balanceBefore + 1 wei >= info.debt, "invaraint balance >= debt");
-
-    // calculate fees
-    if (balanceBefore <= info.debt) return;
+    require(balanceBefore >= info.debt, "invariant balance > debt");
     uint256 fees = balanceBefore - info.debt;
+
+    // save gas by avoiding a transaction if there are no fees
+    if (fees == 0) return;
 
     // withdraw the generated fees
     pool.withdraw(fees);
