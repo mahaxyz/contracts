@@ -55,10 +55,10 @@ contract MultiStakingRewardsERC4626SimpleTest is BaseZaiTest {
     assertApproxEqAbs(staker.rewardRate(maha), 1_157_407_407_407_407, 1e6);
     assertApproxEqAbs(staker.rewardRate(weth), 115_740_740_740_740, 1e6);
 
-    assertEq(staker.totalBoostedSupply(), 100 ether);
+    assertEq(staker.totalBoostedSupply(), 20 ether);
 
-    assertEq(staker.totalBoostedSupply(), 100 ether);
-    assertEq(staker.boostedBalance(whale), 100 ether);
+    assertEq(staker.totalBoostedSupply(), 20 ether);
+    assertEq(staker.boostedBalance(whale), 20 ether);
   }
 
   function test_claimReward() public {
@@ -72,15 +72,15 @@ contract MultiStakingRewardsERC4626SimpleTest is BaseZaiTest {
     assertApproxEqAbs(staker.rewardRate(maha), 1_157_407_407_407_407, 1e6);
     assertEq(staker.rewardRate(weth), 0);
 
-    assertEq(staker.totalBoostedSupply(), 100 ether);
+    assertEq(staker.totalBoostedSupply(), 20 ether);
 
     vm.warp(block.timestamp + 2 days);
 
     staker.getReward(whale, maha);
     assertApproxEqAbs(maha.balanceOf(whale), 100 ether, 1e8);
 
-    assertEq(staker.totalBoostedSupply(), 100 ether);
-    assertEq(staker.boostedBalance(whale), 100 ether);
+    assertEq(staker.totalBoostedSupply(), 20 ether);
+    assertEq(staker.boostedBalance(whale), 20 ether);
   }
 
   function test_withdraw() public {
@@ -92,8 +92,9 @@ contract MultiStakingRewardsERC4626SimpleTest is BaseZaiTest {
     staker.redeem(10 ether, whale, whale);
 
     assertEq(zai.balanceOf(whale), 10 ether);
-    assertEq(staker.totalBoostedSupply(), 90 ether);
-    assertEq(staker.boostedBalance(whale), 90 ether);
+
+    assertEq(staker.totalBoostedSupply(), 18 ether);
+    assertEq(staker.boostedBalance(whale), 18 ether);
   }
 
   function test_totalBoostedSupply() public {
@@ -103,12 +104,12 @@ contract MultiStakingRewardsERC4626SimpleTest is BaseZaiTest {
     vm.prank(whale);
     staker.mint(100 ether, whale);
 
-    assertEq(staker.totalBoostedSupply(), 100 ether);
+    assertEq(staker.totalBoostedSupply(), 20 ether);
 
     vm.prank(whale);
     staker.redeem(10 ether, whale, whale);
 
-    assertEq(staker.totalBoostedSupply(), 90 ether);
+    assertEq(staker.totalBoostedSupply(), 18 ether);
   }
 
   function test_boostedBalance() public {
@@ -118,11 +119,12 @@ contract MultiStakingRewardsERC4626SimpleTest is BaseZaiTest {
     vm.prank(whale);
     staker.mint(100 ether, whale);
 
-    assertEq(staker.boostedBalance(whale), 100 ether);
+    assertEq(staker.boostedBalance(whale), 20 ether);
+    assertEq(staker.balanceOf(whale), 100 ether);
 
     vm.prank(whale);
     staker.redeem(10 ether, whale, whale);
 
-    assertEq(staker.boostedBalance(whale), 90 ether);
+    assertEq(staker.boostedBalance(whale), 18 ether);
   }
 }

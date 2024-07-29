@@ -347,7 +347,7 @@ abstract contract MultiStakingRewardsERC4626 is
     uint256 totalSupply = totalSupply();
 
     if (staking == IOmnichainStaking(address(0))) {
-      return (balance, totalSupply);
+      return (balance / 5, totalSupply / 5);
     }
 
     boostedBalance_ = balance / 5;
