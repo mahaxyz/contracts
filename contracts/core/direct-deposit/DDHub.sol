@@ -131,6 +131,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     _updatePoolInfo(pool, info);
   }
 
+  /// @inheritdoc IDDHub
   function sweepFees(IDDPool pool) external {
     _sweepFees(pool);
   }

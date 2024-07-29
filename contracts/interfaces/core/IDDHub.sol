@@ -147,4 +147,10 @@ interface IDDHub {
    * @param pool The pool to shutdown
    */
   function shutdownPool(IDDPool pool) external;
+
+  /**
+   * @notice Sweeps fees from a specific pool
+   * @param pool The pool to sweep fees for
+   */
+  function sweepFees(IDDPool pool) external;
 }
