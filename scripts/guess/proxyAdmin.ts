@@ -10,7 +10,7 @@ const constructorTypes = contractArtifact.abi
   ?.inputs.map((t) => t.type);
 
 const factoryAddress = "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0";
-const constructorArgs: any[] = ["0x69000d5a9f4ca229227b90f61285f5866d139f11"];
+const constructorArgs: any[] = ["0x690002da1f2d828d72aa89367623df7a432e85a9"];
 
 console.log("constructor parameters", constructorTypes, constructorArgs);
 

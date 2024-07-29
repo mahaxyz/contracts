@@ -12,7 +12,7 @@ const constructorTypes = contractArtifact.abi
   ?.inputs.map((t) => t.type);
 
 const impl = new ethers.Contract(
-  "0xC17596890598282dE86028B24C0C4885a9261874",
+  "0x6A661312938D22A2A0e27F585073E4406903990a",
   implArtificat.abi
 );
 
@@ -30,8 +30,8 @@ const initData = impl.interface.encodeFunctionData("initialize", [
 
 const factoryAddress = "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0";
 const constructorArgs: any[] = [
-  "0xC17596890598282dE86028B24C0C4885a9261874", // implementation
-  "0x69000f2f879ee598ddf16c6c33cfc4f2d983b6bd", // proxyadmin
+  "0x6A661312938D22A2A0e27F585073E4406903990a", // implementation
+  "0x6900064e7a3920c114e25b5fe4780f26520e3231", // proxyadmin
   initData, // init data
 ];
 

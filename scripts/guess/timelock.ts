@@ -12,7 +12,7 @@ const constructorTypes = contractArtifact.abi
 
 const factoryAddress = "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0";
 const constructorArgs: any[] = [
-  86400 * 5,
+  60 * 60,
   "0x6357EDbfE5aDA570005ceB8FAd3139eF5A8863CC",
   ["0x6357EDbfE5aDA570005ceB8FAd3139eF5A8863CC"],
 ];

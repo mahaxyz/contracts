@@ -4,7 +4,7 @@ import { getCreate2Address } from "../create2/create2";
 
 // declare deployment parameters
 import contractArtifact from "../../artifacts/contracts/governance/MAHAProxy.sol/MAHAProxy.json";
-import implArtificat from "../../artifacts/contracts/core/psm/PegStabilityModule.sol/PegStabilityModule.json";
+import implArtificat from "../../artifacts/contracts/core/safety-pool/SafetyPool.sol/SafetyPool.json";
 
 // @ts-ignore
 const constructorTypes = contractArtifact.abi
@@ -12,17 +12,17 @@ const constructorTypes = contractArtifact.abi
   ?.inputs.map((t) => t.type);
 
 const impl = new ethers.Contract(
-  "0x6A661312938D22A2A0e27F585073E4406903990a",
+  "0x5153c753BFaf3dFFaB76004Ed004c79714f5aA78",
   implArtificat.abi
 );
 
 const initData = impl.interface.encodeFunctionData("initialize", [
   "0x69000405f9dce69bd4cbf4f2865b79144a69bfe0", // address _zai,
-  "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", // address _collateral,
+  "0xdac17f958d2ee523a2206206994597c13d831ec7", // address _collateral,
   "0x1F09Ec21d7fd0A21879b919bf0f9C46e6b85CA8b", // address _governance,
   1e6, // uint256 _newRate,
-  10000000n * 10n ** 6n, // uint256 _supplyCap,
-  10000000n * 10n ** 18n, // uint256 _debtCap,
+  100000000n * 10n ** 6n, // uint256 _supplyCap,
+  100000000n * 10n ** 18n, // uint256 _debtCap,
   0, // uint256 _mintFeeBps,
   300, // uint256 _redeemFeeBps,
   "0x6357EDbfE5aDA570005ceB8FAd3139eF5A8863CC", // address _feeDestination
@@ -41,7 +41,7 @@ const job = () => {
   let i = 0;
 
   while (true) {
-    const salt = ethers.id("" + i);
+    const salt = ethers.id("#" + i);
     // Calculate contract address
     const computedAddress = getCreate2Address({
       salt: salt,

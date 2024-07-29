@@ -6,23 +6,20 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const timelockD = await deployments.get("MAHATimelockController");
-
-  const admin = await deploy("ProxyAdmin", {
+  const contract = await deploy("SafetyPool-impl", {
     from: deployer,
-    contract: "ProxyAdmin",
-    args: [timelockD.address],
+    contract: "SafetyPool",
+    args: [],
     autoMine: true,
     log: true,
   });
 
   if (network.name !== "hardhat") {
     await hre.run("verify:verify", {
-      address: admin.address,
-      constructorArguments: [timelockD.address],
+      address: contract.address,
     });
   }
 }
 
-main.tags = ["ProxyAdmin"];
+main.tags = ["SafetyPool"];
 export default main;

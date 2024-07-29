@@ -21,8 +21,8 @@ async function main() {
   const initData = impl.interface.encodeFunctionData("initialize", implArgs);
 
   const constructorArgs: any[] = [
-    "0xC17596890598282dE86028B24C0C4885a9261874",
-    "0x69000f2f879ee598ddf16c6c33cfc4f2d983b6bd",
+    "0x6A661312938D22A2A0e27F585073E4406903990a",
+    "0x6900064e7a3920c114e25b5fe4780f26520e3231",
     initData,
   ];
   const salt =

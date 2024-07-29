@@ -4,15 +4,14 @@ import { waitForTx } from "../utils";
 
 async function main() {
   const constructorArgs: any[] = [
-    86400 * 5,
+    60 * 60,
     "0x6357EDbfE5aDA570005ceB8FAd3139eF5A8863CC",
     ["0x6357EDbfE5aDA570005ceB8FAd3139eF5A8863CC"],
   ];
   const salt =
-    "0x69d6d41e98a79d76ddcc4edd70bfc8205509588f3b307cf950fdf68e6a18e006";
-  const address = "0x69000d5a9f4ca229227b90f61285f5866d139f11";
+    "0xd0e12b966b8f295eee7939e395339999e99db2caf2a53e482d881250122e5b39";
+  const target = "0x690002da1f2d828d72aa89367623df7a432e85a9";
 
-  const [wallet] = await hre.ethers.getSigners();
   const deployer = await hre.ethers.getContractAt(
     "Deployer",
     "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0"
@@ -26,23 +25,19 @@ async function main() {
     factory.bytecode
   );
 
-  const txPopulated = await deployer.deploy.populateTransaction(
-    bytecode,
-    ethers.id(salt)
+  await waitForTx(
+    await deployer.deployWithAssert(bytecode, ethers.id(salt), target)
   );
-
-  const txR = await waitForTx(await wallet.sendTransaction(txPopulated));
-  console.log(txR?.logs);
 
   if (network.name !== "hardhat") {
     await hre.deployments.save("MAHATimelockController", {
-      address: address,
+      address: target,
       args: constructorArgs,
       abi: factory.interface.format(true),
     });
 
     await hre.run("verify:verify", {
-      address: address,
+      address: target,
       constructorArguments: constructorArgs,
     });
   }

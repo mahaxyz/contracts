@@ -3,12 +3,11 @@ import { buildBytecode } from "./create2";
 import { waitForTx } from "../utils";
 
 async function main() {
-  const constructorArgs: any[] = ["0x69000d5a9f4ca229227b90f61285f5866d139f11"];
+  const constructorArgs: any[] = ["0x690002da1f2d828d72aa89367623df7a432e85a9"];
   const salt =
-    "0x201f9ccf664d63a838c47d6d856dd2fa22f1a107bd0e4c83debe9092b05f7439";
-  const address = "0x69000f2f879ee598ddf16c6c33cfc4f2d983b6bd";
+    "0x2b51c962304bb35fa37a504feeb6a8ea4cf009c1b1a26a9aba4e9458ae0b69ba";
+  const target = "0x6900064e7a3920c114e25b5fe4780f26520e3231";
 
-  const [wallet] = await hre.ethers.getSigners();
   const deployer = await hre.ethers.getContractAt(
     "Deployer",
     "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0"
@@ -22,23 +21,19 @@ async function main() {
     factory.bytecode
   );
 
-  const txPopulated = await deployer.deploy.populateTransaction(
-    bytecode,
-    ethers.id(salt)
+  await waitForTx(
+    await deployer.deployWithAssert(bytecode, ethers.id(salt), target)
   );
-
-  const txR = await waitForTx(await wallet.sendTransaction(txPopulated));
-  console.log(txR?.logs);
 
   if (network.name !== "hardhat") {
     await hre.deployments.save("ProxyAdmin", {
-      address: address,
+      address: target,
       args: constructorArgs,
       abi: factory.interface.format(true),
     });
 
     await hre.run("verify:verify", {
-      address: address,
+      address: target,
       constructorArguments: constructorArgs,
     });
   }
