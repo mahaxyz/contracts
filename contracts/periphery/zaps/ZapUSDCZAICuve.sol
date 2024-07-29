@@ -68,6 +68,12 @@ contract ZapUSDCZAICuve {
     me = address(this);
   }
 
+  /**
+   * @notice Zaps collateral into ZAI LP tokens
+   * @dev This function is used when the user only has collateral tokens.
+   * @param collateralAmount The amount of collateral to zap
+   * @param minLpAmount The minimum amount of LP tokens to stake
+   */
   function zapUsdcIntoLP(uint256 collateralAmount, uint256 minLpAmount) external {
     // fetch tokens
     collateral.transferFrom(msg.sender, me, collateralAmount);
@@ -91,6 +97,13 @@ contract ZapUSDCZAICuve {
     emit Zapped(msg.sender, collateralAmount / 2, zaiAmount, pool.balanceOf(msg.sender));
   }
 
+  /**
+   * @notice Zaps ZAI and collateral into LP tokens
+   * @dev This function is used when the user already has ZAI tokens.
+   * @param zaiAmount The amount of ZAI to zap
+   * @param collateralAmount The amount of collateral to zap
+   * @param minLpAmount The minimum amount of LP tokens to stake
+   */
   function zapZaiUsdcIntoLP(uint256 zaiAmount, uint256 collateralAmount, uint256 minLpAmount) external {
     // fetch tokens
     if (zaiAmount > 0) zai.transferFrom(msg.sender, me, zaiAmount);
