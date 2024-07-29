@@ -141,11 +141,8 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     uint256 currentAssets = pool.assetBalance(); // Should return ZAI owned by pools
     uint256 maxWithdraw = Math.min(pool.maxWithdraw(), Constants.SAFEMAX);
 
-    // Determine if it needs to fully unwind due to DDM being shutdown, plan is not active or
-    // something wrong is going with the third party and we are entering in the
-    // illegal situation of having less assets than what is registered
-    // It's adding up `WAD` due possible rounding errors
-    if (!info.isLive || !info.plan.active() || currentAssets + Constants.WAD < info.debt) {
+    // Determine if it needs to fully unwind due to DDM being shutdown, plan is not active
+    if (!info.isLive || !info.plan.active()) {
       toWithdraw = maxWithdraw;
     } else {
       uint256 maxDebt = info.debtCeiling; //vat.Line();

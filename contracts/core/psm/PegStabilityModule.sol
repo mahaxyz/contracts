@@ -15,6 +15,8 @@ pragma solidity 0.8.21;
 
 import {IStablecoin} from "../../interfaces/IStablecoin.sol";
 import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
+
+import {PSMErrors} from "../../interfaces/errors/PSMErrors.sol";
 import {PSMEventsLib} from "../../interfaces/events/PSMEventsLib.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
@@ -58,7 +60,7 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
   address public feeDestination;
 
   /// @inheritdoc IPegStabilityModule
-  uint256 public MAX_FEE_BPS;
+  uint256 public immutable MAX_FEE_BPS = 10_000;
 
   /// @inheritdoc IPegStabilityModule
   function initialize(
@@ -75,6 +77,14 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
     zai = IStablecoin(_zai);
     collateral = IERC20(_collateral);
 
+    if (_zai == address(0) || _collateral == address(0) || _governance == address(0) || _feeDestination == address(0)) {
+      revert PSMErrors.NotZeroAddress();
+    }
+
+    if (_newRate == 0 || _supplyCap == 0 || _debtCap == 0) {
+      revert PSMErrors.NotZeroValue();
+    }
+
     __Ownable_init(_governance);
     __ReentrancyGuard_init();
 
@@ -82,17 +92,17 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
     _updateCaps(_supplyCap, _debtCap);
     _updateRate(_newRate);
     _updateFeeDestination(_feeDestination);
-
-    MAX_FEE_BPS = 10_000;
   }
 
   /// @inheritdoc IPegStabilityModule
   function mint(address dest, uint256 shares) external nonReentrant {
     uint256 amount = toCollateralAmountWithFee(shares, mintFeeBps);
 
-    require(amount > 0, "amount too low");
-    require(collateral.balanceOf(address(this)) + amount <= supplyCap, "supply cap exceeded");
-    require(debt + shares <= debtCap, "debt cap exceeded");
+    if (amount == 0) revert PSMErrors.NotZeroValue();
+    if (shares == 0) revert PSMErrors.NotZeroValue();
+
+    if (collateral.balanceOf(address(this)) + amount > supplyCap) revert PSMErrors.SupplyCapReached();
+    if (debt + shares > debtCap) revert PSMErrors.DebtCapReached();
 
     collateral.safeTransferFrom(msg.sender, address(this), amount);
     zai.mint(dest, shares);
@@ -105,7 +115,8 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
   function redeem(address dest, uint256 shares) external nonReentrant {
     uint256 amount = toCollateralAmountWithFeeInverse(shares, redeemFeeBps);
 
-    require(amount > 0, "amount too low");
+    if (amount == 0) revert PSMErrors.NotZeroValue();
+    if (shares == 0) revert PSMErrors.NotZeroValue();
 
     zai.transferFrom(msg.sender, address(this), shares);
     zai.burn(address(this), shares);
