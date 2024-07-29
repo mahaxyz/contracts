@@ -22,6 +22,7 @@ import {Constants} from "./Constants.sol";
 import {AccessControlEnumerableUpgradeable} from
   "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 
+import "../../../lib/forge-std/src/console.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
@@ -196,11 +197,10 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     PoolInfo memory info = _poolInfos[pool];
     uint256 balanceBefore = pool.assetBalance();
 
-    require(balanceBefore >= info.debt, "invariant balance > debt");
-    uint256 fees = balanceBefore - info.debt;
+    require(balanceBefore + 1 wei >= info.debt, "invariant balance > debt");
+    if (balanceBefore <= info.debt) return;
 
-    // save gas by avoiding a transaction if there are no fees
-    if (fees == 0) return;
+    uint256 fees = balanceBefore - info.debt;
 
     // withdraw the generated fees
     pool.withdraw(fees);
