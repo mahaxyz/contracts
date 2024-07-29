@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/mahaxyz/contracts/compare/v1.1.1...v1.2.0) (2024-07-29)
+
+
+### Features
+
+* governance staking contracts ([#13](https://github.com/mahaxyz/contracts/issues/13)) ([176498e](https://github.com/mahaxyz/contracts/commit/176498e86aed03a1009cc0d4c8d5315eb114fdd1))
+
 ## [1.1.1](https://github.com/mahaxyz/contracts/compare/v1.1.0...v1.1.1) (2024-07-28)
 
 
