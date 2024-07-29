@@ -121,6 +121,10 @@ abstract contract MultiStakingRewardsERC4626 is
     if (_boostedTotalSupply == 0) {
       _boostedTotalSupply = totalSupply();
     }
+
+    // register the erc20 event
+    _mint(msg.sender, 1e18);
+    _burn(msg.sender, 1e18);
   }
 
   /// @inheritdoc IMultiTokenRewards
