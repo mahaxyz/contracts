@@ -33,6 +33,7 @@ contract DDOperatorPlan is AccessControlDefaultAdminRules, IDDPlan {
   }
 
   /// @inheritdoc IDDPlan
+  /// @dev The `currentAssets` arguement is not used in this plan.
   function getTargetAssets(uint256) external view override returns (uint256) {
     if (enabled == 0) return 0;
     return targetAssets;
