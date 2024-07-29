@@ -73,7 +73,7 @@ contract PegStabilityModule is OwnableUpgradeable, ReentrancyGuardUpgradeable, I
     uint256 _mintFeeBps,
     uint256 _redeemFeeBps,
     address _feeDestination
-  ) external reinitializer(1) {
+  ) external reinitializer(2) {
     zai = IStablecoin(_zai);
     collateral = IERC20(_collateral);
 
