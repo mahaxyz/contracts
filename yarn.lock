@@ -441,16 +441,6 @@
     wrap-ansi "^8.1.0"
     wrap-ansi-cjs "npm:wrap-ansi@^7.0.0"
 
-"@layerzerolabs/lz-evm-oapp-v2@^2.3.29":
-  version "2.3.29"
-  resolved "https://registry.yarnpkg.com/@layerzerolabs/lz-evm-oapp-v2/-/lz-evm-oapp-v2-2.3.29.tgz#7872de67696c5e994ae35e2b149e2f4eb6d25954"
-  integrity sha512-HFuHVCUjZNOjKuhRDBbK2NSGA7sMwFhXRqy0veym9kECDwtHdazLfYmOGhu1amRfomc+eq+KBakJl2XI8njM6Q==
-
-"@layerzerolabs/lz-evm-protocol-v2@^2.3.29":
-  version "2.3.29"
-  resolved "https://registry.yarnpkg.com/@layerzerolabs/lz-evm-protocol-v2/-/lz-evm-protocol-v2-2.3.29.tgz#8c089118a399c1af53a9a00db298695bc4b8b086"
-  integrity sha512-jPQxMkgT88JaJ6zH0PJft1b4nCKe06g0ejWTKtNniSgsgd2qd8Xou6NSmg4tNgZljCfi8SrqWhX7Iz4WIQb2gg==
-
 "@metamask/eth-sig-util@^4.0.0":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@metamask/eth-sig-util/-/eth-sig-util-4.0.1.tgz#3ad61f6ea9ad73ba5b19db780d40d9aae5157088"
