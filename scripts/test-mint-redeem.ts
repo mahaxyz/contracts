@@ -14,7 +14,7 @@ async function main() {
   );
   const zai = await hre.ethers.getContractAt(
     "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
-    "0x6900057428C99Fb373397D657Beb40D92D8aC97f"
+    "0x69000405f9dce69bd4cbf4f2865b79144a69bfe0"
   );
 
   const psmD = await hre.deployments.get(`PegStabilityModule-${symbol}`);

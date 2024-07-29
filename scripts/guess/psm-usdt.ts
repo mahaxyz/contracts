@@ -17,9 +17,9 @@ const impl = new ethers.Contract(
 );
 
 const initData = impl.interface.encodeFunctionData("initialize", [
-  "0x6900057428C99Fb373397D657Beb40D92D8aC97f", // address _zai,
+  "0x69000405f9dce69bd4cbf4f2865b79144a69bfe0", // address _zai,
   "0xdac17f958d2ee523a2206206994597c13d831ec7", // address _collateral,
-  "0xe5159e75ba5f1C9E386A3ad2FC7eA75c14629572", // address _governance,
+  "0x1F09Ec21d7fd0A21879b919bf0f9C46e6b85CA8b", // address _governance,
   1e6, // uint256 _newRate,
   100000000n * 10n ** 6n, // uint256 _supplyCap,
   100000000n * 10n ** 18n, // uint256 _debtCap,
@@ -28,7 +28,7 @@ const initData = impl.interface.encodeFunctionData("initialize", [
   "0x6357EDbfE5aDA570005ceB8FAd3139eF5A8863CC", // address _feeDestination
 ]);
 
-const factoryAddress = "0xc07c1980C87bfD5de0DC77f90Ce6508c1C0795C3";
+const factoryAddress = "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0";
 const constructorArgs: any[] = [
   "0xC17596890598282dE86028B24C0C4885a9261874", // implementation
   "0x69000f2f879ee598ddf16c6c33cfc4f2d983b6bd", // proxyadmin

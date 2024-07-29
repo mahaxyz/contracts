@@ -7,9 +7,9 @@ async function main() {
   const impl = await hre.ethers.getContractFactory("PegStabilityModule");
 
   const implArgs = [
-    "0x6900057428C99Fb373397D657Beb40D92D8aC97f", // address _zai,
+    "0x69000405f9dce69bd4cbf4f2865b79144a69bfe0", // address _zai,
     "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", // address _collateral,
-    "0xe5159e75ba5f1C9E386A3ad2FC7eA75c14629572", // address _governance,
+    "0x1F09Ec21d7fd0A21879b919bf0f9C46e6b85CA8b", // address _governance,
     1e6, // uint256 _newRate,
     10000000n * 10n ** 6n, // uint256 _supplyCap,
     10000000n * 10n ** 18n, // uint256 _debtCap,
@@ -32,7 +32,7 @@ async function main() {
   const [wallet] = await hre.ethers.getSigners();
   const deployer = await hre.ethers.getContractAt(
     "Deployer",
-    "0xc07c1980C87bfD5de0DC77f90Ce6508c1C0795C3"
+    "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0"
   );
 
   const bytecode = buildBytecode(

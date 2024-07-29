@@ -10,7 +10,7 @@ const constructorTypes = contractArtifact.abi
   .find((v) => v.type === "constructor")
   ?.inputs.map((t) => t.type);
 
-const factoryAddress = "0xc07c1980C87bfD5de0DC77f90Ce6508c1C0795C3";
+const factoryAddress = "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0";
 const constructorArgs: any[] = [
   86400 * 5,
   "0x6357EDbfE5aDA570005ceB8FAd3139eF5A8863CC",

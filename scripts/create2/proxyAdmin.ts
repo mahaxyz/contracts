@@ -11,7 +11,7 @@ async function main() {
   const [wallet] = await hre.ethers.getSigners();
   const deployer = await hre.ethers.getContractAt(
     "Deployer",
-    "0xc07c1980C87bfD5de0DC77f90Ce6508c1C0795C3"
+    "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0"
   );
 
   const factory = await hre.ethers.getContractFactory("ProxyAdmin");
