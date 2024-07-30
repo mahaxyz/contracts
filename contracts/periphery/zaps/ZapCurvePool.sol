@@ -13,21 +13,31 @@
 
 pragma solidity 0.8.21;
 
+import "../../../lib/forge-std/src/console.sol";
 import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
 import {ICurveStableSwapNG} from "../../interfaces/periphery/ICurveStableSwapNG.sol";
-
 import {IERC20Metadata} from "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
+interface ICurveRouter {
+  function add_liquidity(
+    address _pool,
+    uint256[3] memory _deposit_amounts,
+    uint256 _min_mint_amount
+  ) external returns (uint256);
+}
+
 /**
- * @title ZapCuvePool
+ * @title ZapCurvePool
  * @dev This contract allows users to perform a Zap operation by swapping collateral for zai tokens, adding liquidity to
  * curve LP, and staking the LP tokens.
  */
-contract ZapCuvePool {
+contract ZapCurvePool {
   IERC4626 public staking;
 
   ICurveStableSwapNG public pool;
+
+  ICurveRouter public router;
 
   IERC20Metadata public zai;
 
@@ -50,9 +60,10 @@ contract ZapCuvePool {
   /**
    * @dev Initializes the contract with the required contracts
    */
-  constructor(address _staking, address _psm) {
+  constructor(address _staking, address _psm, address _router) {
     staking = IERC4626(_staking);
     psm = IPegStabilityModule(_psm);
+    router = ICurveRouter(_router);
 
     pool = ICurveStableSwapNG(staking.asset());
     zai = IERC20Metadata(address(psm.zai()));
@@ -61,8 +72,8 @@ contract ZapCuvePool {
     decimalOffset = 10 ** (18 - collateral.decimals());
 
     // give approvals
-    zai.approve(address(pool), type(uint256).max);
-    collateral.approve(address(pool), type(uint256).max);
+    zai.approve(address(_router), type(uint256).max);
+    collateral.approve(address(_router), type(uint256).max);
     collateral.approve(address(psm), type(uint256).max);
     pool.approve(_staking, type(uint256).max);
 
@@ -84,11 +95,11 @@ contract ZapCuvePool {
     psm.mint(address(this), zaiAmount);
 
     // add liquidity
-    uint256[] memory amounts = new uint256[](2);
+    uint256[3] memory amounts;
     amounts[0] = zaiAmount;
-    amounts[1] = collateralAmount / 2;
+    amounts[2] = collateralAmount / 2;
 
-    pool.add_liquidity(amounts, minLpAmount, address(this));
+    router.add_liquidity(address(pool), amounts, minLpAmount);
 
     // we now have LP tokens; deposit into staking contract for the user
     staking.deposit(pool.balanceOf(address(this)), msg.sender);
