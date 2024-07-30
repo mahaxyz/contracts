@@ -91,13 +91,13 @@ contract ZapCurvePoolTest is BaseZaiTest {
   function test_zap_fork() public {
     uint256 mainnetFork = vm.createFork(MAINNET_RPC_URL);
     vm.selectFork(mainnetFork);
-    vm.rollFork(20_419_140);
+    vm.rollFork(20_419_466);
 
     address user = 0x95Ba4cF87D6723ad9C0Db21737D862bE80e93911;
     IERC20 _usdc = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
     IERC20 _zai = IERC20(0x69000405f9DcE69BD4Cbf4f2865b79144A69BFE0);
     IERC20 _pool = IERC20(0x057c658DfBBcbb96C361Fb4e66B86cCA081B6C6A);
-    IERC20 _staking = IERC20(0x0Aad7FC97a30670714957e91276C2296d3b7e9D0);
+    IERC20 _staking = IERC20(0x6900066D9F8DF0bfaF1E25Ef89c0453e8e12373d);
     address _psmUSDC = 0x69000052a82e218ccB61FE6E9d7e3F87b9C5916f;
 
     ZapCurvePool _zap = new ZapCurvePool(
