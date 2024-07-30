@@ -24,7 +24,7 @@ contract ZapSafetyPoolTest is BaseZaiTest {
   ZapSafetyPool internal zap;
   PegStabilityModule internal psmUSDC;
 
-  function setUp() public {
+  function test_zap() public {
     _setUpBase();
     zai.mint(whale, 1000 ether);
 
@@ -54,12 +54,9 @@ contract ZapSafetyPoolTest is BaseZaiTest {
     vm.prank(governance);
     safetyPool.grantRole(role, governance);
 
-    vm.prank(whale);
-    zai.approve(address(safetyPool), type(uint256).max);
-  }
-
-  function test_zap() public {
     vm.startPrank(whale);
+    zai.approve(address(safetyPool), type(uint256).max);
+
     usdc.mint(whale, 100e6);
 
     usdc.approve(address(zap), type(uint256).max);
