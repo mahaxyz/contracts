@@ -25,7 +25,6 @@ interface IL2Deposit {
    * @param   _collateralToken  nextWETH on L2
    * @param   _connext  Connext contract
    * @param   _swapKey  Swap key for the connext contract swap from WETH to nextWETH
-   * @param   _receiver Renzo Receiver middleware contract for price feed
    */
   function initialize(
     IERC20 _xZAI,
@@ -33,7 +32,6 @@ interface IL2Deposit {
     IERC20 _collateralToken,
     IConnext _connext,
     bytes32 _swapKey,
-    address _receiver,
     uint32 _bridgeDestinationDomain,
     address _bridgeTargetAddress,
     address _owner,
@@ -61,7 +59,7 @@ interface IL2Deposit {
 
   /**
    * @notice  This function will take the balance of nextWETH in the contract and bridge it down to the L1
-   * @dev     The L1 contract will unwrap, deposit in Renzo, and lock up the ZAI in the lockbox on L1
+   * @dev     The L1 contract will unwrap, deposit in maha, and lock up the ZAI in the lockbox on L1
    *          This function should only be callable by permissioned accounts
    *          The caller will estimate and pay the gas for the bridge call
    */
@@ -92,13 +90,6 @@ interface IL2Deposit {
   function recoverERC20(address _token, uint256 _amount, address _to) external;
 
   function setRate(uint256 _rate) external;
-
-  /**
-   * @notice This function sets/updates the Receiver Price Feed Middleware for ZAI
-   * @dev This should be permissioned call (onlyOnwer), can be set to address(0) for not configured
-   * @param _receiver Receiver address
-   */
-  function setReceiverPriceFeed(address _receiver) external;
 
   /**
    * @notice This function updates the BridgeFeeShare for depositors (must be <= 1% i.e. 100 bps)

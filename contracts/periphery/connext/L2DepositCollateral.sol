@@ -24,10 +24,10 @@ import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IER
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
- * @author  Renzo
+ * @author  maha.xyz
  * @title   L2DepositCollateral Contract
  * @dev     Tokens are sent to this contract via deposit, xZAI is minted for the user,
- *          and funds are batched and bridged down to the L1 for depositing into the Renzo Protocol.
+ *          and funds are batched and bridged down to the L1 for depositing into the maha protocol.
  *          Any ZAI minted on the L1 will be locked in the lockbox for unwrapping at a later time with xZAI.
  * @notice  Allows L2 minting of xZAI tokens in exchange for deposited assets
  */
@@ -50,9 +50,6 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
 
   /// @notice The swap ID for the connext token swap
   bytes32 public swapKey;
-
-  /// @notice The receiver middleware contract address
-  address public receiver;
 
   /// @notice The bridge router fee basis points - 100 basis points = 1%
   uint256 public bridgeRouterFeeBps;
@@ -88,7 +85,6 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
     IERC20 _collateralToken,
     IConnext _connext,
     bytes32 _swapKey,
-    address _receiver,
     uint32 _bridgeDestinationDomain,
     address _bridgeTargetAddress,
     address _owner,
@@ -111,7 +107,6 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
     collateralToken = _collateralToken;
     connext = _connext;
     swapKey = _swapKey;
-    receiver = _receiver;
     bridgeRouterFeeBps = 5;
     bridgeDestinationDomain = _bridgeDestinationDomain;
     bridgeTargetAddress = _bridgeTargetAddress;
@@ -165,7 +160,7 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
       address(collateralToken),
       msg.sender,
       balance,
-      0, // Asset is already nextWETH, so no slippage will be incurred
+      0, // Asset is already nextUSDC, so no slippage will be incurred
       bridgeCallData
     );
 
@@ -196,12 +191,6 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
   function setRate(uint256 _rate) external onlyOwner {
     emit ConnextEvents.RateUpdated(rate, _rate);
     rate = _rate;
-  }
-
-  /// @inheritdoc IL2Deposit
-  function setReceiverPriceFeed(address _receiver) external onlyOwner {
-    emit ConnextEvents.ReceiverPriceFeedUpdated(_receiver, receiver);
-    receiver = _receiver;
   }
 
   /// @inheritdoc IL2Deposit

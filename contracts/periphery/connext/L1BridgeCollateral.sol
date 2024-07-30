@@ -40,7 +40,7 @@ contract L1BridgeCollateral is IL1Bridge, ReentrancyGuardUpgradeable {
   IERC20 public collateral;
 
   /// @notice The lockbox contract for ZAI - minted ZAI is sent here
-  IXERC20Lockbox public xZaiLockbox;
+  IXERC20Lockbox public lockbox;
 
   /// @notice The address of the main Connext contract
   address public connext;
@@ -51,13 +51,13 @@ contract L1BridgeCollateral is IL1Bridge, ReentrancyGuardUpgradeable {
     IERC20 _xZai,
     IPegStabilityModule _psm,
     IERC20 _collateral,
-    IXERC20Lockbox _xZaiLockbox,
+    IXERC20Lockbox _lockbox,
     address _connext
   ) public initializer {
     // Verify non-zero addresses on inputs
     if (
       address(_zai) == address(0) || address(_xZai) == address(0) || address(_psm) == address(0)
-        || address(_collateral) == address(0) || address(_xZaiLockbox) == address(0) || address(_connext) == address(0)
+        || address(_collateral) == address(0) || address(_lockbox) == address(0) || address(_connext) == address(0)
     ) {
       revert ConnextErrors.InvalidZeroInput();
     }
@@ -66,10 +66,10 @@ contract L1BridgeCollateral is IL1Bridge, ReentrancyGuardUpgradeable {
     xZAI = _xZai;
     psm = _psm;
     collateral = _collateral;
-    xZaiLockbox = _xZaiLockbox;
+    lockbox = _lockbox;
     connext = _connext;
 
-    zai.approve(address(xZaiLockbox), type(uint256).max);
+    zai.approve(address(lockbox), type(uint256).max);
     collateral.approve(address(psm), type(uint256).max);
   }
 
@@ -109,7 +109,7 @@ contract L1BridgeCollateral is IL1Bridge, ReentrancyGuardUpgradeable {
     uint256 xZaiBalanceBeforeDeposit = xZAI.balanceOf(address(this));
 
     // Send to the lockbox to be wrapped into xZAI
-    xZaiLockbox.deposit(zaiAmount);
+    lockbox.deposit(zaiAmount);
 
     // Get the amount of xZAI that was minted
     uint256 xZaiAmount = xZAI.balanceOf(address(this)) - xZaiBalanceBeforeDeposit;
