@@ -17,12 +17,12 @@ import {PegStabilityModule} from "../../../contracts/core/psm/PegStabilityModule
 import {SafetyPool} from "../../../contracts/core/safety-pool/SafetyPool.sol";
 
 import {IERC20, MockCurvePool} from "../../../contracts/mocks/MockCurvePool.sol";
-import {ZapCuvePool} from "../../../contracts/periphery/zaps/ZapCuvePool.sol";
+import {ZapCurvePool} from "../../../contracts/periphery/zaps/ZapCurvePool.sol";
 import {BaseZaiTest, console} from "../base/BaseZaiTest.sol";
 
-contract ZapCuvePoolTest is BaseZaiTest {
+contract ZapCurvePoolTest is BaseZaiTest {
   SafetyPool internal safetyPool;
-  ZapCuvePool internal zap;
+  ZapCurvePool internal zap;
   PegStabilityModule internal psmUSDC;
   MockCurvePool internal pool;
 
@@ -65,7 +65,7 @@ contract ZapCuvePoolTest is BaseZaiTest {
 
     zai.grantManagerRole(address(psmUSDC));
 
-    // zap = new ZapCuvePool(address(safetyPool), address(psmUSDC));
+    // zap = new ZapCurvePool(address(safetyPool), address(psmUSDC));
 
     // bytes32 role = safetyPool.MANAGER_ROLE();
     // vm.prank(governance);
@@ -100,7 +100,7 @@ contract ZapCuvePoolTest is BaseZaiTest {
     IERC20 _staking = IERC20(0x0Aad7FC97a30670714957e91276C2296d3b7e9D0);
     address _psmUSDC = 0x69000052a82e218ccB61FE6E9d7e3F87b9C5916f;
 
-    ZapCuvePool _zap = new ZapCuvePool(
+    ZapCurvePool _zap = new ZapCurvePool(
       address(_staking), // lp staking pool
       _psmUSDC, // psm
       0x08780fb7E580e492c1935bEe4fA5920b94AA95Da // router

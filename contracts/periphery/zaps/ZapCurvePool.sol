@@ -28,11 +28,11 @@ interface ICurveRouter {
 }
 
 /**
- * @title ZapCuvePool
+ * @title ZapCurvePool
  * @dev This contract allows users to perform a Zap operation by swapping collateral for zai tokens, adding liquidity to
  * curve LP, and staking the LP tokens.
  */
-contract ZapCuvePool {
+contract ZapCurvePool {
   IERC4626 public staking;
 
   ICurveStableSwapNG public pool;
