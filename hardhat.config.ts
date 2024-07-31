@@ -65,9 +65,9 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      forking: {
-        url: `https://rpc.ankr.com/eth`,
-      },
+      // forking: {
+      //   url: `https://rpc.ankr.com/eth`,
+      // },
     },
     mainnet: {
       url: `https://rpc.ankr.com/eth`,

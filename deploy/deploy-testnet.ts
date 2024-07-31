@@ -60,9 +60,25 @@ async function main(hre: HardhatRuntimeEnvironment) {
     log: true,
   });
 
+  const mockCurvePoolD = await deploy("MockCurvePool", {
+    from: deployer,
+    contract: "MockCurvePool",
+    args: ["curve", "curve", [zaiD.address, mockUSDCD.address]],
+    autoMine: true,
+    log: true,
+  });
+
   const safetyPoolZaiD = await deploy("SafetyPool-ZAI", {
     from: deployer,
     contract: "SafetyPool",
+    args: [],
+    autoMine: true,
+    log: true,
+  });
+
+  const lpStakingZaiUsdcD = await deploy("StakingLPRewards-USDC", {
+    from: deployer,
+    contract: "StakingLPRewards",
     args: [],
     autoMine: true,
     log: true,
@@ -89,6 +105,10 @@ async function main(hre: HardhatRuntimeEnvironment) {
     "SafetyPool",
     safetyPoolZaiD.address
   );
+  const lpStakingZaiUsdc = await hre.ethers.getContractAt(
+    "StakingLPRewards",
+    lpStakingZaiUsdcD.address
+  );
   const zapSafetyPool = await hre.ethers.getContractAt(
     "ZapSafetyPool",
     zapSafetyPoolD.address
@@ -114,7 +134,33 @@ async function main(hre: HardhatRuntimeEnvironment) {
         deployer // address _feeDestination
       )
     );
-
+  if ((await lpStakingZaiUsdc.asset()) === ZeroAddress)
+    await waitForTx(
+      await lpStakingZaiUsdc.initialize(
+        "", // "", // string memory _name,
+        "", // "", // string memory _symbol,
+        mockCurvePoolD.address, // address(pool), // address _stakingToken,
+        deployer, // governance, // address _governance,
+        usdc.target, // address(zai), // address _rewardToken1,
+        maha.target, // address(usdc), // address _rewardToken2,
+        86400 * 30, // 86_400 * 30, // uint256 _rewardsDuration,
+        ZeroAddress // address(0) // address _staking
+      )
+    );
+  if ((await usdcPSM.zai()) !== zai.target)
+    await waitForTx(
+      await usdcPSM.initialize(
+        zai.target, // address _zai,
+        usdc.target, // address _collateral,
+        deployer, // address _governance,
+        e6, // uint256 _newRate,
+        k100 * e6, // uint256 _supplyCap,
+        k100 * e18, // uint256 _debtCap,
+        0, // uint256 _mintFeeBps,
+        100, // uint256 _redeemFeeBps,
+        deployer // address _feeDestination
+      )
+    );
   if ((await daiPSM.zai()) !== zai.target)
     await waitForTx(
       await daiPSM.initialize(
@@ -129,14 +175,13 @@ async function main(hre: HardhatRuntimeEnvironment) {
         deployer // address _feeDestination
       )
     );
-
   if ((await safetyPoolZai.asset()) !== zai.target) {
     await waitForTx(
       await safetyPoolZai.initialize(
         "Staked ZAI", // string memory _name,
         "sUSDz", // string memory _symbol,
         zai.target, // address _stablecoin,
-        600, // uint256 _withdrawalDelay,
+        300, // uint256 _withdrawalDelay,
         deployer, // address _governance,
         maha.target, // address _rewardToken1,
         usdc.target, // address _rewardToken2,
@@ -145,6 +190,18 @@ async function main(hre: HardhatRuntimeEnvironment) {
       )
     );
   }
+
+  const zapCurvePoolD = await deploy("ZapCurvePool", {
+    from: deployer,
+    contract: "ZapCurvePool",
+    args: [lpStakingZaiUsdcD.address, usdcPSMD.address, mockCurvePoolD.address],
+    autoMine: true,
+    log: true,
+  });
+  const zapCurve = await hre.ethers.getContractAt(
+    "ZapCurvePool",
+    zapCurvePoolD.address
+  );
 
   console.log("done, initializing contracts...");
   if (!(await zai.isManager(daiPSM.target)))
@@ -181,11 +238,15 @@ async function main(hre: HardhatRuntimeEnvironment) {
   await waitForTx(await zai.approve(daiPSM.target, MaxUint256));
   await waitForTx(await zai.approve(safetyPoolZai.target, MaxUint256));
   await waitForTx(await zai.approve(usdcPSM.target, MaxUint256));
+  await waitForTx(await usdc.approve(zapCurve.target, MaxUint256));
 
   console.log("testing safety pool zap");
   await waitForTx(
     await zapSafetyPool.zapIntoSafetyPool(usdcPSM.target, 100n * e6)
   );
+
+  console.log("testing lp zap");
+  await waitForTx(await zapCurve.zapIntoLP(100n * e6, 0));
 
   console.log("testing psm mint");
   await waitForTx(await usdcPSM.mint(deployer, 1000n * e18));

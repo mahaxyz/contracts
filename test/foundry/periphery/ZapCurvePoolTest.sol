@@ -14,19 +14,77 @@
 pragma solidity 0.8.21;
 
 import {PegStabilityModule} from "../../../contracts/core/psm/PegStabilityModule.sol";
-import {SafetyPool} from "../../../contracts/core/safety-pool/SafetyPool.sol";
+import {StakingLPRewards} from "../../../contracts/periphery/staking/StakingLPRewards.sol";
 
 import {IERC20, MockCurvePool} from "../../../contracts/mocks/MockCurvePool.sol";
 import {ZapCurvePool} from "../../../contracts/periphery/zaps/ZapCurvePool.sol";
 import {BaseZaiTest, console} from "../base/BaseZaiTest.sol";
 
 contract ZapCurvePoolTest is BaseZaiTest {
-  SafetyPool internal safetyPool;
+  StakingLPRewards internal staking;
   ZapCurvePool internal zap;
   PegStabilityModule internal psmUSDC;
   MockCurvePool internal pool;
 
   string MAINNET_RPC_URL = vm.envString("MAINNET_RPC_URL");
+
+  function test_zap_mock() public {
+    _setUpBase();
+
+    IERC20[] memory tokens = new IERC20[](2);
+    tokens[0] = zai;
+    tokens[1] = usdc;
+
+    pool = new MockCurvePool("Curve Pool", "CRV", tokens);
+
+    psmUSDC = new PegStabilityModule();
+    psmUSDC.initialize(
+      address(zai), // address _zai,
+      address(usdc), // address _collateral,
+      governance, // address _governance,
+      1e6, // uint256 _newRate,
+      100_000 * 1e6, // uint256 _supplyCap,
+      100_000 * 1e18, // uint256 _debtCap
+      0, // supplyFeeBps 1%
+      100, // redeemFeeBps 1%
+      feeDestination
+    );
+
+    zai.grantManagerRole(address(psmUSDC));
+
+    staking = new StakingLPRewards();
+    staking.initialize(
+      "", // string memory _name,
+      "", // string memory _symbol,
+      address(pool), // address _stakingToken,
+      governance, // address _governance,
+      address(zai), // address _rewardToken1,
+      address(usdc), // address _rewardToken2,
+      86_400 * 30, // uint256 _rewardsDuration,
+      address(0) // address _staking
+    );
+
+    zap = new ZapCurvePool(
+      address(staking), // lp staking pool
+      address(psmUSDC), // psm
+      address(pool) // router
+    );
+
+    vm.startPrank(whale);
+    usdc.mint(whale, 100e6);
+    usdc.approve(address(zap), type(uint256).max);
+    zap.zapIntoLP(100e6, 0);
+
+    vm.stopPrank();
+
+    assertGe(pool.balanceOf(address(staking)), 0, "!pool.balanceOf(staking)");
+    assertEq(usdc.balanceOf(address(psmUSDC)), 50_000_000, "!usdc.balanceOf(psmUSDC)");
+
+    assertEq(zai.balanceOf(address(zap)), 0, "!zai.balanceOf(zap)");
+    assertEq(usdc.balanceOf(address(zap)), 0, "!usdc.balanceOf(zap)");
+
+    assertApproxEqAbs(staking.balanceOf(whale), 50e18, 1e18, "!staking.balanceOf(user)");
+  }
 
   function test_zap_fork() public {
     uint256 mainnetFork = vm.createFork(MAINNET_RPC_URL);
