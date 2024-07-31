@@ -277,6 +277,14 @@ async function main(hre: HardhatRuntimeEnvironment) {
       constructorArguments: [safetyPoolZaiD.address, zaiD.address],
     });
     await hre.run("verify:verify", {
+      address: zapCurve.target,
+      constructorArguments: [
+        lpStakingZaiUsdcD.address,
+        usdcPSMD.address,
+        mockCurvePoolD.address,
+      ],
+    });
+    await hre.run("verify:verify", {
       address: zaiD.address,
       constructorArguments: [deployer],
     });
