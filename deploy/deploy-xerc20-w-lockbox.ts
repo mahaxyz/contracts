@@ -3,15 +3,15 @@ import { deployProxy } from "../scripts/utils";
 
 async function main(hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
-  const { deployer } = await getNamedAccounts();
+  const { deployer, proxyAdmin } = await getNamedAccounts();
 
   const zaiD = await deployments.get("ZaiStablecoin");
 
   const xZaiD = await deployProxy(
     hre,
     "XERC20",
-    ["xZai Stablecoin", "xZai", deployer],
-    deployer,
+    ["xZAI Stablecoin", "xUSDz", deployer],
+    proxyAdmin,
     "xZAI"
   );
 
@@ -19,7 +19,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
     hre,
     "XERC20Lockbox",
     [xZaiD.address, zaiD.address, false],
-    deployer,
+    proxyAdmin,
     "xZaiLockbox"
   );
 }

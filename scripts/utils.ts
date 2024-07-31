@@ -1,5 +1,7 @@
 import { TransactionReceipt, TransactionResponse } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import fs from "fs";
+import path from "path";
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -82,3 +84,13 @@ export async function deployProxy(
 
   return proxy;
 }
+
+export const loadTasks = (taskFolders: string[]): void =>
+  taskFolders.forEach((folder) => {
+    const tasksPath = path.join(__dirname, "../tasks", folder);
+    fs.readdirSync(tasksPath)
+      .filter((pth) => pth.includes(".ts") || pth.includes(".js"))
+      .forEach((task) => {
+        require(`${tasksPath}/${task}`);
+      });
+  });

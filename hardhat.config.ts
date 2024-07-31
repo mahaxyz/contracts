@@ -13,6 +13,7 @@ import "@typechain/hardhat";
 import "@nomicfoundation/hardhat-chai-matchers";
 
 import dotenv from "dotenv";
+import { loadTasks } from "./scripts/utils";
 dotenv.config();
 
 const defaultAccount = {
@@ -24,6 +25,14 @@ const defaultAccount = {
   count: 20,
   passphrase: "",
 };
+
+const SKIP_LOAD = process.env.SKIP_LOAD === "true";
+const TASK_FOLDERS = ["connext"];
+
+// Prevent to load tasks before compilation and typechain
+if (!SKIP_LOAD) {
+  loadTasks(TASK_FOLDERS);
+}
 
 const config: HardhatUserConfig = {
   abiExporter: {
@@ -87,6 +96,7 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: 0,
+    proxyAdmin: 1,
   },
   etherscan: {
     apiKey: {
