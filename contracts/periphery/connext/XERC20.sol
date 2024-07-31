@@ -14,21 +14,22 @@
 pragma solidity 0.8.21;
 
 import {IXERC20} from "../../interfaces/periphery/connext/IXERC20.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {
+  ERC20PermitUpgradeable,
+  ERC20Upgradeable
+} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
-
-contract XERC20 is ERC20, Ownable, IXERC20, ERC20Permit {
+contract XERC20 is ERC20Upgradeable, OwnableUpgradeable, IXERC20, ERC20PermitUpgradeable {
   /**
    * @notice The duration it takes for the limits to fully replenish
    */
-  uint256 private constant _DURATION = 1 days;
+  uint256 private immutable _DURATION = 1 days;
 
   /**
    * @notice The address of the factory which deployed this contract
    */
-  address public immutable FACTORY;
+  address public FACTORY;
 
   /**
    * @notice The address of the lockbox contract
@@ -47,11 +48,21 @@ contract XERC20 is ERC20, Ownable, IXERC20, ERC20Permit {
    * @param _symbol The symbol of the token
    * @param _factory The factory which deployed this contract
    */
-  constructor(
-    string memory _name,
-    string memory _symbol,
-    address _factory
-  ) ERC20(_name, _symbol) ERC20Permit(_name) Ownable(_factory) {
+  function initialize(string memory _name, string memory _symbol, address _factory) public initializer {
+    __XERC20_init(_name, _symbol, _factory);
+  }
+
+  /**
+   * @notice Constructs the initial config of the XERC20
+   *
+   * @param _name The name of the token
+   * @param _symbol The symbol of the token
+   * @param _factory The factory which deployed this contract
+   */
+  function __XERC20_init(string memory _name, string memory _symbol, address _factory) internal onlyInitializing {
+    __ERC20_init(_name, _symbol);
+    __ERC20Permit_init(_name);
+    __Ownable_init(_factory);
     FACTORY = _factory;
   }
 
@@ -75,7 +86,6 @@ contract XERC20 is ERC20, Ownable, IXERC20, ERC20Permit {
     if (msg.sender != _user) {
       _spendAllowance(_user, msg.sender, _amount);
     }
-
     _burnWithCaller(msg.sender, _user, _amount);
   }
 
@@ -87,7 +97,6 @@ contract XERC20 is ERC20, Ownable, IXERC20, ERC20Permit {
   function setLockbox(address _lockbox) public {
     if (msg.sender != FACTORY) revert IXERC20_NotFactory();
     lockbox = _lockbox;
-
     emit LockboxSet(_lockbox);
   }
 

@@ -17,17 +17,17 @@ import {IConnext, MockConnext} from "../../../contracts/mocks/MockConnext.sol";
 
 import {L1BridgeCollateral} from "../../../contracts/periphery/connext/L1BridgeCollateral.sol";
 import {L2DepositCollateral} from "../../../contracts/periphery/connext/L2DepositCollateral.sol";
-import {IXERC20, XERC20} from "../../../contracts/periphery/connext/XERC20.sol";
+import {XERC20} from "../../../contracts/periphery/connext/XERC20.sol";
 import {XERC20Lockbox} from "../../../contracts/periphery/connext/XERC20Lockbox.sol";
 import "../base/BasePsmTest.sol";
 
 contract ConnextRestakingTest is BasePsmTest {
   IConnext bridge;
 
-  IXERC20 localZAI;
+  XERC20 localZAI;
   XERC20Lockbox lockbox;
 
-  IXERC20 remoteZAI;
+  XERC20 remoteZAI;
   MockERC20 remoteUSDC;
 
   L1BridgeCollateral l1Bridge;
@@ -38,14 +38,15 @@ contract ConnextRestakingTest is BasePsmTest {
 
     bridge = new MockConnext();
 
-    localZAI = new XERC20("ZAI", "xZAI", address(this));
-    remoteZAI = new XERC20("ZAI", "xZAI", address(this));
+    localZAI = new XERC20();
+    remoteZAI = new XERC20();
     remoteUSDC = new MockERC20("USDC", "USDC", 6);
     lockbox = new XERC20Lockbox();
-
     l1Bridge = new L1BridgeCollateral();
     l2Bridge = new L2DepositCollateral();
 
+    localZAI.initialize("ZAI", "xZAI", address(this));
+    remoteZAI.initialize("ZAI", "xZAI", address(this));
     lockbox.initialize(address(localZAI), address(zai), false);
 
     l1Bridge.initialize(

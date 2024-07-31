@@ -79,6 +79,11 @@ const config: HardhatUserConfig = {
       accounts: defaultAccount,
       saveDeployments: true,
     },
+    arb_sepolia: {
+      url: "https://sepolia-rollup.arbitrum.io/rpc",
+      accounts: defaultAccount,
+      saveDeployments: true,
+    },
   },
   namedAccounts: {
     deployer: 0,
@@ -87,6 +92,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       mainnet: process.env.ETHERSCAN_KEY || "",
       sepolia: process.env.ETHERSCAN_KEY || "",
+      arbitrumSepolia: process.env.ARBISCAN_KEY || "",
     },
   },
 };
