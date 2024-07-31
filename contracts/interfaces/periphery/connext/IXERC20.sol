@@ -13,7 +13,9 @@
 
 pragma solidity 0.8.21;
 
-interface IXERC20 {
+import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
+
+interface IXERC20 is IERC20 {
   /**
    * @notice Emits when a lockbox is set
    *
