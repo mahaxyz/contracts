@@ -13,11 +13,11 @@
 
 pragma solidity 0.8.21;
 
-import {ConnextErrors} from "../../interfaces/errors/ConnextErrors.sol";
-import {ConnextEvents} from "../../interfaces/events/ConnextEvents.sol";
-import {IConnext, IL2Deposit} from "../../interfaces/periphery/IL2Deposit.sol";
-import {IXERC20} from "../../interfaces/periphery/connext/IXERC20.sol";
-import {IXERC20Lockbox} from "../../interfaces/periphery/connext/IXERC20Lockbox.sol";
+import {ConnextErrors} from "../../../interfaces/errors/ConnextErrors.sol";
+import {ConnextEvents} from "../../../interfaces/events/ConnextEvents.sol";
+import {IConnext, IL2Deposit} from "../../../interfaces/periphery/IL2Deposit.sol";
+import {IXERC20} from "../../../interfaces/periphery/connext/IXERC20.sol";
+import {IXERC20Lockbox} from "../../../interfaces/periphery/connext/IXERC20Lockbox.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";

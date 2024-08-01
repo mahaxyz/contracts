@@ -13,13 +13,13 @@
 
 pragma solidity 0.8.21;
 
-import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
+import {IPegStabilityModule} from "../../../interfaces/core/IPegStabilityModule.sol";
 
-import {ConnextErrors} from "../../interfaces/errors/ConnextErrors.sol";
-import {ConnextEvents} from "../../interfaces/events/ConnextEvents.sol";
-import {IL1Bridge} from "../../interfaces/periphery/IL1Bridge.sol";
-import {IXERC20} from "../../interfaces/periphery/connext/IXERC20.sol";
-import {IXERC20Lockbox} from "../../interfaces/periphery/connext/IXERC20Lockbox.sol";
+import {ConnextErrors} from "../../../interfaces/errors/ConnextErrors.sol";
+import {ConnextEvents} from "../../../interfaces/events/ConnextEvents.sol";
+import {IL1Bridge} from "../../../interfaces/periphery/IL1Bridge.sol";
+import {IXERC20} from "../../../interfaces/periphery/connext/IXERC20.sol";
+import {IXERC20Lockbox} from "../../../interfaces/periphery/connext/IXERC20Lockbox.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
