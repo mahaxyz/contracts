@@ -44,6 +44,15 @@ contract MockCurvePool is ICurveStableSwapNG, ERC20 {
     _mint(_receiver, sum);
   }
 
+  function add_liquidity(address, uint256[3] memory _amounts, uint256 _min_mint_amount) external returns (uint256 sum) {
+    for (uint256 index = 0; index < tokens.length; index++) {
+      tokens[index].transferFrom(msg.sender, address(this), _amounts[index]);
+      sum += _amounts[index];
+    }
+    require(sum >= _min_mint_amount, "MockCurvePool: INSUFFICIENT_LIQUIDITY");
+    _mint(msg.sender, sum);
+  }
+
   function calc_token_amount(uint256[] memory _amounts, bool) external view override returns (uint256 sum) {
     for (uint256 index = 0; index < tokens.length; index++) {
       sum += _amounts[index];

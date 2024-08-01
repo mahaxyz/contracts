@@ -13,7 +13,6 @@
 
 pragma solidity 0.8.21;
 
-import "../../../lib/forge-std/src/console.sol";
 import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
 import {ICurveStableSwapNG} from "../../interfaces/periphery/ICurveStableSwapNG.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";

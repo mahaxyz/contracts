@@ -35,7 +35,10 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Run coverage
-        run: yarn compile && yarn coverage:html
+        run: |
+          echo MAINNET_RPC_URL=${{ secrets.MAINNET_RPC_URL }} >> .env
+          yarn compile
+          yarn coverage:html
 
       # Deploy to gh pages
       - name: Upload artifact

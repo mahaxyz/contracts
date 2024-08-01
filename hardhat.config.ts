@@ -74,10 +74,9 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      accounts: defaultAccount,
-      forking: {
-        url: `https://arb1.arbitrum.io/rpc`,
-      },
+      // forking: {
+      //   url: `https://rpc.ankr.com/eth`,
+      // },
     },
     mainnet: {
       url: `https://rpc.ankr.com/eth`,
