@@ -5,6 +5,7 @@ interface IConfig {
     chainId: number;
   };
 }
+
 export const config: IConfig = {
   arb_sepolia: {
     connext: "0x1780Ac087Cbe84CA8feb75C0Fb61878971175eb8",
