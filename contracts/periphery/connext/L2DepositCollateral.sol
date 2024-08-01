@@ -88,7 +88,8 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
     uint32 _bridgeDestinationDomain,
     address _bridgeTargetAddress,
     address _owner,
-    uint256 _rate
+    uint256 _rate,
+    uint256 _sweepBatchSize
   ) public initializer {
     // Initialize inherited classes
     __Ownable_init(_owner);
@@ -111,7 +112,7 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
     bridgeTargetAddress = _bridgeTargetAddress;
     rate = _rate;
     bridgeFeeShare = 5;
-    sweepBatchSize = 32 ether;
+    sweepBatchSize = _sweepBatchSize;
   }
 
   /// @inheritdoc IL2Deposit
@@ -139,7 +140,7 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
       revert ConnextErrors.UnauthorizedBridgeSweeper();
     }
 
-    // Get the balance of nextWETH in the contract
+    // Get the balance of nextUSDC in the contract
     uint256 balance = collateralToken.balanceOf(address(this));
 
     // If there is no balance, return
@@ -201,13 +202,13 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
 
   /// @inheritdoc IL2Deposit
   function updateSweepBatchSize(uint256 _newBatchSize) external onlyOwner {
-    if (_newBatchSize < 32 ether) revert ConnextErrors.InvalidSweepBatchSize(_newBatchSize);
+    if (_newBatchSize < 1e6) revert ConnextErrors.InvalidSweepBatchSize(_newBatchSize);
     emit ConnextEvents.SweepBatchSizeUpdated(sweepBatchSize, _newBatchSize);
     sweepBatchSize = _newBatchSize;
   }
 
   /**
-   * @notice  Internal function to trade deposit tokens for nextWETH and mint xZAI
+   * @notice  Internal function to trade deposit tokens for nextUSDC and mint xZAI
    * @dev     Deposit Tokens should be available in the contract before calling this function
    * @param   _amountIn  Amount of tokens deposited
    * @param   _minOut  Minimum number of xZAI to accept to ensure slippage minimums
@@ -222,7 +223,7 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
     _amountIn -= bridgeFee;
     bridgeFeeCollected += bridgeFee;
 
-    // Trade deposit tokens for nextWETH
+    // Trade deposit tokens for nextUSDC
     uint256 amountOut = _trade(_amountIn, _deadline);
     if (amountOut == 0) {
       revert ConnextErrors.InvalidZeroOutput();
@@ -245,7 +246,7 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
   }
 
   /**
-   * @notice  Trades deposit asset for nextWETH
+   * @notice  Trades deposit asset for nextUSDC
    * @dev     Note that min out is not enforced here since the asset will be priced to ZAI by the calling function
    * @param   _amountIn  Amount of deposit tokens to trade for collateral asset
    * @return  _deadline Deadline for the trade to prevent stale requests
@@ -259,16 +260,16 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
     uint256 minOut = 0;
 
     // Swap the tokens
-    uint256 amountNextWETH =
+    uint256 amountNextUSDC =
       connext.swapExact(swapKey, _amountIn, address(depositToken), address(collateralToken), minOut, _deadline);
 
     // Subtract the bridge router fee
     if (bridgeRouterFeeBps > 0) {
-      uint256 fee = (amountNextWETH * bridgeRouterFeeBps) / 10_000;
-      amountNextWETH -= fee;
+      uint256 fee = (amountNextUSDC * bridgeRouterFeeBps) / 10_000;
+      amountNextUSDC -= fee;
     }
 
-    return amountNextWETH;
+    return amountNextUSDC;
   }
 
   /**

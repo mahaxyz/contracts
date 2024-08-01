@@ -22,9 +22,9 @@ interface IL2Deposit {
    * @dev     All tokens are expected to have 18 decimals
    * @param   _xZAI  L2 ZAI token
    * @param   _depositToken  WETH on L2
-   * @param   _collateralToken  nextWETH on L2
+   * @param   _collateralToken  nextUSDC on L2
    * @param   _connext  Connext contract
-   * @param   _swapKey  Swap key for the connext contract swap from WETH to nextWETH
+   * @param   _swapKey  Swap key for the connext contract swap from WETH to nextUSDC
    */
   function initialize(
     IERC20 _xZAI,
@@ -35,7 +35,8 @@ interface IL2Deposit {
     uint32 _bridgeDestinationDomain,
     address _bridgeTargetAddress,
     address _owner,
-    uint256 _rate
+    uint256 _rate,
+    uint256 _sweepBatchSize
   ) external;
 
   /**
@@ -58,7 +59,7 @@ interface IL2Deposit {
   function getBridgeFeeShare(uint256 _amountIn) external view returns (uint256);
 
   /**
-   * @notice  This function will take the balance of nextWETH in the contract and bridge it down to the L1
+   * @notice  This function will take the balance of nextUSDC in the contract and bridge it down to the L1
    * @dev     The L1 contract will unwrap, deposit in maha, and lock up the ZAI in the lockbox on L1
    *          This function should only be callable by permissioned accounts
    *          The caller will estimate and pay the gas for the bridge call
@@ -89,6 +90,10 @@ interface IL2Deposit {
    */
   function recoverERC20(address _token, uint256 _amount, address _to) external;
 
+  /**
+   * @notice This function updates the rate for the deposit
+   * @param _rate The new rate for the deposit
+   */
   function setRate(uint256 _rate) external;
 
   /**
@@ -99,7 +104,7 @@ interface IL2Deposit {
   function updateBridgeFeeShare(uint256 _newShare) external;
 
   /**
-   * @notice This function updates the Sweep Batch Size (must be >= 32 ETH)
+   * @notice This function updates the Sweep Batch Size
    * @dev This should be a permissioned call (onlyOwner)
    * @param _newBatchSize new batch size for sweeping
    */
