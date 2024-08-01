@@ -3,18 +3,31 @@ import { ethers } from "ethers";
 import { getCreate2Address } from "../create2/create2";
 
 // declare deployment parameters
-import contractArtifact from "../../artifacts/contracts/governance/MAHATimelockController.sol/MAHATimelockController.json";
+import contractArtifact from "../../artifacts/contracts/governance/MAHAProxy.sol/MAHAProxy.json";
+import implArtificat from "../../artifacts/contracts/periphery/connext/XERC20.sol/XERC20.json";
+import { get } from "./_helpers";
 
 // @ts-ignore
 const constructorTypes = contractArtifact.abi
   .find((v) => v.type === "constructor")
   ?.inputs.map((t) => t.type);
 
-const factoryAddress = "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0";
+const impl = new ethers.Contract(
+  get("XERC20-impl", "arbitrum"),
+  implArtificat.abi
+);
+
+const initData = impl.interface.encodeFunctionData("initialize", [
+  "xZAI Stablecoin",
+  "xUSDz",
+  get("MAHATimelockController", "arbitrum"), // timelock
+]);
+
+const factoryAddress = get("Deployer", "arbitrum");
 const constructorArgs: any[] = [
-  60 * 60,
-  "0x1f09ec21d7fd0a21879b919bf0f9c46e6b85ca8b",
-  ["0x1f09ec21d7fd0a21879b919bf0f9c46e6b85ca8b"],
+  impl.target, // implementation
+  get("ProxyAdmin", "arbitrum"),
+  initData, // init data
 ];
 
 console.log("constructor parameters", constructorTypes, constructorArgs);

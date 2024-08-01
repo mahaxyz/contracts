@@ -1,0 +1,23 @@
+{
+  "address": "0x69000614b97a6a442dc72c07b948cd1e66f5bb83",
+  "abi": [
+    "constructor(address,address,bytes)",
+    "error AddressEmptyCode(address)",
+    "error ERC1967InvalidAdmin(address)",
+    "error ERC1967InvalidImplementation(address)",
+    "error ERC1967NonPayable()",
+    "error FailedInnerCall()",
+    "error ProxyDeniedAdminAccess()",
+    "event AdminChanged(address,address)",
+    "event Upgraded(address indexed)",
+    "fallback() payable",
+    "function implementation() view returns (address)",
+    "function proxyAdmin() view returns (address)"
+  ],
+  "args": [
+    "0x998910da83fdC602452B61bFCd7A9f260363B897",
+    "0x6900064e7a3920c114e25b5fe4780f26520e3231",
+    "0x077f224a000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000690002da1f2d828d72aa89367623df7a432e85a9000000000000000000000000000000000000000000000000000000000000000f785a414920537461626c65636f696e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005785553447a000000000000000000000000000000000000000000000000000000"
+  ],
+  "numDeployments": 1
+}

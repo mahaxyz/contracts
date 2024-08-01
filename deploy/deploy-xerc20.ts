@@ -13,5 +13,5 @@ async function main(hre: HardhatRuntimeEnvironment) {
     "xZAI"
   );
 }
-main.tags = ["XERC20"];
+main.tags = ["XERC20-ZAI"];
 export default main;
