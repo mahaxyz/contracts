@@ -1,5 +1,7 @@
 import { TransactionReceipt, TransactionResponse } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import fs from "fs";
+import path from "path";
 
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -43,17 +45,21 @@ export async function deployProxy(
   const implementationD = await deploy(`${implementation}-Impl`, {
     from: deployer,
     contract: implementation,
-    args: args,
     autoMine: true,
     log: true,
   });
 
-  // todo encodeData
+  const contract = await hre.ethers.getContractAt(
+    implementation,
+    implementationD.address
+  );
+
+  const argsInit = contract.interface.encodeFunctionData("initialize", args);
 
   const proxy = await deploy(`${name}-Proxy`, {
     from: deployer,
     contract: "MAHAProxy",
-    args: [implementationD.address, proxyAdmin, "0x"],
+    args: [implementationD.address, proxyAdmin, argsInit],
     autoMine: true,
     log: true,
   });
@@ -64,5 +70,27 @@ export async function deployProxy(
     args: args,
   });
 
-  return proxyAdmin;
+  if (hre.network.name !== "hardhat") {
+    console.log("verifying contracts");
+    await hre.run("verify:verify", {
+      address: implementationD.address,
+      constructorArguments: [],
+    });
+    await hre.run("verify:verify", {
+      address: proxy.address,
+      constructorArguments: [implementationD.address, proxyAdmin, argsInit],
+    });
+  }
+
+  return proxy;
 }
+
+export const loadTasks = (taskFolders: string[]): void =>
+  taskFolders.forEach((folder) => {
+    const tasksPath = path.join(__dirname, "../tasks", folder);
+    fs.readdirSync(tasksPath)
+      .filter((pth) => pth.includes(".ts") || pth.includes(".js"))
+      .forEach((task) => {
+        require(`${tasksPath}/${task}`);
+      });
+  });
