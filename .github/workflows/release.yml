@@ -27,7 +27,9 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
 
       - name: Publish to NPM
-        run: npm publish
+        run: |
+          echo MAINNET_RPC_URL=${{ secrets.MAINNET_RPC_URL }} >> .env
+          npm publish
         if: ${{ steps.release.outputs.release_created }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
