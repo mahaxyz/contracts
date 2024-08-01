@@ -81,7 +81,6 @@ export const guess = (contractArtifact: any, args: any[], network: string) => {
     // Calculate contract address
     const computedAddress = getCreate2Address({
       salt: salt,
-
       factoryAddress,
       contractBytecode: contractArtifact.bytecode,
       constructorTypes: constructorTypes,

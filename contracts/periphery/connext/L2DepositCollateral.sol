@@ -164,7 +164,7 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
       bridgeCallData
     );
 
-    // send collected bridge fee to sweeper
+    // send collected bridge fee to owner
     _recoverBridgeFee();
 
     // Emit the event
@@ -273,18 +273,18 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
   }
 
   /**
-   * @notice This function transfer the bridge fee to sweeper address
+   * @notice This function transfer the bridge fee to the owner
    */
   function _recoverBridgeFee() internal {
     uint256 feeCollected = bridgeFeeCollected;
     bridgeFeeCollected = 0;
-    // transfer collected fee to bridgeSweeper
+    // transfer collected fee to owner
     uint256 chainId;
     assembly {
       chainId := chainid()
     }
 
-    IERC20(address(depositToken)).safeTransfer(msg.sender, feeCollected);
-    emit ConnextEvents.SweeperBridgeFeeCollected(msg.sender, feeCollected);
+    IERC20(address(depositToken)).safeTransfer(owner(), feeCollected);
+    emit ConnextEvents.SweeperBridgeFeeCollected(owner(), feeCollected);
   }
 }

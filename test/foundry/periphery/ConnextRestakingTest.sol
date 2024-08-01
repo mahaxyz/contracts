@@ -69,8 +69,8 @@ contract ConnextRestakingTest is BasePsmTest {
       100, // uint32 _bridgeDestinationDomain,
       address(l1Bridge), // address _bridgeTargetAddress,
       address(this), // address _owner,
-      1e12, // uint256 _rate
-      1e6
+      1e6, // uint256 _rate
+      1e6 // uint256 _sweepBatchSize
     );
 
     l2Bridge.setAllowedBridgeSweeper(address(this), true);
@@ -98,10 +98,14 @@ contract ConnextRestakingTest is BasePsmTest {
 
   function test_l2Bridge() public {
     vm.startPrank(whale);
+    assertEq(remoteZAI.balanceOf(whale), 0);
+
     remoteUSDC.mint(address(whale), 100e6);
     remoteUSDC.approve(address(l2Bridge), 100e6);
-    l2Bridge.deposit(100, 0, block.timestamp + 1000);
+    l2Bridge.deposit(100e6, 0, block.timestamp + 1000);
     vm.stopPrank();
+
+    assertApproxEqAbs(remoteZAI.balanceOf(whale), 100e18, 1e17);
   }
 
   function test_fullConnextLoop() external {
