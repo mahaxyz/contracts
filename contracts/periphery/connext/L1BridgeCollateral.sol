@@ -94,13 +94,13 @@ contract L1BridgeCollateral is IL1Bridge, ReentrancyGuardUpgradeable {
     if (_amount == 0) revert ConnextErrors.InvalidZeroInput();
 
     // Get the amount of collateral
-    uint256 ethAmount = collateral.balanceOf(address(this));
+    uint256 collateralAmount = collateral.balanceOf(address(this));
 
     // Get the amonut of zai before the deposit
     uint256 zaiBalanceBeforeDeposit = zai.balanceOf(address(this));
 
     // Deposit it into psm
-    psm.mint(address(this), psm.toCollateralAmount(ethAmount));
+    psm.mint(address(this), psm.mintAmountIn(collateralAmount));
 
     // Get the amount of zai that was minted
     uint256 zaiAmount = zai.balanceOf(address(this)) - zaiBalanceBeforeDeposit;

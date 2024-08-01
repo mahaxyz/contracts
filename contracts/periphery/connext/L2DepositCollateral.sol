@@ -96,8 +96,7 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
     // Verify valid non zero values
     if (
       address(_xZAI) == address(0) || address(_depositToken) == address(0) || address(_collateralToken) == address(0)
-        || address(_connext) == address(0) || _swapKey == 0 || _bridgeDestinationDomain == 0
-        || _bridgeTargetAddress == address(0)
+        || address(_connext) == address(0) || _bridgeDestinationDomain == 0 || _bridgeTargetAddress == address(0)
     ) {
       revert ConnextErrors.InvalidZeroInput();
     }

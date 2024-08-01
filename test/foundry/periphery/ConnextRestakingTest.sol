@@ -64,14 +64,41 @@ contract ConnextRestakingTest is BasePsmTest {
       remoteUSDC, // IERC20 _collateralToken,
       bridge, // IConnext _connext,
       "0x", // bytes32 _swapKey,
-      0, // uint32 _bridgeDestinationDomain,
-      address(0), // address _bridgeTargetAddress,
+      100, // uint32 _bridgeDestinationDomain,
+      address(l1Bridge), // address _bridgeTargetAddress,
       address(this), // address _owner,
       1e12 // uint256 _rate
     );
+
+    // give limits
+    localZAI.setLimits(address(l1Bridge), 0, 1e18 * 10_000_000);
+    localZAI.setLockbox(address(lockbox));
   }
 
-  function test_bridgeRestaking() external {
-    // todo
+  function test_l1Bridge() external {
+    usdc.mint(address(l1Bridge), 100e6);
+    vm.prank(address(bridge));
+    l1Bridge.xReceive(
+      bytes32(0), // bytes32 _transferId,
+      100e6, // uint256 _amount,
+      address(usdc), // address _asset,
+      address(0x1), // address _originSender,
+      1, // uint32 _origin,
+      "" // bytes memory
+    );
+  }
+
+  function test_l2Bridge() external {
+    usdc.mint(address(l1Bridge), 100e6);
+
+    vm.prank(address(bridge));
+    l1Bridge.xReceive(
+      bytes32(0), // bytes32 _transferId,
+      100e6, // uint256 _amount,
+      address(usdc), // address _asset,
+      address(0x1), // address _originSender,
+      1, // uint32 _origin,
+      "" // bytes memory
+    );
   }
 }
