@@ -19,8 +19,8 @@ async function main() {
     implArgs,
     get("XERC20-impl", "arbitrum"),
     "arbitrum",
-    "0x52e810aa739c078a8b372f3e003efabc56ca497a06da279dbbc060bed8345146",
-    "0xf1adca6863abe2fa5592c7220e5053b42a94e298"
+    "0xd04a1c3fd1157d54d9d9d44577258e3d7bca482415a100e296b352dc71699259",
+    "0x69000ee306393ef6f9a2a57d5cb5960263bd531f"
   );
 }
 

@@ -29,7 +29,7 @@ export const guessProxy = (
 
   const impl = new ethers.Contract(implAddress, implArtificat.abi);
 
-  const initData = impl.interface.encodeFunctionData("initialize", initArgs);
+  const initData = impl.interface.encodeFunctionData(initFunction, initArgs);
 
   const factoryAddress = get("Deployer", network);
   const constructorArgs: any[] = [

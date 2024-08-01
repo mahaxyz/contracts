@@ -6,7 +6,7 @@ import assert from "assert";
 task(`connect-xerc20`, `Connects the xerc20 to the bridge`)
   .addParam("limit", "limit of minting/burning")
   .setAction(async (params, hre) => {
-    const xerc20D = await hre.deployments.get("xZAI");
+    const xerc20D = await hre.deployments.get("xZAI-Proxy");
 
     const e18 = 10n ** 18n;
     const xerc20 = await hre.ethers.getContractAt("XERC20", xerc20D.address);

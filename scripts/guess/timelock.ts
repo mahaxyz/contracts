@@ -1,4 +1,4 @@
-import implArtificat from "../../artifacts/contracts/periphery/connext/XERC20.sol/XERC20.json";
+import implArtificat from "../../artifacts/contracts/governance/MAHATimelockController.sol/MAHATimelockController.json";
 import { guess } from "./_helpers";
 
 guess(
