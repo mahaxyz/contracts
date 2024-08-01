@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/mahaxyz/contracts/compare/v1.2.1...v1.2.2) (2024-08-01)
+
+
+### Bug Fixes
+
+* fixed releease script ([2a78fda](https://github.com/mahaxyz/contracts/commit/2a78fdae15c021e8aadb72989d0a0ecab78bbb6e))
+
 ## [1.2.1](https://github.com/mahaxyz/contracts/compare/v1.2.0...v1.2.1) (2024-08-01)
 
 
