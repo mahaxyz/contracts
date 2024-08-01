@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/mahaxyz/contracts/compare/v1.2.0...v1.2.1) (2024-08-01)
+
+
+### Bug Fixes
+
+* updated readme file ([d29ffbc](https://github.com/mahaxyz/contracts/commit/d29ffbc0fecebd5be2734b0977eefa4eb47657a2))
+
 ## [1.2.0](https://github.com/mahaxyz/contracts/compare/v1.1.1...v1.2.0) (2024-07-29)
 
 
