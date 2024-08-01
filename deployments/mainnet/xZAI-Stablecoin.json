@@ -1,5 +1,5 @@
 {
-  "address": "0x69000614b97a6a442dc72c07b948cd1e66f5bb83",
+  "address": "0x6900070de14fffaf3a129dc3880e0153444167fa",
   "abi": [
     "error ECDSAInvalidSignature()",
     "error ECDSAInvalidSignatureLength(uint256)",
@@ -59,7 +59,7 @@
   "args": [
     "xZAI Stablecoin",
     "xUSDz",
-    "0x690002da1f2d828d72aa89367623df7a432e85a9"
+    "0x1f09ec21d7fd0a21879b919bf0f9c46e6b85ca8b"
   ],
   "numDeployments": 1
 }
