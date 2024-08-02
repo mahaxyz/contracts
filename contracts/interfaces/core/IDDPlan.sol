@@ -20,6 +20,7 @@ pragma solidity 0.8.20;
  */
 interface IDDPlan {
   event Disable();
+  event Enable();
 
   /**
    * @notice Determines what the position should be based on current assets
@@ -34,6 +35,13 @@ interface IDDPlan {
    * @notice Reports whether the plan is active
    */
   function active() external view returns (bool);
+
+  /**
+   * @notice Enables the plan so that it would instruct the Hub to unwind
+   * its entire position.
+   * @dev Implementation should be permissioned.
+   */
+  function enable() external;
 
   /**
    * @notice Disables the plan so that it would instruct the Hub to unwind

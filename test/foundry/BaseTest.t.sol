@@ -31,6 +31,7 @@ abstract contract BaseTest is Test {
   address whale = address(0x3);
   address ant = address(0x4);
   address feeDestination = address(0x5);
+  address user = address(0x6);
 
   function setUpBase() internal {
     MockLayerZero lz = new MockLayerZero();

@@ -46,6 +46,13 @@ contract DDOperatorPlan is AccessControlDefaultAdminRules, IDDPlan {
   }
 
   /// @inheritdoc IDDPlan
+  function enable() external override {
+    require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || hasRole(OPERATOR_ROLE, msg.sender), "!role");
+    enabled = 1;
+    emit Enable();
+  }
+
+  /// @inheritdoc IDDPlan
   function disable() external override {
     require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || hasRole(OPERATOR_ROLE, msg.sender), "!role");
     enabled = 0;
