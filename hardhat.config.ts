@@ -13,6 +13,7 @@ import "@typechain/hardhat";
 import "@nomicfoundation/hardhat-chai-matchers";
 
 import dotenv from "dotenv";
+import { loadTasks } from "./scripts/utils";
 dotenv.config();
 
 const defaultAccount = {
@@ -24,6 +25,14 @@ const defaultAccount = {
   count: 20,
   passphrase: "",
 };
+
+const SKIP_LOAD = process.env.SKIP_LOAD === "true";
+const TASK_FOLDERS = ["connext"];
+
+// Prevent to load tasks before compilation and typechain
+if (!SKIP_LOAD) {
+  loadTasks(TASK_FOLDERS);
+}
 
 const config: HardhatUserConfig = {
   abiExporter: {
@@ -79,14 +88,27 @@ const config: HardhatUserConfig = {
       accounts: defaultAccount,
       saveDeployments: true,
     },
+    arbitrum: {
+      url: "https://arb1.arbitrum.io/rpc",
+      accounts: defaultAccount,
+      saveDeployments: true,
+    },
+    arb_sepolia: {
+      url: "https://sepolia-rollup.arbitrum.io/rpc",
+      accounts: defaultAccount,
+      saveDeployments: true,
+    },
   },
   namedAccounts: {
     deployer: 0,
+    proxyAdmin: 1,
   },
   etherscan: {
     apiKey: {
       mainnet: process.env.ETHERSCAN_KEY || "",
       sepolia: process.env.ETHERSCAN_KEY || "",
+      arbitrumOne: process.env.ARBISCAN_KEY || "",
+      arbitrumSepolia: process.env.ARBISCAN_KEY || "",
     },
   },
 };
