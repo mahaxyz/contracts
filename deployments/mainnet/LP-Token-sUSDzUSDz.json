@@ -1,5 +1,5 @@
 {
-  "address": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  "address": "0x109bb7a87e92a74db0a4f7d55384e0517f886d74",
   "abi": [
     "event Approval(address indexed,address indexed,uint256)",
     "event Transfer(address indexed,address indexed,uint256)",
@@ -12,5 +12,6 @@
     "function totalSupply() view returns (uint256)",
     "function transfer(address,uint256) returns (bool)",
     "function transferFrom(address,address,uint256) returns (bool)"
-  ]
+  ],
+  "numDeployments": 1
 }
