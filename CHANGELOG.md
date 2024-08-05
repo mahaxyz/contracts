@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.3](https://github.com/mahaxyz/contracts/compare/v1.2.2...v1.2.3) (2024-08-05)
+
+
+### Features
+
+* native restaking with connext bridge ([#10](https://github.com/mahaxyz/contracts/issues/10)) ([c535c90](https://github.com/mahaxyz/contracts/commit/c535c9022a14fbb95d671810b29bf8a8834c4fde))
+
+
+### Bug Fixes
+
+* added pool staking contract ([3853fc3](https://github.com/mahaxyz/contracts/commit/3853fc3d6cfaf9be937f4c451937f8be99ff786c))
+
 ## [1.2.2](https://github.com/mahaxyz/contracts/compare/v1.2.1...v1.2.2) (2024-08-01)
 
 
