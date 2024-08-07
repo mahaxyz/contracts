@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/mahaxyz/contracts/compare/v1.2.3...v1.3.0) (2024-08-07)
+
+
+### Features
+
+* added zap contracts for mainnet ([07d0577](https://github.com/mahaxyz/contracts/commit/07d05777b6b3bcf53a87d23c1e8dea8655ae092b))
+* deployed the metamorpho vaults ([e14acaa](https://github.com/mahaxyz/contracts/commit/e14acaa567a89d28b18caedcbb6d46b4fd392927))
+
 ## [1.2.3](https://github.com/mahaxyz/contracts/compare/v1.2.2...v1.2.3) (2024-08-05)
 
 
