@@ -8,10 +8,11 @@ export function sleep(ms: number): Promise<void> {
 }
 
 export async function waitForTx(
-  tx: TransactionResponse
+  tx: TransactionResponse,
+  confirmations = 1
 ): Promise<TransactionReceipt | null> {
   console.log("waiting for tx", tx.hash);
-  return await tx.wait(1);
+  return await tx.wait(confirmations);
 }
 
 export async function verify(
