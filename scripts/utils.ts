@@ -87,6 +87,36 @@ export async function deployProxy(
   return proxy;
 }
 
+export async function deployContract(
+  hre: HardhatRuntimeEnvironment,
+  implementation: string,
+  args: any[],
+  name: string
+) {
+  const { deploy } = hre.deployments;
+  const { deployer } = await hre.getNamedAccounts();
+
+  const contract = await deploy(name, {
+    from: deployer,
+    contract: implementation,
+    skipIfAlreadyDeployed: true,
+    args: args,
+    autoMine: true,
+    log: true,
+  });
+
+  if (hre.network.name !== "hardhat") {
+    console.log("verifying contracts");
+
+    await hre.run("verify:verify", {
+      address: contract.address,
+      constructorArguments: args,
+    });
+  }
+
+  return contract;
+}
+
 export const loadTasks = (taskFolders: string[]): void =>
   taskFolders.forEach((folder) => {
     const tasksPath = path.join(__dirname, "../tasks", folder);
