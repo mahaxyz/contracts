@@ -13,11 +13,11 @@
 
 pragma solidity 0.8.21;
 
-import {PegStabilityModule} from "../../../contracts/core/psm/PegStabilityModule.sol";
-import {SafetyPool} from "../../../contracts/core/safety-pool/SafetyPool.sol";
+import {PegStabilityModule} from "../../../../contracts/core/psm/PegStabilityModule.sol";
+import {SafetyPool} from "../../../../contracts/core/safety-pool/SafetyPool.sol";
 
-import {ZapSafetyPool} from "../../../contracts/periphery/zaps/ZapSafetyPool.sol";
-import {BaseZaiTest, console} from "../base/BaseZaiTest.sol";
+import {ZapSafetyPool} from "../../../../contracts/periphery/zaps/ZapSafetyPool.sol";
+import {BaseZaiTest, console} from "../../base/BaseZaiTest.sol";
 
 contract ZapSafetyPoolTest is BaseZaiTest {
   SafetyPool internal safetyPool;
