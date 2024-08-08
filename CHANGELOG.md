@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/mahaxyz/contracts/compare/v1.3.0...v1.4.0) (2024-08-08)
+
+
+### Features
+
+* deployed pool ui helper for APR calculations ([943c75c](https://github.com/mahaxyz/contracts/commit/943c75c5f72ac9ea4222c272f70938b04416b735))
+
 ## [1.3.0](https://github.com/mahaxyz/contracts/compare/v1.2.3...v1.3.0) (2024-08-07)
 
 
