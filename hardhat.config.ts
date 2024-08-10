@@ -27,7 +27,7 @@ const defaultAccount = {
 };
 
 const SKIP_LOAD = process.env.SKIP_LOAD === "true";
-const TASK_FOLDERS = ["connext"];
+const TASK_FOLDERS = ["connext", "misc"];
 
 // Prevent to load tasks before compilation and typechain
 if (!SKIP_LOAD) {
