@@ -54,11 +54,12 @@ task(
 
     if (!isOwnable(d) && !isProxy(d) && !isAccessControl(d)) continue;
 
-    console.log(`checking ownership for ${blue(name)}.`);
+    console.log(`\x1b[0mchecking ownership for ${blue(name)}.`);
+
     console.log(
       `  Ownable: ${boolVal(isOwnable(d))}, Proxy: ${boolVal(
         isProxy(d)
-      )}, AccessControl: ${boolVal(isAccessControl(d))}`
+      )}, AccessControl: ${boolVal(isAccessControl(d))}\x1b[90m`
     );
 
     if (isOwnable(d)) {
@@ -96,7 +97,7 @@ task(
         );
       }
 
-      _checkRole(
+      await _checkRole(
         inst,
         name,
         "DEFAULT_ADMIN",
@@ -119,9 +120,9 @@ const _checkRole = async (
 
   console.log(`  checking ${roleName} roles for ${name}`);
   for (let i = 0; i < admins.length; i++) {
-    // console.log(`    user ${i + 1} is`, admins[i]);
+    console.log(`    user ${i + 1} is`, admins[i]);
     if (admins[i] == deployer.toLowerCase()) {
-      console.warn(`    WARN!! deployer is ${roleName} for ${name}`);
+      console.warn(`   WARN!! deployer is ${roleName} for ${name}`);
     }
   }
 };
