@@ -1,6 +1,7 @@
 import { task } from "hardhat/config";
 import { AccessControlEnumerableUpgradeable } from "../../types";
 import { Deployment } from "hardhat-deploy/dist/types";
+import { time } from "console";
 
 const green = (msg: string) => `\x1b[32m${msg}\x1b[0m`;
 const red = (msg: string) => `\x1b[31m${msg}\x1b[0m`;
@@ -32,7 +33,10 @@ task(
   const proxyAdmin = await hre.deployments.get("ProxyAdmin");
 
   const isOwnable = (deployment: Deployment) =>
-    deployment.abi.findIndex((abi: any) => abi.name === "owner") >= 0;
+    deployment.abi.findIndex(
+      (abi: any) =>
+        abi.name === "owner" || abi == "function owner() view returns (address)"
+    ) >= 0;
 
   const isProxy = (deployment: Deployment) =>
     deployment.abi.findIndex(
@@ -54,7 +58,7 @@ task(
 
     if (!isOwnable(d) && !isProxy(d) && !isAccessControl(d)) continue;
 
-    console.log(`\x1b[0mchecking ownership for ${blue(name)}.`);
+    console.log(`\x1b[0mchecking ownership for ${blue(name)} - ${d.address}`);
 
     console.log(
       `  Ownable: ${boolVal(isOwnable(d))}, Proxy: ${boolVal(
@@ -66,10 +70,14 @@ task(
       const inst = await hre.ethers.getContractAt("Ownable", d.address);
       const owner = await inst.owner();
 
-      if (owner.toLowerCase() != safe.toLowerCase()) {
+      if (
+        owner.toLowerCase() != safe.toLowerCase() &&
+        owner.toLowerCase() != timelock.address.toLowerCase()
+      ) {
         console.warn(`   WARN!! owner for ${name} is`, owner);
-      } else {
-        console.log(`owner for ${name} is`, owner);
+      }
+      if (owner.toLowerCase() != timelock.address.toLowerCase()) {
+        console.warn(`   NOTE: owner for ${name} is not the timelock`);
       }
     }
 
@@ -122,7 +130,7 @@ const _checkRole = async (
   for (let i = 0; i < admins.length; i++) {
     console.log(`    user ${i + 1} is`, admins[i]);
     if (admins[i] == deployer.toLowerCase()) {
-      console.warn(`   WARN!! deployer is ${roleName} for ${name}`);
+      console.warn(`    WARN!! deployer is ${roleName} for ${name}`);
     }
   }
 };
