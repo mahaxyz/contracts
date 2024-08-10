@@ -1,9 +1,11 @@
 import { task } from "hardhat/config";
-// import { waitForTx } from "../../scripts/utils";
-// import { config } from "./config";
-import assert from "assert";
 import { AccessControlEnumerableUpgradeable } from "../../types";
 import { Deployment } from "hardhat-deploy/dist/types";
+
+const green = (msg: string) => `\x1b[32m${msg}\x1b[0m`;
+const red = (msg: string) => `\x1b[31m${msg}\x1b[0m`;
+const blue = (msg: string) => `\x1b[34m${msg}\x1b[0m`;
+const boolVal = (val: boolean) => (val ? green("true") : red("false"));
 
 task(
   `audit-ownerships`,
@@ -12,48 +14,87 @@ task(
   const deployments = await hre.deployments.all();
   const [deployer] = await hre.ethers.getSigners();
 
+  const roles = [
+    "CANCELLER_ROLE",
+    "DEFAULT_ADMIN_ROLE",
+    "DISTRIBUTOR_ROLE",
+    "EXECUTOR_ROLE",
+    "MANAGER_ROLE",
+    "OPERATOR_ROLE",
+    "PROPOSER_ROLE",
+    "RISK_ROLE",
+  ];
+
+  const safe = "0x6357edbfe5ada570005ceb8fad3139ef5a8863cc";
+  const timelock = await hre.deployments.get("MAHATimelockController");
+
   const deploymentNames = Object.keys(deployments);
   const proxyAdmin = await hre.deployments.get("ProxyAdmin");
 
+  const isOwnable = (deployment: Deployment) =>
+    deployment.abi.findIndex((abi: any) => abi.name === "owner") >= 0;
+
+  const isProxy = (deployment: Deployment) =>
+    deployment.abi.findIndex(
+      (abi: any) =>
+        abi.name === "proxyAdmin" ||
+        abi == "function proxyAdmin() view returns (address)"
+    ) >= 0;
+
+  const isAccessControl = (deployment: Deployment) =>
+    deployment.abi.findIndex(
+      (abi: any) =>
+        abi.name === "getRoleMemberCount" ||
+        abi === "function getRoleMember(bytes32,uint256) view returns (address)"
+    ) >= 0;
+
   for (let i = 0; i < deploymentNames.length; i++) {
     const name = deploymentNames[i];
-    const deployment = deployments[name];
+    const d = deployments[name];
 
-    if (deployment.abi.find((abi: any) => abi.name === "owner")) {
-      const inst = await hre.ethers.getContractAt(
-        "Ownable",
-        deployment.address
-      );
+    if (!isOwnable(d) && !isProxy(d) && !isAccessControl(d)) continue;
+
+    console.log(`checking ownership for ${blue(name)}.`);
+    console.log(
+      `  Ownable: ${boolVal(isOwnable(d))}, Proxy: ${boolVal(
+        isProxy(d)
+      )}, AccessControl: ${boolVal(isAccessControl(d))}`
+    );
+
+    if (isOwnable(d)) {
+      const inst = await hre.ethers.getContractAt("Ownable", d.address);
       const owner = await inst.owner();
 
-      if (owner.toLowerCase() == deployer.address.toLowerCase()) {
-        console.warn(`WARN!! owner at ${inst.target} for ${name} is`, owner);
+      if (owner.toLowerCase() != safe.toLowerCase()) {
+        console.warn(`   WARN!! owner for ${name} is`, owner);
       } else {
-        console.log(`owner at ${inst.target} for ${name} is`, owner);
+        console.log(`owner for ${name} is`, owner);
       }
     }
 
-    if (deployment.abi.find((abi: any) => abi.name === "proxyAdmin")) {
-      const inst = await hre.ethers.getContractAt(
-        "MAHAProxy",
-        deployment.address
-      );
+    if (isProxy(d)) {
+      const inst = await hre.ethers.getContractAt("MAHAProxy", d.address);
       const owner = await inst.proxyAdmin();
       if (owner.toLowerCase() != proxyAdmin.address.toLowerCase()) {
-        console.warn(
-          `WARN!! proxyAdmin at ${inst.target} for ${name} is`,
-          owner
-        );
-      } else {
-        console.log(`proxyAdmin at ${inst.target} for ${name} is`, owner);
+        console.warn(`   WARN!! proxyAdmin for ${name} is`, owner);
       }
     }
 
-    if (deployment.abi.find((abi: any) => abi.name === "getRoleMemberCount")) {
+    if (isAccessControl(d)) {
       const inst = await hre.ethers.getContractAt(
         "AccessControlEnumerableUpgradeable",
-        deployment.address
+        d.address
       );
+
+      for (let j = 0; j < roles.length; j++) {
+        await _checkRole(
+          inst,
+          name,
+          roles[j],
+          deployer.address,
+          await hre.ethers.solidityPackedKeccak256(["string"], [roles[j]])
+        );
+      }
 
       _checkRole(
         inst,
@@ -76,13 +117,11 @@ const _checkRole = async (
   const admins = await _getRoles(inst, role);
   if (admins.length == 0) return;
 
-  console.log(`printing ${roleName} roles for ${name}`);
+  console.log(`  checking ${roleName} roles for ${name}`);
   for (let i = 0; i < admins.length; i++) {
-    console.log(`   user ${i + 1} is`, admins[i]);
+    // console.log(`    user ${i + 1} is`, admins[i]);
     if (admins[i] == deployer.toLowerCase()) {
-      console.warn(
-        `   WARN!! deployer is an admin at ${inst.target} for ${name}`
-      );
+      console.warn(`    WARN!! deployer is ${roleName} for ${name}`);
     }
   }
 };
