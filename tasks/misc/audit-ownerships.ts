@@ -1,7 +1,6 @@
 import { task } from "hardhat/config";
 import { AccessControlEnumerableUpgradeable } from "../../types";
 import { Deployment } from "hardhat-deploy/dist/types";
-import { time } from "console";
 
 const green = (msg: string) => `\x1b[32m${msg}\x1b[0m`;
 const red = (msg: string) => `\x1b[31m${msg}\x1b[0m`;
@@ -56,7 +55,11 @@ task(
     const name = deploymentNames[i];
     const d = deployments[name];
 
-    if (!isOwnable(d) && !isProxy(d) && !isAccessControl(d)) continue;
+    if (
+      (!isOwnable(d) && !isProxy(d) && !isAccessControl(d)) ||
+      name.endsWith("-impl")
+    )
+      continue;
 
     console.log(`\x1b[0mchecking ownership for ${blue(name)} - ${d.address}`);
 
@@ -75,6 +78,8 @@ task(
         owner.toLowerCase() != timelock.address.toLowerCase()
       ) {
         console.warn(`   WARN!! owner for ${name} is`, owner);
+      } else {
+        console.log(`  owner looks good`);
       }
       if (owner.toLowerCase() != timelock.address.toLowerCase()) {
         console.warn(`   NOTE: owner for ${name} is not the timelock`);
@@ -86,6 +91,8 @@ task(
       const owner = await inst.proxyAdmin();
       if (owner.toLowerCase() != proxyAdmin.address.toLowerCase()) {
         console.warn(`   WARN!! proxyAdmin for ${name} is`, owner);
+      } else {
+        console.log(`  proxyAdmin looks good`);
       }
     }
 
@@ -131,6 +138,7 @@ const _checkRole = async (
     console.log(`    user ${i + 1} is`, admins[i]);
     if (admins[i] == deployer.toLowerCase()) {
       console.warn(`    WARN!! deployer is ${roleName} for ${name}`);
+      console.warn(`    please revoke the role: ${role}`);
     }
   }
 };

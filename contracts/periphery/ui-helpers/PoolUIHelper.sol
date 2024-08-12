@@ -60,7 +60,8 @@ contract PoolUIHelper {
     res.poolUsdTVLE8 =
       (res.mahaTotalSupply * _mahaPriceE8 / 1e8 + res.usdcTotalSupply * 1e12 + res.zaiTotalSupply) / 1e10;
 
-    res.userShareE18 = stakingPool4626.balanceOf(_who) * 1e18 / stakingPool4626.totalSupply();
+    uint256 totalSupply = stakingPool4626.totalSupply();
+    res.userShareE18 = totalSupply == 0 ? 0 : stakingPool4626.balanceOf(_who) * 1e18 / totalSupply;
 
     res.mahaUserBalance = res.mahaTotalSupply * res.userShareE18 / 1e18;
     res.usdcUserBalance = res.usdcTotalSupply * res.userShareE18 / 1e18;
