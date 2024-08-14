@@ -77,9 +77,15 @@ const config: HardhatUserConfig = {
       // forking: {
       //   url: `https://rpc.ankr.com/eth`,
       // },
+      accounts: defaultAccount,
     },
     mainnet: {
       url: `https://rpc.ankr.com/eth`,
+      accounts: defaultAccount,
+      saveDeployments: true,
+    },
+    base: {
+      url: `https://mainnet.base.org`,
       accounts: defaultAccount,
       saveDeployments: true,
     },
@@ -107,6 +113,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       mainnet: process.env.ETHERSCAN_KEY || "",
       sepolia: process.env.ETHERSCAN_KEY || "",
+      base: process.env.BASESCAN_KEY || "",
       arbitrumOne: process.env.ARBISCAN_KEY || "",
       arbitrumSepolia: process.env.ARBISCAN_KEY || "",
     },

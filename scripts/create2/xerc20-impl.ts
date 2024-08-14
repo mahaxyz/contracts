@@ -1,3 +1,4 @@
+import hre from "hardhat";
 import { executeCreate2 } from "./helpers";
 
 async function main() {
@@ -5,9 +6,9 @@ async function main() {
     "XERC20-impl",
     "XERC20",
     [],
-    "arbitrum",
-    "0x52e810aa739c078a8b372f3e003efabc56ca497a06da279dbbc060bed8345146",
-    "0xf1adca6863abe2fa5592c7220e5053b42a94e298"
+    hre.network.name,
+    "0x044852b2a670ade5407e78fb2863c51de9fcb96542a07186fe3aeda6bb8a116d",
+    "0x878df2f50de7077a0fe45f9e06253b7a591d22aa"
   );
 }
 

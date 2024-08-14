@@ -17,10 +17,10 @@ async function main() {
     "xZAI-Proxy",
     "XERC20",
     implArgs,
-    get("XERC20-impl", "arbitrum"),
+    get("XERC20-impl", network.name),
     "arbitrum",
-    "0xd04a1c3fd1157d54d9d9d44577258e3d7bca482415a100e296b352dc71699259",
-    "0x69000ee306393ef6f9a2a57d5cb5960263bd531f"
+    "0x07f7b4a675919f14b4ac361f5bbd083b8493fd1b3d43b957013f2eb971273abc",
+    "0x69000cc63be9b4322f3f62c233dd1a7f509ae080"
   );
 }
 

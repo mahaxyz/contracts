@@ -69,13 +69,18 @@ export const executeCreate2 = async (
 ) => {
   const impl = await hre.ethers.getContractFactory(implContract);
 
+  const constructorTypes =
+    impl.interface.fragments
+      .find((v) => v.type === "constructor")
+      ?.inputs.map((t) => t.type) || [];
+
   const deployer = await hre.ethers.getContractAt(
     "Deployer",
     get("Deployer", _network)
   );
 
   const bytecode = buildBytecode(
-    ["address", "address", "bytes"],
+    constructorTypes,
     constructorArgs,
     impl.bytecode
   );

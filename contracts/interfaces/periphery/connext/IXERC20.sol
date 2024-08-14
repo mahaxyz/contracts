@@ -38,11 +38,6 @@ interface IXERC20 is IERC20 {
   error IXERC20_NotHighEnoughLimits();
 
   /**
-   * @notice Reverts when caller is not the factory
-   */
-  error IXERC20_NotFactory();
-
-  /**
    * @notice Reverts when limits are too high
    */
   error IXERC20_LimitsTooHigh();

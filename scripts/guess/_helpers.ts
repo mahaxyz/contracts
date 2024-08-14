@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import fs from "fs";
 import path from "path";
 import { getCreate2Address } from "../create2/create2";
-import proxyArtifact from "../../artifacts/@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol/ProxyAdmin.json";
+import proxyArtifact from "../../artifacts/contracts/governance/MAHAProxy.sol/MAHAProxy.json";
 
 export function get(name: string, network: string): string {
   const data = fs.readFileSync(

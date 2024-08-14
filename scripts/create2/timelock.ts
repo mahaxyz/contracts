@@ -1,4 +1,5 @@
 import { executeCreate2 } from "./helpers";
+import hre from "hardhat";
 
 async function main() {
   const constructorArgs: any[] = [
@@ -11,7 +12,7 @@ async function main() {
     "MAHATimelockController",
     "MAHATimelockController",
     constructorArgs,
-    "arbitrum",
+    hre.network.name,
     "0xe0bcdd4e23c1a527f2e76f1cf91d3065c17f0259fd17bdb4525ab0b04d735d91",
     "0x690005544ba364a53dcc9e8d81c9ce1e90018ab7"
   );

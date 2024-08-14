@@ -27,11 +27,6 @@ contract XERC20 is ERC20Upgradeable, OwnableUpgradeable, IXERC20, ERC20PermitUpg
   uint256 private immutable _DURATION = 1 days;
 
   /**
-   * @notice The address of the factory which deployed this contract
-   */
-  address public FACTORY;
-
-  /**
    * @notice The address of the lockbox contract
    */
   address public lockbox;
@@ -63,7 +58,6 @@ contract XERC20 is ERC20Upgradeable, OwnableUpgradeable, IXERC20, ERC20PermitUpg
     __ERC20_init(_name, _symbol);
     __ERC20Permit_init(_name);
     __Ownable_init(_factory);
-    FACTORY = _factory;
   }
 
   /**
@@ -94,8 +88,7 @@ contract XERC20 is ERC20Upgradeable, OwnableUpgradeable, IXERC20, ERC20PermitUpg
    *
    * @param _lockbox The address of the lockbox
    */
-  function setLockbox(address _lockbox) public {
-    if (msg.sender != FACTORY) revert IXERC20_NotFactory();
+  function setLockbox(address _lockbox) public onlyOwner {
     lockbox = _lockbox;
     emit LockboxSet(_lockbox);
   }
