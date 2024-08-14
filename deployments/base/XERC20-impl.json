@@ -1,5 +1,5 @@
 {
-  "address": "0x6900070de14fffaf3a129dc3880e0153444167fa",
+  "address": "0x878df2f50de7077a0fe45f9e06253b7a591d22aa",
   "abi": [
     "error ECDSAInvalidSignature()",
     "error ECDSAInvalidSignatureLength(uint256)",
@@ -13,7 +13,6 @@
     "error ERC2612ExpiredSignature(uint256)",
     "error ERC2612InvalidSigner(address,address)",
     "error IXERC20_LimitsTooHigh()",
-    "error IXERC20_NotFactory()",
     "error IXERC20_NotHighEnoughLimits()",
     "error InvalidAccountNonce(address,uint256)",
     "error InvalidInitialization()",
@@ -28,7 +27,6 @@
     "event OwnershipTransferred(address indexed,address indexed)",
     "event Transfer(address indexed,address indexed,uint256)",
     "function DOMAIN_SEPARATOR() view returns (bytes32)",
-    "function FACTORY() view returns (address)",
     "function allowance(address,address) view returns (uint256)",
     "function approve(address,uint256) returns (bool)",
     "function balanceOf(address) view returns (uint256)",
@@ -56,10 +54,6 @@
     "function transferFrom(address,address,uint256) returns (bool)",
     "function transferOwnership(address)"
   ],
-  "args": [
-    "xZAI Stablecoin",
-    "xUSDz",
-    "0x1f09ec21d7fd0a21879b919bf0f9c46e6b85ca8b"
-  ],
+  "args": [],
   "numDeployments": 1
 }
