@@ -18,7 +18,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
       zaiD.address, // IERC20 _xZAI,
       connextConfig[network.name].usdc, // IERC20 _depositToken,
       connextConfig[network.name].zUsdc, // IERC20 _collateralToken,
-      connextConfig.arbitrum.connext, // IConnext _connext,
+      connextConfig[network.name].connext, // IConnext _connext,
       connextConfig[network.name].swapKeyNextUSDC, // bytes32 _swapKey,
       connextConfig.mainnet.domainId, // uint32 _bridgeDestinationDomain,
       get("L1BridgeCollateral", "mainnet"), // address _bridgeTargetAddress,

@@ -34,7 +34,8 @@ export const config: IConfig = {
     chainId: 8453,
     usdc: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
     zUsdc: "0x1ede59e0d39B14c038698B1036BDE9a4819C86D4",
-    swapKeyNextUSDC: "",
+    swapKeyNextUSDC:
+      "0x6d9af4a33ed4034765652ab0f44205952bc6d92198d3ef78fe3fb2b078d0941c",
   },
   arb_sepolia: {
     connext: "0x1780Ac087Cbe84CA8feb75C0Fb61878971175eb8",
