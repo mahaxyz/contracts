@@ -446,6 +446,11 @@
   resolved "https://registry.yarnpkg.com/@layerzerolabs/lz-evm-oapp-v2/-/lz-evm-oapp-v2-2.3.36.tgz#930163eaf3b6ba5cda10159865776e2d3489e462"
   integrity sha512-ftKop35M5TTZdCEcg/QYaCWXvu1YHi2UB1njw737D2c0pptj+Vzp+aNXoKswOqPW8jzdtJ6xaULUtvdh2f+ZcA==
 
+"@layerzerolabs/lz-evm-protocol-v2@^2.3.36":
+  version "2.3.36"
+  resolved "https://registry.yarnpkg.com/@layerzerolabs/lz-evm-protocol-v2/-/lz-evm-protocol-v2-2.3.36.tgz#08da4d9fee8bc00b96fa002e00e29cee776f8bf6"
+  integrity sha512-mYjnUykexwtTtsBDvkM0OkcbiuW3Ou28qiinG4YPU1kkd/8Bll4/UM/lkm4sVSkR+lYmqafXzaikIS/A4MJXJg==
+
 "@metamask/eth-sig-util@^4.0.0":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@metamask/eth-sig-util/-/eth-sig-util-4.0.1.tgz#3ad61f6ea9ad73ba5b19db780d40d9aae5157088"

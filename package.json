@@ -84,12 +84,13 @@
     "tslint-config-prettier": "1.18.0",
     "tslint-plugin-prettier": "2.3.0",
     "typechain": "^8.3.2",
+    "@layerzerolabs/lz-evm-oapp-v2": "^2.3.36",
+    "@layerzerolabs/lz-evm-protocol-v2": "^2.3.36",
     "typescript": "^5.5.3"
   },
   "resolutions": {
+    "ethers": "^5.7.2",
+    "hardhat-deploy": "^0.12.1",
     "@openzeppelin/contracts": "^5.0.0"
-  },
-  "dependencies": {
-    "@layerzerolabs/lz-evm-oapp-v2": "^2.3.36"
   }
 }
