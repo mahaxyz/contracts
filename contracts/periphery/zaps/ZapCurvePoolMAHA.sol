@@ -15,16 +15,17 @@ pragma solidity 0.8.21;
 
 import {ICurveTwoCrypto} from "../../interfaces/periphery/ICurveTwoCrypto.sol";
 import {IERC20Metadata, ZapCurvePoolBase} from "./ZapCurvePoolBase.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract ZapCurvePoolMAHA is ZapCurvePoolBase {
+  using SafeERC20 for IERC20;
   using SafeERC20 for IERC20Metadata;
 
-  IERC20Metadata public maha;
+  IERC20 public maha;
   address public odos;
 
-  constructor(address _staking, address _maha, address _psm, address _odos) ZapCurvePoolBase(_staking, _psm) {
-    maha = IERC20Metadata(_maha);
+  constructor(address _staking, IERC20 _maha, address _psm, address _odos) ZapCurvePoolBase(_staking, _psm) {
+    maha = IERC20(_maha);
     odos = _odos;
     maha.approve(address(pool), type(uint256).max);
   }
@@ -41,12 +42,12 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
   }
 
   function zapIntoLPWithOdos(
-    IERC20Metadata swapAsset,
+    IERC20 swapAsset,
     uint256 swapAmount,
     uint256 minLpAmount,
     bytes memory odosCallData
   ) external payable {
-    if (swapAsset != IERC20Metadata(address(0))) {
+    if (swapAsset != IERC20(address(0))) {
       swapAsset.safeTransferFrom(msg.sender, me, swapAmount);
     }
 
@@ -72,15 +73,15 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
     // sweep any dust
     _sweep(zai);
     _sweep(collateral);
-    _sweep(maha);
+    _sweep(IERC20Metadata(address(maha)));
 
     emit Zapped(msg.sender, collateralAmount / 2, zaiAmount, pool.balanceOf(msg.sender));
   }
 
   function _addLiquidity(uint256 zaiAmt, uint256 collatAmt, uint256 minLp) internal virtual override {
     uint256[2] memory amounts; // = new uint256[2]();
-    amounts[0] = zaiAmt;
-    amounts[1] = collatAmt;
+    amounts[0] = collatAmt;
+    amounts[1] = zaiAmt;
     ICurveTwoCrypto(address(pool)).add_liquidity(amounts, minLp);
   }
 }
