@@ -13,13 +13,19 @@
 
 pragma solidity 0.8.21;
 
+import {ICurveTwoCrypto} from "../../interfaces/periphery/ICurveTwoCrypto.sol";
 import {IERC20Metadata, ZapCurvePoolBase} from "./ZapCurvePoolBase.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract ZapCurvePoolMAHA is ZapCurvePoolBase {
-  IERC20Metadata public maha;
+  using SafeERC20 for IERC20Metadata;
 
-  constructor(address _staking, address _maha, address _psm) ZapCurvePoolBase(_staking, _psm) {
+  IERC20Metadata public maha;
+  address public odos;
+
+  constructor(address _staking, address _maha, address _psm, address _odos) ZapCurvePoolBase(_staking, _psm) {
     maha = IERC20Metadata(_maha);
+    odos = _odos;
     maha.approve(address(pool), type(uint256).max);
   }
 
@@ -29,22 +35,36 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
    * @param collateralAmount The amount of collateral to zap
    * @param minLpAmount The minimum amount of LP tokens to stake
    */
-  function zapIntoLP(uint256 collateralAmount, uint256 minLpAmount) external {
-    // fetch tokens
-    collateral.transferFrom(msg.sender, me, collateralAmount);
+  function zapIntoLP(uint256 collateralAmount, uint256 minLpAmount) public {
+    collateral.safeTransferFrom(msg.sender, me, collateralAmount);
+    _zapIntoLP(collateralAmount, minLpAmount);
+  }
 
-    // convert 50% collateral for zai
+  function zapIntoLPWithOdos(
+    IERC20Metadata swapAsset,
+    uint256 swapAmount,
+    uint256 minLpAmount,
+    bytes memory odosCallData
+  ) external payable {
+    if (swapAsset != IERC20Metadata(address(0))) {
+      swapAsset.safeTransferFrom(msg.sender, me, swapAmount);
+    }
+
+    // swap on odos
+    swapAsset.approve(odos, swapAmount);
+    (bool success,) = odos.call{value: msg.value}(odosCallData);
+    require(success, "odos call failed");
+
+    _zapIntoLP(collateral.balanceOf(me), minLpAmount);
+  }
+
+  function _zapIntoLP(uint256 collateralAmount, uint256 minLpAmount) internal {
+    // convert 100% collateral for zai
     uint256 zaiAmount = collateralAmount * decimalOffset;
     psm.mint(address(this), zaiAmount);
 
-    // convert 50% collateral for maha
-    // todo
-
     // add liquidity
-    // uint256[2] memory amounts;
-    // amounts[0] = collateralAmount / 2;
-    // amounts[1] = collateralAmount / 2;
-    // router.add_liquidity(address(pool), amounts, minLpAmount);
+    _addLiquidity(zaiAmount, 0, minLpAmount);
 
     // we now have LP tokens; deposit into staking contract for the user
     staking.deposit(pool.balanceOf(address(this)), msg.sender);
@@ -55,5 +75,12 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
     _sweep(maha);
 
     emit Zapped(msg.sender, collateralAmount / 2, zaiAmount, pool.balanceOf(msg.sender));
+  }
+
+  function _addLiquidity(uint256 zaiAmt, uint256 collatAmt, uint256 minLp) internal virtual override {
+    uint256[2] memory amounts; // = new uint256[2]();
+    amounts[0] = zaiAmt;
+    amounts[1] = collatAmt;
+    ICurveTwoCrypto(address(pool)).add_liquidity(amounts, minLp);
   }
 }
