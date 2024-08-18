@@ -16,16 +16,14 @@ pragma solidity 0.8.21;
 import {DDBaseL2} from "./DDBaseL2.sol";
 
 /**
- * @title A Direct Deposit Module that sends the newly minted ZAI to a hub on a layer 2 via an optimism bridge
+ * @title A Direct Deposit Module that sends the newly minted ZAI to a hub on a layer 2 via a Polygon zkEVM Bridge
  * @author maha.xyz
  */
-contract DDOptimismHub is DDBaseL2 {
-  // https://github.com/base-org/guides/blob/main/bridge/native/README.md
+contract DDZkPolygonEVMHub is DDBaseL2 {
   function proveBridgeWithdrawal() external {
     // todo
   }
 
-  // https://github.com/base-org/guides/blob/main/bridge/native/README.md
   function finalizeBridgeWithdrawal() external {
     // todo
   }
