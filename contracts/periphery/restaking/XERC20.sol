@@ -36,6 +36,12 @@ contract XERC20 is ERC20Upgradeable, OwnableUpgradeable, IXERC20, ERC20PermitUpg
    */
   mapping(address => Bridge) public bridges;
 
+  /// @dev Prevents implementation contract from being initialized.
+  /// @custom:oz-upgrades-unsafe-allow constructor
+  constructor() {
+    _disableInitializers();
+  }
+
   /**
    * @notice Constructs the initial config of the XERC20
    *
