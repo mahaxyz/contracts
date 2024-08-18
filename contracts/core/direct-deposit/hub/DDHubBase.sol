@@ -13,12 +13,12 @@
 
 pragma solidity 0.8.21;
 
-import {IStablecoin} from "../../interfaces/IStablecoin.sol";
-import {IDDHub} from "../../interfaces/core/IDDHub.sol";
-import {IDDPlan} from "../../interfaces/core/IDDPlan.sol";
-import {IDDPool} from "../../interfaces/core/IDDPool.sol";
-import {DDEventsLib} from "../../interfaces/events/DDEventsLib.sol";
-import {Constants} from "./Constants.sol";
+import {IStablecoin} from "../../../interfaces/IStablecoin.sol";
+import {IDDHub} from "../../../interfaces/core/IDDHub.sol";
+import {IDDPlan} from "../../../interfaces/core/IDDPlan.sol";
+import {IDDPool} from "../../../interfaces/core/IDDPool.sol";
+import {DDEventsLib} from "../../../interfaces/events/DDEventsLib.sol";
+import {Constants} from "../Constants.sol";
 import {AccessControlEnumerableUpgradeable} from
   "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 
@@ -31,7 +31,7 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
  * @notice This is the main contract responsible for managing pools.
  * @dev Has permissions to mint/burn ZAI
  */
-contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpgradeable {
+abstract contract DDHubBase is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpgradeable {
   /// @inheritdoc IDDHub
   IStablecoin public zai;
 
@@ -189,7 +189,7 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     }
 
     pool.withdraw(amount);
-    zai.burn(address(this), amount);
+    _burn(amount, address(this));
     emit DDEventsLib.BurnDebt(pool, amount);
   }
 
@@ -224,13 +224,13 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     if (toWithdraw > 0) {
       pool.withdraw(toWithdraw);
       info.debt -= toWithdraw;
-      zai.burn(address(this), toWithdraw);
+      _burn(toWithdraw, address(this));
       emit DDEventsLib.BurnDebt(pool, toWithdraw);
     } else if (toSupply > 0) {
       require(info.debt + toSupply <= Constants.SAFEMAX, "DDHub/wind-overflow");
 
       info.debt += toSupply;
-      zai.mint(address(this), toSupply);
+      _mint(toSupply, address(this));
       pool.deposit(toSupply);
       emit DDEventsLib.MintDebt(pool, toSupply);
     } else {
@@ -244,4 +244,8 @@ contract DDHub is IDDHub, AccessControlEnumerableUpgradeable, ReentrancyGuardUpg
     _poolInfos[_pool] = _info;
     emit DDEventsLib.PoolInfoUpdated(_pool, _info);
   }
+
+  function _mint(uint256 amount, address dest) internal virtual;
+
+  function _burn(uint256 amount, address dest) internal virtual;
 }
