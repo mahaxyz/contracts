@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {DDHubBase} from "./DDHubBase.sol";
+import {DDHubBase} from "../DDHubBase.sol";
 
 /**
  * @title A L2 Direct Deposit Hub
@@ -21,7 +21,7 @@ import {DDHubBase} from "./DDHubBase.sol";
  * @notice This is the main contract responsible for managing pools on layer 2s.
  * @dev Holds bridged ZAI from the L1
  */
-contract DDHubL2 is DDHubBase {
+abstract contract DDHubL2Base is DDHubBase {
   /// @dev Keeps track of how much ZAI was artificially minted
   uint256 public minted;
 
@@ -44,7 +44,10 @@ contract DDHubL2 is DDHubBase {
     destinationL1 = dest;
   }
 
+  /// @notice Withdraws the pending zai tokens into the L1 contract
   function withdrawToL1(uint256 amt) external onlyRole(EXECUTOR_ROLE) {
-    // todo send the zai tokens back to the bridge
+    _withdrawToL1(amt);
   }
+
+  function _withdrawToL1(uint256 amt) internal virtual;
 }
