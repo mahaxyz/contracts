@@ -22,7 +22,11 @@ import {DDHubBase} from "./DDHubBase.sol";
  * @dev Holds bridged ZAI from the L1
  */
 contract DDHubL2 is DDHubBase {
-  uint256 minted;
+  /// @dev Keeps track of how much ZAI was artificially minted
+  uint256 public minted;
+
+  /// @dev The destination on the L1
+  address public destinationL1;
 
   function _mint(uint256 amount, address dest) internal virtual override {
     minted += amount;
@@ -31,8 +35,16 @@ contract DDHubL2 is DDHubBase {
 
   function _burn(uint256 amount, address dest) internal virtual override {
     minted -= amount;
-    zai.transferFrom(dest, address(this), amount);
+    if (dest != address(this)) {
+      zai.transferFrom(dest, address(this), amount);
+    }
+  }
 
-    // todo on burn send the zai tokens back to the bridge
+  function setDestinationL1(address dest) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    destinationL1 = dest;
+  }
+
+  function withdrawToL1(uint256 amt) external onlyRole(EXECUTOR_ROLE) {
+    // todo send the zai tokens back to the bridge
   }
 }
