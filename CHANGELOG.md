@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1](https://github.com/mahaxyz/contracts/compare/v1.4.0...v1.4.1) (2024-08-18)
+
+
+### Bug Fixes
+
+* added unit tests and deployed the zap for maha/usdz pool ([5cb5935](https://github.com/mahaxyz/contracts/commit/5cb593595751b59b4cb98efd29f1ca2ec7352831))
+* removed unwanted deployments and updated the audit script ([5366212](https://github.com/mahaxyz/contracts/commit/5366212043c91a5b8f7b868024bb9d60cb16e07d))
+
 ## [1.4.0](https://github.com/mahaxyz/contracts/compare/v1.3.0...v1.4.0) (2024-08-08)
 
 
