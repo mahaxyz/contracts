@@ -44,7 +44,7 @@ abstract contract DDBaseL2 is Initializable, DDBase {
   /// @inheritdoc IDDPool
   function deposit(uint256 wad) external override onlyHub {
     bridged += wad;
-    zai.transferFrom(msg.sender, address(this), wad);
+    zai.transferFrom(msg.sender, me, wad);
     _depositToBridge(destinationL2, wad);
   }
 
@@ -67,7 +67,7 @@ abstract contract DDBaseL2 is Initializable, DDBase {
 
   /// @inheritdoc IDDPool
   function assetBalance() external view returns (uint256) {
-    return bridged + zai.balanceOf(address(this));
+    return bridged + zai.balanceOf(me);
   }
 
   /// @inheritdoc IDDPool
@@ -77,12 +77,12 @@ abstract contract DDBaseL2 is Initializable, DDBase {
 
   /// @inheritdoc IDDPool
   function maxWithdraw() external view returns (uint256) {
-    return zai.balanceOf(address(this));
+    return zai.balanceOf(me);
   }
 
   /// @inheritdoc IDDPool
   function redeemable() external view returns (address) {
-    return address(this);
+    return me;
   }
 
   function _depositToBridge(address to, uint256 amount) internal virtual;

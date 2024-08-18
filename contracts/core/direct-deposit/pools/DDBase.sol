@@ -24,9 +24,12 @@ abstract contract DDBase is IDDPool {
   /// @notice The Direct Deposit module hub
   address public hub;
 
+  address internal me;
+
   function __DDBBase_init(address _zai, address _hub) internal {
     zai = IStablecoin(_zai);
     hub = _hub;
+    me = address(this);
   }
 
   modifier onlyHub() {
