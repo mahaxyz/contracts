@@ -14,7 +14,8 @@
 pragma solidity 0.8.21;
 
 import {ZaiStablecoin} from "../../../contracts/core/ZaiStablecoin.sol";
-import {DDEventsLib, DDHub, IDDHub} from "../../../contracts/core/direct-deposit/DDHub.sol";
+import {DDEventsLib, IDDHub} from "../../../contracts/core/direct-deposit/hub/DDHubBase.sol";
+import {DDHubL1} from "../../../contracts/core/direct-deposit/hub/DDHubL1.sol";
 import {DDOperatorPlan, IDDPlan} from "../../../contracts/core/direct-deposit/plans/DDOperatorPlan.sol";
 import {DDMetaMorpho, IDDPool} from "../../../contracts/core/direct-deposit/pools/DDMetaMorpho.sol";
 
@@ -24,7 +25,7 @@ import {BaseMorphoTest} from "./BaseMorphoTest.sol";
 // todo test multiple hubs
 
 abstract contract BaseDDHubTest is BaseMorphoTest {
-  DDHub internal hub;
+  DDHubL1 internal hub;
   DDMetaMorpho internal pool;
   DDOperatorPlan internal plan;
 
@@ -34,7 +35,7 @@ abstract contract BaseDDHubTest is BaseMorphoTest {
   function _setUpHub() public {
     _setUpMorpho();
 
-    hub = new DDHub();
+    hub = new DDHubL1();
 
     hub.initialize(
       feeDestination, // address _feeCollector,
