@@ -345,6 +345,7 @@ abstract contract MultiStakingRewardsERC4626 is
   function _calculateBoostedBalance(address account)
     internal
     view
+    virtual
     returns (uint256 boostedBalance_, uint256 boostedTotalSupply_)
   {
     uint256 balance = balanceOf(account);
