@@ -14,7 +14,6 @@
 pragma solidity 0.8.21;
 
 import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
-import {ICurveStableSwapNG} from "../../interfaces/periphery/ICurveStableSwapNG.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
@@ -26,7 +25,7 @@ import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 abstract contract ZapCurvePoolBase {
   IERC4626 public staking;
 
-  ICurveStableSwapNG public pool;
+  IERC20Metadata public pool;
 
   IERC20Metadata public zai;
 
@@ -53,7 +52,7 @@ abstract contract ZapCurvePoolBase {
     staking = IERC4626(_staking);
     psm = IPegStabilityModule(_psm);
 
-    pool = ICurveStableSwapNG(staking.asset());
+    pool = IERC20Metadata(staking.asset());
     zai = IERC20Metadata(address(psm.zai()));
     collateral = IERC20Metadata(address(psm.collateral()));
 
@@ -81,10 +80,7 @@ abstract contract ZapCurvePoolBase {
     if (collateralAmount > 0) collateral.transferFrom(msg.sender, me, collateralAmount);
 
     // add liquidity
-    uint256[] memory amounts = new uint256[](2);
-    amounts[0] = zaiAmount;
-    amounts[1] = collateralAmount;
-    pool.add_liquidity(amounts, minLpAmount, address(this));
+    _addLiquidity(zaiAmount, collateralAmount, minLpAmount);
 
     // we now have LP tokens; deposit into staking contract for the user
     staking.deposit(pool.balanceOf(address(this)), msg.sender);
@@ -102,4 +98,6 @@ abstract contract ZapCurvePoolBase {
       revert TokenTransferFailed();
     }
   }
+
+  function _addLiquidity(uint256 zaiAmt, uint256 collatAmt, uint256 minLp) internal virtual;
 }
