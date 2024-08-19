@@ -13,9 +13,13 @@ interface IConfig {
 
     config: {
       confirmations: number;
-      optionalDVNThreshold: number;
-      requiredDVNs: string[];
-      optionalDVNs: string[];
+      sendDVNs: {
+        [network: string]: {
+          optionalDVNThreshold: number;
+          requiredDVNs: string[];
+          optionalDVNs: string[];
+        };
+      };
     };
   };
 }
@@ -34,19 +38,19 @@ export const config: IConfig = {
 
     config: {
       confirmations: 5,
-      optionalDVNThreshold: 2,
-      requiredDVNs: [
-        "0x589dedbd617e0cbcb916a9223f4d1300c294236b", // layerzero labs
-      ],
-      optionalDVNs: [
-        "0x380275805876ff19055ea900cdb2b46a94ecf20d", // horizen
-        "0x8ddf05f9a5c488b4973897e278b58895bf87cb24", // polyhedra
-        "0xa59ba433ac34d2927232918ef5b2eaafcf130ba5", // nethermind
-        "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc", // google cloud
-        // "0x5fddd320a1e29bb466fa635661b125d51d976f92", // stablelab
-        // "0x771d10d0c86e26ea8d3b778ad4d31b30533b9cbf", // chainlink ccip
-        // "0x8fafae7dd957044088b3d0f67359c327c6200d18", // stargate
-      ],
+      sendDVNs: {
+        xlayer: {
+          optionalDVNThreshold: 2,
+          requiredDVNs: [
+            "0x589dedbd617e0cbcb916a9223f4d1300c294236b", // layerzero labs
+          ],
+          optionalDVNs: [
+            "0x380275805876ff19055ea900cdb2b46a94ecf20d", // horizen
+            "0x8ddf05f9a5c488b4973897e278b58895bf87cb24", // polyhedra
+            "0xa59ba433ac34d2927232918ef5b2eaafcf130ba5", // nethermind
+          ],
+        },
+      },
     },
   },
   xlayer: {
@@ -61,15 +65,19 @@ export const config: IConfig = {
     },
     config: {
       confirmations: 15,
-      optionalDVNThreshold: 2,
-      requiredDVNs: [
-        "0x9c061c9a4782294eef65ef28cb88233a987f4bdd", // layerzero labs
-      ],
-      optionalDVNs: [
-        "0x28af4dadbc5066e994986e8bb105240023dc44b6", // nethermind
-        "0x8ddf05f9a5c488b4973897e278b58895bf87cb24", // polyhedra
-        "0xdd7b5e1db4aafd5c8ec3b764efb8ed265aa5445b", // horizen
-      ],
+      sendDVNs: {
+        mainnet: {
+          optionalDVNThreshold: 2,
+          requiredDVNs: [
+            "0x9c061c9a4782294eef65ef28cb88233a987f4bdd", // layerzero labs
+          ],
+          optionalDVNs: [
+            "0x28af4dadbc5066e994986e8bb105240023dc44b6", // nethermind
+            "0x8ddf05f9a5c488b4973897e278b58895bf87cb24", // polyhedra
+            "0xdd7b5e1db4aafd5c8ec3b764efb8ed265aa5445b", // horizen
+          ],
+        },
+      },
     },
   },
 };

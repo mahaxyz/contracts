@@ -1,7 +1,6 @@
 import { task } from "hardhat/config";
 import { waitForTx } from "../../scripts/utils";
 import { config } from "./config";
-import { zeroPadValue } from "ethers";
 
 task(`setup-oft`, `Sets up the OFT with the right DVNs`).setAction(
   async (_, hre) => {
@@ -9,8 +8,8 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`).setAction(
     const configTypeUln = 2; // As defined for CONFIG_TYPE_ULN
 
     const connections = Object.values(config);
-    const connection = connections.find((c) => c.network === hre.network.name);
-    if (!connection) throw new Error("cannot find connection");
+    const c = connections.find((c) => c.network === hre.network.name);
+    if (!c) throw new Error("cannot find connection");
 
     const remoteConnections = connections.filter(
       (c) => c.network !== hre.network.name
@@ -23,61 +22,66 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`).setAction(
 
     const encoder = new hre.ethers.AbiCoder();
 
-    const oftD = await hre.deployments.get(connection.contract);
+    const oftD = await hre.deployments.get(c.contract);
     const oft = await hre.ethers.getContractAt("OFT", oftD.address);
     const endpoint = await hre.ethers.getContractAt(
       "IL0EndpointV2",
       await oft.endpoint()
     );
 
+    const execConfigData = {
+      maxMessageSize: 10000,
+      executorAddress: c.libraries.executor,
+    };
+
     // taken from https://docs.layerzero.network/v2/developers/evm/protocol-gas-settings/default-config#setting-send-config
     for (let index = 0; index < remoteConnections.length; index++) {
-      const remote = remoteConnections[index];
-      console.log("setting up DVN routes for", remote.network);
+      const r = remoteConnections[index];
+      console.log("setting up DVN routes for", r.network);
 
-      const ulnConfigData = {
-        confirmations: connection.config.confirmations,
-        requiredDVNCount: connection.config.requiredDVNs.length,
-        optionalDVNCount: connection.config.optionalDVNs.length,
-        optionalDVNThreshold: connection.config.optionalDVNThreshold,
-        requiredDVNs: connection.config.requiredDVNs,
-        optionalDVNs: connection.config.optionalDVNs,
+      const ulnConfigDataSend = {
+        confirmations: c.config.confirmations,
+        requiredDVNCount: c.config.sendDVNs[r.network].requiredDVNs.length,
+        optionalDVNCount: c.config.sendDVNs[r.network].optionalDVNs.length,
+        optionalDVNThreshold: c.config.sendDVNs[r.network].optionalDVNThreshold,
+        requiredDVNs: c.config.sendDVNs[r.network].requiredDVNs,
+        optionalDVNs: c.config.sendDVNs[r.network].optionalDVNs,
       };
 
-      const execConfigData = {
-        maxMessageSize: 10000,
-        executorAddress: connection.libraries.executor,
+      const ulnConfigDataRecv = {
+        confirmations: r.config.confirmations,
+        requiredDVNCount: r.config.sendDVNs[c.network].requiredDVNs.length,
+        optionalDVNCount: r.config.sendDVNs[c.network].optionalDVNs.length,
+        optionalDVNThreshold: r.config.sendDVNs[c.network].optionalDVNThreshold,
+        requiredDVNs: r.config.sendDVNs[c.network].requiredDVNs,
+        optionalDVNs: r.config.sendDVNs[c.network].optionalDVNs,
       };
 
-      const ulnConfigEncoded = encoder.encode(
-        [ulnConfigStructType],
-        [ulnConfigData]
-      );
-
-      const execConfigEncoded = encoder.encode(
-        [configTypeExecutorStruct],
-        [execConfigData]
-      );
-
-      const setConfigParamUln = {
-        eid: remote.eid, // Replace with your remote chain's endpoint ID (source or destination)
+      const setConfigParamUlnSend = {
+        eid: r.eid, // Replace with your remote chain's endpoint ID (source or destination)
         configType: configTypeUln,
-        config: ulnConfigEncoded,
+        config: encoder.encode([ulnConfigStructType], [ulnConfigDataSend]),
+      };
+
+      const setConfigParamUlnRecv = {
+        eid: r.eid, // Replace with your remote chain's endpoint ID (source or destination)
+        configType: configTypeUln,
+        config: encoder.encode([ulnConfigStructType], [ulnConfigDataRecv]),
       };
 
       const setConfigParamExecutor = {
-        eid: remote.eid, // Replace with your remote chain's endpoint ID (source or destination)
+        eid: r.eid, // Replace with your remote chain's endpoint ID (source or destination)
         configType: configTypeExec,
-        config: execConfigEncoded,
+        config: encoder.encode([configTypeExecutorStruct], [execConfigData]),
       };
 
-      console.log("setConfigParamUln", setConfigParamUln);
+      console.log("setConfigParamUlnSend", setConfigParamUlnSend);
       console.log("setConfigParamExecutor", setConfigParamExecutor);
 
       // setup the send config
       await waitForTx(
-        await endpoint.setConfig(oft.target, connection.libraries.sendLib302, [
-          setConfigParamUln,
+        await endpoint.setConfig(oft.target, c.libraries.sendLib302, [
+          setConfigParamUlnSend,
           setConfigParamExecutor,
         ]),
         2
@@ -85,11 +89,9 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`).setAction(
 
       // setup the receive config
       await waitForTx(
-        await endpoint.setConfig(
-          oft.target,
-          connection.libraries.receiveLib302,
-          [setConfigParamUln]
-        )
+        await endpoint.setConfig(oft.target, c.libraries.receiveLib302, [
+          setConfigParamUlnRecv,
+        ])
       );
     }
   }
