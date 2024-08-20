@@ -41,6 +41,8 @@
   "homepage": "https://github.com/mahaxyz/contracts#readme",
   "devDependencies": {
     "@ethersproject/bignumber": "^5.6.2",
+    "@layerzerolabs/lz-evm-oapp-v2": "^2.3.36",
+    "@layerzerolabs/lz-evm-protocol-v2": "^2.3.36",
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.4",
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
@@ -87,9 +89,11 @@
     "typescript": "^5.5.3"
   },
   "resolutions": {
+    "ethers": "^5.7.2",
+    "hardhat-deploy": "^0.12.1",
     "@openzeppelin/contracts": "^5.0.0"
   },
   "dependencies": {
-    "@layerzerolabs/lz-evm-oapp-v2": "^2.3.36"
+    "@layerzerolabs/lz-v2-utilities": "^2.3.36"
   }
 }

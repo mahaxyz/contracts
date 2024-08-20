@@ -27,7 +27,7 @@ const defaultAccount = {
 };
 
 const SKIP_LOAD = process.env.SKIP_LOAD === "true";
-const TASK_FOLDERS = ["connext", "misc"];
+const TASK_FOLDERS = ["connext", "misc", "layerzero"];
 
 // Prevent to load tasks before compilation and typechain
 if (!SKIP_LOAD) {
@@ -94,6 +94,11 @@ const config: HardhatUserConfig = {
       accounts: defaultAccount,
       saveDeployments: true,
     },
+    xlayer: {
+      url: `https://xlayerrpc.okx.com`,
+      accounts: defaultAccount,
+      saveDeployments: true,
+    },
     arbitrum: {
       url: "https://arb1.arbitrum.io/rpc",
       accounts: defaultAccount,
@@ -115,8 +120,20 @@ const config: HardhatUserConfig = {
       sepolia: process.env.ETHERSCAN_KEY || "",
       base: process.env.BASESCAN_KEY || "",
       arbitrumOne: process.env.ARBISCAN_KEY || "",
+      xlayer: process.env.XLAYER_KEY || "",
       arbitrumSepolia: process.env.ARBISCAN_KEY || "",
     },
+    customChains: [
+      {
+        network: "xlayer",
+        chainId: 196,
+        urls: {
+          apiURL:
+            "https://www.oklink.com/api/v5/explorer/contract/verify-source-code-plugin/XLAYER",
+          browserURL: "https://www.oklink.com/xlayer", //or https://www.oklink.com/xlayer for mainnet
+        },
+      },
+    ],
   },
 };
 
