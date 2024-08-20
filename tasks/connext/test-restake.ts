@@ -18,5 +18,5 @@ task(`test-restake`).setAction(async (_, hre) => {
 
   console.log("deposit contract is at", contract.target);
   await waitForTx(await erc20.approve(contract.target, MaxUint256));
-  await waitForTx(await contract.deposit(10e6, 0, Date.now()));
+  await waitForTx(await contract.deposit(1e6, 0, Date.now()));
 });

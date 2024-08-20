@@ -25,7 +25,9 @@ task(
     "RISK_ROLE",
   ];
 
-  const safe = "0x6357edbfe5ada570005ceb8fad3139ef5a8863cc";
+  const safeD = await hre.deployments.get("GnosisSafe");
+  const safe = safeD.address;
+
   const timelock = await hre.deployments.get("MAHATimelockController");
 
   const deploymentNames = Object.keys(deployments);

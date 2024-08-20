@@ -1,5 +1,5 @@
 {
-  "address": "0x878df2f50de7077a0fe45f9e06253b7a591d22aa",
+  "address": "0x69000b9e02fd541c6e1df00470e12e968d419051",
   "abi": [
     "error ECDSAInvalidSignature()",
     "error ECDSAInvalidSignatureLength(uint256)",

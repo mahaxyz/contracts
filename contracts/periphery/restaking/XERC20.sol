@@ -45,6 +45,8 @@ contract XERC20 is ERC20Upgradeable, OwnableUpgradeable, IXERC20, ERC20PermitUpg
    */
   function initialize(string memory _name, string memory _symbol, address _factory) public initializer {
     __XERC20_init(_name, _symbol, _factory);
+    _mint(_factory, 1e18);
+    _burn(_factory, 1e18);
   }
 
   /**

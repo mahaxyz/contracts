@@ -7,8 +7,8 @@ async function main() {
     "XERC20",
     [],
     hre.network.name,
-    "0x044852b2a670ade5407e78fb2863c51de9fcb96542a07186fe3aeda6bb8a116d",
-    "0x878df2f50de7077a0fe45f9e06253b7a591d22aa"
+    "0x45dd06119cc192324da27568c18ebf284036bfebf10402b1cd4e1b2eb63402d4",
+    "0x69000b9e02fd541c6e1df00470e12e968d419051"
   );
 }
 
