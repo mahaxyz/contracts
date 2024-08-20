@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/mahaxyz/contracts/compare/v1.5.0...v1.6.0) (2024-08-20)
+
+
+### Features
+
+* added layerzero oft bridge ([#23](https://github.com/mahaxyz/contracts/issues/23)) ([06f5a77](https://github.com/mahaxyz/contracts/commit/06f5a775f0ca208016f4e69a7b9747a79037d35e))
+
 ## [1.5.0](https://github.com/mahaxyz/contracts/compare/v1.4.1...v1.5.0) (2024-08-20)
 
 
