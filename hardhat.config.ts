@@ -120,7 +120,7 @@ const config: HardhatUserConfig = {
       sepolia: process.env.ETHERSCAN_KEY || "",
       base: process.env.BASESCAN_KEY || "",
       arbitrumOne: process.env.ARBISCAN_KEY || "",
-      xlayer: process.env.XLAYER_KEY || "",
+      xlayer: process.env.XLAYER_KEY || "test",
       arbitrumSepolia: process.env.ARBISCAN_KEY || "",
     },
     customChains: [
@@ -130,7 +130,7 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL:
             "https://www.oklink.com/api/v5/explorer/contract/verify-source-code-plugin/XLAYER",
-          browserURL: "https://www.oklink.com/xlayer", //or https://www.oklink.com/xlayer for mainnet
+          browserURL: "https://www.oklink.com/xlayer",
         },
       },
     ],
