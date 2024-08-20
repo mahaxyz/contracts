@@ -15,18 +15,40 @@ interface IConfig {
       [name: string]: string;
     };
 
-    config: {
-      confirmations: number;
-      sendDVNs: {
-        [network: string]: {
-          optionalDVNThreshold: number;
-          requiredDVNs: string[];
-          optionalDVNs: string[];
-        };
-      };
-    };
+    confirmations: number;
   };
 }
+
+type IRoute = [
+  string,
+  string,
+  {
+    optionalDVNThreshold: number;
+    requiredDVNs: string[];
+    optionalDVNs: string[];
+  }
+];
+
+const defaultDVNList = {
+  optionalDVNThreshold: 1,
+  requiredDVNs: ["layerzeroLabs"],
+  optionalDVNs: ["polyhedra", "horizen", "nethermind"],
+};
+
+const tighterDVNList = {
+  optionalDVNThreshold: 1,
+  requiredDVNs: ["layerzeroLabs"],
+  optionalDVNs: ["polyhedra", "horizen", "nethermind", "googleCloud"],
+};
+
+export const routes: IRoute[] = [
+  ["mainnet", "base", tighterDVNList],
+  ["mainnet", "xlayer", defaultDVNList],
+  ["mainnet", "arbitrum", tighterDVNList],
+  ["mainnet", "bsc", tighterDVNList],
+  ["mainnet", "scroll", tighterDVNList],
+  ["mainnet", "zircuit", tighterDVNList],
+];
 
 export const config: IConfig = {
   mainnet: {
@@ -46,26 +68,7 @@ export const config: IConfig = {
       horizen: "0x380275805876ff19055ea900cdb2b46a94ecf20d",
       googleCloud: "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc",
     },
-    config: {
-      confirmations: 5,
-      sendDVNs: {
-        arbitrum: {
-          optionalDVNThreshold: 1,
-          requiredDVNs: ["layerzeroLabs"],
-          optionalDVNs: ["polyhedra", "horizen", "nethermind"],
-        },
-        xlayer: {
-          optionalDVNThreshold: 1,
-          requiredDVNs: ["layerzeroLabs"],
-          optionalDVNs: ["polyhedra", "horizen", "nethermind"],
-        },
-        base: {
-          optionalDVNThreshold: 1,
-          requiredDVNs: ["layerzeroLabs"],
-          optionalDVNs: ["polyhedra", "horizen", "nethermind", "googleCloud"],
-        },
-      },
-    },
+    confirmations: 5,
   },
   base: {
     network: "base",
@@ -84,21 +87,7 @@ export const config: IConfig = {
       horizen: "0xa7b5189bca84cd304d8553977c7c614329750d99",
       googleCloud: "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc",
     },
-    config: {
-      confirmations: 15,
-      sendDVNs: {
-        mainnet: {
-          optionalDVNThreshold: 1,
-          requiredDVNs: ["layerzeroLabs"],
-          optionalDVNs: ["polyhedra", "horizen", "nethermind", "googleCloud"],
-        },
-        xlayer: {
-          optionalDVNThreshold: 1,
-          requiredDVNs: ["layerzeroLabs"],
-          optionalDVNs: ["polyhedra", "horizen", "nethermind"],
-        },
-      },
-    },
+    confirmations: 15,
   },
   xlayer: {
     network: "xlayer",
@@ -116,20 +105,6 @@ export const config: IConfig = {
       nethermind: "0x28af4dadbc5066e994986e8bb105240023dc44b6",
       horizen: "0xdd7b5e1db4aafd5c8ec3b764efb8ed265aa5445b",
     },
-    config: {
-      confirmations: 15,
-      sendDVNs: {
-        mainnet: {
-          optionalDVNThreshold: 1,
-          requiredDVNs: ["layerzeroLabs"],
-          optionalDVNs: ["polyhedra", "horizen", "nethermind"],
-        },
-        base: {
-          optionalDVNThreshold: 1,
-          requiredDVNs: ["layerzeroLabs"],
-          optionalDVNs: ["polyhedra", "horizen", "nethermind"],
-        },
-      },
-    },
+    confirmations: 15,
   },
 };
