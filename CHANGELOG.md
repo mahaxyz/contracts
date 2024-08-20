@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.6.1](https://github.com/mahaxyz/contracts/compare/v1.6.0...v1.6.1) (2024-08-20)
+
+
+### Features
+
+* maha oft ([#28](https://github.com/mahaxyz/contracts/issues/28)) ([0cdf8db](https://github.com/mahaxyz/contracts/commit/0cdf8dbc2543d09e020a167871195cb568f0aeac))
+
+
+### Bug Fixes
+
+* redeployed the xUSDz contract into base ([50f7e25](https://github.com/mahaxyz/contracts/commit/50f7e2593b225cec2e4921c870f9034975919729))
+
 ## [1.6.0](https://github.com/mahaxyz/contracts/compare/v1.5.0...v1.6.0) (2024-08-20)
 
 
