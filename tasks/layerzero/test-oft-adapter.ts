@@ -61,7 +61,6 @@ task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
       await waitForTx(await erc20.approve(oftAdapter.target, MaxUint256));
     }
 
-    console.log(await oftAdapter.quoteSend.populateTransaction(params, false));
     const [nativeFee] = await oftAdapter.quoteSend(params, false);
 
     const fee: MessagingFeeStruct = {
