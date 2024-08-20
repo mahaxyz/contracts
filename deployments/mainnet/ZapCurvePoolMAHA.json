@@ -1,5 +1,5 @@
 {
-  "address": "0x64f629a1dBbBFBc6e8a41440D45ee3223f5d7261",
+  "address": "0x460F0411CcFb0951FfB526c41E98Ba3a28620AA9",
   "abi": [
     {
       "inputs": [
@@ -9,13 +9,45 @@
           "type": "address"
         },
         {
+          "internalType": "contract IERC20",
+          "name": "_maha",
+          "type": "address"
+        },
+        {
           "internalType": "address",
           "name": "_psm",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_odos",
           "type": "address"
         }
       ],
       "stateMutability": "nonpayable",
       "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "target",
+          "type": "address"
+        }
+      ],
+      "name": "AddressEmptyCode",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "AddressInsufficientBalance",
+      "type": "error"
     },
     {
       "inputs": [],
@@ -24,7 +56,23 @@
     },
     {
       "inputs": [],
+      "name": "FailedInnerCall",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "OdosSwapFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "SafeERC20FailedOperation",
       "type": "error"
     },
     {
@@ -91,10 +139,36 @@
     },
     {
       "inputs": [],
+      "name": "maha",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "odos",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "pool",
       "outputs": [
         {
-          "internalType": "contract ICurveStableSwapNG",
+          "internalType": "contract IERC20Metadata",
           "name": "",
           "type": "address"
         }
@@ -157,6 +231,34 @@
       "name": "zapIntoLP",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "swapAsset",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "swapAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minLpAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "odosCallData",
+          "type": "bytes"
+        }
+      ],
+      "name": "zapIntoLPWithOdos",
+      "outputs": [],
+      "stateMutability": "payable",
       "type": "function"
     },
     {
