@@ -9,8 +9,7 @@ const _fetchAndSortDVNS = (
   remoteDvns: string[] = []
 ) => {
   const commonDVNs = _.intersection(dvns, remoteDvns);
-  const mappedDVNs = commonDVNs.map((dvn) => conf.dvns[dvn]);
-  return mappedDVNs.sort();
+  return commonDVNs.map((dvn) => conf.dvns[dvn]).sort();
 };
 
 task(`setup-oft`, `Sets up the OFT with the right DVNs`)
@@ -103,20 +102,20 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
         config: encoder.encode([configTypeExecutorStruct], [execConfigData]),
       };
 
-      // // setup the send config
-      // await waitForTx(
-      //   await endpoint.setConfig(oft.target, c.libraries.sendLib302, [
-      //     setConfigParamUlnSend,
-      //     setConfigParamExecutor,
-      //   ]),
-      //   2
-      // );
+      // setup the send config
+      await waitForTx(
+        await endpoint.setConfig(oft.target, c.libraries.sendLib302, [
+          setConfigParamUlnSend,
+          setConfigParamExecutor,
+        ]),
+        2
+      );
 
-      // // setup the receive config
-      // await waitForTx(
-      //   await endpoint.setConfig(oft.target, c.libraries.receiveLib302, [
-      //     setConfigParamUlnRecv,
-      //   ])
-      // );
+      // setup the receive config
+      await waitForTx(
+        await endpoint.setConfig(oft.target, c.libraries.receiveLib302, [
+          setConfigParamUlnRecv,
+        ])
+      );
     }
   });
