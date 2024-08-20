@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/mahaxyz/contracts/compare/v1.4.1...v1.5.0) (2024-08-20)
+
+
+### Features
+
+* added staking pool for aerodrome sUSDzUSDC pool ([d9efb65](https://github.com/mahaxyz/contracts/commit/d9efb658cb9f63b16957ef9f1382166208b04f36))
+
 ## [1.4.1](https://github.com/mahaxyz/contracts/compare/v1.4.0...v1.4.1) (2024-08-18)
 
 
