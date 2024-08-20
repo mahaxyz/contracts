@@ -40,7 +40,7 @@ export const config: IConfig = {
       confirmations: 5,
       sendDVNs: {
         xlayer: {
-          optionalDVNThreshold: 2,
+          optionalDVNThreshold: 1,
           requiredDVNs: [
             "0x589dedbd617e0cbcb916a9223f4d1300c294236b", // layerzero labs
           ],
@@ -64,10 +64,10 @@ export const config: IConfig = {
       executor: "0xcCE466a522984415bC91338c232d98869193D46e",
     },
     config: {
-      confirmations: 15,
+      confirmations: 10,
       sendDVNs: {
         mainnet: {
-          optionalDVNThreshold: 2,
+          optionalDVNThreshold: 1,
           requiredDVNs: [
             "0x9c061c9a4782294eef65ef28cb88233a987f4bdd", // layerzero labs
           ],

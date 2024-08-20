@@ -27,7 +27,7 @@ task(`skip-oft-tx`, `Sets up the OFT with the right DVNs`)
         oft.target, // address _oapp, //the Oapp address
         target.eid, // uint32 _srcEid, //source chain endpoint id
         zeroPadValue(deployer.address, 32), // bytes32 _sender, //the byte32 format of sender address
-        1 // uint64 _nonce // the message nonce you wish to skip to
+        3 // uint64 _nonce // the message nonce you wish to skip to
       )
     );
   });

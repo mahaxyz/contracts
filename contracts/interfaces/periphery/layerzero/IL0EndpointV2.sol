@@ -28,4 +28,18 @@ interface IL0EndpointV2 {
     bytes32 _sender, //the byte32 format of sender address
     uint64 _nonce // the message nonce you wish to skip to
   ) external;
+
+  function setSendLibrary(address _oapp, uint32 _eid, address _newLib) external;
+
+  function getSendLibrary(address _sender, uint32 _eid) external view returns (address lib);
+
+  function isDefaultSendLibrary(address _sender, uint32 _eid) external view returns (bool);
+
+  function setReceiveLibrary(address _oapp, uint32 _eid, address _newLib, uint256 _gracePeriod) external;
+
+  function getReceiveLibrary(address _receiver, uint32 _eid) external view returns (address lib, bool isDefault);
+
+  function setReceiveLibraryTimeout(address _oapp, uint32 _eid, address _lib, uint256 _gracePeriod) external;
+
+  function receiveLibraryTimeout(address _receiver, uint32 _eid) external view returns (address lib, uint256 expiry);
 }

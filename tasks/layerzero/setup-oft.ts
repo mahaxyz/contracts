@@ -4,9 +4,6 @@ import { config } from "./config";
 
 task(`setup-oft`, `Sets up the OFT with the right DVNs`).setAction(
   async (_, hre) => {
-    const configTypeExec = 1; // As defined for CONFIG_TYPE_ULN
-    const configTypeUln = 2; // As defined for CONFIG_TYPE_ULN
-
     const connections = Object.values(config);
     const c = connections.find((c) => c.network === hre.network.name);
     if (!c) throw new Error("cannot find connection");
@@ -20,7 +17,8 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`).setAction(
     const configTypeExecutorStruct =
       "tuple(uint32 maxMessageSize, address executorAddress)";
 
-    const encoder = new hre.ethers.AbiCoder();
+    console.log(hre.ethers.version);
+    const encoder = hre.ethers.AbiCoder.defaultAbiCoder();
 
     const oftD = await hre.deployments.get(c.contract);
     const oft = await hre.ethers.getContractAt("OFT", oftD.address);
@@ -59,24 +57,34 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`).setAction(
 
       const setConfigParamUlnSend = {
         eid: r.eid, // Replace with your remote chain's endpoint ID (source or destination)
-        configType: configTypeUln,
+        configType: 2,
         config: encoder.encode([ulnConfigStructType], [ulnConfigDataSend]),
       };
 
       const setConfigParamUlnRecv = {
         eid: r.eid, // Replace with your remote chain's endpoint ID (source or destination)
-        configType: configTypeUln,
+        configType: 2,
         config: encoder.encode([ulnConfigStructType], [ulnConfigDataRecv]),
       };
 
       const setConfigParamExecutor = {
         eid: r.eid, // Replace with your remote chain's endpoint ID (source or destination)
-        configType: configTypeExec,
+        configType: 1,
         config: encoder.encode([configTypeExecutorStruct], [execConfigData]),
       };
 
-      console.log("setConfigParamUlnSend", setConfigParamUlnSend);
-      console.log("setConfigParamExecutor", setConfigParamExecutor);
+      await waitForTx(
+        await endpoint.setReceiveLibrary(
+          oft.target,
+          r.eid,
+          c.libraries.receiveLib302,
+          0
+        )
+      );
+
+      await waitForTx(
+        await endpoint.setSendLibrary(oft.target, r.eid, c.libraries.sendLib302)
+      );
 
       // setup the send config
       await waitForTx(
