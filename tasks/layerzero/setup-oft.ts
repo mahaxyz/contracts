@@ -2,11 +2,15 @@ import { task } from "hardhat/config";
 import { waitForTx } from "../../scripts/utils";
 import { config } from "./config";
 
-task(`setup-oft`, `Sets up the OFT with the right DVNs`).setAction(
-  async (_, hre) => {
+task(`setup-oft`, `Sets up the OFT with the right DVNs`)
+  .addParam("token", "either zai or maha")
+  .setAction(async ({ token }, hre) => {
     const connections = Object.values(config);
     const c = connections.find((c) => c.network === hre.network.name);
     if (!c) throw new Error("cannot find connection");
+
+    const contractNameToken = token === "zai" ? "ZaiStablecoin" : "MAHA";
+    const contractName = `${contractNameToken}${c.contract}`;
 
     const remoteConnections = connections.filter(
       (c) => c.network !== hre.network.name
@@ -19,7 +23,7 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`).setAction(
 
     const encoder = hre.ethers.AbiCoder.defaultAbiCoder();
 
-    const oftD = await hre.deployments.get(c.contract);
+    const oftD = await hre.deployments.get(contractName);
     const oft = await hre.ethers.getContractAt("OFT", oftD.address);
     const endpoint = await hre.ethers.getContractAt(
       "IL0EndpointV2",
@@ -92,5 +96,4 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`).setAction(
         ])
       );
     }
-  }
-);
+  });

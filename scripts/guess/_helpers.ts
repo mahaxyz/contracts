@@ -15,6 +15,12 @@ export function get(name: string, network: string): string {
   return res;
 }
 
+export function existsD(name: string, network: string): boolean {
+  return fs.existsSync(
+    path.resolve(__dirname, `../../deployments/${network}/${name}.json`)
+  );
+}
+
 export const guessProxy = (
   implArtificat: any,
   implAddress: string,

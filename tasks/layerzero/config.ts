@@ -3,7 +3,7 @@ interface IConfig {
     eid: number;
     network: string;
     endpoint: string;
-    contract: "ZaiStablecoinOFTAdapter" | "ZaiStablecoinOFT";
+    contract: "OFTAdapter" | "OFT";
 
     libraries: {
       sendLib302: string;
@@ -28,7 +28,7 @@ export const config: IConfig = {
   mainnet: {
     network: "mainnet",
     eid: 30101,
-    contract: "ZaiStablecoinOFTAdapter",
+    contract: "OFTAdapter",
     libraries: {
       sendLib302: "0xbB2Ea70C9E858123480642Cf96acbcCE1372dCe1",
       receiveLib302: "0xc02Ab410f0734EFa3F14628780e6e695156024C2",
@@ -50,13 +50,25 @@ export const config: IConfig = {
             "0xa59ba433ac34d2927232918ef5b2eaafcf130ba5", // nethermind
           ],
         },
+        base: {
+          optionalDVNThreshold: 1,
+          requiredDVNs: [
+            "0x589dedbd617e0cbcb916a9223f4d1300c294236b", // layerzero labs
+          ],
+          optionalDVNs: [
+            "0x380275805876ff19055ea900cdb2b46a94ecf20d", // horizen
+            "0x8ddf05f9a5c488b4973897e278b58895bf87cb24", // polyhedra
+            "0xa59ba433ac34d2927232918ef5b2eaafcf130ba5", // nethermind
+            "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc", // google cloud
+          ],
+        },
       },
     },
   },
   base: {
     network: "base",
     eid: 30184,
-    contract: "ZaiStablecoinOFTAdapter",
+    contract: "OFT",
     libraries: {
       sendLib302: "0xB5320B0B3a13cC860893E2Bd79FCd7e13484Dda2",
       receiveLib302: "0xc70AB6f32772f59fBfc23889Caf4Ba3376C84bAf",
@@ -64,14 +76,27 @@ export const config: IConfig = {
     },
     endpoint: "0x1a44076050125825900e736c501f859c50fE728c",
     config: {
-      confirmations: 5,
-      sendDVNs: {},
+      confirmations: 15,
+      sendDVNs: {
+        mainnet: {
+          optionalDVNThreshold: 1,
+          requiredDVNs: [
+            "0x9e059a54699a285714207b43b055483e78faac25", // layerzero labs
+          ],
+          optionalDVNs: [
+            "0x8ddf05f9a5c488b4973897e278b58895bf87cb24", // polyhedra
+            "0xa7b5189bca84cd304d8553977c7c614329750d99", // horizen
+            "0xcd37ca043f8479064e10635020c65ffc005d36f6", // nethermind
+            "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc", // google cloud
+          ],
+        },
+      },
     },
   },
   xlayer: {
     network: "xlayer",
     eid: 30274,
-    contract: "ZaiStablecoinOFT",
+    contract: "OFT",
     endpoint: "0x1a44076050125825900e736c501f859c50fE728c",
     libraries: {
       sendLib302: "0xe1844c5D63a9543023008D332Bd3d2e6f1FE1043",
