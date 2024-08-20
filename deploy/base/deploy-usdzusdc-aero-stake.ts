@@ -1,30 +1,30 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployProxy } from "../../scripts/utils";
+import { ZeroAddress } from "ethers";
+import assert from "assert";
 
 async function main(hre: HardhatRuntimeEnvironment) {
+  assert(hre.network.name === "base", "Wrong network");
   const { deployments } = hre;
 
-  const [deployer] = await hre.ethers.getSigners();
   const proxyAdminD = await deployments.get("ProxyAdmin");
-  const zaiD = await deployments.get("ZaiStablecoin");
-  const safe = "0x6357EDbfE5aDA570005ceB8FAd3139eF5A8863CC";
+  const mahaD = await deployments.get("MahaOFT");
+  const usdcD = await deployments.get("USDC");
+  const safe = "0x7427E82f5abCbcA2a45cAfE6e65cBC1FADf9ad9D";
 
-  const name = "Staked ZAI/FRAXBP Pool"; // string memory _name,
-  const implArgs = [
-    "sZAIFRAXBP", // string memory _symbol,
-    "0x057c658dfbbcbb96c361fb4e66b86cca081b6c6a", // address _stakingToken,
-    "0x6357EDbfE5aDA570005ceB8FAd3139eF5A8863CC", // address _governance,
-    "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", // address _rewardToken1,
-    "0x745407c86df8db893011912d3ab28e68b62e49b0", // address _rewardToken2,
-    86400 * 7, // uint256 _rewardsDuration,
-    ZeroAddress, // address _staking
-  ];
+  const name = "Staked USDz/USDC Pool"; // string memory _name,
+  const symbol = "sUSDZUSDC"; // string memory _symbol,
+  const stakingToken = "0xd52881ea5880712a3f91bc1391598312321d2d84";
 
   const params = [
-    safe, // address _feeCollector,
-    100000n * 10n ** 18n, // uint256 _globalDebtCeiling,
-    zaiD.address, // address _zai,
-    deployer.address, // address _governance
+    name,
+    symbol,
+    stakingToken, // address _stakingToken,
+    safe, // address _governance,
+    usdcD.address, // address _rewardToken1,
+    mahaD.address, // address _rewardToken2,
+    86400 * 7, // uint256 _rewardsDuration,
+    ZeroAddress, // address _staking
   ];
 
   await deployProxy(
@@ -32,9 +32,9 @@ async function main(hre: HardhatRuntimeEnvironment) {
     "StakingLPRewards",
     params,
     proxyAdminD.address,
-    `DDHub`
+    `StakingLPRewards-${symbol}`
   );
 }
 
-main.tags = ["DeployDDHub"];
+main.tags = ["StakingLPRewards-Aero-sUSDZUSDC"];
 export default main;
