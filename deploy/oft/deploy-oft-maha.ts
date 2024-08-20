@@ -6,10 +6,10 @@ async function main(hre: HardhatRuntimeEnvironment) {
   await deployContract(
     hre,
     "LayerZeroCustomOFT",
-    ["MAHA.xyz", "MAHA", config[hre.network.name].endpoint],
-    "MahaOFT"
+    ["MAHA.xyz", "MAHA", config[hre.network.name].libraries.endpoint],
+    "MAHAOFT"
   );
 }
 
-main.tags = ["MahaOFT"];
+main.tags = ["MAHAOFT"];
 export default main;

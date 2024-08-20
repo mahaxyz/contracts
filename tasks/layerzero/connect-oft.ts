@@ -9,8 +9,7 @@ task(`connect-oft`, `Connects of all the OFT connections`)
   .setAction(async ({ token }, hre) => {
     const [deployer] = await hre.ethers.getSigners();
 
-    const connections = Object.values(config);
-    const c = connections.find((c) => c.network === hre.network.name);
+    const c = config[hre.network.name];
     console.log("current connection", c);
     if (!c) throw new Error("cannot find connection");
 
@@ -24,8 +23,8 @@ task(`connect-oft`, `Connects of all the OFT connections`)
       await oft.endpoint()
     );
 
-    const remoteConnections = connections.filter(
-      (c) => c.network !== hre.network.name
+    const remoteConnections = Object.keys(config).filter(
+      (c) => c !== hre.network.name
     );
     const owner = await oft.owner();
     const delegate = await endpoint.delegates(oft.target);
@@ -35,14 +34,18 @@ task(`connect-oft`, `Connects of all the OFT connections`)
     console.log("valid", delegate.toLowerCase() == owner.toLowerCase());
 
     for (let index = 0; index < remoteConnections.length; index++) {
-      const r = remoteConnections[index];
+      const remoteNetwork = remoteConnections[index];
+      const r = config[remoteNetwork];
       const remoteContractName = `${contractNameToken}${r.contract}`;
 
-      if (!existsD(remoteContractName, r.network)) continue;
+      if (!existsD(remoteContractName, remoteNetwork)) {
+        console.log("no contract found for", remoteNetwork);
+        continue;
+      }
 
-      const remoteD = get(remoteContractName, r.network);
+      const remoteD = get(remoteContractName, remoteNetwork);
       const remoteOft = zeroPadValue(remoteD, 32);
-      console.log("\nnetwork", r.network);
+      console.log("\nnetwork", remoteNetwork);
       console.log("remote peer  ", remoteOft);
 
       const peer = await oft.peers(r.eid);
@@ -52,7 +55,7 @@ task(`connect-oft`, `Connects of all the OFT connections`)
       if (peer.toLowerCase() != remoteOft.toLowerCase()) {
         // if we can set the peer, we will set it here
         if (owner == deployer.address) {
-          console.log("setting peer for", r.network);
+          console.log("setting peer for", remoteNetwork);
           await waitForTx(await oft.setPeer(r.eid, remoteOft));
         } else {
           const data = await oft.setPeer.populateTransaction(r.eid, remoteOft);

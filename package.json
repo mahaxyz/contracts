@@ -60,6 +60,7 @@
     "@types/lowdb": "1.0.9",
     "@types/mocha": "^9.1.1",
     "@types/node": "14.0.5",
+    "@types/underscore": "^1.11.15",
     "bluebird": "^3.7.2",
     "chai": "^4.2.0",
     "dotenv": "^16.4.5",
@@ -94,6 +95,7 @@
     "@openzeppelin/contracts": "^5.0.0"
   },
   "dependencies": {
-    "@layerzerolabs/lz-v2-utilities": "^2.3.36"
+    "@layerzerolabs/lz-v2-utilities": "^2.3.36",
+    "underscore": "^1.13.7"
   }
 }

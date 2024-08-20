@@ -1,19 +1,29 @@
 import { task } from "hardhat/config";
 import { waitForTx } from "../../scripts/utils";
-import { config } from "./config";
+import { config, IL0Config } from "./config";
+import _ from "underscore";
+
+const _fetchAndSortDVNS = (
+  conf: IL0Config,
+  dvns: string[] = [],
+  remoteDvns: string[] = []
+) => {
+  const commonDVNs = _.intersection(dvns, remoteDvns);
+  const mappedDVNs = commonDVNs.map((dvn) => conf.dvns[dvn]);
+  return mappedDVNs.sort();
+};
 
 task(`setup-oft`, `Sets up the OFT with the right DVNs`)
   .addParam("token", "either zai or maha")
   .setAction(async ({ token }, hre) => {
-    const connections = Object.values(config);
-    const c = connections.find((c) => c.network === hre.network.name);
+    const c = config[hre.network.name];
     if (!c) throw new Error("cannot find connection");
 
     const contractNameToken = token === "zai" ? "ZaiStablecoin" : "MAHA";
     const contractName = `${contractNameToken}${c.contract}`;
 
-    const remoteConnections = connections.filter(
-      (c) => c.network !== hre.network.name
+    const remoteConnections = Object.keys(config).filter(
+      (c) => c !== hre.network.name
     );
 
     const ulnConfigStructType =
@@ -37,29 +47,42 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
 
     // taken from https://docs.layerzero.network/v2/developers/evm/protocol-gas-settings/default-config#setting-send-config
     for (let index = 0; index < remoteConnections.length; index++) {
-      const r = remoteConnections[index];
-      console.log("setting up DVN routes for remote network:", r.network);
-      if (!c.config.sendDVNs[r.network]) {
-        console.log("no DVN routes for remote network:", r.network);
+      const remoteNetwork = remoteConnections[index];
+      const r = config[remoteNetwork];
+
+      console.log(
+        "setting up DVN routes from",
+        hre.network.name,
+        "to remote network",
+        remoteNetwork
+      );
+      const requiredDVNs = _fetchAndSortDVNS(c, c.requiredDVNs, r.requiredDVNs);
+      const optionalDVNs = _fetchAndSortDVNS(c, c.optionalDVNs, r.optionalDVNs);
+
+      if (requiredDVNs.length === 0 && optionalDVNs.length === 0) {
+        console.log("no DVNs to set up for remote network", remoteNetwork);
         continue;
+      } else {
+        console.log("using requiredDVNs:", requiredDVNs);
+        console.log("using optionalDVNs:", optionalDVNs);
       }
 
       const ulnConfigDataSend = {
-        confirmations: c.config.confirmations,
-        requiredDVNCount: c.config.sendDVNs[r.network].requiredDVNs.length,
-        optionalDVNCount: c.config.sendDVNs[r.network].optionalDVNs.length,
-        optionalDVNThreshold: c.config.sendDVNs[r.network].optionalDVNThreshold,
-        requiredDVNs: c.config.sendDVNs[r.network].requiredDVNs,
-        optionalDVNs: c.config.sendDVNs[r.network].optionalDVNs,
+        confirmations: c.confirmations,
+        requiredDVNCount: requiredDVNs.length,
+        optionalDVNCount: optionalDVNs.length,
+        optionalDVNThreshold: c.optionalDVNThreshold,
+        requiredDVNs: requiredDVNs,
+        optionalDVNs: optionalDVNs,
       };
 
       const ulnConfigDataRecv = {
-        confirmations: r.config.confirmations,
-        requiredDVNCount: c.config.sendDVNs[r.network].requiredDVNs.length,
-        optionalDVNCount: c.config.sendDVNs[r.network].optionalDVNs.length,
-        optionalDVNThreshold: c.config.sendDVNs[r.network].optionalDVNThreshold,
-        requiredDVNs: c.config.sendDVNs[r.network].requiredDVNs,
-        optionalDVNs: c.config.sendDVNs[r.network].optionalDVNs,
+        confirmations: r.confirmations,
+        requiredDVNCount: requiredDVNs.length,
+        optionalDVNCount: optionalDVNs.length,
+        optionalDVNThreshold: r.optionalDVNThreshold,
+        requiredDVNs: requiredDVNs,
+        optionalDVNs: optionalDVNs,
       };
 
       const setConfigParamUlnSend = {
@@ -80,20 +103,20 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
         config: encoder.encode([configTypeExecutorStruct], [execConfigData]),
       };
 
-      // setup the send config
-      await waitForTx(
-        await endpoint.setConfig(oft.target, c.libraries.sendLib302, [
-          setConfigParamUlnSend,
-          setConfigParamExecutor,
-        ]),
-        2
-      );
+      // // setup the send config
+      // await waitForTx(
+      //   await endpoint.setConfig(oft.target, c.libraries.sendLib302, [
+      //     setConfigParamUlnSend,
+      //     setConfigParamExecutor,
+      //   ]),
+      //   2
+      // );
 
-      // setup the receive config
-      await waitForTx(
-        await endpoint.setConfig(oft.target, c.libraries.receiveLib302, [
-          setConfigParamUlnRecv,
-        ])
-      );
+      // // setup the receive config
+      // await waitForTx(
+      //   await endpoint.setConfig(oft.target, c.libraries.receiveLib302, [
+      //     setConfigParamUlnRecv,
+      //   ])
+      // );
     }
   });

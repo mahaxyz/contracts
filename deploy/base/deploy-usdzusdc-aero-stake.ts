@@ -8,7 +8,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const { deployments } = hre;
 
   const proxyAdminD = await deployments.get("ProxyAdmin");
-  const mahaD = await deployments.get("MahaOFT");
+  const mahaD = await deployments.get("MAHAOFT");
   const usdcD = await deployments.get("USDC");
   const safe = "0x7427E82f5abCbcA2a45cAfE6e65cBC1FADf9ad9D";
 
