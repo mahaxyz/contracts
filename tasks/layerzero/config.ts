@@ -79,7 +79,7 @@ export const config: IConfig = {
       executor: "0xcCE466a522984415bC91338c232d98869193D46e",
     },
     config: {
-      confirmations: 10,
+      confirmations: 15,
       sendDVNs: {
         mainnet: {
           optionalDVNThreshold: 1,

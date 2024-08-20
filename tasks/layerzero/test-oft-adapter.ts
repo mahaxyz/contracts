@@ -29,7 +29,7 @@ task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
     );
 
     // Defining the amount of tokens to send and constructing the parameters for the send operation
-    const tokensToSend = parseEther("1");
+    const tokensToSend = parseEther("0.1");
 
     // Defining extra message execution options for the send operation
     const options = Options.newOptions()
@@ -47,10 +47,6 @@ task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
       oftCmd: "0x",
     };
 
-    console.log(
-      params,
-      await oftAdapter.quoteSend.populateTransaction(params, false)
-    );
     const [nativeFee] = await oftAdapter.quoteSend(params, false);
 
     const fee: MessagingFeeStruct = {
@@ -58,7 +54,7 @@ task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
       lzTokenFee: 0n,
     };
 
-    // await waitForTx(await zai.approve(oftAdapter.target, MaxUint256));
+    await waitForTx(await zai.approve(oftAdapter.target, MaxUint256));
     await waitForTx(
       await oftAdapter.send(params, fee, deployer.address, {
         value: nativeFee,
