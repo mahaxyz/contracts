@@ -53,6 +53,21 @@ export const config: IConfig = {
       },
     },
   },
+  base: {
+    network: "base",
+    eid: 30184,
+    contract: "ZaiStablecoinOFTAdapter",
+    libraries: {
+      sendLib302: "0xB5320B0B3a13cC860893E2Bd79FCd7e13484Dda2",
+      receiveLib302: "0xc70AB6f32772f59fBfc23889Caf4Ba3376C84bAf",
+      executor: "0x2CCA08ae69E0C44b18a57Ab2A87644234dAebaE4",
+    },
+    endpoint: "0x1a44076050125825900e736c501f859c50fE728c",
+    config: {
+      confirmations: 5,
+      sendDVNs: {},
+    },
+  },
   xlayer: {
     network: "xlayer",
     eid: 30274,
