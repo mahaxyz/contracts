@@ -1,4 +1,4 @@
-import { MaxUint256 } from "ethers";
+import { MaxUint256, ZeroAddress } from "ethers";
 import { ethers } from "hardhat";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployContract, waitForTx } from "../scripts/utils";
@@ -7,18 +7,20 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const { deployments } = hre;
 
   const args = [
-    (await deployments.get("StakingLPRewards-sUSDzUSDC")).address,
+    (await deployments.get("StakingLPRewards-sMAHAUSDz")).address,
+    (await deployments.get("MAHA")).address,
     (await deployments.get("PegStabilityModule-USDC")).address,
+    ZeroAddress,
   ];
 
   const zapD = await deployContract(
     hre,
-    "ZapCurvePoolUSDC",
+    "ZapCurvePoolMAHA",
     args,
-    "ZapCurvePoolUSDC"
+    "ZapCurvePoolMAHA"
   );
 
-  const zap = await ethers.getContractAt("ZapCurvePoolUSDC", zapD.address);
+  const zap = await ethers.getContractAt("ZapCurvePoolMAHA", zapD.address);
   const usdc = await ethers.getContractAt(
     "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
     "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
@@ -28,5 +30,5 @@ async function main(hre: HardhatRuntimeEnvironment) {
   await waitForTx(await zap.zapIntoLP(10e6, 0));
 }
 
-main.tags = ["ZapCurvePoolUSDC"];
+main.tags = ["ZapCurvePoolMAHA"];
 export default main;
