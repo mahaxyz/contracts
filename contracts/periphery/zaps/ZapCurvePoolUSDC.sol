@@ -13,6 +13,7 @@
 
 pragma solidity 0.8.21;
 
+import {ICurveStableSwapNG} from "../../interfaces/periphery/ICurveStableSwapNG.sol";
 import {ZapCurvePoolBase} from "./ZapCurvePoolBase.sol";
 
 contract ZapCurvePoolUSDC is ZapCurvePoolBase {
@@ -35,10 +36,7 @@ contract ZapCurvePoolUSDC is ZapCurvePoolBase {
     psm.mint(address(this), zaiAmount);
 
     // add liquidity
-    uint256[] memory amounts = new uint256[](2);
-    amounts[0] = collateralAmount / 2;
-    amounts[1] = zaiAmount;
-    pool.add_liquidity(amounts, minLpAmount, me);
+    _addLiquidity(collateralAmount / 2, zaiAmount, minLpAmount);
 
     // we now have LP tokens; deposit into staking contract for the user
     staking.deposit(pool.balanceOf(address(this)), msg.sender);
@@ -48,5 +46,12 @@ contract ZapCurvePoolUSDC is ZapCurvePoolBase {
     _sweep(collateral);
 
     emit Zapped(msg.sender, collateralAmount / 2, zaiAmount, pool.balanceOf(msg.sender));
+  }
+
+  function _addLiquidity(uint256 zaiAmt, uint256 collatAmt, uint256 minLp) internal virtual override {
+    uint256[] memory amounts = new uint256[](2);
+    amounts[0] = zaiAmt;
+    amounts[1] = collatAmt;
+    ICurveStableSwapNG(address(pool)).add_liquidity(amounts, minLp, address(this));
   }
 }
