@@ -10,10 +10,9 @@ task(`connect-oft`, `Connects of all the OFT connections`)
     const [deployer] = await hre.ethers.getSigners();
 
     const c = config[hre.network.name];
-    console.log("current connection", c);
     if (!c) throw new Error("cannot find connection");
 
-    const contractNameToken = token === "zai" ? "ZaiStablecoin" : "Maha";
+    const contractNameToken = token === "zai" ? "ZaiStablecoin" : "MAHA";
     const contractName = `${contractNameToken}${c.contract}`;
 
     const oftD = await hre.deployments.get(contractName);
@@ -45,7 +44,7 @@ task(`connect-oft`, `Connects of all the OFT connections`)
 
       const remoteD = get(remoteContractName, remoteNetwork);
       const remoteOft = zeroPadValue(remoteD, 32);
-      console.log("\nnetwork", remoteNetwork);
+      console.log("\nnetwork", remoteNetwork, "for", hre.network.name);
       console.log("remote peer  ", remoteOft);
 
       const peer = await oft.peers(r.eid);
