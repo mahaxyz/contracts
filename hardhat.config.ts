@@ -91,6 +91,7 @@ const config: HardhatUserConfig = {
     linea: _network("https://rpc.linea.build"),
     mainnet: _network("https://rpc.ankr.com/eth"),
     optimism: _network("https://mainnet.optimism.io"),
+    scroll: _network("https://rpc.scroll.io"),
     sepolia: _network("https://rpc2.sepolia.org"),
     xlayer: _network("https://xlayerrpc.okx.com"),
   },
