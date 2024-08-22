@@ -1,0 +1,238 @@
+{
+  "01node": {
+    "arbitrum": "0x7a205ed4e3d7f9d0777594501705d8cd405c3b05",
+    "bsc": "0x8fc629aa400d4d9c0b118f2685a49316552abf27",
+    "ethereum": "0x58dff8622759ea75910a08dba5d060579271dcd7",
+    "optimism": "0x969a0bdd86a230345ad87a6a381de5ed9e6cda85"
+  },
+  "Animoca-Blockdaemon": {
+    "arbitrum": "0xddaa92ce2d2fac3f7c5eae19136e438902ab46cc",
+    "bsc": "0x313328609a9c38459cae56625fff7f2ad6dcde3b",
+    "ethereum": "0x7e65bdd15c8db8995f80abf0d6593b57dc8be437",
+    "optimism": "0x7b8a0fd9d6ae5011d5cbd3e85ed6d5510f98c9bf"
+  },
+  "Axelar": {
+    "arbitrum": "0x9d3979c7e3dd26653c52256307709c09f47741e0",
+    "bsc": "0x878c20d3685cdbc5e2680a8a0e7fb97389344fe1",
+    "blast": "0xb830a5afcbebb936c30c607a18bbba9f5b0a592f",
+    "ethereum": "0xce5b47fa5139fc5f3c8c5f4c278ad5f56a7b2016",
+    "optimism": "0x218b462e19d00c8fed4adbce78f33aef88d2ccfc",
+    "scroll": "0x70cedf51c199fad12c6c0a71cd876af948059540"
+  },
+  "BCW_Group": {
+    "arbitrum": "0x78203678d264063815dac114ea810e9837cd80f7",
+    "base": "0xb3ce0a5d132cd9bf965aba435e650c55edce0062",
+    "bsc": "0xd36246c322ee102a2203bca9cafb84c179d306f6",
+    "ethereum": "0xe552485d02edd3067fe7fcbd4dd56bb1d3a998d2",
+    "optimism": "0x73ddc92e39aeda95feb8d3e0008016d9f1268c76",
+    "scroll": "0x7a7ddc46882220a075934f40380d3a7e1e87d409"
+  },
+  "BWare": {
+    "arbitrum": "0x9bcd17a654bffaa6f8fea38d19661a7210e22196",
+    "base": "0xdd7b5e1db4aafd5c8ec3b764efb8ed265aa5445b",
+    "bsc": "0xfe1cd27827e16b07e61a4ac96b521bdb35e00328",
+    "blast": "0xabc9b1819cc4d9846550f928b985993cf6240439",
+    "ethereum": "0x7a23612f07d81f16b26cf0b5a4c3eca0e8668df2",
+    "linea": "0xf45742bbfabcee739ea2a2d0ba2dd140f1f2c6a3",
+    "optimism": "0x19670df5e16bea2ba9b9e68b48c054c5baea06b8",
+    "scroll": "0xdd7b5e1db4aafd5c8ec3b764efb8ed265aa5445b"
+  },
+  "Blockhunters": {
+    "arbitrum": "0xd074b6bbcbec2f2b4c4265de3d95e521f82bf669",
+    "bsc": "0x547bf6889b1095b7cc6e525a1f8e8fdb26134a38",
+    "ethereum": "0x6e70fcdc42d3d63748b7d8883399dcb16bbb5c8c",
+    "optimism": "0xb3ce0a5d132cd9bf965aba435e650c55edce0062"
+  },
+  "Chainlink_CCIP": {
+    "bsc": "0x53561bcfe6b3f23bc72e5b9919c12322729942e8",
+    "ethereum": "0x771d10d0c86e26ea8d3b778ad4d31b30533b9cbf"
+  },
+  "Delegate": {
+    "arbitrum": "0xdf30c9f6a70ce65a152c5bd09826525d7e97ba49",
+    "bsc": "0x9eeee79f5dbc4d99354b5cb547c138af432f937b",
+    "ethereum": "0x87048402c32632b7c4d0a892d82bc1160e8b2393",
+    "optimism": "0x7a205ed4e3d7f9d0777594501705d8cd405c3b05"
+  },
+  "Gitcoin": {
+    "arbitrum": "0x313328609a9c38459cae56625fff7f2ad6dcde3b",
+    "bsc": "0x2afa3787cd95fee5d5753cd717ef228eb259f4ea",
+    "ethereum": "0x38179d3bfa6ef1d69a8a7b0b671ba3d8836b2ae8",
+    "optimism": "0xb4fa7f1c67e5ec99b556ec92cbddbcdd384106f2"
+  },
+  "Google_Cloud": {
+    "arbitrum": "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc",
+    "base": "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc",
+    "bsc": "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc",
+    "ethereum": "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc",
+    "linea": "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc",
+    "optimism": "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc"
+  },
+  "Horizen": {
+    "arbitrum": "0x19670df5e16bea2ba9b9e68b48c054c5baea06b8",
+    "base": "0xa7b5189bca84cd304d8553977c7c614329750d99",
+    "bsc": "0x247624e2143504730aec22912ed41f092498bef2",
+    "blast": "0x70bf42c69173d6e33b834f59630dac592c70b369",
+    "ethereum": "0x380275805876ff19055ea900cdb2b46a94ecf20d",
+    "linea": "0x7fe673201724925b5c477d4e1a4bd3e954688cf5",
+    "optimism": "0x9e930731cb4a6bf7ecc11f695a295c60bdd212eb",
+    "scroll": "0x7fe673201724925b5c477d4e1a4bd3e954688cf5",
+    "xlayer": "0xdd7b5e1db4aafd5c8ec3b764efb8ed265aa5445b"
+  },
+  "Lagrange": {
+    "arbitrum": "0x021e401c2a1a60618c5e6353a40524971eba1e8d",
+    "base": "0xc50a49186aa80427aa3b0d3c2cec19ba64222a29",
+    "ethereum": "0x95729ea44326f8add8a9b1d987279dbdc1dd3dff",
+    "optimism": "0xa4281c1c88f0278ff696edeb517052153190fc9e"
+  },
+  "LayerZero_Labs": {
+    "arbitrum": "0x2f55c492897526677c5b68fb199ea31e2c126416",
+    "base": "0x9e059a54699a285714207b43b055483e78faac25",
+    "bsc": "0xfd6865c841c2d64565562fcc7e05e619a30615f0",
+    "blast": "0xc097ab8cd7b053326dfe9fb3e3a31a0cce3b526f",
+    "ethereum": "0x589dedbd617e0cbcb916a9223f4d1300c294236b",
+    "linea": "0x129ee430cb2ff2708ccaddbdb408a88fe4ffd480",
+    "optimism": "0x6a02d83e8d433304bba74ef1c427913958187142",
+    "scroll": "0xbe0d08a85eebfcc6eda0a843521f7cbb1180d2e2",
+    "xlayer": "0x9c061c9a4782294eef65ef28cb88233a987f4bdd",
+    "zircuit-testnet": "0x88b27057a9e00c5f05dda29241027aff63f9e6e0"
+  },
+  "Luganodes": {
+    "arbitrum": "0x54dd79f5ce72b51fcbbcb170dd01e32034323565",
+    "bsc": "0x2c7185f5b0976397d9eb5c19d639d4005e6708f0",
+    "ethereum": "0x58249a2ec05c1978bf21df1f5ec1847e42455cf4",
+    "optimism": "0xd841a741addcb6dea735d3b8c9faf96ba3f3d30d"
+  },
+  "MIM": {
+    "arbitrum": "0x9e930731cb4a6bf7ecc11f695a295c60bdd212eb",
+    "bsc": "0x25e0e650a78e6304a3983fc4b7ffc6544b1beea6",
+    "ethereum": "0x0ae4e6a9a8b01ee22c6a49af22b674a4e033a23d",
+    "optimism": "0xd954bf7968ef68875c9100c9ec890f969504d120"
+  },
+  "Nethermind": {
+    "arbitrum": "0xa7b5189bca84cd304d8553977c7c614329750d99",
+    "base": "0xcd37ca043f8479064e10635020c65ffc005d36f6",
+    "bsc": "0x31f748a368a893bdb5abb67ec95f232507601a73",
+    "blast": "0xdd7b5e1db4aafd5c8ec3b764efb8ed265aa5445b",
+    "ethereum": "0xa59ba433ac34d2927232918ef5b2eaafcf130ba5",
+    "linea": "0xdd7b5e1db4aafd5c8ec3b764efb8ed265aa5445b",
+    "optimism": "0xa7b5189bca84cd304d8553977c7c614329750d99",
+    "scroll": "0x446755349101cb20c582c224462c3912d3584dce",
+    "xlayer": "0x28af4dadbc5066e994986e8bb105240023dc44b6"
+  },
+  "Nocturnal_Labs": {
+    "ethereum": "0x04584d612802a3a26b160e3f90341e6443ddb76a"
+  },
+  "Nodes.Guru": {
+    "arbitrum": "0xd954bf7968ef68875c9100c9ec890f969504d120",
+    "bsc": "0x1bab20e7fdc79257729cb596bef85db76c44915e",
+    "ethereum": "0x9f45834f0c8042e36935781b944443e906886a87",
+    "optimism": "0xe6cd8c2e46ef396df88048449e5b1c75172b40c3"
+  },
+  "Omni_X": {
+    "arbitrum": "0xabea0b6b9237b589e676dc16f6d74bf7612591f4",
+    "base": "0xeede111103535e473451311e26c3e6660b0f77e1",
+    "bsc": "0x5a4c666e9c7aa86fd4fbfdfbfd04646dcc45c6c5",
+    "ethereum": "0xaf75bfd402f3d4ee84978179a6c87d16c4bd1724",
+    "optimism": "0x03d2414476a742aba715bcc337583c820525e22a"
+  },
+  "Omnicat": {
+    "arbitrum": "0xd1c70192cc0eb9a89e3d9032b9facab259a0a1e9",
+    "base": "0xe6cd8c2e46ef396df88048449e5b1c75172b40c3",
+    "bsc": "0xdff3f73c260b3361d4f006b02972c6af6c5c5417",
+    "blast": "0x25e0e650a78e6304a3983fc4b7ffc6544b1beea6",
+    "ethereum": "0xf10ea2c0d43bc4973cfbcc94ebafc39d1d4af118"
+  },
+  "P-OPS": {
+    "arbitrum": "0x8fa9eef18c2a1459024f0b44714e5acc1ce7f5e8",
+    "bsc": "0x33e5fcc13d7439cc62d54c41aa966197145b3cd7",
+    "ethereum": "0x94aafe0a92a8300f0a2100a7f3de47d6845747a9",
+    "optimism": "0xe552485d02edd3067fe7fcbd4dd56bb1d3a998d2",
+    "scroll": "0x34730f2570e6cff8b1c91faabf37d0dd917c4367"
+  },
+  "P2P": {
+    "arbitrum": "0xb3ce0a5d132cd9bf965aba435e650c55edce0062",
+    "bsc": "0x439264fb87581a70bb6d7befd16b636521b0ad2d",
+    "ethereum": "0x06559ee34d85a88317bf0bfe307444116c631b67",
+    "optimism": "0x539008c98b17803a273edf98aba2d4414ee3f4d7"
+  },
+  "Pearlnet": {
+    "arbitrum": "0xabc9b1819cc4d9846550f928b985993cf6240439",
+    "ethereum": "0xd24972c11f91c1bb9eaee97ec96bb9c33cf7af24",
+    "optimism": "0xabc9b1819cc4d9846550f928b985993cf6240439"
+  },
+  "Planetarium_Labs": {
+    "arbitrum": "0xe6cd8c2e46ef396df88048449e5b1c75172b40c3",
+    "bsc": "0x05aaefdf9db6e0f7d27fa3b6ee099edb33da029e",
+    "ethereum": "0x972ed7bd3d42d9c0bea3632992ebf7e97186ea4a",
+    "optimism": "0x021e401c2a1a60618c5e6353a40524971eba1e8d"
+  },
+  "Polyhedra": {
+    "arbitrum": "0x8ddf05f9a5c488b4973897e278b58895bf87cb24",
+    "base": "0x8ddf05f9a5c488b4973897e278b58895bf87cb24",
+    "bsc": "0x8ddf05f9a5c488b4973897e278b58895bf87cb24",
+    "blast": "0x0ff4cc28826356503bb79c00637bec0ee006f237",
+    "ethereum": "0x8ddf05f9a5c488b4973897e278b58895bf87cb24",
+    "linea": "0x8ddf05f9a5c488b4973897e278b58895bf87cb24",
+    "optimism": "0x8ddf05f9a5c488b4973897e278b58895bf87cb24",
+    "scroll": "0x8ddf05f9a5c488b4973897e278b58895bf87cb24",
+    "xlayer": "0x8ddf05f9a5c488b4973897e278b58895bf87cb24"
+  },
+  "Portal": {
+    "arbitrum": "0x539008c98b17803a273edf98aba2d4414ee3f4d7",
+    "bsc": "0xbd40c9047980500c46b8aed4462e2f889299febe",
+    "ethereum": "0x92ef4381a03372985985e70fb15e9f081e2e8d14",
+    "optimism": "0xdf30c9f6a70ce65a152c5bd09826525d7e97ba49"
+  },
+  "Republic": {
+    "bsc": "0xf7ddee427507cdb6885e53caaaa1973b1fe29357",
+    "ethereum": "0xa1bc1b9af01a0ec78883aa5dc7decdce897e1e76"
+  },
+  "Restake": {
+    "arbitrum": "0x969a0bdd86a230345ad87a6a381de5ed9e6cda85",
+    "bsc": "0x4d52f5bc932cf1a854381a85ad9ed79b8497c153",
+    "ethereum": "0xe4193136b92ba91402313e95347c8e9fad8d27d0",
+    "optimism": "0xcced05c3667877b545285b25f19f794436a1c481"
+  },
+  "Shrapnel": {
+    "arbitrum": "0x7b8a0fd9d6ae5011d5cbd3e85ed6d5510f98c9bf",
+    "bsc": "0xb4fa7f1c67e5ec99b556ec92cbddbcdd384106f2",
+    "ethereum": "0xce97511db880571a7c31821eb026ef12fcac892e",
+    "optimism": "0xd36246c322ee102a2203bca9cafb84c179d306f6"
+  },
+  "StableLab": {
+    "arbitrum": "0xcd37ca043f8479064e10635020c65ffc005d36f6",
+    "bsc": "0xabc9b1819cc4d9846550f928b985993cf6240439",
+    "ethereum": "0x5fddd320a1e29bb466fa635661b125d51d976f92",
+    "optimism": "0xcd37ca043f8479064e10635020c65ffc005d36f6"
+  },
+  "StakingCabin": {
+    "arbitrum": "0x6268950b2d11aa0516007b6361f6ee3facb3cb14",
+    "bsc": "0xd841a741addcb6dea735d3b8c9faf96ba3f3d30d",
+    "ethereum": "0xdeb742e71d57603d8f769ce36f4353468007fc02",
+    "optimism": "0xea0c32623d19d888e926e68667a5e42853fa91b4"
+  },
+  "Stargate": {
+    "arbitrum": "0x5756a74e8e18d8392605ba667171962b2b2826b5",
+    "base": "0xcdf31d62140204c08853b547e64707110fbc6680",
+    "bsc": "0xac8de74ce0a44a5e73bbc709fe800406f58431e0",
+    "ethereum": "0x8fafae7dd957044088b3d0f67359c327c6200d18",
+    "linea": "0xef269bbadb81de86e4b3278fa1dae1723545268b",
+    "optimism": "0xfe6507f094155cabb4784403cd784c2df04122dd",
+    "scroll": "0xb87591d8b0b93fae8b631a073577c40e8dd46a62"
+  },
+  "Switchboard": {
+    "arbitrum": "0xcced05c3667877b545285b25f19f794436a1c481",
+    "bsc": "0xf0809f6e760a5452ee567975eda7a28da4a83d38",
+    "ethereum": "0x276e6b1138d2d49c0cda86658765d12ef84550c1",
+    "optimism": "0x313328609a9c38459cae56625fff7f2ad6dcde3b"
+  },
+  "Zenrock": {
+    "arbitrum": "0x3b65e87e2a4690f14cae0483014259ded8215adc",
+    "base": "0x9e930731cb4a6bf7ecc11f695a295c60bdd212eb",
+    "bsc": "0xe5491fac6965aa664efd6d1ae5e7d1d56da4fdda",
+    "blast": "0x1383981c78393b36f59c4f8f4f12f1b4eb249ebf",
+    "ethereum": "0xd42306df1a805d8053bc652ce0cd9f62bde80146",
+    "optimism": "0xaf75bfd402f3d4ee84978179a6c87d16c4bd1724",
+    "scroll": "0x05aaefdf9db6e0f7d27fa3b6ee099edb33da029e"
+  }
+}

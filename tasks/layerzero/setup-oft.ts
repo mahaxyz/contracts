@@ -55,6 +55,7 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
         "to remote network",
         remoteNetwork
       );
+
       const requiredDVNs = _fetchAndSortDVNS(c, c.requiredDVNs, r.requiredDVNs);
       const optionalDVNs = _fetchAndSortDVNS(c, c.optionalDVNs, r.optionalDVNs);
 
