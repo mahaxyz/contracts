@@ -34,6 +34,12 @@ if (!SKIP_LOAD) {
   loadTasks(TASK_FOLDERS);
 }
 
+const _network = (url: string) => ({
+  url,
+  accounts: defaultAccount,
+  saveDeployments: true,
+});
+
 const config: HardhatUserConfig = {
   abiExporter: {
     path: "./abi",
@@ -79,36 +85,15 @@ const config: HardhatUserConfig = {
       // },
       accounts: defaultAccount,
     },
-    mainnet: {
-      url: `https://rpc.ankr.com/eth`,
-      accounts: defaultAccount,
-      saveDeployments: true,
-    },
-    base: {
-      url: `https://mainnet.base.org`,
-      accounts: defaultAccount,
-      saveDeployments: true,
-    },
-    sepolia: {
-      url: `https://rpc2.sepolia.org`,
-      accounts: defaultAccount,
-      saveDeployments: true,
-    },
-    xlayer: {
-      url: `https://xlayerrpc.okx.com`,
-      accounts: defaultAccount,
-      saveDeployments: true,
-    },
-    arbitrum: {
-      url: "https://arb1.arbitrum.io/rpc",
-      accounts: defaultAccount,
-      saveDeployments: true,
-    },
-    arb_sepolia: {
-      url: "https://sepolia-rollup.arbitrum.io/rpc",
-      accounts: defaultAccount,
-      saveDeployments: true,
-    },
+    arbitrum: _network("https://arb1.arbitrum.io/rpc"),
+    base: _network("https://mainnet.base.org"),
+    bsc: _network("https://rpc.ankr.com/bsc"),
+    linea: _network("https://rpc.linea.build"),
+    mainnet: _network("https://rpc.ankr.com/eth"),
+    optimism: _network("https://mainnet.optimism.io"),
+    scroll: _network("https://rpc.scroll.io"),
+    sepolia: _network("https://rpc2.sepolia.org"),
+    xlayer: _network("https://xlayerrpc.okx.com"),
   },
   namedAccounts: {
     deployer: 0,
@@ -120,8 +105,7 @@ const config: HardhatUserConfig = {
       sepolia: process.env.ETHERSCAN_KEY || "",
       base: process.env.BASESCAN_KEY || "",
       arbitrumOne: process.env.ARBISCAN_KEY || "",
-      xlayer: process.env.XLAYER_KEY || "test",
-      arbitrumSepolia: process.env.ARBISCAN_KEY || "",
+      xlayer: "test",
     },
     customChains: [
       {
