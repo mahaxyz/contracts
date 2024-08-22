@@ -85,6 +85,8 @@ export const executeCreate2 = async (
     impl.bytecode
   );
 
+  console.log("Deploying", name, "expecting", expectedAddress);
+
   await waitForTx(
     await deployer.deployWithAssert(bytecode, ethers.id(salt), expectedAddress)
   );

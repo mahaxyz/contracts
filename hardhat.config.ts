@@ -87,7 +87,8 @@ const config: HardhatUserConfig = {
     },
     arbitrum: _network("https://arb1.arbitrum.io/rpc"),
     base: _network("https://mainnet.base.org"),
-    bsc: _network("https://rpc.ankr.com/bsc"),
+    bsc: _network("https://bsc-dataseed1.bnbchain.org"),
+    blast: _network("https://rpc.blast.io"),
     linea: _network("https://rpc.linea.build"),
     mainnet: _network("https://rpc.ankr.com/eth"),
     optimism: _network("https://mainnet.optimism.io"),
@@ -104,6 +105,11 @@ const config: HardhatUserConfig = {
       mainnet: process.env.ETHERSCAN_KEY || "",
       sepolia: process.env.ETHERSCAN_KEY || "",
       base: process.env.BASESCAN_KEY || "",
+      blast: process.env.BLASTSCAN_KEY || "",
+      bsc: process.env.BSCSCAN_KEY || "",
+      linea: process.env.LINEASCAN_KEY || "",
+      optimisticEthereum: process.env.OP_ETHERSCAN_KEY || "",
+      scroll: process.env.SCROLLSCAN_KEY || "",
       arbitrumOne: process.env.ARBISCAN_KEY || "",
       xlayer: "test",
     },
@@ -115,6 +121,30 @@ const config: HardhatUserConfig = {
           apiURL:
             "https://www.oklink.com/api/v5/explorer/contract/verify-source-code-plugin/XLAYER",
           browserURL: "https://www.oklink.com/xlayer",
+        },
+      },
+      {
+        network: "linea",
+        chainId: 59144,
+        urls: {
+          apiURL: "https://api.lineascan.build/api",
+          browserURL: "https://lineascan.build",
+        },
+      },
+      {
+        network: "blast",
+        chainId: 81457,
+        urls: {
+          apiURL: "https://api.blastscan.io/api",
+          browserURL: "https://blastscan.io",
+        },
+      },
+      {
+        network: "scroll",
+        chainId: 534352,
+        urls: {
+          apiURL: "https://api.scrollscan.com/api",
+          browserURL: "https://scrollscan.com",
         },
       },
     ],
