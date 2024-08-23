@@ -1,123 +1,150 @@
-interface IConfig {
-  [key: string]: {
-    eid: number;
-    network: string;
+import dvns from "./dvn-deployments.json";
+import deployments from "./lz-chain-deployments.json";
+
+export interface IL0Config {
+  eid: number;
+  confirmations: number;
+  optionalDVNThreshold: number;
+  requiredDVNs: string[];
+  optionalDVNs: string[];
+  contract: "OFTAdapter" | "OFT";
+  libraries: {
     endpoint: string;
-    contract: "OFTAdapter" | "OFT";
-
-    libraries: {
-      sendLib302: string;
-      receiveLib302: string;
-      executor: string;
-    };
-
-    config: {
-      confirmations: number;
-      sendDVNs: {
-        [network: string]: {
-          optionalDVNThreshold: number;
-          requiredDVNs: string[];
-          optionalDVNs: string[];
-        };
-      };
-    };
+    sendLib302: string;
+    receiveLib302: string;
+    executor: string;
+  };
+  dvns: {
+    [name: string]: string; // list all the valid DVNs here and we'll match them when connecting the contracts
   };
 }
 
-export const config: IConfig = {
+export type IL0ConfigKey =
+  | "arbitrum"
+  | "base"
+  | "blast"
+  | "bsc"
+  | "linea"
+  | "mainnet"
+  | "optimism"
+  | "scroll"
+  | "xlayer";
+
+export type IL0ConfigMapping = {
+  [key in IL0ConfigKey]: IL0Config;
+};
+
+const pluckDVNs = (network: string) => {
+  const _dvns: {
+    [name: string]: string;
+  } = {};
+  const providers = Object.keys(dvns);
+  for (let index = 0; index < providers.length; index++) {
+    const provider = providers[index];
+    if (!!dvns[provider][network]) _dvns[provider] = dvns[provider][network];
+  }
+
+  return _dvns;
+};
+
+const pluckLibraries = (network: string) => {
+  return {
+    sendLib302: deployments[network].sendUln302,
+    receiveLib302: deployments[network].receiveUln302,
+    executor: deployments[network].executor,
+    endpoint: deployments[network].endpointV2,
+  };
+};
+
+export const config: IL0ConfigMapping = {
+  arbitrum: {
+    eid: 30110,
+    contract: "OFT",
+    confirmations: 15,
+    optionalDVNThreshold: 1,
+    libraries: pluckLibraries("arbitrum"),
+    dvns: pluckDVNs("arbitrum"),
+    requiredDVNs: ["LayerZero_Labs"],
+    optionalDVNs: ["Polyhedra", "Horizen", "Nethermind", "Google_Cloud"],
+  },
+  linea: {
+    eid: 30183,
+    contract: "OFT",
+    confirmations: 15,
+    optionalDVNThreshold: 1,
+    libraries: pluckLibraries("linea"),
+    dvns: pluckDVNs("linea"),
+    requiredDVNs: ["LayerZero_Labs"],
+    optionalDVNs: ["Polyhedra", "Horizen", "Nethermind", "Google_Cloud"],
+  },
   mainnet: {
-    network: "mainnet",
     eid: 30101,
     contract: "OFTAdapter",
-    libraries: {
-      sendLib302: "0xbB2Ea70C9E858123480642Cf96acbcCE1372dCe1",
-      receiveLib302: "0xc02Ab410f0734EFa3F14628780e6e695156024C2",
-      executor: "0x173272739Bd7Aa6e4e214714048a9fE699453059",
-    },
-    endpoint: "0x1a44076050125825900e736c501f859c50fE728c",
-
-    config: {
-      confirmations: 5,
-      sendDVNs: {
-        xlayer: {
-          optionalDVNThreshold: 1,
-          requiredDVNs: [
-            "0x589dedbd617e0cbcb916a9223f4d1300c294236b", // layerzero labs
-          ],
-          optionalDVNs: [
-            "0x380275805876ff19055ea900cdb2b46a94ecf20d", // horizen
-            "0x8ddf05f9a5c488b4973897e278b58895bf87cb24", // polyhedra
-            "0xa59ba433ac34d2927232918ef5b2eaafcf130ba5", // nethermind
-          ],
-        },
-        base: {
-          optionalDVNThreshold: 1,
-          requiredDVNs: [
-            "0x589dedbd617e0cbcb916a9223f4d1300c294236b", // layerzero labs
-          ],
-          optionalDVNs: [
-            "0x380275805876ff19055ea900cdb2b46a94ecf20d", // horizen
-            "0x8ddf05f9a5c488b4973897e278b58895bf87cb24", // polyhedra
-            "0xa59ba433ac34d2927232918ef5b2eaafcf130ba5", // nethermind
-            "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc", // google cloud
-          ],
-        },
-      },
-    },
+    confirmations: 5,
+    optionalDVNThreshold: 1,
+    libraries: pluckLibraries("ethereum"),
+    dvns: pluckDVNs("ethereum"),
+    requiredDVNs: ["LayerZero_Labs"],
+    optionalDVNs: ["Polyhedra", "Horizen", "Nethermind", "Google_Cloud"],
   },
   base: {
-    network: "base",
     eid: 30184,
     contract: "OFT",
-    libraries: {
-      sendLib302: "0xB5320B0B3a13cC860893E2Bd79FCd7e13484Dda2",
-      receiveLib302: "0xc70AB6f32772f59fBfc23889Caf4Ba3376C84bAf",
-      executor: "0x2CCA08ae69E0C44b18a57Ab2A87644234dAebaE4",
-    },
-    endpoint: "0x1a44076050125825900e736c501f859c50fE728c",
-    config: {
-      confirmations: 15,
-      sendDVNs: {
-        mainnet: {
-          optionalDVNThreshold: 1,
-          requiredDVNs: [
-            "0x9e059a54699a285714207b43b055483e78faac25", // layerzero labs
-          ],
-          optionalDVNs: [
-            "0x8ddf05f9a5c488b4973897e278b58895bf87cb24", // polyhedra
-            "0xa7b5189bca84cd304d8553977c7c614329750d99", // horizen
-            "0xcd37ca043f8479064e10635020c65ffc005d36f6", // nethermind
-            "0xd56e4eab23cb81f43168f9f45211eb027b9ac7cc", // google cloud
-          ],
-        },
-      },
-    },
+    confirmations: 15,
+    optionalDVNThreshold: 1,
+    libraries: pluckLibraries("base"),
+    dvns: pluckDVNs("base"),
+    requiredDVNs: ["LayerZero_Labs"],
+    optionalDVNs: ["Polyhedra", "Horizen", "Nethermind", "Google_Cloud"],
+  },
+  blast: {
+    eid: 30243,
+    contract: "OFT",
+    confirmations: 15,
+    optionalDVNThreshold: 1,
+    libraries: pluckLibraries("blast"),
+    dvns: pluckDVNs("blast"),
+    requiredDVNs: ["LayerZero_Labs"],
+    optionalDVNs: ["Polyhedra", "Horizen", "Nethermind", "axelar"],
+  },
+  bsc: {
+    eid: 30102,
+    contract: "OFT",
+    confirmations: 15,
+    optionalDVNThreshold: 1,
+    libraries: pluckLibraries("bsc"),
+    dvns: pluckDVNs("bsc"),
+    requiredDVNs: ["LayerZero_Labs"],
+    optionalDVNs: ["Polyhedra", "Horizen", "Nethermind", "Google_Cloud"],
   },
   xlayer: {
-    network: "xlayer",
     eid: 30274,
     contract: "OFT",
-    endpoint: "0x1a44076050125825900e736c501f859c50fE728c",
-    libraries: {
-      sendLib302: "0xe1844c5D63a9543023008D332Bd3d2e6f1FE1043",
-      receiveLib302: "0x2367325334447C5E1E0f1b3a6fB947b262F58312",
-      executor: "0xcCE466a522984415bC91338c232d98869193D46e",
-    },
-    config: {
-      confirmations: 15,
-      sendDVNs: {
-        mainnet: {
-          optionalDVNThreshold: 1,
-          requiredDVNs: [
-            "0x9c061c9a4782294eef65ef28cb88233a987f4bdd", // layerzero labs
-          ],
-          optionalDVNs: [
-            "0x28af4dadbc5066e994986e8bb105240023dc44b6", // nethermind
-            "0x8ddf05f9a5c488b4973897e278b58895bf87cb24", // polyhedra
-            "0xdd7b5e1db4aafd5c8ec3b764efb8ed265aa5445b", // horizen
-          ],
-        },
-      },
-    },
+    confirmations: 15,
+    optionalDVNThreshold: 1,
+    libraries: pluckLibraries("xlayer"),
+    dvns: pluckDVNs("xlayer"),
+    requiredDVNs: ["LayerZero_Labs"],
+    optionalDVNs: ["Polyhedra", "Horizen", "Nethermind"],
+  },
+  scroll: {
+    eid: 30214,
+    contract: "OFT",
+    confirmations: 15,
+    optionalDVNThreshold: 1,
+    libraries: pluckLibraries("scroll"),
+    dvns: pluckDVNs("scroll"),
+    requiredDVNs: ["LayerZero_Labs"],
+    optionalDVNs: ["Polyhedra", "Horizen", "Nethermind"],
+  },
+  optimism: {
+    eid: 30111,
+    contract: "OFT",
+    confirmations: 15,
+    optionalDVNThreshold: 1,
+    libraries: pluckLibraries("optimism"),
+    dvns: pluckDVNs("optimism"),
+    requiredDVNs: ["LayerZero_Labs"],
+    optionalDVNs: ["Polyhedra", "Horizen", "Nethermind"],
   },
 };

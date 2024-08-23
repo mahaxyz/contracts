@@ -21,7 +21,11 @@ struct SetConfigParam {
 
 interface IL0EndpointV2 {
   function delegates(address) external view returns (address);
+
   function setConfig(address, address, SetConfigParam[] calldata) external;
+
+  function getConfig(address, address, uint32, uint32) external view returns (bytes memory);
+
   function skip(
     address _oapp, //the Oapp address
     uint32 _srcEid, //source chain endpoint id

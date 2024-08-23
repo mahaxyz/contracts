@@ -26,7 +26,8 @@ contract LayerZeroCustomOFT is OFT, ERC20Permit {
     string memory symbol,
     address _lzEndpoint
   ) OFT(name, symbol, _lzEndpoint, msg.sender) Ownable(msg.sender) ERC20Permit(symbol) {
-    // nothing
+    _mint(msg.sender, 1e18);
+    _burn(msg.sender, 1e18);
   }
 
   function toggleBlacklist(address who, bool what) external onlyOwner {

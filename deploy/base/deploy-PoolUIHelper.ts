@@ -8,7 +8,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const { deployments } = hre;
 
   const usdcD = await deployments.get("USDC");
-  const mahaD = await deployments.get("MahaOFT");
+  const mahaD = await deployments.get("MAHAOFT");
   const zaiD = await deployments.get("ZaiStablecoin");
 
   await deployContract(

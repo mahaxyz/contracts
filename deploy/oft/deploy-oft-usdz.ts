@@ -3,12 +3,28 @@ import { deployContract } from "../../scripts/utils";
 import { config } from "../../tasks/layerzero/config";
 
 async function main(hre: HardhatRuntimeEnvironment) {
-  await deployContract(
+  const contract = await deployContract(
     hre,
-    "LayerZeroCustomOFT",
-    ["ZAI Stablecoin (OFT)", "USDz", config[hre.network.name].endpoint],
+    "ZaiOFTWithRestaking",
+    [
+      "ZAI Stablecoin (OFT)",
+      "USDz",
+      config[hre.network.name].libraries.endpoint,
+    ],
     "ZaiStablecoinOFT"
   );
+
+  const zai = await hre.ethers.getContractAt(
+    "ZaiOFTWithRestaking",
+    contract.address
+  );
+
+  if (!(await hre.deployments.getOrNull("ZaiStablecoin"))) {
+    await hre.deployments.save("ZaiStablecoin", {
+      abi: zai.interface.format(true),
+      address: contract.address,
+    });
+  }
 }
 
 main.tags = ["ZaiStablecoinOFT"];

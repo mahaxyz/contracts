@@ -1,5 +1,5 @@
 {
-  "address": "0xd077ABE1663166c0920d41Fd37ea2D9A00faBd40",
+  "address": "0xbc3186B68d1a7B771288122386288Aca9c1561a9",
   "abi": [
     "constructor(string,string,address)",
     "error AddressEmptyCode(address)",
@@ -79,15 +79,12 @@
     "function quoteOFT((uint32,bytes32,uint256,uint256,bytes,bytes,bytes)) view returns ((uint256,uint256),(int256,string)[],(uint256,uint256))",
     "function quoteSend((uint32,bytes32,uint256,uint256,bytes,bytes,bytes),bool) view returns ((uint256,uint256))",
     "function renounceOwnership()",
-    "function restaker() view returns (address)",
-    "function restakingMint(address,uint256)",
     "function send((uint32,bytes32,uint256,uint256,bytes,bytes,bytes),(uint256,uint256),address) payable returns ((bytes32,uint64,(uint256,uint256)),(uint256,uint256))",
     "function setDelegate(address)",
     "function setEnforcedOptions((uint32,uint16,bytes)[])",
     "function setMsgInspector(address)",
     "function setPeer(uint32,bytes32)",
     "function setPreCrime(address)",
-    "function setRestaker(address)",
     "function sharedDecimals() view returns (uint8)",
     "function symbol() view returns (string)",
     "function toggleBlacklist(address,bool)",
