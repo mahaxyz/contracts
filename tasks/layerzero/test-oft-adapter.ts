@@ -1,3 +1,17 @@
+/**
+
+  Script to send a test OFT to a target network
+
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork arbitrum --token zai  --network mainnet
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork base --token zai  --network mainnet
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork blast --token zai  --network mainnet
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork bsc --token zai  --network mainnet
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork linea --token zai  --network mainnet
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork optimism --token zai  --network mainnet
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork xlayer --token zai  --network mainnet
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork scroll --token zai  --network mainnet
+
+ */
 import { task } from "hardhat/config";
 import { waitForTx } from "../../scripts/utils";
 import { config } from "./config";
