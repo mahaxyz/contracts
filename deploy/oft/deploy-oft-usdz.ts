@@ -5,8 +5,12 @@ import { config } from "../../tasks/layerzero/config";
 async function main(hre: HardhatRuntimeEnvironment) {
   await deployContract(
     hre,
-    "LayerZeroCustomOFT",
-    ["ZAI Stablecoin (OFT)", "USDz", config[hre.network.name].endpoint],
+    "ZaiOFTWithRestaking",
+    [
+      "ZAI Stablecoin (OFT)",
+      "USDz",
+      config[hre.network.name].libraries.endpoint,
+    ],
     "ZaiStablecoinOFT"
   );
 }

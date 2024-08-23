@@ -19,7 +19,7 @@ export interface IL0Config {
   };
 }
 
-type IL0ConfigKey =
+export type IL0ConfigKey =
   | "arbitrum"
   | "base"
   | "blast"
@@ -68,7 +68,7 @@ export const config: IL0ConfigMapping = {
     optionalDVNs: ["Polyhedra", "Horizen", "Nethermind", "Google_Cloud"],
   },
   linea: {
-    eid: 30110,
+    eid: 30183,
     contract: "OFT",
     confirmations: 15,
     optionalDVNThreshold: 1,

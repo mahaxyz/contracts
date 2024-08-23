@@ -11,8 +11,9 @@ import {
 
 task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
   .addParam("token", "either zai or maha")
+  .addParam("amt", "the amount of tokens")
   .addParam("targetnetwork", "The target network to send the OFT tokens to")
-  .setAction(async ({ targetnetwork, token }, hre) => {
+  .setAction(async ({ targetnetwork, token, amt }, hre) => {
     const contractNameToken = token === "zai" ? "ZaiStablecoin" : "MAHA";
     const zaiD = await hre.deployments.get(contractNameToken);
     const erc20 = await hre.ethers.getContractAt(
@@ -21,9 +22,8 @@ task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
     );
     const [deployer] = await hre.ethers.getSigners();
 
-    const connections = Object.values(config);
-    const source = connections.find((c) => c.network === hre.network.name);
-    const target = connections.find((c) => c.network === targetnetwork);
+    const source = config[hre.network.name];
+    const target = config[targetnetwork];
 
     if (!source || !target) throw new Error("cannot find connection");
 
@@ -35,7 +35,7 @@ task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
     );
 
     // Defining the amount of tokens to send and constructing the parameters for the send operation
-    const tokensToSend = parseEther("0.1");
+    const tokensToSend = parseEther(amt);
 
     // Defining extra message execution options for the send operation
     const options = Options.newOptions()
