@@ -1,3 +1,18 @@
+/**
+
+  Script to connect OFTs for the Zai and Maha tokens on the various networks.
+
+  npx hardhat connect-oft --token zai --network arbitrum
+  npx hardhat connect-oft --token zai --network base
+  npx hardhat connect-oft --token zai --network blast
+  npx hardhat connect-oft --token zai --network bsc
+  npx hardhat connect-oft --token zai --network linea
+  npx hardhat connect-oft --token zai --network optimism
+  npx hardhat connect-oft --token zai --network xlayer
+  npx hardhat connect-oft --token zai --network mainnet
+  npx hardhat connect-oft --token zai --network scroll
+
+ */
 import { task } from "hardhat/config";
 import { waitForTx } from "../../scripts/utils";
 import { config } from "./config";
@@ -55,7 +70,11 @@ task(`connect-oft`, `Connects of all the OFT connections`)
         // if we can set the peer, we will set it here
         if (owner == deployer.address) {
           console.log("setting peer for", remoteNetwork);
-          await waitForTx(await oft.setPeer(r.eid, remoteOft));
+          await waitForTx(
+            await oft.setPeer(r.eid, remoteOft, {
+              gasPrice: 1000000000,
+            })
+          );
         } else {
           const data = await oft.setPeer.populateTransaction(r.eid, remoteOft);
           console.log("use to", data.to);

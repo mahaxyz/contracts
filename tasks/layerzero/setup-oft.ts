@@ -1,3 +1,18 @@
+/**
+
+  Script to setup OFTs for the Zai and Maha tokens on the various networks.
+
+  npx hardhat setup-oft --token zai --network arbitrum
+  npx hardhat setup-oft --token zai --network base
+  npx hardhat setup-oft --token zai --network blast
+  npx hardhat setup-oft --token zai --network bsc
+  npx hardhat setup-oft --token zai --network linea
+  npx hardhat setup-oft --token zai --network optimism
+  npx hardhat setup-oft --token zai --network xlayer
+  npx hardhat setup-oft --token zai --network mainnet
+  npx hardhat setup-oft --token zai --network scroll
+
+ */
 import { task } from "hardhat/config";
 import { waitForTx } from "../../scripts/utils";
 import { config, IL0Config, IL0ConfigKey } from "./config";

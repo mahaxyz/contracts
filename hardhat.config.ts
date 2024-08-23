@@ -34,10 +34,11 @@ if (!SKIP_LOAD) {
   loadTasks(TASK_FOLDERS);
 }
 
-const _network = (url: string) => ({
+const _network = (url: string, gasPrice: number | "auto" = "auto") => ({
   url,
   accounts: defaultAccount,
   saveDeployments: true,
+  gasPrice,
 });
 
 const config: HardhatUserConfig = {
@@ -92,7 +93,7 @@ const config: HardhatUserConfig = {
     linea: _network("https://rpc.linea.build"),
     mainnet: _network("https://rpc.ankr.com/eth"),
     optimism: _network("https://mainnet.optimism.io"),
-    scroll: _network("https://rpc.scroll.io"),
+    scroll: _network("https://rpc.scroll.io", 1000000000),
     sepolia: _network("https://rpc2.sepolia.org"),
     xlayer: _network("https://xlayerrpc.okx.com"),
   },
