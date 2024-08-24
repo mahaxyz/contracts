@@ -38,9 +38,14 @@ contract L1BridgeCollateralL0 is OApp {
   /// @notice The collateral token address - will be sent via bridge from L2
   IERC20 public immutable collateral;
 
-  constructor(IPegStabilityModule _psm, address endpoint) OApp(endpoint, msg.sender) Ownable(msg.sender) {
+  constructor(
+    IPegStabilityModule _psm,
+    address _adapter,
+    address _endpoint
+  ) OApp(_endpoint, msg.sender) Ownable(msg.sender) {
     require(address(_psm) != address(0), "Invalid PSM address");
     psm = _psm;
+    adapter = _adapter;
     stablecoin = _psm.zai();
     collateral = _psm.collateral();
     collateral.approve(address(psm), type(uint256).max);

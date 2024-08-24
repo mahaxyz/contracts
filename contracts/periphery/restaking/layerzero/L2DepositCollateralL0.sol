@@ -50,19 +50,19 @@ contract L2DepositCollateralL0 is OwnableUpgradeable, ReentrancyGuardUpgradeable
   IStargate public stargate;
 
   /// @notice The contract address where the bridge call should be sent on mainnet ETH
-  address public bridgeTargetAddress;
+  bytes32 public bridgeTargetAddress;
 
   /// @notice The mapping of allowed addresses that can trigger the bridge function
   mapping(address => bool) public allowedBridgeSweepers;
 
   event Deposit(address from, uint256 amountIn, uint256 amountOut);
-  event BridgeSwept(address bridgeTargetAddress, address caller, uint256 balance);
+  event BridgeSwept(bytes32 bridgeTargetAddress, address caller, uint256 balance);
 
   function initialize(
     IStablecoinOFT _oft,
     IERC20 _depositToken,
     IStargate _stargate,
-    address _bridgeTargetAddress,
+    bytes32 _bridgeTargetAddress,
     address _governance,
     uint256 _rate,
     uint256 _slippage
@@ -106,16 +106,16 @@ contract L2DepositCollateralL0 is OwnableUpgradeable, ReentrancyGuardUpgradeable
 
     SendParam memory _sendParam = SendParam({
       dstEid: 30_101, // Destination endpoint ID. 30101 is the mainnet endpoint.
-      to: 0x0, // Recipient address.
+      to: bridgeTargetAddress, // Recipient address.
       amountLD: amount, // Amount to send in local decimals.
-      minAmountLD: amount * slippage / MAX_SLIPPAGE, //  Minimum amount to send in local decimals.
+      minAmountLD: amount * (MAX_SLIPPAGE - slippage) / MAX_SLIPPAGE, //  Minimum amount to send in local decimals.
       extraOptions: "", // Additional options supplied by the caller to be used in the LayerZero message.
       composeMsg: "", // The composed message for the send() operation.
-      oftCmd: "" // The OFT command to be executed, unused in default OFT implementations.
+      oftCmd: "2" // The OFT command to be executed, unused in default OFT implementations.
     });
-    MessagingFee memory _fee = MessagingFee(0, 0);
+    MessagingFee memory _fee = MessagingFee(msg.value, 0);
 
-    stargate.sendToken(_sendParam, _fee, owner());
+    stargate.sendToken{value: msg.value}(_sendParam, _fee, owner());
 
     emit BridgeSwept(bridgeTargetAddress, msg.sender, balance);
   }

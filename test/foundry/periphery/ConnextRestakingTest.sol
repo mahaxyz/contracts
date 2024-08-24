@@ -15,10 +15,10 @@ pragma solidity 0.8.21;
 
 import {MockConnext} from "../../../contracts/mocks/MockConnext.sol";
 
-import {XERC20} from "../../../contracts/periphery/restaking/XERC20.sol";
-import {XERC20Lockbox} from "../../../contracts/periphery/restaking/XERC20Lockbox.sol";
 import {L1BridgeCollateralConnext} from "../../../contracts/periphery/restaking/connext/L1BridgeCollateralConnext.sol";
 import {L2DepositCollateralConnext} from "../../../contracts/periphery/restaking/connext/L2DepositCollateralConnext.sol";
+import {XERC20} from "../../../contracts/periphery/restaking/connext/XERC20.sol";
+import {XERC20Lockbox} from "../../../contracts/periphery/restaking/connext/XERC20Lockbox.sol";
 import "../base/BasePsmTest.sol";
 
 contract ConnextRestakingTest is BasePsmTest {
