@@ -111,7 +111,7 @@ contract L2DepositCollateralL0 is OwnableUpgradeable, ReentrancyGuardUpgradeable
       minAmountLD: amount * (MAX_SLIPPAGE - slippage) / MAX_SLIPPAGE, //  Minimum amount to send in local decimals.
       extraOptions: "", // Additional options supplied by the caller to be used in the LayerZero message.
       composeMsg: "", // The composed message for the send() operation.
-      oftCmd: "2" // The OFT command to be executed, unused in default OFT implementations.
+      oftCmd: "" // The OFT command to be executed, unused in default OFT implementations.
     });
     MessagingFee memory _fee = MessagingFee(msg.value, 0);
 
