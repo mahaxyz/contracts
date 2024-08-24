@@ -13,9 +13,6 @@
 
 pragma solidity 0.8.21;
 
-import {ConnextErrors} from "../../../interfaces/errors/ConnextErrors.sol";
-import {ConnextEvents} from "../../../interfaces/events/ConnextEvents.sol";
-
 import {IStablecoinOFT} from "../../../interfaces/periphery/IStablecoinOFT.sol";
 import {IStargate} from "../../../interfaces/periphery/layerzero/IStargate.sol";
 
@@ -71,25 +68,17 @@ contract L2DepositCollateralL0 is OwnableUpgradeable, ReentrancyGuardUpgradeable
     uint256 _slippage
   ) public initializer {
     __Ownable_init(_governance);
-
-    if (
-      address(_oft) == address(0) || address(_depositToken) == address(0) || address(_stargate) == address(0)
-        || _bridgeTargetAddress == address(0)
-    ) {
-      revert ConnextErrors.InvalidZeroInput();
-    }
-
-    oft = _oft;
-    slippage = _slippage;
-    depositToken = _depositToken;
+    allowedBridgeSweepers[_governance] = true;
     bridgeTargetAddress = _bridgeTargetAddress;
+    depositToken = _depositToken;
+    oft = _oft;
     rate = _rate;
+    slippage = _slippage;
+    stargate = _stargate;
   }
 
   function deposit(uint256 _amountIn) external nonReentrant returns (uint256 amountOut) {
-    if (_amountIn == 0) {
-      revert ConnextErrors.InvalidZeroInput();
-    }
+    require(_amountIn > 0, "invalid amount");
 
     depositToken.safeTransferFrom(msg.sender, address(this), _amountIn);
 
@@ -105,9 +94,7 @@ contract L2DepositCollateralL0 is OwnableUpgradeable, ReentrancyGuardUpgradeable
 
   function sweep(uint256 amount) public payable nonReentrant {
     // Verify the caller is whitelisted
-    if (!allowedBridgeSweepers[msg.sender]) {
-      revert ConnextErrors.UnauthorizedBridgeSweeper();
-    }
+    require(allowedBridgeSweepers[msg.sender], "invalid sweeper");
 
     // Get the balance of depositToken in the contract
     uint256 balance = depositToken.balanceOf(address(this));
