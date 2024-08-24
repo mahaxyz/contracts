@@ -16,7 +16,7 @@ pragma solidity 0.8.21;
 import {ConnextErrors} from "../../../interfaces/errors/ConnextErrors.sol";
 import {ConnextEvents} from "../../../interfaces/events/ConnextEvents.sol";
 
-import {IConnext, IL2Deposit} from "../../../interfaces/periphery/IL2Deposit.sol";
+import {IL2Deposit, IStargate} from "../../../interfaces/periphery/IL2Deposit.sol";
 import {IStablecoinOFT} from "../../../interfaces/periphery/IStablecoinOFT.sol";
 import {IXERC20} from "../../../interfaces/periphery/connext/IXERC20.sol";
 import {IXERC20Lockbox} from "../../../interfaces/periphery/connext/IXERC20Lockbox.sol";
@@ -27,13 +27,13 @@ import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeE
 
 /**
  * @author  maha.xyz
- * @title   L2DepositCollateralL0 Contract
+ * @title   L2DepositCollateralConnextL0 Contract
  * @dev     Tokens are sent to this contract via deposit, xZAI is minted for the user,
  *          and funds are batched and bridged down to the L1 for depositing into the maha protocol.
  *          Any ZAI minted on the L1 will be locked in the lockbox for unwrapping at a later time with xZAI.
  * @notice  Allows L2 minting of xZAI tokens in exchange for deposited assets
  */
-contract L2DepositCollateralL0 is OwnableUpgradeable, ReentrancyGuardUpgradeable, IL2Deposit {
+contract L2DepositCollateralConnextL0 is OwnableUpgradeable, ReentrancyGuardUpgradeable, IL2Deposit {
   using SafeERC20 for IERC20;
 
   uint256 public rate;
@@ -47,11 +47,8 @@ contract L2DepositCollateralL0 is OwnableUpgradeable, ReentrancyGuardUpgradeable
   /// @notice The collateral token address - this is what the deposit token will be swapped into and bridged to L1
   IERC20 public collateralToken;
 
-  /// @notice The address of the main Connext contract
-  IConnext public connext;
-
-  /// @notice The swap ID for the connext token swap
-  bytes32 public swapKey;
+  /// @notice The address of the stargate bridge
+  IStargate public stargate;
 
   /// @notice The bridge router fee basis points - 100 basis points = 1%
   uint256 public bridgeRouterFeeBps;

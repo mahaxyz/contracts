@@ -17,14 +17,14 @@ import {IPegStabilityModule} from "../../../interfaces/core/IPegStabilityModule.
 
 import {ConnextErrors} from "../../../interfaces/errors/ConnextErrors.sol";
 import {ConnextEvents} from "../../../interfaces/events/ConnextEvents.sol";
-import {IL1Bridge} from "../../../interfaces/periphery/IL1Bridge.sol";
+import {IL1BridgeConnext} from "../../../interfaces/periphery/connext/IL1BridgeConnext.sol";
 import {IXERC20} from "../../../interfaces/periphery/connext/IXERC20.sol";
 import {IXERC20Lockbox} from "../../../interfaces/periphery/connext/IXERC20Lockbox.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract L1BridgeCollateral is IL1Bridge, ReentrancyGuardUpgradeable {
+contract L1BridgeCollateralConnext is IL1BridgeConnext, ReentrancyGuardUpgradeable {
   using SafeERC20 for IERC20;
 
   /// @notice The xZAI token address
@@ -73,7 +73,7 @@ contract L1BridgeCollateral is IL1Bridge, ReentrancyGuardUpgradeable {
     collateral.approve(address(psm), type(uint256).max);
   }
 
-  /// @inheritdoc IL1Bridge
+  /// @inheritdoc IL1BridgeConnext
   function xReceive(
     bytes32 _transferId,
     uint256 _amount,

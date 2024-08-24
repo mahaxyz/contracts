@@ -7,8 +7,8 @@ task(`connect-xerc20-l2-deposit`, `Connects the xerc20 to the deposit contract`)
   .addParam("limit", "limit of minting/burning")
   .setAction(async (params, hre) => {
     const xerc20D = await hre.deployments.get("xZAI-Proxy");
-    const l2DepositCollateralD = await hre.deployments.get(
-      "L2DepositCollateral"
+    const L2DepositCollateralConnextD = await hre.deployments.get(
+      "L2DepositCollateralConnext"
     );
 
     const e18 = 10n ** 18n;
@@ -22,9 +22,13 @@ task(`connect-xerc20-l2-deposit`, `Connects the xerc20 to the deposit contract`)
 
     console.log(`Setting limits for xERC20 - ${xerc20.target}`);
     console.log(
-      `Setting limits for L2DepositCollateral at ${l2DepositCollateralD.address} to ${limitE18}`
+      `Setting limits for L2DepositCollateralConnext at ${L2DepositCollateralConnextD.address} to ${limitE18}`
     );
     await waitForTx(
-      await xerc20.setLimits(l2DepositCollateralD.address, limitE18, limitE18)
+      await xerc20.setLimits(
+        L2DepositCollateralConnextD.address,
+        limitE18,
+        limitE18
+      )
     );
   });

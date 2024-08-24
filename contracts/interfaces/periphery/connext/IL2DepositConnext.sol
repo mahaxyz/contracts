@@ -13,10 +13,10 @@
 
 pragma solidity 0.8.21;
 
-import {IConnext} from "./connext/IConnext.sol";
+import {IConnext} from "./IConnext.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface IL2Deposit {
+interface IL2DepositConnext {
   /**
    * @notice  Initializes the contract with initial vars
    * @dev     All tokens are expected to have 18 decimals

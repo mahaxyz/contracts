@@ -15,7 +15,7 @@ pragma solidity 0.8.21;
 
 import {ConnextErrors} from "../../../interfaces/errors/ConnextErrors.sol";
 import {ConnextEvents} from "../../../interfaces/events/ConnextEvents.sol";
-import {IConnext, IL2Deposit} from "../../../interfaces/periphery/IL2Deposit.sol";
+import {IConnext, IL2DepositConnext} from "../../../interfaces/periphery/connext/IL2DepositConnext.sol";
 import {IXERC20} from "../../../interfaces/periphery/connext/IXERC20.sol";
 import {IXERC20Lockbox} from "../../../interfaces/periphery/connext/IXERC20Lockbox.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -25,13 +25,13 @@ import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeE
 
 /**
  * @author  maha.xyz
- * @title   L2DepositCollateral Contract
+ * @title   L2DepositCollateralConnext Contract
  * @dev     Tokens are sent to this contract via deposit, xZAI is minted for the user,
  *          and funds are batched and bridged down to the L1 for depositing into the maha protocol.
  *          Any ZAI minted on the L1 will be locked in the lockbox for unwrapping at a later time with xZAI.
  * @notice  Allows L2 minting of xZAI tokens in exchange for deposited assets
  */
-contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, IL2Deposit {
+contract L2DepositCollateralConnext is OwnableUpgradeable, ReentrancyGuardUpgradeable, IL2DepositConnext {
   using SafeERC20 for IERC20;
 
   uint256 public rate;
@@ -78,7 +78,7 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
   // Total bridge fee collected for current batch
   uint256 public bridgeFeeCollected;
 
-  /// @inheritdoc IL2Deposit
+  /// @inheritdoc IL2DepositConnext
   function initialize(
     IERC20 _xZAI,
     IERC20 _depositToken,
@@ -115,7 +115,7 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
     sweepBatchSize = _sweepBatchSize;
   }
 
-  /// @inheritdoc IL2Deposit
+  /// @inheritdoc IL2DepositConnext
   function deposit(uint256 _amountIn, uint256 _minOut, uint256 _deadline) external nonReentrant returns (uint256) {
     if (_amountIn == 0) {
       revert ConnextErrors.InvalidZeroInput();
@@ -124,7 +124,7 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
     return _deposit(_amountIn, _minOut, _deadline);
   }
 
-  /// @inheritdoc IL2Deposit
+  /// @inheritdoc IL2DepositConnext
   function getBridgeFeeShare(uint256 _amountIn) public view returns (uint256) {
     // deduct bridge Fee share
     if (_amountIn < sweepBatchSize) {
@@ -133,7 +133,7 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
     return (sweepBatchSize * bridgeFeeShare) / FEE_BASIS;
   }
 
-  /// @inheritdoc IL2Deposit
+  /// @inheritdoc IL2DepositConnext
   function sweep() public payable nonReentrant {
     // Verify the caller is whitelisted
     if (!allowedBridgeSweepers[msg.sender]) {
@@ -171,36 +171,36 @@ contract L2DepositCollateral is OwnableUpgradeable, ReentrancyGuardUpgradeable, 
     emit ConnextEvents.BridgeSwept(bridgeDestinationDomain, bridgeTargetAddress, msg.sender, balance);
   }
 
-  /// @inheritdoc IL2Deposit
+  /// @inheritdoc IL2DepositConnext
   function setAllowedBridgeSweeper(address _sweeper, bool _allowed) external onlyOwner {
     allowedBridgeSweepers[_sweeper] = _allowed;
     emit ConnextEvents.BridgeSweeperAddressUpdated(_sweeper, _allowed);
   }
 
-  /// @inheritdoc IL2Deposit
+  /// @inheritdoc IL2DepositConnext
   function recoverNative(uint256 _amount, address _to) external onlyOwner {
     payable(_to).transfer(_amount);
   }
 
-  /// @inheritdoc IL2Deposit
+  /// @inheritdoc IL2DepositConnext
   function recoverERC20(address _token, uint256 _amount, address _to) external onlyOwner {
     IERC20(_token).safeTransfer(_to, _amount);
   }
 
-  /// @inheritdoc IL2Deposit
+  /// @inheritdoc IL2DepositConnext
   function setRate(uint256 _rate) external onlyOwner {
     emit ConnextEvents.RateUpdated(rate, _rate);
     rate = _rate;
   }
 
-  /// @inheritdoc IL2Deposit
+  /// @inheritdoc IL2DepositConnext
   function updateBridgeFeeShare(uint256 _newShare) external onlyOwner {
     if (_newShare > 100) revert ConnextErrors.InvalidBridgeFeeShare(_newShare);
     emit ConnextEvents.BridgeFeeShareUpdated(bridgeFeeShare, _newShare);
     bridgeFeeShare = _newShare;
   }
 
-  /// @inheritdoc IL2Deposit
+  /// @inheritdoc IL2DepositConnext
   function updateSweepBatchSize(uint256 _newBatchSize) external onlyOwner {
     if (_newBatchSize < 1e6) revert ConnextErrors.InvalidSweepBatchSize(_newBatchSize);
     emit ConnextEvents.SweepBatchSizeUpdated(sweepBatchSize, _newBatchSize);

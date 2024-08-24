@@ -26,7 +26,7 @@ import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/ut
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract L1BridgeCollateralL0 is IL1Bridge, ReentrancyGuardUpgradeable {
+contract L1BridgeCollateralConnextL0 is IL1Bridge, ReentrancyGuardUpgradeable {
   using SafeERC20 for IERC20;
 
   /// @notice The xZAI token address
