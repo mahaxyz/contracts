@@ -6,11 +6,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const contract = await deployContract(
     hre,
     "ZaiOFTWithRestaking",
-    [
-      "ZAI Stablecoin (OFT)",
-      "USDz",
-      config[hre.network.name].libraries.endpoint,
-    ],
+    ["ZAI Stablecoin", "xUSDz", config[hre.network.name].libraries.endpoint],
     "ZaiStablecoinOFT"
   );
 
