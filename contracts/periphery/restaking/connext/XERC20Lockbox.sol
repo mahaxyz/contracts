@@ -13,8 +13,8 @@
 
 pragma solidity 0.8.21;
 
-import {IXERC20} from "../../interfaces/periphery/connext/IXERC20.sol";
-import {IXERC20Lockbox} from "../../interfaces/periphery/connext/IXERC20Lockbox.sol";
+import {IXERC20} from "../../../interfaces/periphery/connext/IXERC20.sol";
+import {IXERC20Lockbox} from "../../../interfaces/periphery/connext/IXERC20Lockbox.sol";
 
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
