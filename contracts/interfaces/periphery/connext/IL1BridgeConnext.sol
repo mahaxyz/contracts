@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-interface IL1Bridge {
+interface IL1BridgeConnext {
   /**
    * @notice  Accepts collateral from the bridge
    * @dev     This function will take all collateral and deposit it into maha

@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {IXERC20} from "../../interfaces/periphery/connext/IXERC20.sol";
+import {IXERC20} from "../../../interfaces/periphery/connext/IXERC20.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {
   ERC20PermitUpgradeable,
