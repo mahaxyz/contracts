@@ -60,7 +60,10 @@ contract L1BridgeCollateralL0 is OApp {
   ) internal virtual override {
     // for any message that gets sent to the contract from the endpoint
     // we just simply mint ZAI with whatever collateral is sent to the contract
+    process();
+  }
 
+  function process() public {
     // Get the amount of collateral
     uint256 collateralAmount = collateral.balanceOf(address(this));
 
