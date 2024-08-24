@@ -27,10 +27,9 @@ import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeE
 /**
  * @author  maha.xyz
  * @title   L2DepositCollateralL0 Contract
- * @dev     Tokens are sent to this contract via deposit, xZAI is minted for the user,
+ * @dev     Tokens are sent to this contract via deposit, zai is minted for the user,
  *          and funds are batched and bridged down to the L1 for depositing into the maha protocol.
- *          Any ZAI minted on the L1 will be locked in the lockbox for unwrapping at a later time with xZAI.
- * @notice  Allows L2 minting of xZAI tokens in exchange for deposited assets
+ * @notice  Allows L2 minting of zai tokens in exchange for deposited assets
  */
 contract L2DepositCollateralL0 is OwnableUpgradeable, ReentrancyGuardUpgradeable {
   using SafeERC20 for IERC20;
