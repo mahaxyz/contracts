@@ -19,11 +19,11 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
- * @title L1BridgeCollateralConnextL0
+ * @title L1BridgeCollateralL0
  * @author maha.xyz
  * @notice Credits any collateral bridged from various L2s via layerzero into the adapter for accounting purposes.
  */
-contract L1BridgeCollateralConnextL0 is OApp {
+contract L1BridgeCollateralL0 is OApp {
   using SafeERC20 for IERC20;
 
   /// @notice The layerzero OFT adapter on mainnet
