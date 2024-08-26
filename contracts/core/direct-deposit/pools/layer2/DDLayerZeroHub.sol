@@ -29,6 +29,7 @@ contract DDLayerZeroHub is Initializable, DDBase {
   IOFT public oftAdapter;
   uint256 public bridged;
   uint32 public dstEid;
+  address internal ethRefundAddress;
 
   function initialize(
     address _hub,
@@ -49,6 +50,10 @@ contract DDLayerZeroHub is Initializable, DDBase {
     require(_oftAdapter != address(0), "DDLayerZeroHub/zero-address");
 
     zai.approve(_oftAdapter, type(uint256).max);
+  }
+
+  receive() external payable {
+    // nothing
   }
 
   /// @inheritdoc IDDPool
