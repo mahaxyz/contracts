@@ -1,0 +1,890 @@
+{
+  "address": "0xABE93AB5Ae27D30a15bA90792436bA019BC4BEA5",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint48",
+          "name": "_initialDelay",
+          "type": "uint48"
+        },
+        {
+          "internalType": "address",
+          "name": "_governance",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "AccessControlBadConfirmation",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint48",
+          "name": "schedule",
+          "type": "uint48"
+        }
+      ],
+      "name": "AccessControlEnforcedDefaultAdminDelay",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "AccessControlEnforcedDefaultAdminRules",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "defaultAdmin",
+          "type": "address"
+        }
+      ],
+      "name": "AccessControlInvalidDefaultAdmin",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "neededRole",
+          "type": "bytes32"
+        }
+      ],
+      "name": "AccessControlUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "bits",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "SafeCastOverflowedUintDowncast",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "DefaultAdminDelayChangeCanceled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint48",
+          "name": "newDelay",
+          "type": "uint48"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint48",
+          "name": "effectSchedule",
+          "type": "uint48"
+        }
+      ],
+      "name": "DefaultAdminDelayChangeScheduled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "DefaultAdminTransferCanceled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newAdmin",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint48",
+          "name": "acceptSchedule",
+          "type": "uint48"
+        }
+      ],
+      "name": "DefaultAdminTransferScheduled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "Disable",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "previousAdminRole",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "newAdminRole",
+          "type": "bytes32"
+        }
+      ],
+      "name": "RoleAdminChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "RoleGranted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "RoleRevoked",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "DEFAULT_ADMIN_ROLE",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "OPERATOR_ROLE",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "acceptDefaultAdminTransfer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "active",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newAdmin",
+          "type": "address"
+        }
+      ],
+      "name": "beginDefaultAdminTransfer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "cancelDefaultAdminTransfer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint48",
+          "name": "newDelay",
+          "type": "uint48"
+        }
+      ],
+      "name": "changeDefaultAdminDelay",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "defaultAdmin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "defaultAdminDelay",
+      "outputs": [
+        {
+          "internalType": "uint48",
+          "name": "",
+          "type": "uint48"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "defaultAdminDelayIncreaseWait",
+      "outputs": [
+        {
+          "internalType": "uint48",
+          "name": "",
+          "type": "uint48"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "disable",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "enabled",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getRoleAdmin",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTargetAssets",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "grantRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "hasRole",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pendingDefaultAdmin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "newAdmin",
+          "type": "address"
+        },
+        {
+          "internalType": "uint48",
+          "name": "schedule",
+          "type": "uint48"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pendingDefaultAdminDelay",
+      "outputs": [
+        {
+          "internalType": "uint48",
+          "name": "newDelay",
+          "type": "uint48"
+        },
+        {
+          "internalType": "uint48",
+          "name": "schedule",
+          "type": "uint48"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "renounceRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "revokeRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rollbackDefaultAdminDelay",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "setTargetAssets",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "interfaceId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "targetAssets",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xa8b346a190984a131d2a84e4b96cac677c026d41501a90736b2a1a1c8be44ad8",
+  "receipt": {
+    "to": null,
+    "from": "0x1F09Ec21d7fd0A21879b919bf0f9C46e6b85CA8b",
+    "contractAddress": "0x350925D345d642DE0fDa8B9794BcbDC83a689594",
+    "transactionIndex": 9,
+    "gasUsed": "1066856",
+    "logsBloom": "0x00000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000800000000000000000000000000000010000000000000000000008000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000100000000000020000000000001000000000000000000000000000000008000000000000000000000",
+    "blockHash": "0x44cebf6e50d9590869f697a4251f08daa5ebb2117310046fe0aa7091fa516c5b",
+    "transactionHash": "0xa8b346a190984a131d2a84e4b96cac677c026d41501a90736b2a1a1c8be44ad8",
+    "logs": [
+      {
+        "transactionIndex": 9,
+        "blockNumber": 20610961,
+        "transactionHash": "0xa8b346a190984a131d2a84e4b96cac677c026d41501a90736b2a1a1c8be44ad8",
+        "address": "0x350925D345d642DE0fDa8B9794BcbDC83a689594",
+        "topics": [
+          "0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000001f09ec21d7fd0a21879b919bf0f9c46e6b85ca8b",
+          "0x0000000000000000000000001f09ec21d7fd0a21879b919bf0f9c46e6b85ca8b"
+        ],
+        "data": "0x",
+        "logIndex": 24,
+        "blockHash": "0x44cebf6e50d9590869f697a4251f08daa5ebb2117310046fe0aa7091fa516c5b"
+      }
+    ],
+    "blockNumber": 20610961,
+    "cumulativeGasUsed": "2247776",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [3600, "0x1F09Ec21d7fd0A21879b919bf0f9C46e6b85CA8b"],
+  "numDeployments": 1,
+  "solcInputHash": "76824f13995f88204cdc4c9579fb25ab",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.21+commit.d9974bed\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint48\",\"name\":\"_initialDelay\",\"type\":\"uint48\"},{\"internalType\":\"address\",\"name\":\"_governance\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"AccessControlBadConfirmation\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint48\",\"name\":\"schedule\",\"type\":\"uint48\"}],\"name\":\"AccessControlEnforcedDefaultAdminDelay\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"AccessControlEnforcedDefaultAdminRules\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"defaultAdmin\",\"type\":\"address\"}],\"name\":\"AccessControlInvalidDefaultAdmin\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"neededRole\",\"type\":\"bytes32\"}],\"name\":\"AccessControlUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"bits\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"SafeCastOverflowedUintDowncast\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"DefaultAdminDelayChangeCanceled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint48\",\"name\":\"newDelay\",\"type\":\"uint48\"},{\"indexed\":false,\"internalType\":\"uint48\",\"name\":\"effectSchedule\",\"type\":\"uint48\"}],\"name\":\"DefaultAdminDelayChangeScheduled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"DefaultAdminTransferCanceled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint48\",\"name\":\"acceptSchedule\",\"type\":\"uint48\"}],\"name\":\"DefaultAdminTransferScheduled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"Disable\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"OPERATOR_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"acceptDefaultAdminTransfer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"active\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"beginDefaultAdminTransfer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"cancelDefaultAdminTransfer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint48\",\"name\":\"newDelay\",\"type\":\"uint48\"}],\"name\":\"changeDefaultAdminDelay\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defaultAdmin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defaultAdminDelay\",\"outputs\":[{\"internalType\":\"uint48\",\"name\":\"\",\"type\":\"uint48\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defaultAdminDelayIncreaseWait\",\"outputs\":[{\"internalType\":\"uint48\",\"name\":\"\",\"type\":\"uint48\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"disable\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"enabled\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"getTargetAssets\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pendingDefaultAdmin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"},{\"internalType\":\"uint48\",\"name\":\"schedule\",\"type\":\"uint48\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pendingDefaultAdminDelay\",\"outputs\":[{\"internalType\":\"uint48\",\"name\":\"newDelay\",\"type\":\"uint48\"},{\"internalType\":\"uint48\",\"name\":\"schedule\",\"type\":\"uint48\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rollbackDefaultAdminDelay\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"setTargetAssets\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"targetAssets\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"errors\":{\"AccessControlBadConfirmation()\":[{\"details\":\"The caller of a function is not the expected one. NOTE: Don't confuse with {AccessControlUnauthorizedAccount}.\"}],\"AccessControlEnforcedDefaultAdminDelay(uint48)\":[{\"details\":\"The delay for transferring the default admin delay is enforced and the operation must wait until `schedule`. NOTE: `schedule` can be 0 indicating there's no transfer scheduled.\"}],\"AccessControlEnforcedDefaultAdminRules()\":[{\"details\":\"At least one of the following rules was violated: - The `DEFAULT_ADMIN_ROLE` must only be managed by itself. - The `DEFAULT_ADMIN_ROLE` must only be held by one account at the time. - Any `DEFAULT_ADMIN_ROLE` transfer must be in two delayed steps.\"}],\"AccessControlInvalidDefaultAdmin(address)\":[{\"details\":\"The new default admin is not a valid default admin.\"}],\"AccessControlUnauthorizedAccount(address,bytes32)\":[{\"details\":\"The `account` is missing a role.\"}],\"SafeCastOverflowedUintDowncast(uint8,uint256)\":[{\"details\":\"Value doesn't fit in an uint of `bits` size.\"}]},\"events\":{\"DefaultAdminDelayChangeCanceled()\":{\"details\":\"Emitted when a {pendingDefaultAdminDelay} is reset if its schedule didn't pass.\"},\"DefaultAdminDelayChangeScheduled(uint48,uint48)\":{\"details\":\"Emitted when a {defaultAdminDelay} change is started, setting `newDelay` as the next delay to be applied between default admin transfer after `effectSchedule` has passed.\"},\"DefaultAdminTransferCanceled()\":{\"details\":\"Emitted when a {pendingDefaultAdmin} is reset if it was never accepted, regardless of its schedule.\"},\"DefaultAdminTransferScheduled(address,uint48)\":{\"details\":\"Emitted when a {defaultAdmin} transfer is started, setting `newAdmin` as the next address to become the {defaultAdmin} by calling {acceptDefaultAdminTransfer} only after `acceptSchedule` passes.\"},\"RoleAdminChanged(bytes32,bytes32,bytes32)\":{\"details\":\"Emitted when `newAdminRole` is set as ``role``'s admin role, replacing `previousAdminRole` `DEFAULT_ADMIN_ROLE` is the starting admin for all roles, despite {RoleAdminChanged} not being emitted signaling this.\"},\"RoleGranted(bytes32,address,address)\":{\"details\":\"Emitted when `account` is granted `role`. `sender` is the account that originated the contract call, an admin role bearer except when using {AccessControl-_setupRole}.\"},\"RoleRevoked(bytes32,address,address)\":{\"details\":\"Emitted when `account` is revoked `role`. `sender` is the account that originated the contract call:   - if using `revokeRole`, it is the admin role bearer   - if using `renounceRole`, it is the role bearer (i.e. `account`)\"}},\"kind\":\"dev\",\"methods\":{\"acceptDefaultAdminTransfer()\":{\"details\":\"Completes a {defaultAdmin} transfer previously started with {beginDefaultAdminTransfer}. After calling the function: - `DEFAULT_ADMIN_ROLE` should be granted to the caller. - `DEFAULT_ADMIN_ROLE` should be revoked from the previous holder. - {pendingDefaultAdmin} should be reset to zero values. Requirements: - Only can be called by the {pendingDefaultAdmin}'s `newAdmin`. - The {pendingDefaultAdmin}'s `acceptSchedule` should've passed.\"},\"beginDefaultAdminTransfer(address)\":{\"details\":\"Starts a {defaultAdmin} transfer by setting a {pendingDefaultAdmin} scheduled for acceptance after the current timestamp plus a {defaultAdminDelay}. Requirements: - Only can be called by the current {defaultAdmin}. Emits a DefaultAdminRoleChangeStarted event.\"},\"cancelDefaultAdminTransfer()\":{\"details\":\"Cancels a {defaultAdmin} transfer previously started with {beginDefaultAdminTransfer}. A {pendingDefaultAdmin} not yet accepted can also be cancelled with this function. Requirements: - Only can be called by the current {defaultAdmin}. May emit a DefaultAdminTransferCanceled event.\"},\"changeDefaultAdminDelay(uint48)\":{\"details\":\"Initiates a {defaultAdminDelay} update by setting a {pendingDefaultAdminDelay} scheduled for getting into effect after the current timestamp plus a {defaultAdminDelay}. This function guarantees that any call to {beginDefaultAdminTransfer} done between the timestamp this method is called and the {pendingDefaultAdminDelay} effect schedule will use the current {defaultAdminDelay} set before calling. The {pendingDefaultAdminDelay}'s effect schedule is defined in a way that waiting until the schedule and then calling {beginDefaultAdminTransfer} with the new delay will take at least the same as another {defaultAdmin} complete transfer (including acceptance). The schedule is designed for two scenarios: - When the delay is changed for a larger one the schedule is `block.timestamp + newDelay` capped by {defaultAdminDelayIncreaseWait}. - When the delay is changed for a shorter one, the schedule is `block.timestamp + (current delay - new delay)`. A {pendingDefaultAdminDelay} that never got into effect will be canceled in favor of a new scheduled change. Requirements: - Only can be called by the current {defaultAdmin}. Emits a DefaultAdminDelayChangeScheduled event and may emit a DefaultAdminDelayChangeCanceled event.\"},\"defaultAdmin()\":{\"details\":\"Returns the address of the current `DEFAULT_ADMIN_ROLE` holder.\"},\"defaultAdminDelay()\":{\"details\":\"Returns the delay required to schedule the acceptance of a {defaultAdmin} transfer started. This delay will be added to the current timestamp when calling {beginDefaultAdminTransfer} to set the acceptance schedule. NOTE: If a delay change has been scheduled, it will take effect as soon as the schedule passes, making this function returns the new delay. See {changeDefaultAdminDelay}.\"},\"defaultAdminDelayIncreaseWait()\":{\"details\":\"Maximum time in seconds for an increase to {defaultAdminDelay} (that is scheduled using {changeDefaultAdminDelay}) to take effect. Default to 5 days. When the {defaultAdminDelay} is scheduled to be increased, it goes into effect after the new delay has passed with the purpose of giving enough time for reverting any accidental change (i.e. using milliseconds instead of seconds) that may lock the contract. However, to avoid excessive schedules, the wait is capped by this function and it can be overrode for a custom {defaultAdminDelay} increase scheduling. IMPORTANT: Make sure to add a reasonable amount of time while overriding this value, otherwise, there's a risk of setting a high new delay that goes into effect almost immediately without the possibility of human intervention in the case of an input error (eg. set milliseconds instead of seconds).\"},\"disable()\":{\"details\":\"Implementation should be permissioned.\"},\"getRoleAdmin(bytes32)\":{\"details\":\"Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.\"},\"getTargetAssets(uint256)\":{\"details\":\"The `currentAssets` arguement is not used in this plan.\",\"params\":{\"currentAssets\":\"asset balance from a specific pool in Dai [wad] denomination\"},\"returns\":{\"_0\":\"uint256 target assets the Hub should wind or unwind to in Dai\"}},\"grantRole(bytes32,address)\":{\"details\":\"See {AccessControl-grantRole}. Reverts for `DEFAULT_ADMIN_ROLE`.\"},\"hasRole(bytes32,address)\":{\"details\":\"Returns `true` if `account` has been granted `role`.\"},\"owner()\":{\"details\":\"See {IERC5313-owner}.\"},\"pendingDefaultAdmin()\":{\"details\":\"Returns a tuple of a `newAdmin` and an accept schedule. After the `schedule` passes, the `newAdmin` will be able to accept the {defaultAdmin} role by calling {acceptDefaultAdminTransfer}, completing the role transfer. A zero value only in `acceptSchedule` indicates no pending admin transfer. NOTE: A zero address `newAdmin` means that {defaultAdmin} is being renounced.\"},\"pendingDefaultAdminDelay()\":{\"details\":\"Returns a tuple of `newDelay` and an effect schedule. After the `schedule` passes, the `newDelay` will get into effect immediately for every new {defaultAdmin} transfer started with {beginDefaultAdminTransfer}. A zero value only in `effectSchedule` indicates no pending delay change. NOTE: A zero value only for `newDelay` means that the next {defaultAdminDelay} will be zero after the effect schedule.\"},\"renounceRole(bytes32,address)\":{\"details\":\"See {AccessControl-renounceRole}. For the `DEFAULT_ADMIN_ROLE`, it only allows renouncing in two steps by first calling {beginDefaultAdminTransfer} to the `address(0)`, so it's required that the {pendingDefaultAdmin} schedule has also passed when calling this function. After its execution, it will not be possible to call `onlyRole(DEFAULT_ADMIN_ROLE)` functions. NOTE: Renouncing `DEFAULT_ADMIN_ROLE` will leave the contract without a {defaultAdmin}, thereby disabling any functionality that is only available for it, and the possibility of reassigning a non-administrated role.\"},\"revokeRole(bytes32,address)\":{\"details\":\"See {AccessControl-revokeRole}. Reverts for `DEFAULT_ADMIN_ROLE`.\"},\"rollbackDefaultAdminDelay()\":{\"details\":\"Cancels a scheduled {defaultAdminDelay} change. Requirements: - Only can be called by the current {defaultAdmin}. May emit a DefaultAdminDelayChangeCanceled event.\"},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\"}},\"title\":\"Direct Deposit Operator Plan\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"active()\":{\"notice\":\"Reports whether the plan is active\"},\"disable()\":{\"notice\":\"Disables the plan so that it would instruct the Hub to unwind its entire position.\"},\"getTargetAssets(uint256)\":{\"notice\":\"Determines what the position should be based on current assets and the custom plan rules.\"}},\"notice\":\"An operator sets the desired target assets for a simple vault\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/core/direct-deposit/plans/DDOperatorPlan.sol\":\"DDOperatorPlan\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/access/AccessControl.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/AccessControl.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IAccessControl} from \\\"./IAccessControl.sol\\\";\\nimport {Context} from \\\"../utils/Context.sol\\\";\\nimport {ERC165} from \\\"../utils/introspection/ERC165.sol\\\";\\n\\n/**\\n * @dev Contract module that allows children to implement role-based access\\n * control mechanisms. This is a lightweight version that doesn't allow enumerating role\\n * members except through off-chain means by accessing the contract event logs. Some\\n * applications may benefit from on-chain enumerability, for those cases see\\n * {AccessControlEnumerable}.\\n *\\n * Roles are referred to by their `bytes32` identifier. These should be exposed\\n * in the external API and be unique. The best way to achieve this is by\\n * using `public constant` hash digests:\\n *\\n * ```solidity\\n * bytes32 public constant MY_ROLE = keccak256(\\\"MY_ROLE\\\");\\n * ```\\n *\\n * Roles can be used to represent a set of permissions. To restrict access to a\\n * function call, use {hasRole}:\\n *\\n * ```solidity\\n * function foo() public {\\n *     require(hasRole(MY_ROLE, msg.sender));\\n *     ...\\n * }\\n * ```\\n *\\n * Roles can be granted and revoked dynamically via the {grantRole} and\\n * {revokeRole} functions. Each role has an associated admin role, and only\\n * accounts that have a role's admin role can call {grantRole} and {revokeRole}.\\n *\\n * By default, the admin role for all roles is `DEFAULT_ADMIN_ROLE`, which means\\n * that only accounts with this role will be able to grant or revoke other\\n * roles. More complex role relationships can be created by using\\n * {_setRoleAdmin}.\\n *\\n * WARNING: The `DEFAULT_ADMIN_ROLE` is also its own admin: it has permission to\\n * grant and revoke this role. Extra precautions should be taken to secure\\n * accounts that have been granted it. We recommend using {AccessControlDefaultAdminRules}\\n * to enforce additional security measures for this role.\\n */\\nabstract contract AccessControl is Context, IAccessControl, ERC165 {\\n    struct RoleData {\\n        mapping(address account => bool) hasRole;\\n        bytes32 adminRole;\\n    }\\n\\n    mapping(bytes32 role => RoleData) private _roles;\\n\\n    bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;\\n\\n    /**\\n     * @dev Modifier that checks that an account has a specific role. Reverts\\n     * with an {AccessControlUnauthorizedAccount} error including the required role.\\n     */\\n    modifier onlyRole(bytes32 role) {\\n        _checkRole(role);\\n        _;\\n    }\\n\\n    /**\\n     * @dev See {IERC165-supportsInterface}.\\n     */\\n    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {\\n        return interfaceId == type(IAccessControl).interfaceId || super.supportsInterface(interfaceId);\\n    }\\n\\n    /**\\n     * @dev Returns `true` if `account` has been granted `role`.\\n     */\\n    function hasRole(bytes32 role, address account) public view virtual returns (bool) {\\n        return _roles[role].hasRole[account];\\n    }\\n\\n    /**\\n     * @dev Reverts with an {AccessControlUnauthorizedAccount} error if `_msgSender()`\\n     * is missing `role`. Overriding this function changes the behavior of the {onlyRole} modifier.\\n     */\\n    function _checkRole(bytes32 role) internal view virtual {\\n        _checkRole(role, _msgSender());\\n    }\\n\\n    /**\\n     * @dev Reverts with an {AccessControlUnauthorizedAccount} error if `account`\\n     * is missing `role`.\\n     */\\n    function _checkRole(bytes32 role, address account) internal view virtual {\\n        if (!hasRole(role, account)) {\\n            revert AccessControlUnauthorizedAccount(account, role);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the admin role that controls `role`. See {grantRole} and\\n     * {revokeRole}.\\n     *\\n     * To change a role's admin, use {_setRoleAdmin}.\\n     */\\n    function getRoleAdmin(bytes32 role) public view virtual returns (bytes32) {\\n        return _roles[role].adminRole;\\n    }\\n\\n    /**\\n     * @dev Grants `role` to `account`.\\n     *\\n     * If `account` had not been already granted `role`, emits a {RoleGranted}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     *\\n     * May emit a {RoleGranted} event.\\n     */\\n    function grantRole(bytes32 role, address account) public virtual onlyRole(getRoleAdmin(role)) {\\n        _grantRole(role, account);\\n    }\\n\\n    /**\\n     * @dev Revokes `role` from `account`.\\n     *\\n     * If `account` had been granted `role`, emits a {RoleRevoked} event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     *\\n     * May emit a {RoleRevoked} event.\\n     */\\n    function revokeRole(bytes32 role, address account) public virtual onlyRole(getRoleAdmin(role)) {\\n        _revokeRole(role, account);\\n    }\\n\\n    /**\\n     * @dev Revokes `role` from the calling account.\\n     *\\n     * Roles are often managed via {grantRole} and {revokeRole}: this function's\\n     * purpose is to provide a mechanism for accounts to lose their privileges\\n     * if they are compromised (such as when a trusted device is misplaced).\\n     *\\n     * If the calling account had been revoked `role`, emits a {RoleRevoked}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must be `callerConfirmation`.\\n     *\\n     * May emit a {RoleRevoked} event.\\n     */\\n    function renounceRole(bytes32 role, address callerConfirmation) public virtual {\\n        if (callerConfirmation != _msgSender()) {\\n            revert AccessControlBadConfirmation();\\n        }\\n\\n        _revokeRole(role, callerConfirmation);\\n    }\\n\\n    /**\\n     * @dev Sets `adminRole` as ``role``'s admin role.\\n     *\\n     * Emits a {RoleAdminChanged} event.\\n     */\\n    function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual {\\n        bytes32 previousAdminRole = getRoleAdmin(role);\\n        _roles[role].adminRole = adminRole;\\n        emit RoleAdminChanged(role, previousAdminRole, adminRole);\\n    }\\n\\n    /**\\n     * @dev Attempts to grant `role` to `account` and returns a boolean indicating if `role` was granted.\\n     *\\n     * Internal function without access restriction.\\n     *\\n     * May emit a {RoleGranted} event.\\n     */\\n    function _grantRole(bytes32 role, address account) internal virtual returns (bool) {\\n        if (!hasRole(role, account)) {\\n            _roles[role].hasRole[account] = true;\\n            emit RoleGranted(role, account, _msgSender());\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n\\n    /**\\n     * @dev Attempts to revoke `role` to `account` and returns a boolean indicating if `role` was revoked.\\n     *\\n     * Internal function without access restriction.\\n     *\\n     * May emit a {RoleRevoked} event.\\n     */\\n    function _revokeRole(bytes32 role, address account) internal virtual returns (bool) {\\n        if (hasRole(role, account)) {\\n            _roles[role].hasRole[account] = false;\\n            emit RoleRevoked(role, account, _msgSender());\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0xa0e92d42942f4f57c5be50568dac11e9d00c93efcb458026e18d2d9b9b2e7308\",\"license\":\"MIT\"},\"@openzeppelin/contracts/access/IAccessControl.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/IAccessControl.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev External interface of AccessControl declared to support ERC165 detection.\\n */\\ninterface IAccessControl {\\n    /**\\n     * @dev The `account` is missing a role.\\n     */\\n    error AccessControlUnauthorizedAccount(address account, bytes32 neededRole);\\n\\n    /**\\n     * @dev The caller of a function is not the expected one.\\n     *\\n     * NOTE: Don't confuse with {AccessControlUnauthorizedAccount}.\\n     */\\n    error AccessControlBadConfirmation();\\n\\n    /**\\n     * @dev Emitted when `newAdminRole` is set as ``role``'s admin role, replacing `previousAdminRole`\\n     *\\n     * `DEFAULT_ADMIN_ROLE` is the starting admin for all roles, despite\\n     * {RoleAdminChanged} not being emitted signaling this.\\n     */\\n    event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole);\\n\\n    /**\\n     * @dev Emitted when `account` is granted `role`.\\n     *\\n     * `sender` is the account that originated the contract call, an admin role\\n     * bearer except when using {AccessControl-_setupRole}.\\n     */\\n    event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);\\n\\n    /**\\n     * @dev Emitted when `account` is revoked `role`.\\n     *\\n     * `sender` is the account that originated the contract call:\\n     *   - if using `revokeRole`, it is the admin role bearer\\n     *   - if using `renounceRole`, it is the role bearer (i.e. `account`)\\n     */\\n    event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);\\n\\n    /**\\n     * @dev Returns `true` if `account` has been granted `role`.\\n     */\\n    function hasRole(bytes32 role, address account) external view returns (bool);\\n\\n    /**\\n     * @dev Returns the admin role that controls `role`. See {grantRole} and\\n     * {revokeRole}.\\n     *\\n     * To change a role's admin, use {AccessControl-_setRoleAdmin}.\\n     */\\n    function getRoleAdmin(bytes32 role) external view returns (bytes32);\\n\\n    /**\\n     * @dev Grants `role` to `account`.\\n     *\\n     * If `account` had not been already granted `role`, emits a {RoleGranted}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     */\\n    function grantRole(bytes32 role, address account) external;\\n\\n    /**\\n     * @dev Revokes `role` from `account`.\\n     *\\n     * If `account` had been granted `role`, emits a {RoleRevoked} event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     */\\n    function revokeRole(bytes32 role, address account) external;\\n\\n    /**\\n     * @dev Revokes `role` from the calling account.\\n     *\\n     * Roles are often managed via {grantRole} and {revokeRole}: this function's\\n     * purpose is to provide a mechanism for accounts to lose their privileges\\n     * if they are compromised (such as when a trusted device is misplaced).\\n     *\\n     * If the calling account had been granted `role`, emits a {RoleRevoked}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must be `callerConfirmation`.\\n     */\\n    function renounceRole(bytes32 role, address callerConfirmation) external;\\n}\\n\",\"keccak256\":\"0xb6b36edd6a2999fd243ff226d6cbf84bd71af2432bbd0dfe19392996a1d9cb41\",\"license\":\"MIT\"},\"@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/extensions/AccessControlDefaultAdminRules.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IAccessControlDefaultAdminRules} from \\\"./IAccessControlDefaultAdminRules.sol\\\";\\nimport {AccessControl, IAccessControl} from \\\"../AccessControl.sol\\\";\\nimport {SafeCast} from \\\"../../utils/math/SafeCast.sol\\\";\\nimport {Math} from \\\"../../utils/math/Math.sol\\\";\\nimport {IERC5313} from \\\"../../interfaces/IERC5313.sol\\\";\\n\\n/**\\n * @dev Extension of {AccessControl} that allows specifying special rules to manage\\n * the `DEFAULT_ADMIN_ROLE` holder, which is a sensitive role with special permissions\\n * over other roles that may potentially have privileged rights in the system.\\n *\\n * If a specific role doesn't have an admin role assigned, the holder of the\\n * `DEFAULT_ADMIN_ROLE` will have the ability to grant it and revoke it.\\n *\\n * This contract implements the following risk mitigations on top of {AccessControl}:\\n *\\n * * Only one account holds the `DEFAULT_ADMIN_ROLE` since deployment until it's potentially renounced.\\n * * Enforces a 2-step process to transfer the `DEFAULT_ADMIN_ROLE` to another account.\\n * * Enforces a configurable delay between the two steps, with the ability to cancel before the transfer is accepted.\\n * * The delay can be changed by scheduling, see {changeDefaultAdminDelay}.\\n * * It is not possible to use another role to manage the `DEFAULT_ADMIN_ROLE`.\\n *\\n * Example usage:\\n *\\n * ```solidity\\n * contract MyToken is AccessControlDefaultAdminRules {\\n *   constructor() AccessControlDefaultAdminRules(\\n *     3 days,\\n *     msg.sender // Explicit initial `DEFAULT_ADMIN_ROLE` holder\\n *    ) {}\\n * }\\n * ```\\n */\\nabstract contract AccessControlDefaultAdminRules is IAccessControlDefaultAdminRules, IERC5313, AccessControl {\\n    // pending admin pair read/written together frequently\\n    address private _pendingDefaultAdmin;\\n    uint48 private _pendingDefaultAdminSchedule; // 0 == unset\\n\\n    uint48 private _currentDelay;\\n    address private _currentDefaultAdmin;\\n\\n    // pending delay pair read/written together frequently\\n    uint48 private _pendingDelay;\\n    uint48 private _pendingDelaySchedule; // 0 == unset\\n\\n    /**\\n     * @dev Sets the initial values for {defaultAdminDelay} and {defaultAdmin} address.\\n     */\\n    constructor(uint48 initialDelay, address initialDefaultAdmin) {\\n        if (initialDefaultAdmin == address(0)) {\\n            revert AccessControlInvalidDefaultAdmin(address(0));\\n        }\\n        _currentDelay = initialDelay;\\n        _grantRole(DEFAULT_ADMIN_ROLE, initialDefaultAdmin);\\n    }\\n\\n    /**\\n     * @dev See {IERC165-supportsInterface}.\\n     */\\n    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {\\n        return interfaceId == type(IAccessControlDefaultAdminRules).interfaceId || super.supportsInterface(interfaceId);\\n    }\\n\\n    /**\\n     * @dev See {IERC5313-owner}.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return defaultAdmin();\\n    }\\n\\n    ///\\n    /// Override AccessControl role management\\n    ///\\n\\n    /**\\n     * @dev See {AccessControl-grantRole}. Reverts for `DEFAULT_ADMIN_ROLE`.\\n     */\\n    function grantRole(bytes32 role, address account) public virtual override(AccessControl, IAccessControl) {\\n        if (role == DEFAULT_ADMIN_ROLE) {\\n            revert AccessControlEnforcedDefaultAdminRules();\\n        }\\n        super.grantRole(role, account);\\n    }\\n\\n    /**\\n     * @dev See {AccessControl-revokeRole}. Reverts for `DEFAULT_ADMIN_ROLE`.\\n     */\\n    function revokeRole(bytes32 role, address account) public virtual override(AccessControl, IAccessControl) {\\n        if (role == DEFAULT_ADMIN_ROLE) {\\n            revert AccessControlEnforcedDefaultAdminRules();\\n        }\\n        super.revokeRole(role, account);\\n    }\\n\\n    /**\\n     * @dev See {AccessControl-renounceRole}.\\n     *\\n     * For the `DEFAULT_ADMIN_ROLE`, it only allows renouncing in two steps by first calling\\n     * {beginDefaultAdminTransfer} to the `address(0)`, so it's required that the {pendingDefaultAdmin} schedule\\n     * has also passed when calling this function.\\n     *\\n     * After its execution, it will not be possible to call `onlyRole(DEFAULT_ADMIN_ROLE)` functions.\\n     *\\n     * NOTE: Renouncing `DEFAULT_ADMIN_ROLE` will leave the contract without a {defaultAdmin},\\n     * thereby disabling any functionality that is only available for it, and the possibility of reassigning a\\n     * non-administrated role.\\n     */\\n    function renounceRole(bytes32 role, address account) public virtual override(AccessControl, IAccessControl) {\\n        if (role == DEFAULT_ADMIN_ROLE && account == defaultAdmin()) {\\n            (address newDefaultAdmin, uint48 schedule) = pendingDefaultAdmin();\\n            if (newDefaultAdmin != address(0) || !_isScheduleSet(schedule) || !_hasSchedulePassed(schedule)) {\\n                revert AccessControlEnforcedDefaultAdminDelay(schedule);\\n            }\\n            delete _pendingDefaultAdminSchedule;\\n        }\\n        super.renounceRole(role, account);\\n    }\\n\\n    /**\\n     * @dev See {AccessControl-_grantRole}.\\n     *\\n     * For `DEFAULT_ADMIN_ROLE`, it only allows granting if there isn't already a {defaultAdmin} or if the\\n     * role has been previously renounced.\\n     *\\n     * NOTE: Exposing this function through another mechanism may make the `DEFAULT_ADMIN_ROLE`\\n     * assignable again. Make sure to guarantee this is the expected behavior in your implementation.\\n     */\\n    function _grantRole(bytes32 role, address account) internal virtual override returns (bool) {\\n        if (role == DEFAULT_ADMIN_ROLE) {\\n            if (defaultAdmin() != address(0)) {\\n                revert AccessControlEnforcedDefaultAdminRules();\\n            }\\n            _currentDefaultAdmin = account;\\n        }\\n        return super._grantRole(role, account);\\n    }\\n\\n    /**\\n     * @dev See {AccessControl-_revokeRole}.\\n     */\\n    function _revokeRole(bytes32 role, address account) internal virtual override returns (bool) {\\n        if (role == DEFAULT_ADMIN_ROLE && account == defaultAdmin()) {\\n            delete _currentDefaultAdmin;\\n        }\\n        return super._revokeRole(role, account);\\n    }\\n\\n    /**\\n     * @dev See {AccessControl-_setRoleAdmin}. Reverts for `DEFAULT_ADMIN_ROLE`.\\n     */\\n    function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual override {\\n        if (role == DEFAULT_ADMIN_ROLE) {\\n            revert AccessControlEnforcedDefaultAdminRules();\\n        }\\n        super._setRoleAdmin(role, adminRole);\\n    }\\n\\n    ///\\n    /// AccessControlDefaultAdminRules accessors\\n    ///\\n\\n    /**\\n     * @inheritdoc IAccessControlDefaultAdminRules\\n     */\\n    function defaultAdmin() public view virtual returns (address) {\\n        return _currentDefaultAdmin;\\n    }\\n\\n    /**\\n     * @inheritdoc IAccessControlDefaultAdminRules\\n     */\\n    function pendingDefaultAdmin() public view virtual returns (address newAdmin, uint48 schedule) {\\n        return (_pendingDefaultAdmin, _pendingDefaultAdminSchedule);\\n    }\\n\\n    /**\\n     * @inheritdoc IAccessControlDefaultAdminRules\\n     */\\n    function defaultAdminDelay() public view virtual returns (uint48) {\\n        uint48 schedule = _pendingDelaySchedule;\\n        return (_isScheduleSet(schedule) && _hasSchedulePassed(schedule)) ? _pendingDelay : _currentDelay;\\n    }\\n\\n    /**\\n     * @inheritdoc IAccessControlDefaultAdminRules\\n     */\\n    function pendingDefaultAdminDelay() public view virtual returns (uint48 newDelay, uint48 schedule) {\\n        schedule = _pendingDelaySchedule;\\n        return (_isScheduleSet(schedule) && !_hasSchedulePassed(schedule)) ? (_pendingDelay, schedule) : (0, 0);\\n    }\\n\\n    /**\\n     * @inheritdoc IAccessControlDefaultAdminRules\\n     */\\n    function defaultAdminDelayIncreaseWait() public view virtual returns (uint48) {\\n        return 5 days;\\n    }\\n\\n    ///\\n    /// AccessControlDefaultAdminRules public and internal setters for defaultAdmin/pendingDefaultAdmin\\n    ///\\n\\n    /**\\n     * @inheritdoc IAccessControlDefaultAdminRules\\n     */\\n    function beginDefaultAdminTransfer(address newAdmin) public virtual onlyRole(DEFAULT_ADMIN_ROLE) {\\n        _beginDefaultAdminTransfer(newAdmin);\\n    }\\n\\n    /**\\n     * @dev See {beginDefaultAdminTransfer}.\\n     *\\n     * Internal function without access restriction.\\n     */\\n    function _beginDefaultAdminTransfer(address newAdmin) internal virtual {\\n        uint48 newSchedule = SafeCast.toUint48(block.timestamp) + defaultAdminDelay();\\n        _setPendingDefaultAdmin(newAdmin, newSchedule);\\n        emit DefaultAdminTransferScheduled(newAdmin, newSchedule);\\n    }\\n\\n    /**\\n     * @inheritdoc IAccessControlDefaultAdminRules\\n     */\\n    function cancelDefaultAdminTransfer() public virtual onlyRole(DEFAULT_ADMIN_ROLE) {\\n        _cancelDefaultAdminTransfer();\\n    }\\n\\n    /**\\n     * @dev See {cancelDefaultAdminTransfer}.\\n     *\\n     * Internal function without access restriction.\\n     */\\n    function _cancelDefaultAdminTransfer() internal virtual {\\n        _setPendingDefaultAdmin(address(0), 0);\\n    }\\n\\n    /**\\n     * @inheritdoc IAccessControlDefaultAdminRules\\n     */\\n    function acceptDefaultAdminTransfer() public virtual {\\n        (address newDefaultAdmin, ) = pendingDefaultAdmin();\\n        if (_msgSender() != newDefaultAdmin) {\\n            // Enforce newDefaultAdmin explicit acceptance.\\n            revert AccessControlInvalidDefaultAdmin(_msgSender());\\n        }\\n        _acceptDefaultAdminTransfer();\\n    }\\n\\n    /**\\n     * @dev See {acceptDefaultAdminTransfer}.\\n     *\\n     * Internal function without access restriction.\\n     */\\n    function _acceptDefaultAdminTransfer() internal virtual {\\n        (address newAdmin, uint48 schedule) = pendingDefaultAdmin();\\n        if (!_isScheduleSet(schedule) || !_hasSchedulePassed(schedule)) {\\n            revert AccessControlEnforcedDefaultAdminDelay(schedule);\\n        }\\n        _revokeRole(DEFAULT_ADMIN_ROLE, defaultAdmin());\\n        _grantRole(DEFAULT_ADMIN_ROLE, newAdmin);\\n        delete _pendingDefaultAdmin;\\n        delete _pendingDefaultAdminSchedule;\\n    }\\n\\n    ///\\n    /// AccessControlDefaultAdminRules public and internal setters for defaultAdminDelay/pendingDefaultAdminDelay\\n    ///\\n\\n    /**\\n     * @inheritdoc IAccessControlDefaultAdminRules\\n     */\\n    function changeDefaultAdminDelay(uint48 newDelay) public virtual onlyRole(DEFAULT_ADMIN_ROLE) {\\n        _changeDefaultAdminDelay(newDelay);\\n    }\\n\\n    /**\\n     * @dev See {changeDefaultAdminDelay}.\\n     *\\n     * Internal function without access restriction.\\n     */\\n    function _changeDefaultAdminDelay(uint48 newDelay) internal virtual {\\n        uint48 newSchedule = SafeCast.toUint48(block.timestamp) + _delayChangeWait(newDelay);\\n        _setPendingDelay(newDelay, newSchedule);\\n        emit DefaultAdminDelayChangeScheduled(newDelay, newSchedule);\\n    }\\n\\n    /**\\n     * @inheritdoc IAccessControlDefaultAdminRules\\n     */\\n    function rollbackDefaultAdminDelay() public virtual onlyRole(DEFAULT_ADMIN_ROLE) {\\n        _rollbackDefaultAdminDelay();\\n    }\\n\\n    /**\\n     * @dev See {rollbackDefaultAdminDelay}.\\n     *\\n     * Internal function without access restriction.\\n     */\\n    function _rollbackDefaultAdminDelay() internal virtual {\\n        _setPendingDelay(0, 0);\\n    }\\n\\n    /**\\n     * @dev Returns the amount of seconds to wait after the `newDelay` will\\n     * become the new {defaultAdminDelay}.\\n     *\\n     * The value returned guarantees that if the delay is reduced, it will go into effect\\n     * after a wait that honors the previously set delay.\\n     *\\n     * See {defaultAdminDelayIncreaseWait}.\\n     */\\n    function _delayChangeWait(uint48 newDelay) internal view virtual returns (uint48) {\\n        uint48 currentDelay = defaultAdminDelay();\\n\\n        // When increasing the delay, we schedule the delay change to occur after a period of \\\"new delay\\\" has passed, up\\n        // to a maximum given by defaultAdminDelayIncreaseWait, by default 5 days. For example, if increasing from 1 day\\n        // to 3 days, the new delay will come into effect after 3 days. If increasing from 1 day to 10 days, the new\\n        // delay will come into effect after 5 days. The 5 day wait period is intended to be able to fix an error like\\n        // using milliseconds instead of seconds.\\n        //\\n        // When decreasing the delay, we wait the difference between \\\"current delay\\\" and \\\"new delay\\\". This guarantees\\n        // that an admin transfer cannot be made faster than \\\"current delay\\\" at the time the delay change is scheduled.\\n        // For example, if decreasing from 10 days to 3 days, the new delay will come into effect after 7 days.\\n        return\\n            newDelay > currentDelay\\n                ? uint48(Math.min(newDelay, defaultAdminDelayIncreaseWait())) // no need to safecast, both inputs are uint48\\n                : currentDelay - newDelay;\\n    }\\n\\n    ///\\n    /// Private setters\\n    ///\\n\\n    /**\\n     * @dev Setter of the tuple for pending admin and its schedule.\\n     *\\n     * May emit a DefaultAdminTransferCanceled event.\\n     */\\n    function _setPendingDefaultAdmin(address newAdmin, uint48 newSchedule) private {\\n        (, uint48 oldSchedule) = pendingDefaultAdmin();\\n\\n        _pendingDefaultAdmin = newAdmin;\\n        _pendingDefaultAdminSchedule = newSchedule;\\n\\n        // An `oldSchedule` from `pendingDefaultAdmin()` is only set if it hasn't been accepted.\\n        if (_isScheduleSet(oldSchedule)) {\\n            // Emit for implicit cancellations when another default admin was scheduled.\\n            emit DefaultAdminTransferCanceled();\\n        }\\n    }\\n\\n    /**\\n     * @dev Setter of the tuple for pending delay and its schedule.\\n     *\\n     * May emit a DefaultAdminDelayChangeCanceled event.\\n     */\\n    function _setPendingDelay(uint48 newDelay, uint48 newSchedule) private {\\n        uint48 oldSchedule = _pendingDelaySchedule;\\n\\n        if (_isScheduleSet(oldSchedule)) {\\n            if (_hasSchedulePassed(oldSchedule)) {\\n                // Materialize a virtual delay\\n                _currentDelay = _pendingDelay;\\n            } else {\\n                // Emit for implicit cancellations when another delay was scheduled.\\n                emit DefaultAdminDelayChangeCanceled();\\n            }\\n        }\\n\\n        _pendingDelay = newDelay;\\n        _pendingDelaySchedule = newSchedule;\\n    }\\n\\n    ///\\n    /// Private helpers\\n    ///\\n\\n    /**\\n     * @dev Defines if an `schedule` is considered set. For consistency purposes.\\n     */\\n    function _isScheduleSet(uint48 schedule) private pure returns (bool) {\\n        return schedule != 0;\\n    }\\n\\n    /**\\n     * @dev Defines if an `schedule` is considered passed. For consistency purposes.\\n     */\\n    function _hasSchedulePassed(uint48 schedule) private view returns (bool) {\\n        return schedule < block.timestamp;\\n    }\\n}\\n\",\"keccak256\":\"0xd5e43578dce2678fbd458e1221dc37b20e983ecce4a314b422704f07d6015c5b\",\"license\":\"MIT\"},\"@openzeppelin/contracts/access/extensions/IAccessControlDefaultAdminRules.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/extensions/IAccessControlDefaultAdminRules.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IAccessControl} from \\\"../IAccessControl.sol\\\";\\n\\n/**\\n * @dev External interface of AccessControlDefaultAdminRules declared to support ERC165 detection.\\n */\\ninterface IAccessControlDefaultAdminRules is IAccessControl {\\n    /**\\n     * @dev The new default admin is not a valid default admin.\\n     */\\n    error AccessControlInvalidDefaultAdmin(address defaultAdmin);\\n\\n    /**\\n     * @dev At least one of the following rules was violated:\\n     *\\n     * - The `DEFAULT_ADMIN_ROLE` must only be managed by itself.\\n     * - The `DEFAULT_ADMIN_ROLE` must only be held by one account at the time.\\n     * - Any `DEFAULT_ADMIN_ROLE` transfer must be in two delayed steps.\\n     */\\n    error AccessControlEnforcedDefaultAdminRules();\\n\\n    /**\\n     * @dev The delay for transferring the default admin delay is enforced and\\n     * the operation must wait until `schedule`.\\n     *\\n     * NOTE: `schedule` can be 0 indicating there's no transfer scheduled.\\n     */\\n    error AccessControlEnforcedDefaultAdminDelay(uint48 schedule);\\n\\n    /**\\n     * @dev Emitted when a {defaultAdmin} transfer is started, setting `newAdmin` as the next\\n     * address to become the {defaultAdmin} by calling {acceptDefaultAdminTransfer} only after `acceptSchedule`\\n     * passes.\\n     */\\n    event DefaultAdminTransferScheduled(address indexed newAdmin, uint48 acceptSchedule);\\n\\n    /**\\n     * @dev Emitted when a {pendingDefaultAdmin} is reset if it was never accepted, regardless of its schedule.\\n     */\\n    event DefaultAdminTransferCanceled();\\n\\n    /**\\n     * @dev Emitted when a {defaultAdminDelay} change is started, setting `newDelay` as the next\\n     * delay to be applied between default admin transfer after `effectSchedule` has passed.\\n     */\\n    event DefaultAdminDelayChangeScheduled(uint48 newDelay, uint48 effectSchedule);\\n\\n    /**\\n     * @dev Emitted when a {pendingDefaultAdminDelay} is reset if its schedule didn't pass.\\n     */\\n    event DefaultAdminDelayChangeCanceled();\\n\\n    /**\\n     * @dev Returns the address of the current `DEFAULT_ADMIN_ROLE` holder.\\n     */\\n    function defaultAdmin() external view returns (address);\\n\\n    /**\\n     * @dev Returns a tuple of a `newAdmin` and an accept schedule.\\n     *\\n     * After the `schedule` passes, the `newAdmin` will be able to accept the {defaultAdmin} role\\n     * by calling {acceptDefaultAdminTransfer}, completing the role transfer.\\n     *\\n     * A zero value only in `acceptSchedule` indicates no pending admin transfer.\\n     *\\n     * NOTE: A zero address `newAdmin` means that {defaultAdmin} is being renounced.\\n     */\\n    function pendingDefaultAdmin() external view returns (address newAdmin, uint48 acceptSchedule);\\n\\n    /**\\n     * @dev Returns the delay required to schedule the acceptance of a {defaultAdmin} transfer started.\\n     *\\n     * This delay will be added to the current timestamp when calling {beginDefaultAdminTransfer} to set\\n     * the acceptance schedule.\\n     *\\n     * NOTE: If a delay change has been scheduled, it will take effect as soon as the schedule passes, making this\\n     * function returns the new delay. See {changeDefaultAdminDelay}.\\n     */\\n    function defaultAdminDelay() external view returns (uint48);\\n\\n    /**\\n     * @dev Returns a tuple of `newDelay` and an effect schedule.\\n     *\\n     * After the `schedule` passes, the `newDelay` will get into effect immediately for every\\n     * new {defaultAdmin} transfer started with {beginDefaultAdminTransfer}.\\n     *\\n     * A zero value only in `effectSchedule` indicates no pending delay change.\\n     *\\n     * NOTE: A zero value only for `newDelay` means that the next {defaultAdminDelay}\\n     * will be zero after the effect schedule.\\n     */\\n    function pendingDefaultAdminDelay() external view returns (uint48 newDelay, uint48 effectSchedule);\\n\\n    /**\\n     * @dev Starts a {defaultAdmin} transfer by setting a {pendingDefaultAdmin} scheduled for acceptance\\n     * after the current timestamp plus a {defaultAdminDelay}.\\n     *\\n     * Requirements:\\n     *\\n     * - Only can be called by the current {defaultAdmin}.\\n     *\\n     * Emits a DefaultAdminRoleChangeStarted event.\\n     */\\n    function beginDefaultAdminTransfer(address newAdmin) external;\\n\\n    /**\\n     * @dev Cancels a {defaultAdmin} transfer previously started with {beginDefaultAdminTransfer}.\\n     *\\n     * A {pendingDefaultAdmin} not yet accepted can also be cancelled with this function.\\n     *\\n     * Requirements:\\n     *\\n     * - Only can be called by the current {defaultAdmin}.\\n     *\\n     * May emit a DefaultAdminTransferCanceled event.\\n     */\\n    function cancelDefaultAdminTransfer() external;\\n\\n    /**\\n     * @dev Completes a {defaultAdmin} transfer previously started with {beginDefaultAdminTransfer}.\\n     *\\n     * After calling the function:\\n     *\\n     * - `DEFAULT_ADMIN_ROLE` should be granted to the caller.\\n     * - `DEFAULT_ADMIN_ROLE` should be revoked from the previous holder.\\n     * - {pendingDefaultAdmin} should be reset to zero values.\\n     *\\n     * Requirements:\\n     *\\n     * - Only can be called by the {pendingDefaultAdmin}'s `newAdmin`.\\n     * - The {pendingDefaultAdmin}'s `acceptSchedule` should've passed.\\n     */\\n    function acceptDefaultAdminTransfer() external;\\n\\n    /**\\n     * @dev Initiates a {defaultAdminDelay} update by setting a {pendingDefaultAdminDelay} scheduled for getting\\n     * into effect after the current timestamp plus a {defaultAdminDelay}.\\n     *\\n     * This function guarantees that any call to {beginDefaultAdminTransfer} done between the timestamp this\\n     * method is called and the {pendingDefaultAdminDelay} effect schedule will use the current {defaultAdminDelay}\\n     * set before calling.\\n     *\\n     * The {pendingDefaultAdminDelay}'s effect schedule is defined in a way that waiting until the schedule and then\\n     * calling {beginDefaultAdminTransfer} with the new delay will take at least the same as another {defaultAdmin}\\n     * complete transfer (including acceptance).\\n     *\\n     * The schedule is designed for two scenarios:\\n     *\\n     * - When the delay is changed for a larger one the schedule is `block.timestamp + newDelay` capped by\\n     * {defaultAdminDelayIncreaseWait}.\\n     * - When the delay is changed for a shorter one, the schedule is `block.timestamp + (current delay - new delay)`.\\n     *\\n     * A {pendingDefaultAdminDelay} that never got into effect will be canceled in favor of a new scheduled change.\\n     *\\n     * Requirements:\\n     *\\n     * - Only can be called by the current {defaultAdmin}.\\n     *\\n     * Emits a DefaultAdminDelayChangeScheduled event and may emit a DefaultAdminDelayChangeCanceled event.\\n     */\\n    function changeDefaultAdminDelay(uint48 newDelay) external;\\n\\n    /**\\n     * @dev Cancels a scheduled {defaultAdminDelay} change.\\n     *\\n     * Requirements:\\n     *\\n     * - Only can be called by the current {defaultAdmin}.\\n     *\\n     * May emit a DefaultAdminDelayChangeCanceled event.\\n     */\\n    function rollbackDefaultAdminDelay() external;\\n\\n    /**\\n     * @dev Maximum time in seconds for an increase to {defaultAdminDelay} (that is scheduled using {changeDefaultAdminDelay})\\n     * to take effect. Default to 5 days.\\n     *\\n     * When the {defaultAdminDelay} is scheduled to be increased, it goes into effect after the new delay has passed with\\n     * the purpose of giving enough time for reverting any accidental change (i.e. using milliseconds instead of seconds)\\n     * that may lock the contract. However, to avoid excessive schedules, the wait is capped by this function and it can\\n     * be overrode for a custom {defaultAdminDelay} increase scheduling.\\n     *\\n     * IMPORTANT: Make sure to add a reasonable amount of time while overriding this value, otherwise,\\n     * there's a risk of setting a high new delay that goes into effect almost immediately without the\\n     * possibility of human intervention in the case of an input error (eg. set milliseconds instead of seconds).\\n     */\\n    function defaultAdminDelayIncreaseWait() external view returns (uint48);\\n}\\n\",\"keccak256\":\"0x969a4661694319a003d037ccbf7c8310f8994d746b763c933d3f76d906e67203\",\"license\":\"MIT\"},\"@openzeppelin/contracts/interfaces/IERC5313.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (interfaces/IERC5313.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Interface for the Light Contract Ownership Standard.\\n *\\n * A standardized minimal interface required to identify an account that controls a contract\\n */\\ninterface IERC5313 {\\n    /**\\n     * @dev Gets the address of the owner.\\n     */\\n    function owner() external view returns (address);\\n}\\n\",\"keccak256\":\"0x22412c268e74cc3cbf550aecc2f7456f6ac40783058e219cfe09f26f4d396621\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/introspection/ERC165.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (utils/introspection/ERC165.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IERC165} from \\\"./IERC165.sol\\\";\\n\\n/**\\n * @dev Implementation of the {IERC165} interface.\\n *\\n * Contracts that want to implement ERC165 should inherit from this contract and override {supportsInterface} to check\\n * for the additional interface id that will be supported. For example:\\n *\\n * ```solidity\\n * function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {\\n *     return interfaceId == type(MyInterface).interfaceId || super.supportsInterface(interfaceId);\\n * }\\n * ```\\n */\\nabstract contract ERC165 is IERC165 {\\n    /**\\n     * @dev See {IERC165-supportsInterface}.\\n     */\\n    function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {\\n        return interfaceId == type(IERC165).interfaceId;\\n    }\\n}\\n\",\"keccak256\":\"0x9e8778b14317ba9e256c30a76fd6c32b960af621987f56069e1e819c77c6a133\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (utils/introspection/IERC165.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Interface of the ERC165 standard, as defined in the\\n * https://eips.ethereum.org/EIPS/eip-165[EIP].\\n *\\n * Implementers can declare support of contract interfaces, which can then be\\n * queried by others ({ERC165Checker}).\\n *\\n * For an implementation, see {ERC165}.\\n */\\ninterface IERC165 {\\n    /**\\n     * @dev Returns true if this contract implements the interface defined by\\n     * `interfaceId`. See the corresponding\\n     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]\\n     * to learn more about how these ids are created.\\n     *\\n     * This function call must use less than 30 000 gas.\\n     */\\n    function supportsInterface(bytes4 interfaceId) external view returns (bool);\\n}\\n\",\"keccak256\":\"0x4296879f55019b23e135000eb36896057e7101fb7fb859c5ef690cf14643757b\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/math/Math.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (utils/math/Math.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Standard math utilities missing in the Solidity language.\\n */\\nlibrary Math {\\n    /**\\n     * @dev Muldiv operation overflow.\\n     */\\n    error MathOverflowedMulDiv();\\n\\n    enum Rounding {\\n        Floor, // Toward negative infinity\\n        Ceil, // Toward positive infinity\\n        Trunc, // Toward zero\\n        Expand // Away from zero\\n    }\\n\\n    /**\\n     * @dev Returns the addition of two unsigned integers, with an overflow flag.\\n     */\\n    function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {\\n        unchecked {\\n            uint256 c = a + b;\\n            if (c < a) return (false, 0);\\n            return (true, c);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the subtraction of two unsigned integers, with an overflow flag.\\n     */\\n    function trySub(uint256 a, uint256 b) internal pure returns (bool, uint256) {\\n        unchecked {\\n            if (b > a) return (false, 0);\\n            return (true, a - b);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the multiplication of two unsigned integers, with an overflow flag.\\n     */\\n    function tryMul(uint256 a, uint256 b) internal pure returns (bool, uint256) {\\n        unchecked {\\n            // Gas optimization: this is cheaper than requiring 'a' not being zero, but the\\n            // benefit is lost if 'b' is also tested.\\n            // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522\\n            if (a == 0) return (true, 0);\\n            uint256 c = a * b;\\n            if (c / a != b) return (false, 0);\\n            return (true, c);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the division of two unsigned integers, with a division by zero flag.\\n     */\\n    function tryDiv(uint256 a, uint256 b) internal pure returns (bool, uint256) {\\n        unchecked {\\n            if (b == 0) return (false, 0);\\n            return (true, a / b);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the remainder of dividing two unsigned integers, with a division by zero flag.\\n     */\\n    function tryMod(uint256 a, uint256 b) internal pure returns (bool, uint256) {\\n        unchecked {\\n            if (b == 0) return (false, 0);\\n            return (true, a % b);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the largest of two numbers.\\n     */\\n    function max(uint256 a, uint256 b) internal pure returns (uint256) {\\n        return a > b ? a : b;\\n    }\\n\\n    /**\\n     * @dev Returns the smallest of two numbers.\\n     */\\n    function min(uint256 a, uint256 b) internal pure returns (uint256) {\\n        return a < b ? a : b;\\n    }\\n\\n    /**\\n     * @dev Returns the average of two numbers. The result is rounded towards\\n     * zero.\\n     */\\n    function average(uint256 a, uint256 b) internal pure returns (uint256) {\\n        // (a + b) / 2 can overflow.\\n        return (a & b) + (a ^ b) / 2;\\n    }\\n\\n    /**\\n     * @dev Returns the ceiling of the division of two numbers.\\n     *\\n     * This differs from standard division with `/` in that it rounds towards infinity instead\\n     * of rounding towards zero.\\n     */\\n    function ceilDiv(uint256 a, uint256 b) internal pure returns (uint256) {\\n        if (b == 0) {\\n            // Guarantee the same behavior as in a regular Solidity division.\\n            return a / b;\\n        }\\n\\n        // (a + b - 1) / b can overflow on addition, so we distribute.\\n        return a == 0 ? 0 : (a - 1) / b + 1;\\n    }\\n\\n    /**\\n     * @notice Calculates floor(x * y / denominator) with full precision. Throws if result overflows a uint256 or\\n     * denominator == 0.\\n     * @dev Original credit to Remco Bloemen under MIT license (https://xn--2-umb.com/21/muldiv) with further edits by\\n     * Uniswap Labs also under MIT license.\\n     */\\n    function mulDiv(uint256 x, uint256 y, uint256 denominator) internal pure returns (uint256 result) {\\n        unchecked {\\n            // 512-bit multiply [prod1 prod0] = x * y. Compute the product mod 2^256 and mod 2^256 - 1, then use\\n            // use the Chinese Remainder Theorem to reconstruct the 512 bit result. The result is stored in two 256\\n            // variables such that product = prod1 * 2^256 + prod0.\\n            uint256 prod0 = x * y; // Least significant 256 bits of the product\\n            uint256 prod1; // Most significant 256 bits of the product\\n            assembly {\\n                let mm := mulmod(x, y, not(0))\\n                prod1 := sub(sub(mm, prod0), lt(mm, prod0))\\n            }\\n\\n            // Handle non-overflow cases, 256 by 256 division.\\n            if (prod1 == 0) {\\n                // Solidity will revert if denominator == 0, unlike the div opcode on its own.\\n                // The surrounding unchecked block does not change this fact.\\n                // See https://docs.soliditylang.org/en/latest/control-structures.html#checked-or-unchecked-arithmetic.\\n                return prod0 / denominator;\\n            }\\n\\n            // Make sure the result is less than 2^256. Also prevents denominator == 0.\\n            if (denominator <= prod1) {\\n                revert MathOverflowedMulDiv();\\n            }\\n\\n            ///////////////////////////////////////////////\\n            // 512 by 256 division.\\n            ///////////////////////////////////////////////\\n\\n            // Make division exact by subtracting the remainder from [prod1 prod0].\\n            uint256 remainder;\\n            assembly {\\n                // Compute remainder using mulmod.\\n                remainder := mulmod(x, y, denominator)\\n\\n                // Subtract 256 bit number from 512 bit number.\\n                prod1 := sub(prod1, gt(remainder, prod0))\\n                prod0 := sub(prod0, remainder)\\n            }\\n\\n            // Factor powers of two out of denominator and compute largest power of two divisor of denominator.\\n            // Always >= 1. See https://cs.stackexchange.com/q/138556/92363.\\n\\n            uint256 twos = denominator & (0 - denominator);\\n            assembly {\\n                // Divide denominator by twos.\\n                denominator := div(denominator, twos)\\n\\n                // Divide [prod1 prod0] by twos.\\n                prod0 := div(prod0, twos)\\n\\n                // Flip twos such that it is 2^256 / twos. If twos is zero, then it becomes one.\\n                twos := add(div(sub(0, twos), twos), 1)\\n            }\\n\\n            // Shift in bits from prod1 into prod0.\\n            prod0 |= prod1 * twos;\\n\\n            // Invert denominator mod 2^256. Now that denominator is an odd number, it has an inverse modulo 2^256 such\\n            // that denominator * inv = 1 mod 2^256. Compute the inverse by starting with a seed that is correct for\\n            // four bits. That is, denominator * inv = 1 mod 2^4.\\n            uint256 inverse = (3 * denominator) ^ 2;\\n\\n            // Use the Newton-Raphson iteration to improve the precision. Thanks to Hensel's lifting lemma, this also\\n            // works in modular arithmetic, doubling the correct bits in each step.\\n            inverse *= 2 - denominator * inverse; // inverse mod 2^8\\n            inverse *= 2 - denominator * inverse; // inverse mod 2^16\\n            inverse *= 2 - denominator * inverse; // inverse mod 2^32\\n            inverse *= 2 - denominator * inverse; // inverse mod 2^64\\n            inverse *= 2 - denominator * inverse; // inverse mod 2^128\\n            inverse *= 2 - denominator * inverse; // inverse mod 2^256\\n\\n            // Because the division is now exact we can divide by multiplying with the modular inverse of denominator.\\n            // This will give us the correct result modulo 2^256. Since the preconditions guarantee that the outcome is\\n            // less than 2^256, this is the final result. We don't need to compute the high bits of the result and prod1\\n            // is no longer required.\\n            result = prod0 * inverse;\\n            return result;\\n        }\\n    }\\n\\n    /**\\n     * @notice Calculates x * y / denominator with full precision, following the selected rounding direction.\\n     */\\n    function mulDiv(uint256 x, uint256 y, uint256 denominator, Rounding rounding) internal pure returns (uint256) {\\n        uint256 result = mulDiv(x, y, denominator);\\n        if (unsignedRoundsUp(rounding) && mulmod(x, y, denominator) > 0) {\\n            result += 1;\\n        }\\n        return result;\\n    }\\n\\n    /**\\n     * @dev Returns the square root of a number. If the number is not a perfect square, the value is rounded\\n     * towards zero.\\n     *\\n     * Inspired by Henry S. Warren, Jr.'s \\\"Hacker's Delight\\\" (Chapter 11).\\n     */\\n    function sqrt(uint256 a) internal pure returns (uint256) {\\n        if (a == 0) {\\n            return 0;\\n        }\\n\\n        // For our first guess, we get the biggest power of 2 which is smaller than the square root of the target.\\n        //\\n        // We know that the \\\"msb\\\" (most significant bit) of our target number `a` is a power of 2 such that we have\\n        // `msb(a) <= a < 2*msb(a)`. This value can be written `msb(a)=2**k` with `k=log2(a)`.\\n        //\\n        // This can be rewritten `2**log2(a) <= a < 2**(log2(a) + 1)`\\n        // \\u2192 `sqrt(2**k) <= sqrt(a) < sqrt(2**(k+1))`\\n        // \\u2192 `2**(k/2) <= sqrt(a) < 2**((k+1)/2) <= 2**(k/2 + 1)`\\n        //\\n        // Consequently, `2**(log2(a) / 2)` is a good first approximation of `sqrt(a)` with at least 1 correct bit.\\n        uint256 result = 1 << (log2(a) >> 1);\\n\\n        // At this point `result` is an estimation with one bit of precision. We know the true value is a uint128,\\n        // since it is the square root of a uint256. Newton's method converges quadratically (precision doubles at\\n        // every iteration). We thus need at most 7 iteration to turn our partial result with one bit of precision\\n        // into the expected uint128 result.\\n        unchecked {\\n            result = (result + a / result) >> 1;\\n            result = (result + a / result) >> 1;\\n            result = (result + a / result) >> 1;\\n            result = (result + a / result) >> 1;\\n            result = (result + a / result) >> 1;\\n            result = (result + a / result) >> 1;\\n            result = (result + a / result) >> 1;\\n            return min(result, a / result);\\n        }\\n    }\\n\\n    /**\\n     * @notice Calculates sqrt(a), following the selected rounding direction.\\n     */\\n    function sqrt(uint256 a, Rounding rounding) internal pure returns (uint256) {\\n        unchecked {\\n            uint256 result = sqrt(a);\\n            return result + (unsignedRoundsUp(rounding) && result * result < a ? 1 : 0);\\n        }\\n    }\\n\\n    /**\\n     * @dev Return the log in base 2 of a positive value rounded towards zero.\\n     * Returns 0 if given 0.\\n     */\\n    function log2(uint256 value) internal pure returns (uint256) {\\n        uint256 result = 0;\\n        unchecked {\\n            if (value >> 128 > 0) {\\n                value >>= 128;\\n                result += 128;\\n            }\\n            if (value >> 64 > 0) {\\n                value >>= 64;\\n                result += 64;\\n            }\\n            if (value >> 32 > 0) {\\n                value >>= 32;\\n                result += 32;\\n            }\\n            if (value >> 16 > 0) {\\n                value >>= 16;\\n                result += 16;\\n            }\\n            if (value >> 8 > 0) {\\n                value >>= 8;\\n                result += 8;\\n            }\\n            if (value >> 4 > 0) {\\n                value >>= 4;\\n                result += 4;\\n            }\\n            if (value >> 2 > 0) {\\n                value >>= 2;\\n                result += 2;\\n            }\\n            if (value >> 1 > 0) {\\n                result += 1;\\n            }\\n        }\\n        return result;\\n    }\\n\\n    /**\\n     * @dev Return the log in base 2, following the selected rounding direction, of a positive value.\\n     * Returns 0 if given 0.\\n     */\\n    function log2(uint256 value, Rounding rounding) internal pure returns (uint256) {\\n        unchecked {\\n            uint256 result = log2(value);\\n            return result + (unsignedRoundsUp(rounding) && 1 << result < value ? 1 : 0);\\n        }\\n    }\\n\\n    /**\\n     * @dev Return the log in base 10 of a positive value rounded towards zero.\\n     * Returns 0 if given 0.\\n     */\\n    function log10(uint256 value) internal pure returns (uint256) {\\n        uint256 result = 0;\\n        unchecked {\\n            if (value >= 10 ** 64) {\\n                value /= 10 ** 64;\\n                result += 64;\\n            }\\n            if (value >= 10 ** 32) {\\n                value /= 10 ** 32;\\n                result += 32;\\n            }\\n            if (value >= 10 ** 16) {\\n                value /= 10 ** 16;\\n                result += 16;\\n            }\\n            if (value >= 10 ** 8) {\\n                value /= 10 ** 8;\\n                result += 8;\\n            }\\n            if (value >= 10 ** 4) {\\n                value /= 10 ** 4;\\n                result += 4;\\n            }\\n            if (value >= 10 ** 2) {\\n                value /= 10 ** 2;\\n                result += 2;\\n            }\\n            if (value >= 10 ** 1) {\\n                result += 1;\\n            }\\n        }\\n        return result;\\n    }\\n\\n    /**\\n     * @dev Return the log in base 10, following the selected rounding direction, of a positive value.\\n     * Returns 0 if given 0.\\n     */\\n    function log10(uint256 value, Rounding rounding) internal pure returns (uint256) {\\n        unchecked {\\n            uint256 result = log10(value);\\n            return result + (unsignedRoundsUp(rounding) && 10 ** result < value ? 1 : 0);\\n        }\\n    }\\n\\n    /**\\n     * @dev Return the log in base 256 of a positive value rounded towards zero.\\n     * Returns 0 if given 0.\\n     *\\n     * Adding one to the result gives the number of pairs of hex symbols needed to represent `value` as a hex string.\\n     */\\n    function log256(uint256 value) internal pure returns (uint256) {\\n        uint256 result = 0;\\n        unchecked {\\n            if (value >> 128 > 0) {\\n                value >>= 128;\\n                result += 16;\\n            }\\n            if (value >> 64 > 0) {\\n                value >>= 64;\\n                result += 8;\\n            }\\n            if (value >> 32 > 0) {\\n                value >>= 32;\\n                result += 4;\\n            }\\n            if (value >> 16 > 0) {\\n                value >>= 16;\\n                result += 2;\\n            }\\n            if (value >> 8 > 0) {\\n                result += 1;\\n            }\\n        }\\n        return result;\\n    }\\n\\n    /**\\n     * @dev Return the log in base 256, following the selected rounding direction, of a positive value.\\n     * Returns 0 if given 0.\\n     */\\n    function log256(uint256 value, Rounding rounding) internal pure returns (uint256) {\\n        unchecked {\\n            uint256 result = log256(value);\\n            return result + (unsignedRoundsUp(rounding) && 1 << (result << 3) < value ? 1 : 0);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns whether a provided rounding mode is considered rounding up for unsigned integers.\\n     */\\n    function unsignedRoundsUp(Rounding rounding) internal pure returns (bool) {\\n        return uint8(rounding) % 2 == 1;\\n    }\\n}\\n\",\"keccak256\":\"0x005ec64c6313f0555d59e278f9a7a5ab2db5bdc72a027f255a37c327af1ec02d\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/math/SafeCast.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (utils/math/SafeCast.sol)\\n// This file was procedurally generated from scripts/generate/templates/SafeCast.js.\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Wrappers over Solidity's uintXX/intXX casting operators with added overflow\\n * checks.\\n *\\n * Downcasting from uint256/int256 in Solidity does not revert on overflow. This can\\n * easily result in undesired exploitation or bugs, since developers usually\\n * assume that overflows raise errors. `SafeCast` restores this intuition by\\n * reverting the transaction when such an operation overflows.\\n *\\n * Using this library instead of the unchecked operations eliminates an entire\\n * class of bugs, so it's recommended to use it always.\\n */\\nlibrary SafeCast {\\n    /**\\n     * @dev Value doesn't fit in an uint of `bits` size.\\n     */\\n    error SafeCastOverflowedUintDowncast(uint8 bits, uint256 value);\\n\\n    /**\\n     * @dev An int value doesn't fit in an uint of `bits` size.\\n     */\\n    error SafeCastOverflowedIntToUint(int256 value);\\n\\n    /**\\n     * @dev Value doesn't fit in an int of `bits` size.\\n     */\\n    error SafeCastOverflowedIntDowncast(uint8 bits, int256 value);\\n\\n    /**\\n     * @dev An uint value doesn't fit in an int of `bits` size.\\n     */\\n    error SafeCastOverflowedUintToInt(uint256 value);\\n\\n    /**\\n     * @dev Returns the downcasted uint248 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint248).\\n     *\\n     * Counterpart to Solidity's `uint248` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 248 bits\\n     */\\n    function toUint248(uint256 value) internal pure returns (uint248) {\\n        if (value > type(uint248).max) {\\n            revert SafeCastOverflowedUintDowncast(248, value);\\n        }\\n        return uint248(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint240 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint240).\\n     *\\n     * Counterpart to Solidity's `uint240` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 240 bits\\n     */\\n    function toUint240(uint256 value) internal pure returns (uint240) {\\n        if (value > type(uint240).max) {\\n            revert SafeCastOverflowedUintDowncast(240, value);\\n        }\\n        return uint240(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint232 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint232).\\n     *\\n     * Counterpart to Solidity's `uint232` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 232 bits\\n     */\\n    function toUint232(uint256 value) internal pure returns (uint232) {\\n        if (value > type(uint232).max) {\\n            revert SafeCastOverflowedUintDowncast(232, value);\\n        }\\n        return uint232(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint224 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint224).\\n     *\\n     * Counterpart to Solidity's `uint224` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 224 bits\\n     */\\n    function toUint224(uint256 value) internal pure returns (uint224) {\\n        if (value > type(uint224).max) {\\n            revert SafeCastOverflowedUintDowncast(224, value);\\n        }\\n        return uint224(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint216 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint216).\\n     *\\n     * Counterpart to Solidity's `uint216` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 216 bits\\n     */\\n    function toUint216(uint256 value) internal pure returns (uint216) {\\n        if (value > type(uint216).max) {\\n            revert SafeCastOverflowedUintDowncast(216, value);\\n        }\\n        return uint216(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint208 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint208).\\n     *\\n     * Counterpart to Solidity's `uint208` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 208 bits\\n     */\\n    function toUint208(uint256 value) internal pure returns (uint208) {\\n        if (value > type(uint208).max) {\\n            revert SafeCastOverflowedUintDowncast(208, value);\\n        }\\n        return uint208(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint200 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint200).\\n     *\\n     * Counterpart to Solidity's `uint200` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 200 bits\\n     */\\n    function toUint200(uint256 value) internal pure returns (uint200) {\\n        if (value > type(uint200).max) {\\n            revert SafeCastOverflowedUintDowncast(200, value);\\n        }\\n        return uint200(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint192 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint192).\\n     *\\n     * Counterpart to Solidity's `uint192` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 192 bits\\n     */\\n    function toUint192(uint256 value) internal pure returns (uint192) {\\n        if (value > type(uint192).max) {\\n            revert SafeCastOverflowedUintDowncast(192, value);\\n        }\\n        return uint192(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint184 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint184).\\n     *\\n     * Counterpart to Solidity's `uint184` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 184 bits\\n     */\\n    function toUint184(uint256 value) internal pure returns (uint184) {\\n        if (value > type(uint184).max) {\\n            revert SafeCastOverflowedUintDowncast(184, value);\\n        }\\n        return uint184(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint176 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint176).\\n     *\\n     * Counterpart to Solidity's `uint176` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 176 bits\\n     */\\n    function toUint176(uint256 value) internal pure returns (uint176) {\\n        if (value > type(uint176).max) {\\n            revert SafeCastOverflowedUintDowncast(176, value);\\n        }\\n        return uint176(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint168 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint168).\\n     *\\n     * Counterpart to Solidity's `uint168` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 168 bits\\n     */\\n    function toUint168(uint256 value) internal pure returns (uint168) {\\n        if (value > type(uint168).max) {\\n            revert SafeCastOverflowedUintDowncast(168, value);\\n        }\\n        return uint168(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint160 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint160).\\n     *\\n     * Counterpart to Solidity's `uint160` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 160 bits\\n     */\\n    function toUint160(uint256 value) internal pure returns (uint160) {\\n        if (value > type(uint160).max) {\\n            revert SafeCastOverflowedUintDowncast(160, value);\\n        }\\n        return uint160(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint152 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint152).\\n     *\\n     * Counterpart to Solidity's `uint152` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 152 bits\\n     */\\n    function toUint152(uint256 value) internal pure returns (uint152) {\\n        if (value > type(uint152).max) {\\n            revert SafeCastOverflowedUintDowncast(152, value);\\n        }\\n        return uint152(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint144 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint144).\\n     *\\n     * Counterpart to Solidity's `uint144` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 144 bits\\n     */\\n    function toUint144(uint256 value) internal pure returns (uint144) {\\n        if (value > type(uint144).max) {\\n            revert SafeCastOverflowedUintDowncast(144, value);\\n        }\\n        return uint144(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint136 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint136).\\n     *\\n     * Counterpart to Solidity's `uint136` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 136 bits\\n     */\\n    function toUint136(uint256 value) internal pure returns (uint136) {\\n        if (value > type(uint136).max) {\\n            revert SafeCastOverflowedUintDowncast(136, value);\\n        }\\n        return uint136(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint128 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint128).\\n     *\\n     * Counterpart to Solidity's `uint128` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 128 bits\\n     */\\n    function toUint128(uint256 value) internal pure returns (uint128) {\\n        if (value > type(uint128).max) {\\n            revert SafeCastOverflowedUintDowncast(128, value);\\n        }\\n        return uint128(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint120 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint120).\\n     *\\n     * Counterpart to Solidity's `uint120` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 120 bits\\n     */\\n    function toUint120(uint256 value) internal pure returns (uint120) {\\n        if (value > type(uint120).max) {\\n            revert SafeCastOverflowedUintDowncast(120, value);\\n        }\\n        return uint120(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint112 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint112).\\n     *\\n     * Counterpart to Solidity's `uint112` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 112 bits\\n     */\\n    function toUint112(uint256 value) internal pure returns (uint112) {\\n        if (value > type(uint112).max) {\\n            revert SafeCastOverflowedUintDowncast(112, value);\\n        }\\n        return uint112(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint104 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint104).\\n     *\\n     * Counterpart to Solidity's `uint104` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 104 bits\\n     */\\n    function toUint104(uint256 value) internal pure returns (uint104) {\\n        if (value > type(uint104).max) {\\n            revert SafeCastOverflowedUintDowncast(104, value);\\n        }\\n        return uint104(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint96 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint96).\\n     *\\n     * Counterpart to Solidity's `uint96` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 96 bits\\n     */\\n    function toUint96(uint256 value) internal pure returns (uint96) {\\n        if (value > type(uint96).max) {\\n            revert SafeCastOverflowedUintDowncast(96, value);\\n        }\\n        return uint96(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint88 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint88).\\n     *\\n     * Counterpart to Solidity's `uint88` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 88 bits\\n     */\\n    function toUint88(uint256 value) internal pure returns (uint88) {\\n        if (value > type(uint88).max) {\\n            revert SafeCastOverflowedUintDowncast(88, value);\\n        }\\n        return uint88(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint80 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint80).\\n     *\\n     * Counterpart to Solidity's `uint80` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 80 bits\\n     */\\n    function toUint80(uint256 value) internal pure returns (uint80) {\\n        if (value > type(uint80).max) {\\n            revert SafeCastOverflowedUintDowncast(80, value);\\n        }\\n        return uint80(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint72 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint72).\\n     *\\n     * Counterpart to Solidity's `uint72` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 72 bits\\n     */\\n    function toUint72(uint256 value) internal pure returns (uint72) {\\n        if (value > type(uint72).max) {\\n            revert SafeCastOverflowedUintDowncast(72, value);\\n        }\\n        return uint72(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint64 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint64).\\n     *\\n     * Counterpart to Solidity's `uint64` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 64 bits\\n     */\\n    function toUint64(uint256 value) internal pure returns (uint64) {\\n        if (value > type(uint64).max) {\\n            revert SafeCastOverflowedUintDowncast(64, value);\\n        }\\n        return uint64(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint56 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint56).\\n     *\\n     * Counterpart to Solidity's `uint56` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 56 bits\\n     */\\n    function toUint56(uint256 value) internal pure returns (uint56) {\\n        if (value > type(uint56).max) {\\n            revert SafeCastOverflowedUintDowncast(56, value);\\n        }\\n        return uint56(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint48 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint48).\\n     *\\n     * Counterpart to Solidity's `uint48` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 48 bits\\n     */\\n    function toUint48(uint256 value) internal pure returns (uint48) {\\n        if (value > type(uint48).max) {\\n            revert SafeCastOverflowedUintDowncast(48, value);\\n        }\\n        return uint48(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint40 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint40).\\n     *\\n     * Counterpart to Solidity's `uint40` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 40 bits\\n     */\\n    function toUint40(uint256 value) internal pure returns (uint40) {\\n        if (value > type(uint40).max) {\\n            revert SafeCastOverflowedUintDowncast(40, value);\\n        }\\n        return uint40(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint32 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint32).\\n     *\\n     * Counterpart to Solidity's `uint32` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 32 bits\\n     */\\n    function toUint32(uint256 value) internal pure returns (uint32) {\\n        if (value > type(uint32).max) {\\n            revert SafeCastOverflowedUintDowncast(32, value);\\n        }\\n        return uint32(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint24 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint24).\\n     *\\n     * Counterpart to Solidity's `uint24` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 24 bits\\n     */\\n    function toUint24(uint256 value) internal pure returns (uint24) {\\n        if (value > type(uint24).max) {\\n            revert SafeCastOverflowedUintDowncast(24, value);\\n        }\\n        return uint24(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint16 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint16).\\n     *\\n     * Counterpart to Solidity's `uint16` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 16 bits\\n     */\\n    function toUint16(uint256 value) internal pure returns (uint16) {\\n        if (value > type(uint16).max) {\\n            revert SafeCastOverflowedUintDowncast(16, value);\\n        }\\n        return uint16(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted uint8 from uint256, reverting on\\n     * overflow (when the input is greater than largest uint8).\\n     *\\n     * Counterpart to Solidity's `uint8` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 8 bits\\n     */\\n    function toUint8(uint256 value) internal pure returns (uint8) {\\n        if (value > type(uint8).max) {\\n            revert SafeCastOverflowedUintDowncast(8, value);\\n        }\\n        return uint8(value);\\n    }\\n\\n    /**\\n     * @dev Converts a signed int256 into an unsigned uint256.\\n     *\\n     * Requirements:\\n     *\\n     * - input must be greater than or equal to 0.\\n     */\\n    function toUint256(int256 value) internal pure returns (uint256) {\\n        if (value < 0) {\\n            revert SafeCastOverflowedIntToUint(value);\\n        }\\n        return uint256(value);\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int248 from int256, reverting on\\n     * overflow (when the input is less than smallest int248 or\\n     * greater than largest int248).\\n     *\\n     * Counterpart to Solidity's `int248` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 248 bits\\n     */\\n    function toInt248(int256 value) internal pure returns (int248 downcasted) {\\n        downcasted = int248(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(248, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int240 from int256, reverting on\\n     * overflow (when the input is less than smallest int240 or\\n     * greater than largest int240).\\n     *\\n     * Counterpart to Solidity's `int240` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 240 bits\\n     */\\n    function toInt240(int256 value) internal pure returns (int240 downcasted) {\\n        downcasted = int240(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(240, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int232 from int256, reverting on\\n     * overflow (when the input is less than smallest int232 or\\n     * greater than largest int232).\\n     *\\n     * Counterpart to Solidity's `int232` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 232 bits\\n     */\\n    function toInt232(int256 value) internal pure returns (int232 downcasted) {\\n        downcasted = int232(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(232, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int224 from int256, reverting on\\n     * overflow (when the input is less than smallest int224 or\\n     * greater than largest int224).\\n     *\\n     * Counterpart to Solidity's `int224` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 224 bits\\n     */\\n    function toInt224(int256 value) internal pure returns (int224 downcasted) {\\n        downcasted = int224(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(224, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int216 from int256, reverting on\\n     * overflow (when the input is less than smallest int216 or\\n     * greater than largest int216).\\n     *\\n     * Counterpart to Solidity's `int216` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 216 bits\\n     */\\n    function toInt216(int256 value) internal pure returns (int216 downcasted) {\\n        downcasted = int216(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(216, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int208 from int256, reverting on\\n     * overflow (when the input is less than smallest int208 or\\n     * greater than largest int208).\\n     *\\n     * Counterpart to Solidity's `int208` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 208 bits\\n     */\\n    function toInt208(int256 value) internal pure returns (int208 downcasted) {\\n        downcasted = int208(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(208, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int200 from int256, reverting on\\n     * overflow (when the input is less than smallest int200 or\\n     * greater than largest int200).\\n     *\\n     * Counterpart to Solidity's `int200` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 200 bits\\n     */\\n    function toInt200(int256 value) internal pure returns (int200 downcasted) {\\n        downcasted = int200(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(200, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int192 from int256, reverting on\\n     * overflow (when the input is less than smallest int192 or\\n     * greater than largest int192).\\n     *\\n     * Counterpart to Solidity's `int192` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 192 bits\\n     */\\n    function toInt192(int256 value) internal pure returns (int192 downcasted) {\\n        downcasted = int192(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(192, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int184 from int256, reverting on\\n     * overflow (when the input is less than smallest int184 or\\n     * greater than largest int184).\\n     *\\n     * Counterpart to Solidity's `int184` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 184 bits\\n     */\\n    function toInt184(int256 value) internal pure returns (int184 downcasted) {\\n        downcasted = int184(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(184, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int176 from int256, reverting on\\n     * overflow (when the input is less than smallest int176 or\\n     * greater than largest int176).\\n     *\\n     * Counterpart to Solidity's `int176` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 176 bits\\n     */\\n    function toInt176(int256 value) internal pure returns (int176 downcasted) {\\n        downcasted = int176(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(176, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int168 from int256, reverting on\\n     * overflow (when the input is less than smallest int168 or\\n     * greater than largest int168).\\n     *\\n     * Counterpart to Solidity's `int168` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 168 bits\\n     */\\n    function toInt168(int256 value) internal pure returns (int168 downcasted) {\\n        downcasted = int168(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(168, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int160 from int256, reverting on\\n     * overflow (when the input is less than smallest int160 or\\n     * greater than largest int160).\\n     *\\n     * Counterpart to Solidity's `int160` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 160 bits\\n     */\\n    function toInt160(int256 value) internal pure returns (int160 downcasted) {\\n        downcasted = int160(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(160, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int152 from int256, reverting on\\n     * overflow (when the input is less than smallest int152 or\\n     * greater than largest int152).\\n     *\\n     * Counterpart to Solidity's `int152` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 152 bits\\n     */\\n    function toInt152(int256 value) internal pure returns (int152 downcasted) {\\n        downcasted = int152(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(152, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int144 from int256, reverting on\\n     * overflow (when the input is less than smallest int144 or\\n     * greater than largest int144).\\n     *\\n     * Counterpart to Solidity's `int144` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 144 bits\\n     */\\n    function toInt144(int256 value) internal pure returns (int144 downcasted) {\\n        downcasted = int144(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(144, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int136 from int256, reverting on\\n     * overflow (when the input is less than smallest int136 or\\n     * greater than largest int136).\\n     *\\n     * Counterpart to Solidity's `int136` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 136 bits\\n     */\\n    function toInt136(int256 value) internal pure returns (int136 downcasted) {\\n        downcasted = int136(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(136, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int128 from int256, reverting on\\n     * overflow (when the input is less than smallest int128 or\\n     * greater than largest int128).\\n     *\\n     * Counterpart to Solidity's `int128` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 128 bits\\n     */\\n    function toInt128(int256 value) internal pure returns (int128 downcasted) {\\n        downcasted = int128(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(128, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int120 from int256, reverting on\\n     * overflow (when the input is less than smallest int120 or\\n     * greater than largest int120).\\n     *\\n     * Counterpart to Solidity's `int120` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 120 bits\\n     */\\n    function toInt120(int256 value) internal pure returns (int120 downcasted) {\\n        downcasted = int120(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(120, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int112 from int256, reverting on\\n     * overflow (when the input is less than smallest int112 or\\n     * greater than largest int112).\\n     *\\n     * Counterpart to Solidity's `int112` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 112 bits\\n     */\\n    function toInt112(int256 value) internal pure returns (int112 downcasted) {\\n        downcasted = int112(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(112, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int104 from int256, reverting on\\n     * overflow (when the input is less than smallest int104 or\\n     * greater than largest int104).\\n     *\\n     * Counterpart to Solidity's `int104` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 104 bits\\n     */\\n    function toInt104(int256 value) internal pure returns (int104 downcasted) {\\n        downcasted = int104(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(104, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int96 from int256, reverting on\\n     * overflow (when the input is less than smallest int96 or\\n     * greater than largest int96).\\n     *\\n     * Counterpart to Solidity's `int96` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 96 bits\\n     */\\n    function toInt96(int256 value) internal pure returns (int96 downcasted) {\\n        downcasted = int96(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(96, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int88 from int256, reverting on\\n     * overflow (when the input is less than smallest int88 or\\n     * greater than largest int88).\\n     *\\n     * Counterpart to Solidity's `int88` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 88 bits\\n     */\\n    function toInt88(int256 value) internal pure returns (int88 downcasted) {\\n        downcasted = int88(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(88, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int80 from int256, reverting on\\n     * overflow (when the input is less than smallest int80 or\\n     * greater than largest int80).\\n     *\\n     * Counterpart to Solidity's `int80` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 80 bits\\n     */\\n    function toInt80(int256 value) internal pure returns (int80 downcasted) {\\n        downcasted = int80(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(80, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int72 from int256, reverting on\\n     * overflow (when the input is less than smallest int72 or\\n     * greater than largest int72).\\n     *\\n     * Counterpart to Solidity's `int72` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 72 bits\\n     */\\n    function toInt72(int256 value) internal pure returns (int72 downcasted) {\\n        downcasted = int72(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(72, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int64 from int256, reverting on\\n     * overflow (when the input is less than smallest int64 or\\n     * greater than largest int64).\\n     *\\n     * Counterpart to Solidity's `int64` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 64 bits\\n     */\\n    function toInt64(int256 value) internal pure returns (int64 downcasted) {\\n        downcasted = int64(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(64, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int56 from int256, reverting on\\n     * overflow (when the input is less than smallest int56 or\\n     * greater than largest int56).\\n     *\\n     * Counterpart to Solidity's `int56` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 56 bits\\n     */\\n    function toInt56(int256 value) internal pure returns (int56 downcasted) {\\n        downcasted = int56(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(56, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int48 from int256, reverting on\\n     * overflow (when the input is less than smallest int48 or\\n     * greater than largest int48).\\n     *\\n     * Counterpart to Solidity's `int48` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 48 bits\\n     */\\n    function toInt48(int256 value) internal pure returns (int48 downcasted) {\\n        downcasted = int48(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(48, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int40 from int256, reverting on\\n     * overflow (when the input is less than smallest int40 or\\n     * greater than largest int40).\\n     *\\n     * Counterpart to Solidity's `int40` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 40 bits\\n     */\\n    function toInt40(int256 value) internal pure returns (int40 downcasted) {\\n        downcasted = int40(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(40, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int32 from int256, reverting on\\n     * overflow (when the input is less than smallest int32 or\\n     * greater than largest int32).\\n     *\\n     * Counterpart to Solidity's `int32` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 32 bits\\n     */\\n    function toInt32(int256 value) internal pure returns (int32 downcasted) {\\n        downcasted = int32(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(32, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int24 from int256, reverting on\\n     * overflow (when the input is less than smallest int24 or\\n     * greater than largest int24).\\n     *\\n     * Counterpart to Solidity's `int24` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 24 bits\\n     */\\n    function toInt24(int256 value) internal pure returns (int24 downcasted) {\\n        downcasted = int24(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(24, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int16 from int256, reverting on\\n     * overflow (when the input is less than smallest int16 or\\n     * greater than largest int16).\\n     *\\n     * Counterpart to Solidity's `int16` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 16 bits\\n     */\\n    function toInt16(int256 value) internal pure returns (int16 downcasted) {\\n        downcasted = int16(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(16, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the downcasted int8 from int256, reverting on\\n     * overflow (when the input is less than smallest int8 or\\n     * greater than largest int8).\\n     *\\n     * Counterpart to Solidity's `int8` operator.\\n     *\\n     * Requirements:\\n     *\\n     * - input must fit into 8 bits\\n     */\\n    function toInt8(int256 value) internal pure returns (int8 downcasted) {\\n        downcasted = int8(value);\\n        if (downcasted != value) {\\n            revert SafeCastOverflowedIntDowncast(8, value);\\n        }\\n    }\\n\\n    /**\\n     * @dev Converts an unsigned uint256 into a signed int256.\\n     *\\n     * Requirements:\\n     *\\n     * - input must be less than or equal to maxInt256.\\n     */\\n    function toInt256(uint256 value) internal pure returns (int256) {\\n        // Note: Unsafe cast below is okay because `type(int256).max` is guaranteed to be positive\\n        if (value > uint256(type(int256).max)) {\\n            revert SafeCastOverflowedUintToInt(value);\\n        }\\n        return int256(value);\\n    }\\n}\\n\",\"keccak256\":\"0xe19a4d5f31d2861e7344e8e535e2feafb913d806d3e2b5fe7782741a2a7094fe\",\"license\":\"MIT\"},\"contracts/core/direct-deposit/plans/DDOperatorPlan.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0\\n\\n// \\u2588\\u2588\\u2588\\u2557   \\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2557  \\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2554\\u2588\\u2588\\u2588\\u2588\\u2554\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551\\u255a\\u2588\\u2588\\u2554\\u255d\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551 \\u255a\\u2550\\u255d \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\n// \\u255a\\u2550\\u255d     \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\n\\n// Website: https://maha.xyz\\n// Discord: https://discord.gg/mahadao\\n// Twitter: https://twitter.com/mahaxyz_\\n\\npragma solidity 0.8.21;\\n\\nimport {IDDPlan} from \\\"../../../interfaces/core/IDDPlan.sol\\\";\\nimport {AccessControlDefaultAdminRules} from\\n  \\\"@openzeppelin/contracts/access/extensions/AccessControlDefaultAdminRules.sol\\\";\\n\\n/**\\n * @title Direct Deposit Operator Plan\\n * @notice An operator sets the desired target assets for a simple vault\\n */\\ncontract DDOperatorPlan is AccessControlDefaultAdminRules, IDDPlan {\\n  uint256 public enabled = 1;\\n  uint256 public targetAssets;\\n  bytes32 public immutable OPERATOR_ROLE = keccak256(\\\"OPERATOR_ROLE\\\");\\n\\n  constructor(uint48 _initialDelay, address _governance) AccessControlDefaultAdminRules(_initialDelay, _governance) {}\\n\\n  function setTargetAssets(uint256 value) external onlyRole(OPERATOR_ROLE) {\\n    targetAssets = value;\\n  }\\n\\n  /// @inheritdoc IDDPlan\\n  /// @dev The `currentAssets` arguement is not used in this plan.\\n  function getTargetAssets(uint256) external view override returns (uint256) {\\n    if (enabled == 0) return 0;\\n    return targetAssets;\\n  }\\n\\n  /// @inheritdoc IDDPlan\\n  function active() public view override returns (bool) {\\n    return enabled == 1;\\n  }\\n\\n  /// @inheritdoc IDDPlan\\n  function disable() external override {\\n    require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || hasRole(OPERATOR_ROLE, msg.sender), \\\"!role\\\");\\n    enabled = 0;\\n    emit Disable();\\n  }\\n}\\n\",\"keccak256\":\"0xce68ec6091c1ac9b46986b851e1f3e43765f92c5ff06695357164659d24bf687\",\"license\":\"GPL-3.0\"},\"contracts/interfaces/core/IDDPlan.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0\\n\\n// \\u2588\\u2588\\u2588\\u2557   \\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2557  \\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2554\\u2588\\u2588\\u2588\\u2588\\u2554\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551\\u255a\\u2588\\u2588\\u2554\\u255d\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551 \\u255a\\u2550\\u255d \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\n// \\u255a\\u2550\\u255d     \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\n\\n// Website: https://maha.xyz\\n// Discord: https://discord.gg/mahadao\\n// Twitter: https://twitter.com/mahaxyz_\\n\\npragma solidity 0.8.21;\\n\\n/**\\n * @title DD Plan Interface\\n * @author maha.xyz, makerdao\\n * @notice Plan contracts are contracts that the Hub uses to determine how much to change its position.\\n */\\ninterface IDDPlan {\\n  event Disable();\\n\\n  /**\\n   * @notice Determines what the position should be based on current assets\\n   * and the custom plan rules.\\n   * @param currentAssets asset balance from a specific pool in Dai [wad]\\n   * denomination\\n   * @return uint256 target assets the Hub should wind or unwind to in Dai\\n   */\\n  function getTargetAssets(uint256 currentAssets) external view returns (uint256);\\n\\n  /**\\n   * @notice Reports whether the plan is active\\n   */\\n  function active() external view returns (bool);\\n\\n  /**\\n   * @notice Disables the plan so that it would instruct the Hub to unwind\\n   * its entire position.\\n   * @dev Implementation should be permissioned.\\n   */\\n  function disable() external;\\n}\\n\",\"keccak256\":\"0xdb86139cdd603a36f85abe3290b0ce61e30e89dc7f1fb247fb99a279a770db05\",\"license\":\"GPL-3.0\"}},\"version\":1}",
+  "bytecode": "0x60a060405260016003557f97667070c54ef182b0f5858b034beac1b6f3089aa2d3188bb1e8929f4fa9b9296080523480156200003a57600080fd5b50604051620012fe380380620012fe8339810160408190526200005d91620001e9565b81816001600160a01b0381166200008e57604051636116401160e11b81526000600482015260240160405180910390fd5b600180546001600160d01b0316600160d01b65ffffffffffff851602179055620000ba600082620000c5565b50505050506200023d565b60008262000126576000620000e26002546001600160a01b031690565b6001600160a01b0316146200010a57604051631fe1e13d60e11b815260040160405180910390fd5b600280546001600160a01b0319166001600160a01b0384161790555b6200013283836200013b565b90505b92915050565b6000828152602081815260408083206001600160a01b038516845290915281205460ff16620001e0576000838152602081815260408083206001600160a01b03861684529091529020805460ff19166001179055620001973390565b6001600160a01b0316826001600160a01b0316847f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a450600162000135565b50600062000135565b60008060408385031215620001fd57600080fd5b825165ffffffffffff811681146200021457600080fd5b60208401519092506001600160a01b03811681146200023257600080fd5b809150509250929050565b60805161109762000267600039600081816103af0152818161046501526106db01526110976000f3fe608060405234801561001057600080fd5b50600436106101a35760003560e01c80638715d710116100ee578063cc8463c811610097578063d547741f11610071578063d547741f14610386578063d602b9fd14610399578063ebafa387146103a1578063f5b541a6146103aa57600080fd5b8063cc8463c814610348578063cefc142914610350578063cf6eefb71461035857600080fd5b8063a1eda53c116100c8578063a1eda53c14610306578063a217fddf1461032d578063af7a0a631461033557600080fd5b80638715d710146102b45780638da5cb5b146102c757806391d14854146102cf57600080fd5b80632f2770db11610150578063634e93da1161012a578063634e93da14610269578063649a5ec71461027c57806384ef8ffc1461028f57600080fd5b80632f2770db1461023b5780632f2ff15d1461024357806336568abe1461025657600080fd5b80630aa6220b116101815780630aa6220b146101f7578063238dafe014610201578063248a9ca31461021857600080fd5b806301ffc9a7146101a8578063022d63fb146101d057806302fb0c5e146101ec575b600080fd5b6101bb6101b6366004610f1f565b6103d1565b60405190151581526020015b60405180910390f35b620697805b60405165ffffffffffff90911681526020016101c7565b6003546001146101bb565b6101ff610415565b005b61020a60035481565b6040519081526020016101c7565b61020a610226366004610f49565b60009081526020819052604090206001015490565b6101ff61042b565b6101ff610251366004610f7e565b61053b565b6101ff610264366004610f7e565b610567565b6101ff610277366004610faa565b610628565b6101ff61028a366004610fc5565b61063c565b6002546001600160a01b03165b6040516001600160a01b0390911681526020016101c7565b61020a6102c2366004610f49565b610650565b61029c61066c565b6101bb6102dd366004610f7e565b6000918252602082815260408084206001600160a01b0393909316845291905290205460ff1690565b61030e610685565b6040805165ffffffffffff9384168152929091166020830152016101c7565b61020a600081565b6101ff610343366004610f49565b6106d9565b6101d5610709565b6101ff610768565b600154604080516001600160a01b0383168152600160a01b90920465ffffffffffff166020830152016101c7565b6101ff610394366004610f7e565b6107b7565b6101ff6107df565b61020a60045481565b61020a7f000000000000000000000000000000000000000000000000000000000000000081565b60006001600160e01b031982167f3149878600000000000000000000000000000000000000000000000000000000148061040f575061040f826107f2565b92915050565b600061042081610859565b610428610863565b50565b3360009081527fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb5602052604090205460ff16806104a057507f000000000000000000000000000000000000000000000000000000000000000060009081526020818152604080832033845290915290205460ff165b61050b576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152600560248201527f21726f6c6500000000000000000000000000000000000000000000000000000060448201526064015b60405180910390fd5b600060038190556040517f25a311358326fb18c62efc24bc28d3126acee8d2a67fd8b2145b757dc8bd1bc19190a1565b8161055957604051631fe1e13d60e11b815260040160405180910390fd5b6105638282610870565b5050565b8115801561058257506002546001600160a01b038281169116145b1561061e576001546001600160a01b03811690600160a01b900465ffffffffffff16811515806105b8575065ffffffffffff8116155b806105cb57504265ffffffffffff821610155b156105f3576040516319ca5ebb60e01b815265ffffffffffff82166004820152602401610502565b5050600180547fffffffffffff000000000000ffffffffffffffffffffffffffffffffffffffff1690555b610563828261089b565b600061063381610859565b610563826108ec565b600061064781610859565b6105638261095f565b600060035460000361066457506000919050565b505060045490565b60006106806002546001600160a01b031690565b905090565b600254600090600160d01b900465ffffffffffff1680151580156106b157504265ffffffffffff821610155b6106bd576000806106d1565b600254600160a01b900465ffffffffffff16815b915091509091565b7f000000000000000000000000000000000000000000000000000000000000000061070381610859565b50600455565b600254600090600160d01b900465ffffffffffff16801515801561073457504265ffffffffffff8216105b61074f57600154600160d01b900465ffffffffffff16610762565b600254600160a01b900465ffffffffffff165b91505090565b6001546001600160a01b03163381146107af576040517fc22c8022000000000000000000000000000000000000000000000000000000008152336004820152602401610502565b6104286109cf565b816107d557604051631fe1e13d60e11b815260040160405180910390fd5b6105638282610a7e565b60006107ea81610859565b610428610aa3565b60006001600160e01b031982167f7965db0b00000000000000000000000000000000000000000000000000000000148061040f57507f01ffc9a7000000000000000000000000000000000000000000000000000000006001600160e01b031983161461040f565b6104288133610aae565b61086e600080610b1a565b565b60008281526020819052604090206001015461088b81610859565b6108958383610c00565b50505050565b6001600160a01b03811633146108dd576040517f6697b23200000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6108e78282610c7c565b505050565b60006108f6610709565b6108ff42610cc6565b610909919061101c565b90506109158282610d16565b60405165ffffffffffff821681526001600160a01b038316907f3377dc44241e779dd06afab5b788a35ca5f3b778836e2990bdb26a2a4b2e5ed69060200160405180910390a25050565b600061096a82610d94565b61097342610cc6565b61097d919061101c565b90506109898282610b1a565b6040805165ffffffffffff8085168252831660208201527ff1038c18cf84a56e432fdbfaf746924b7ea511dfe03a6506a0ceba4888788d9b910160405180910390a15050565b6001546001600160a01b03811690600160a01b900465ffffffffffff16801580610a0157504265ffffffffffff821610155b15610a29576040516319ca5ebb60e01b815265ffffffffffff82166004820152602401610502565b610a456000610a406002546001600160a01b031690565b610c7c565b50610a51600083610c00565b5050600180547fffffffffffff000000000000000000000000000000000000000000000000000016905550565b600082815260208190526040902060010154610a9981610859565b6108958383610c7c565b61086e600080610d16565b6000828152602081815260408083206001600160a01b038516845290915290205460ff16610563576040517fe2517d3f0000000000000000000000000000000000000000000000000000000081526001600160a01b038216600482015260248101839052604401610502565b600254600160d01b900465ffffffffffff168015610bb0574265ffffffffffff82161015610b86576002546001805479ffffffffffffffffffffffffffffffffffffffffffffffffffff16600160a01b90920465ffffffffffff16600160d01b02919091179055610bb0565b6040517f2b1fa2edafe6f7b9e97c1a9e0c3660e645beb2dcaa2d45bdbf9beaf5472e1ec590600090a15b50600280546001600160a01b0316600160a01b65ffffffffffff9485160279ffffffffffffffffffffffffffffffffffffffffffffffffffff1617600160d01b9290931691909102919091179055565b600082610c6b576000610c1b6002546001600160a01b031690565b6001600160a01b031614610c4257604051631fe1e13d60e11b815260040160405180910390fd5b6002805473ffffffffffffffffffffffffffffffffffffffff19166001600160a01b0384161790555b610c758383610ddc565b9392505050565b600082158015610c9957506002546001600160a01b038381169116145b15610cbc576002805473ffffffffffffffffffffffffffffffffffffffff191690555b610c758383610e86565b600065ffffffffffff821115610d12576040517f6dfcc6500000000000000000000000000000000000000000000000000000000081526030600482015260248101839052604401610502565b5090565b60018054600160a01b65ffffffffffff84811682027fffffffffffff000000000000000000000000000000000000000000000000000084166001600160a01b038816171790935590041680156108e7576040517f8886ebfc4259abdbc16601dd8fb5678e54878f47b3c34836cfc51154a960510990600090a1505050565b600080610d9f610709565b90508065ffffffffffff168365ffffffffffff1611610dc757610dc28382611042565b610c75565b610c7565ffffffffffff841662069780610f09565b6000828152602081815260408083206001600160a01b038516845290915281205460ff16610e7e576000838152602081815260408083206001600160a01b03861684529091529020805460ff19166001179055610e363390565b6001600160a01b0316826001600160a01b0316847f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a450600161040f565b50600061040f565b6000828152602081815260408083206001600160a01b038516845290915281205460ff1615610e7e576000838152602081815260408083206001600160a01b0386168085529252808320805460ff1916905551339286917ff6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b9190a450600161040f565b6000818310610f185781610c75565b5090919050565b600060208284031215610f3157600080fd5b81356001600160e01b031981168114610c7557600080fd5b600060208284031215610f5b57600080fd5b5035919050565b80356001600160a01b0381168114610f7957600080fd5b919050565b60008060408385031215610f9157600080fd5b82359150610fa160208401610f62565b90509250929050565b600060208284031215610fbc57600080fd5b610c7582610f62565b600060208284031215610fd757600080fd5b813565ffffffffffff81168114610c7557600080fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b65ffffffffffff81811683821601908082111561103b5761103b610fed565b5092915050565b65ffffffffffff82811682821603908082111561103b5761103b610fed56fea264697066735822122048116618ad3d683eb3cac00125063a6ebb4ac97c5f251b196a0e1e0efae6d3c864736f6c63430008150033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106101a35760003560e01c80638715d710116100ee578063cc8463c811610097578063d547741f11610071578063d547741f14610386578063d602b9fd14610399578063ebafa387146103a1578063f5b541a6146103aa57600080fd5b8063cc8463c814610348578063cefc142914610350578063cf6eefb71461035857600080fd5b8063a1eda53c116100c8578063a1eda53c14610306578063a217fddf1461032d578063af7a0a631461033557600080fd5b80638715d710146102b45780638da5cb5b146102c757806391d14854146102cf57600080fd5b80632f2770db11610150578063634e93da1161012a578063634e93da14610269578063649a5ec71461027c57806384ef8ffc1461028f57600080fd5b80632f2770db1461023b5780632f2ff15d1461024357806336568abe1461025657600080fd5b80630aa6220b116101815780630aa6220b146101f7578063238dafe014610201578063248a9ca31461021857600080fd5b806301ffc9a7146101a8578063022d63fb146101d057806302fb0c5e146101ec575b600080fd5b6101bb6101b6366004610f1f565b6103d1565b60405190151581526020015b60405180910390f35b620697805b60405165ffffffffffff90911681526020016101c7565b6003546001146101bb565b6101ff610415565b005b61020a60035481565b6040519081526020016101c7565b61020a610226366004610f49565b60009081526020819052604090206001015490565b6101ff61042b565b6101ff610251366004610f7e565b61053b565b6101ff610264366004610f7e565b610567565b6101ff610277366004610faa565b610628565b6101ff61028a366004610fc5565b61063c565b6002546001600160a01b03165b6040516001600160a01b0390911681526020016101c7565b61020a6102c2366004610f49565b610650565b61029c61066c565b6101bb6102dd366004610f7e565b6000918252602082815260408084206001600160a01b0393909316845291905290205460ff1690565b61030e610685565b6040805165ffffffffffff9384168152929091166020830152016101c7565b61020a600081565b6101ff610343366004610f49565b6106d9565b6101d5610709565b6101ff610768565b600154604080516001600160a01b0383168152600160a01b90920465ffffffffffff166020830152016101c7565b6101ff610394366004610f7e565b6107b7565b6101ff6107df565b61020a60045481565b61020a7f000000000000000000000000000000000000000000000000000000000000000081565b60006001600160e01b031982167f3149878600000000000000000000000000000000000000000000000000000000148061040f575061040f826107f2565b92915050565b600061042081610859565b610428610863565b50565b3360009081527fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb5602052604090205460ff16806104a057507f000000000000000000000000000000000000000000000000000000000000000060009081526020818152604080832033845290915290205460ff165b61050b576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152600560248201527f21726f6c6500000000000000000000000000000000000000000000000000000060448201526064015b60405180910390fd5b600060038190556040517f25a311358326fb18c62efc24bc28d3126acee8d2a67fd8b2145b757dc8bd1bc19190a1565b8161055957604051631fe1e13d60e11b815260040160405180910390fd5b6105638282610870565b5050565b8115801561058257506002546001600160a01b038281169116145b1561061e576001546001600160a01b03811690600160a01b900465ffffffffffff16811515806105b8575065ffffffffffff8116155b806105cb57504265ffffffffffff821610155b156105f3576040516319ca5ebb60e01b815265ffffffffffff82166004820152602401610502565b5050600180547fffffffffffff000000000000ffffffffffffffffffffffffffffffffffffffff1690555b610563828261089b565b600061063381610859565b610563826108ec565b600061064781610859565b6105638261095f565b600060035460000361066457506000919050565b505060045490565b60006106806002546001600160a01b031690565b905090565b600254600090600160d01b900465ffffffffffff1680151580156106b157504265ffffffffffff821610155b6106bd576000806106d1565b600254600160a01b900465ffffffffffff16815b915091509091565b7f000000000000000000000000000000000000000000000000000000000000000061070381610859565b50600455565b600254600090600160d01b900465ffffffffffff16801515801561073457504265ffffffffffff8216105b61074f57600154600160d01b900465ffffffffffff16610762565b600254600160a01b900465ffffffffffff165b91505090565b6001546001600160a01b03163381146107af576040517fc22c8022000000000000000000000000000000000000000000000000000000008152336004820152602401610502565b6104286109cf565b816107d557604051631fe1e13d60e11b815260040160405180910390fd5b6105638282610a7e565b60006107ea81610859565b610428610aa3565b60006001600160e01b031982167f7965db0b00000000000000000000000000000000000000000000000000000000148061040f57507f01ffc9a7000000000000000000000000000000000000000000000000000000006001600160e01b031983161461040f565b6104288133610aae565b61086e600080610b1a565b565b60008281526020819052604090206001015461088b81610859565b6108958383610c00565b50505050565b6001600160a01b03811633146108dd576040517f6697b23200000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6108e78282610c7c565b505050565b60006108f6610709565b6108ff42610cc6565b610909919061101c565b90506109158282610d16565b60405165ffffffffffff821681526001600160a01b038316907f3377dc44241e779dd06afab5b788a35ca5f3b778836e2990bdb26a2a4b2e5ed69060200160405180910390a25050565b600061096a82610d94565b61097342610cc6565b61097d919061101c565b90506109898282610b1a565b6040805165ffffffffffff8085168252831660208201527ff1038c18cf84a56e432fdbfaf746924b7ea511dfe03a6506a0ceba4888788d9b910160405180910390a15050565b6001546001600160a01b03811690600160a01b900465ffffffffffff16801580610a0157504265ffffffffffff821610155b15610a29576040516319ca5ebb60e01b815265ffffffffffff82166004820152602401610502565b610a456000610a406002546001600160a01b031690565b610c7c565b50610a51600083610c00565b5050600180547fffffffffffff000000000000000000000000000000000000000000000000000016905550565b600082815260208190526040902060010154610a9981610859565b6108958383610c7c565b61086e600080610d16565b6000828152602081815260408083206001600160a01b038516845290915290205460ff16610563576040517fe2517d3f0000000000000000000000000000000000000000000000000000000081526001600160a01b038216600482015260248101839052604401610502565b600254600160d01b900465ffffffffffff168015610bb0574265ffffffffffff82161015610b86576002546001805479ffffffffffffffffffffffffffffffffffffffffffffffffffff16600160a01b90920465ffffffffffff16600160d01b02919091179055610bb0565b6040517f2b1fa2edafe6f7b9e97c1a9e0c3660e645beb2dcaa2d45bdbf9beaf5472e1ec590600090a15b50600280546001600160a01b0316600160a01b65ffffffffffff9485160279ffffffffffffffffffffffffffffffffffffffffffffffffffff1617600160d01b9290931691909102919091179055565b600082610c6b576000610c1b6002546001600160a01b031690565b6001600160a01b031614610c4257604051631fe1e13d60e11b815260040160405180910390fd5b6002805473ffffffffffffffffffffffffffffffffffffffff19166001600160a01b0384161790555b610c758383610ddc565b9392505050565b600082158015610c9957506002546001600160a01b038381169116145b15610cbc576002805473ffffffffffffffffffffffffffffffffffffffff191690555b610c758383610e86565b600065ffffffffffff821115610d12576040517f6dfcc6500000000000000000000000000000000000000000000000000000000081526030600482015260248101839052604401610502565b5090565b60018054600160a01b65ffffffffffff84811682027fffffffffffff000000000000000000000000000000000000000000000000000084166001600160a01b038816171790935590041680156108e7576040517f8886ebfc4259abdbc16601dd8fb5678e54878f47b3c34836cfc51154a960510990600090a1505050565b600080610d9f610709565b90508065ffffffffffff168365ffffffffffff1611610dc757610dc28382611042565b610c75565b610c7565ffffffffffff841662069780610f09565b6000828152602081815260408083206001600160a01b038516845290915281205460ff16610e7e576000838152602081815260408083206001600160a01b03861684529091529020805460ff19166001179055610e363390565b6001600160a01b0316826001600160a01b0316847f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a450600161040f565b50600061040f565b6000828152602081815260408083206001600160a01b038516845290915281205460ff1615610e7e576000838152602081815260408083206001600160a01b0386168085529252808320805460ff1916905551339286917ff6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b9190a450600161040f565b6000818310610f185781610c75565b5090919050565b600060208284031215610f3157600080fd5b81356001600160e01b031981168114610c7557600080fd5b600060208284031215610f5b57600080fd5b5035919050565b80356001600160a01b0381168114610f7957600080fd5b919050565b60008060408385031215610f9157600080fd5b82359150610fa160208401610f62565b90509250929050565b600060208284031215610fbc57600080fd5b610c7582610f62565b600060208284031215610fd757600080fd5b813565ffffffffffff81168114610c7557600080fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b65ffffffffffff81811683821601908082111561103b5761103b610fed565b5092915050565b65ffffffffffff82811682821603908082111561103b5761103b610fed56fea264697066735822122048116618ad3d683eb3cac00125063a6ebb4ac97c5f251b196a0e1e0efae6d3c864736f6c63430008150033",
+  "devdoc": {
+    "errors": {
+      "AccessControlBadConfirmation()": [
+        {
+          "details": "The caller of a function is not the expected one. NOTE: Don't confuse with {AccessControlUnauthorizedAccount}."
+        }
+      ],
+      "AccessControlEnforcedDefaultAdminDelay(uint48)": [
+        {
+          "details": "The delay for transferring the default admin delay is enforced and the operation must wait until `schedule`. NOTE: `schedule` can be 0 indicating there's no transfer scheduled."
+        }
+      ],
+      "AccessControlEnforcedDefaultAdminRules()": [
+        {
+          "details": "At least one of the following rules was violated: - The `DEFAULT_ADMIN_ROLE` must only be managed by itself. - The `DEFAULT_ADMIN_ROLE` must only be held by one account at the time. - Any `DEFAULT_ADMIN_ROLE` transfer must be in two delayed steps."
+        }
+      ],
+      "AccessControlInvalidDefaultAdmin(address)": [
+        {
+          "details": "The new default admin is not a valid default admin."
+        }
+      ],
+      "AccessControlUnauthorizedAccount(address,bytes32)": [
+        {
+          "details": "The `account` is missing a role."
+        }
+      ],
+      "SafeCastOverflowedUintDowncast(uint8,uint256)": [
+        {
+          "details": "Value doesn't fit in an uint of `bits` size."
+        }
+      ]
+    },
+    "events": {
+      "DefaultAdminDelayChangeCanceled()": {
+        "details": "Emitted when a {pendingDefaultAdminDelay} is reset if its schedule didn't pass."
+      },
+      "DefaultAdminDelayChangeScheduled(uint48,uint48)": {
+        "details": "Emitted when a {defaultAdminDelay} change is started, setting `newDelay` as the next delay to be applied between default admin transfer after `effectSchedule` has passed."
+      },
+      "DefaultAdminTransferCanceled()": {
+        "details": "Emitted when a {pendingDefaultAdmin} is reset if it was never accepted, regardless of its schedule."
+      },
+      "DefaultAdminTransferScheduled(address,uint48)": {
+        "details": "Emitted when a {defaultAdmin} transfer is started, setting `newAdmin` as the next address to become the {defaultAdmin} by calling {acceptDefaultAdminTransfer} only after `acceptSchedule` passes."
+      },
+      "RoleAdminChanged(bytes32,bytes32,bytes32)": {
+        "details": "Emitted when `newAdminRole` is set as ``role``'s admin role, replacing `previousAdminRole` `DEFAULT_ADMIN_ROLE` is the starting admin for all roles, despite {RoleAdminChanged} not being emitted signaling this."
+      },
+      "RoleGranted(bytes32,address,address)": {
+        "details": "Emitted when `account` is granted `role`. `sender` is the account that originated the contract call, an admin role bearer except when using {AccessControl-_setupRole}."
+      },
+      "RoleRevoked(bytes32,address,address)": {
+        "details": "Emitted when `account` is revoked `role`. `sender` is the account that originated the contract call:   - if using `revokeRole`, it is the admin role bearer   - if using `renounceRole`, it is the role bearer (i.e. `account`)"
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "acceptDefaultAdminTransfer()": {
+        "details": "Completes a {defaultAdmin} transfer previously started with {beginDefaultAdminTransfer}. After calling the function: - `DEFAULT_ADMIN_ROLE` should be granted to the caller. - `DEFAULT_ADMIN_ROLE` should be revoked from the previous holder. - {pendingDefaultAdmin} should be reset to zero values. Requirements: - Only can be called by the {pendingDefaultAdmin}'s `newAdmin`. - The {pendingDefaultAdmin}'s `acceptSchedule` should've passed."
+      },
+      "beginDefaultAdminTransfer(address)": {
+        "details": "Starts a {defaultAdmin} transfer by setting a {pendingDefaultAdmin} scheduled for acceptance after the current timestamp plus a {defaultAdminDelay}. Requirements: - Only can be called by the current {defaultAdmin}. Emits a DefaultAdminRoleChangeStarted event."
+      },
+      "cancelDefaultAdminTransfer()": {
+        "details": "Cancels a {defaultAdmin} transfer previously started with {beginDefaultAdminTransfer}. A {pendingDefaultAdmin} not yet accepted can also be cancelled with this function. Requirements: - Only can be called by the current {defaultAdmin}. May emit a DefaultAdminTransferCanceled event."
+      },
+      "changeDefaultAdminDelay(uint48)": {
+        "details": "Initiates a {defaultAdminDelay} update by setting a {pendingDefaultAdminDelay} scheduled for getting into effect after the current timestamp plus a {defaultAdminDelay}. This function guarantees that any call to {beginDefaultAdminTransfer} done between the timestamp this method is called and the {pendingDefaultAdminDelay} effect schedule will use the current {defaultAdminDelay} set before calling. The {pendingDefaultAdminDelay}'s effect schedule is defined in a way that waiting until the schedule and then calling {beginDefaultAdminTransfer} with the new delay will take at least the same as another {defaultAdmin} complete transfer (including acceptance). The schedule is designed for two scenarios: - When the delay is changed for a larger one the schedule is `block.timestamp + newDelay` capped by {defaultAdminDelayIncreaseWait}. - When the delay is changed for a shorter one, the schedule is `block.timestamp + (current delay - new delay)`. A {pendingDefaultAdminDelay} that never got into effect will be canceled in favor of a new scheduled change. Requirements: - Only can be called by the current {defaultAdmin}. Emits a DefaultAdminDelayChangeScheduled event and may emit a DefaultAdminDelayChangeCanceled event."
+      },
+      "defaultAdmin()": {
+        "details": "Returns the address of the current `DEFAULT_ADMIN_ROLE` holder."
+      },
+      "defaultAdminDelay()": {
+        "details": "Returns the delay required to schedule the acceptance of a {defaultAdmin} transfer started. This delay will be added to the current timestamp when calling {beginDefaultAdminTransfer} to set the acceptance schedule. NOTE: If a delay change has been scheduled, it will take effect as soon as the schedule passes, making this function returns the new delay. See {changeDefaultAdminDelay}."
+      },
+      "defaultAdminDelayIncreaseWait()": {
+        "details": "Maximum time in seconds for an increase to {defaultAdminDelay} (that is scheduled using {changeDefaultAdminDelay}) to take effect. Default to 5 days. When the {defaultAdminDelay} is scheduled to be increased, it goes into effect after the new delay has passed with the purpose of giving enough time for reverting any accidental change (i.e. using milliseconds instead of seconds) that may lock the contract. However, to avoid excessive schedules, the wait is capped by this function and it can be overrode for a custom {defaultAdminDelay} increase scheduling. IMPORTANT: Make sure to add a reasonable amount of time while overriding this value, otherwise, there's a risk of setting a high new delay that goes into effect almost immediately without the possibility of human intervention in the case of an input error (eg. set milliseconds instead of seconds)."
+      },
+      "disable()": {
+        "details": "Implementation should be permissioned."
+      },
+      "getRoleAdmin(bytes32)": {
+        "details": "Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}."
+      },
+      "getTargetAssets(uint256)": {
+        "details": "The `currentAssets` arguement is not used in this plan.",
+        "params": {
+          "currentAssets": "asset balance from a specific pool in Dai [wad] denomination"
+        },
+        "returns": {
+          "_0": "uint256 target assets the Hub should wind or unwind to in Dai"
+        }
+      },
+      "grantRole(bytes32,address)": {
+        "details": "See {AccessControl-grantRole}. Reverts for `DEFAULT_ADMIN_ROLE`."
+      },
+      "hasRole(bytes32,address)": {
+        "details": "Returns `true` if `account` has been granted `role`."
+      },
+      "owner()": {
+        "details": "See {IERC5313-owner}."
+      },
+      "pendingDefaultAdmin()": {
+        "details": "Returns a tuple of a `newAdmin` and an accept schedule. After the `schedule` passes, the `newAdmin` will be able to accept the {defaultAdmin} role by calling {acceptDefaultAdminTransfer}, completing the role transfer. A zero value only in `acceptSchedule` indicates no pending admin transfer. NOTE: A zero address `newAdmin` means that {defaultAdmin} is being renounced."
+      },
+      "pendingDefaultAdminDelay()": {
+        "details": "Returns a tuple of `newDelay` and an effect schedule. After the `schedule` passes, the `newDelay` will get into effect immediately for every new {defaultAdmin} transfer started with {beginDefaultAdminTransfer}. A zero value only in `effectSchedule` indicates no pending delay change. NOTE: A zero value only for `newDelay` means that the next {defaultAdminDelay} will be zero after the effect schedule."
+      },
+      "renounceRole(bytes32,address)": {
+        "details": "See {AccessControl-renounceRole}. For the `DEFAULT_ADMIN_ROLE`, it only allows renouncing in two steps by first calling {beginDefaultAdminTransfer} to the `address(0)`, so it's required that the {pendingDefaultAdmin} schedule has also passed when calling this function. After its execution, it will not be possible to call `onlyRole(DEFAULT_ADMIN_ROLE)` functions. NOTE: Renouncing `DEFAULT_ADMIN_ROLE` will leave the contract without a {defaultAdmin}, thereby disabling any functionality that is only available for it, and the possibility of reassigning a non-administrated role."
+      },
+      "revokeRole(bytes32,address)": {
+        "details": "See {AccessControl-revokeRole}. Reverts for `DEFAULT_ADMIN_ROLE`."
+      },
+      "rollbackDefaultAdminDelay()": {
+        "details": "Cancels a scheduled {defaultAdminDelay} change. Requirements: - Only can be called by the current {defaultAdmin}. May emit a DefaultAdminDelayChangeCanceled event."
+      },
+      "supportsInterface(bytes4)": {
+        "details": "See {IERC165-supportsInterface}."
+      }
+    },
+    "title": "Direct Deposit Operator Plan",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "active()": {
+        "notice": "Reports whether the plan is active"
+      },
+      "disable()": {
+        "notice": "Disables the plan so that it would instruct the Hub to unwind its entire position."
+      },
+      "getTargetAssets(uint256)": {
+        "notice": "Determines what the position should be based on current assets and the custom plan rules."
+      }
+    },
+    "notice": "An operator sets the desired target assets for a simple vault",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 9882,
+        "contract": "contracts/core/direct-deposit/plans/DDOperatorPlan.sol:DDOperatorPlan",
+        "label": "_roles",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_bytes32,t_struct(RoleData)9877_storage)"
+      },
+      {
+        "astId": 10404,
+        "contract": "contracts/core/direct-deposit/plans/DDOperatorPlan.sol:DDOperatorPlan",
+        "label": "_pendingDefaultAdmin",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_address"
+      },
+      {
+        "astId": 10406,
+        "contract": "contracts/core/direct-deposit/plans/DDOperatorPlan.sol:DDOperatorPlan",
+        "label": "_pendingDefaultAdminSchedule",
+        "offset": 20,
+        "slot": "1",
+        "type": "t_uint48"
+      },
+      {
+        "astId": 10408,
+        "contract": "contracts/core/direct-deposit/plans/DDOperatorPlan.sol:DDOperatorPlan",
+        "label": "_currentDelay",
+        "offset": 26,
+        "slot": "1",
+        "type": "t_uint48"
+      },
+      {
+        "astId": 10410,
+        "contract": "contracts/core/direct-deposit/plans/DDOperatorPlan.sol:DDOperatorPlan",
+        "label": "_currentDefaultAdmin",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_address"
+      },
+      {
+        "astId": 10412,
+        "contract": "contracts/core/direct-deposit/plans/DDOperatorPlan.sol:DDOperatorPlan",
+        "label": "_pendingDelay",
+        "offset": 20,
+        "slot": "2",
+        "type": "t_uint48"
+      },
+      {
+        "astId": 10414,
+        "contract": "contracts/core/direct-deposit/plans/DDOperatorPlan.sol:DDOperatorPlan",
+        "label": "_pendingDelaySchedule",
+        "offset": 26,
+        "slot": "2",
+        "type": "t_uint48"
+      },
+      {
+        "astId": 24261,
+        "contract": "contracts/core/direct-deposit/plans/DDOperatorPlan.sol:DDOperatorPlan",
+        "label": "enabled",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 24263,
+        "contract": "contracts/core/direct-deposit/plans/DDOperatorPlan.sol:DDOperatorPlan",
+        "label": "targetAssets",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_bytes32,t_struct(RoleData)9877_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+        "numberOfBytes": "32",
+        "value": "t_struct(RoleData)9877_storage"
+      },
+      "t_struct(RoleData)9877_storage": {
+        "encoding": "inplace",
+        "label": "struct AccessControl.RoleData",
+        "members": [
+          {
+            "astId": 9874,
+            "contract": "contracts/core/direct-deposit/plans/DDOperatorPlan.sol:DDOperatorPlan",
+            "label": "hasRole",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_mapping(t_address,t_bool)"
+          },
+          {
+            "astId": 9876,
+            "contract": "contracts/core/direct-deposit/plans/DDOperatorPlan.sol:DDOperatorPlan",
+            "label": "adminRole",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_bytes32"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      },
+      "t_uint48": {
+        "encoding": "inplace",
+        "label": "uint48",
+        "numberOfBytes": "6"
+      }
+    }
+  }
+}
