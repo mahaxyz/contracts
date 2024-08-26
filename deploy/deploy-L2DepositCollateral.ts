@@ -13,7 +13,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
 
   await deployProxy(
     hre,
-    "L2DepositCollateral",
+    "L2DepositCollateralConnext",
     [
       zaiD.address, // IERC20 _xZAI,
       connextConfig[network.name].usdc, // IERC20 _depositToken,
@@ -21,15 +21,15 @@ async function main(hre: HardhatRuntimeEnvironment) {
       connextConfig[network.name].connext, // IConnext _connext,
       connextConfig[network.name].swapKeyNextUSDC, // bytes32 _swapKey,
       connextConfig.mainnet.domainId, // uint32 _bridgeDestinationDomain,
-      get("L1BridgeCollateral", "mainnet"), // address _bridgeTargetAddress,
+      get("L1BridgeCollateralConnext", "mainnet"), // address _bridgeTargetAddress,
       deployer, // address _owner,
       1e6, // uint256 _rate,
       1e6, // uint256 _sweepBatchSize
     ],
     proxyAdmin,
-    "L2DepositCollateral"
+    "L2DepositCollateralConnext"
   );
 }
 
-main.tags = ["L2DepositCollateral"];
+main.tags = ["L2DepositCollateralConnext"];
 export default main;

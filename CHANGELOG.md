@@ -1,5 +1,51 @@
 # Changelog
 
+## [1.7.0](https://github.com/mahaxyz/contracts/compare/v1.6.1...v1.7.0) (2024-08-24)
+
+
+### Features
+
+* Added layerzero native restaking ([#33](https://github.com/mahaxyz/contracts/issues/33)) ([0671863](https://github.com/mahaxyz/contracts/commit/06718634b7202b5c2884d23c9592c1f3b5d0804e))
+
+
+### Bug Fixes
+
+* added more multichain ofts ([#31](https://github.com/mahaxyz/contracts/issues/31)) ([4c0768d](https://github.com/mahaxyz/contracts/commit/4c0768dc5fdb0ed8d7ca52755807e795cb8ebc0e))
+
+## [1.6.1](https://github.com/mahaxyz/contracts/compare/v1.6.0...v1.6.1) (2024-08-20)
+
+
+### Features
+
+* maha oft ([#28](https://github.com/mahaxyz/contracts/issues/28)) ([0cdf8db](https://github.com/mahaxyz/contracts/commit/0cdf8dbc2543d09e020a167871195cb568f0aeac))
+
+
+### Bug Fixes
+
+* redeployed the xUSDz contract into base ([50f7e25](https://github.com/mahaxyz/contracts/commit/50f7e2593b225cec2e4921c870f9034975919729))
+
+## [1.6.0](https://github.com/mahaxyz/contracts/compare/v1.5.0...v1.6.0) (2024-08-20)
+
+
+### Features
+
+* added layerzero oft bridge ([#23](https://github.com/mahaxyz/contracts/issues/23)) ([06f5a77](https://github.com/mahaxyz/contracts/commit/06f5a775f0ca208016f4e69a7b9747a79037d35e))
+
+## [1.5.0](https://github.com/mahaxyz/contracts/compare/v1.4.1...v1.5.0) (2024-08-20)
+
+
+### Features
+
+* added staking pool for aerodrome sUSDzUSDC pool ([d9efb65](https://github.com/mahaxyz/contracts/commit/d9efb658cb9f63b16957ef9f1382166208b04f36))
+
+## [1.4.1](https://github.com/mahaxyz/contracts/compare/v1.4.0...v1.4.1) (2024-08-18)
+
+
+### Bug Fixes
+
+* added unit tests and deployed the zap for maha/usdz pool ([5cb5935](https://github.com/mahaxyz/contracts/commit/5cb593595751b59b4cb98efd29f1ca2ec7352831))
+* removed unwanted deployments and updated the audit script ([5366212](https://github.com/mahaxyz/contracts/commit/5366212043c91a5b8f7b868024bb9d60cb16e07d))
+
 ## [1.4.0](https://github.com/mahaxyz/contracts/compare/v1.3.0...v1.4.0) (2024-08-08)
 
 

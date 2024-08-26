@@ -7,7 +7,7 @@ guessProxy(
   "initialize",
   [
     "ZAI Stablecoin",
-    "USDz",
+    "xUSDz",
     "0x1f09ec21d7fd0a21879b919bf0f9c46e6b85ca8b", // admin
   ],
   "base"

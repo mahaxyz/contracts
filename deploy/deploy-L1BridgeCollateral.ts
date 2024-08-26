@@ -14,7 +14,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
 
   await deployProxy(
     hre,
-    "L1BridgeCollateral",
+    "L1BridgeCollateralConnext",
     [
       zaiD.address, // IERC20 _zai,
       xzaiD.address, // IERC20 _xZai,
@@ -24,9 +24,9 @@ async function main(hre: HardhatRuntimeEnvironment) {
       connextConfig.mainnet.connext, // address _connext
     ],
     proxyAdminD.address,
-    "L1BridgeCollateral"
+    "L1BridgeCollateralConnext"
   );
 }
 
-main.tags = ["L1BridgeCollateral"];
+main.tags = ["L1BridgeCollateralConnext"];
 export default main;

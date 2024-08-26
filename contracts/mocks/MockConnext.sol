@@ -13,9 +13,9 @@
 
 pragma solidity 0.8.21;
 
-import {IL1Bridge} from "../interfaces/periphery/IL1Bridge.sol";
 import {IConnext} from "../interfaces/periphery/connext/IConnext.sol";
 
+import {IL1BridgeConnext} from "../interfaces/periphery/connext/IL1BridgeConnext.sol";
 import {MockERC20} from "./MockERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -37,7 +37,7 @@ contract MockConnext is IConnext {
   ) external payable override returns (bytes32) {
     IERC20(_asset).transferFrom(msg.sender, address(this), _amount);
     MockERC20(bridgeMapping[_asset]).mint(_to, _amount);
-    IL1Bridge(_to).xReceive(0, _amount, bridgeMapping[_asset], msg.sender, 0, _callData);
+    IL1BridgeConnext(_to).xReceive(0, _amount, bridgeMapping[_asset], msg.sender, 0, _callData);
     return bytes32(0);
   }
 

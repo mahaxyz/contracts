@@ -27,12 +27,19 @@ const defaultAccount = {
 };
 
 const SKIP_LOAD = process.env.SKIP_LOAD === "true";
-const TASK_FOLDERS = ["connext", "misc"];
+const TASK_FOLDERS = ["connext", "misc", "layerzero"];
 
 // Prevent to load tasks before compilation and typechain
 if (!SKIP_LOAD) {
   loadTasks(TASK_FOLDERS);
 }
+
+const _network = (url: string, gasPrice: number | "auto" = "auto") => ({
+  url,
+  accounts: defaultAccount,
+  saveDeployments: true,
+  gasPrice,
+});
 
 const config: HardhatUserConfig = {
   abiExporter: {
@@ -79,31 +86,16 @@ const config: HardhatUserConfig = {
       // },
       accounts: defaultAccount,
     },
-    mainnet: {
-      url: `https://rpc.ankr.com/eth`,
-      accounts: defaultAccount,
-      saveDeployments: true,
-    },
-    base: {
-      url: `https://mainnet.base.org`,
-      accounts: defaultAccount,
-      saveDeployments: true,
-    },
-    sepolia: {
-      url: `https://rpc2.sepolia.org`,
-      accounts: defaultAccount,
-      saveDeployments: true,
-    },
-    arbitrum: {
-      url: "https://arb1.arbitrum.io/rpc",
-      accounts: defaultAccount,
-      saveDeployments: true,
-    },
-    arb_sepolia: {
-      url: "https://sepolia-rollup.arbitrum.io/rpc",
-      accounts: defaultAccount,
-      saveDeployments: true,
-    },
+    arbitrum: _network("https://arb1.arbitrum.io/rpc"),
+    base: _network("https://mainnet.base.org"),
+    bsc: _network("https://bsc-dataseed1.bnbchain.org"),
+    blast: _network("https://rpc.blast.io"),
+    linea: _network("https://rpc.linea.build"),
+    mainnet: _network("https://rpc.ankr.com/eth"),
+    optimism: _network("https://mainnet.optimism.io"),
+    scroll: _network("https://rpc.scroll.io", 1000000000),
+    sepolia: _network("https://rpc2.sepolia.org"),
+    xlayer: _network("https://xlayerrpc.okx.com"),
   },
   namedAccounts: {
     deployer: 0,
@@ -114,9 +106,49 @@ const config: HardhatUserConfig = {
       mainnet: process.env.ETHERSCAN_KEY || "",
       sepolia: process.env.ETHERSCAN_KEY || "",
       base: process.env.BASESCAN_KEY || "",
+      blast: process.env.BLASTSCAN_KEY || "",
+      bsc: process.env.BSCSCAN_KEY || "",
+      linea: process.env.LINEASCAN_KEY || "",
+      optimisticEthereum: process.env.OP_ETHERSCAN_KEY || "",
+      scroll: process.env.SCROLLSCAN_KEY || "",
       arbitrumOne: process.env.ARBISCAN_KEY || "",
-      arbitrumSepolia: process.env.ARBISCAN_KEY || "",
+      xlayer: "test",
     },
+    customChains: [
+      {
+        network: "xlayer",
+        chainId: 196,
+        urls: {
+          apiURL:
+            "https://www.oklink.com/api/v5/explorer/contract/verify-source-code-plugin/XLAYER",
+          browserURL: "https://www.oklink.com/xlayer",
+        },
+      },
+      {
+        network: "linea",
+        chainId: 59144,
+        urls: {
+          apiURL: "https://api.lineascan.build/api",
+          browserURL: "https://lineascan.build",
+        },
+      },
+      {
+        network: "blast",
+        chainId: 81457,
+        urls: {
+          apiURL: "https://api.blastscan.io/api",
+          browserURL: "https://blastscan.io",
+        },
+      },
+      {
+        network: "scroll",
+        chainId: 534352,
+        urls: {
+          apiURL: "https://api.scrollscan.com/api",
+          browserURL: "https://scrollscan.com",
+        },
+      },
+    ],
   },
 };
 

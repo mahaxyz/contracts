@@ -1,6 +1,6 @@
 {
   "name": "@mahaxyz/contracts",
-  "version": "1.4.0",
+  "version": "1.7.0",
   "license": "GPL-3.0",
   "scripts": {
     "build:blue": "cd lib/morpho-blue/ && yarn build:forge && cd ../..",
@@ -41,6 +41,8 @@
   "homepage": "https://github.com/mahaxyz/contracts#readme",
   "devDependencies": {
     "@ethersproject/bignumber": "^5.6.2",
+    "@layerzerolabs/lz-evm-oapp-v2": "^2.3.36",
+    "@layerzerolabs/lz-evm-protocol-v2": "^2.3.36",
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.4",
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
@@ -58,6 +60,7 @@
     "@types/lowdb": "1.0.9",
     "@types/mocha": "^9.1.1",
     "@types/node": "14.0.5",
+    "@types/underscore": "^1.11.15",
     "bluebird": "^3.7.2",
     "chai": "^4.2.0",
     "dotenv": "^16.4.5",
@@ -87,9 +90,12 @@
     "typescript": "^5.5.3"
   },
   "resolutions": {
+    "ethers": "^5.7.2",
+    "hardhat-deploy": "^0.12.1",
     "@openzeppelin/contracts": "^5.0.0"
   },
   "dependencies": {
-    "@layerzerolabs/lz-evm-oapp-v2": "^2.3.36"
+    "@layerzerolabs/lz-v2-utilities": "^2.3.36",
+    "underscore": "^1.13.7"
   }
 }

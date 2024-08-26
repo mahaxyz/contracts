@@ -15,10 +15,10 @@ pragma solidity 0.8.21;
 
 import {MockConnext} from "../../../contracts/mocks/MockConnext.sol";
 
-import {XERC20} from "../../../contracts/periphery/restaking/XERC20.sol";
-import {XERC20Lockbox} from "../../../contracts/periphery/restaking/XERC20Lockbox.sol";
-import {L1BridgeCollateral} from "../../../contracts/periphery/restaking/connext/L1BridgeCollateral.sol";
-import {L2DepositCollateral} from "../../../contracts/periphery/restaking/connext/L2DepositCollateral.sol";
+import {L1BridgeCollateralConnext} from "../../../contracts/periphery/restaking/connext/L1BridgeCollateralConnext.sol";
+import {L2DepositCollateralConnext} from "../../../contracts/periphery/restaking/connext/L2DepositCollateralConnext.sol";
+import {XERC20} from "../../../contracts/periphery/restaking/connext/XERC20.sol";
+import {XERC20Lockbox} from "../../../contracts/periphery/restaking/connext/XERC20Lockbox.sol";
 import "../base/BasePsmTest.sol";
 
 contract ConnextRestakingTest is BasePsmTest {
@@ -31,8 +31,8 @@ contract ConnextRestakingTest is BasePsmTest {
   MockERC20 remoteUSDC;
   MockERC20 remoteUSDCx;
 
-  L1BridgeCollateral l1Bridge;
-  L2DepositCollateral l2Bridge;
+  L1BridgeCollateralConnext l1Bridge;
+  L2DepositCollateralConnext l2Bridge;
 
   function setUp() external {
     _setUpPSM();
@@ -44,8 +44,8 @@ contract ConnextRestakingTest is BasePsmTest {
     remoteUSDC = new MockERC20("USDC", "USDC", 6);
     remoteUSDCx = new MockERC20("xUSDC", "xUSDC", 6);
     lockbox = new XERC20Lockbox();
-    l1Bridge = new L1BridgeCollateral();
-    l2Bridge = new L2DepositCollateral();
+    l1Bridge = new L1BridgeCollateralConnext();
+    l2Bridge = new L2DepositCollateralConnext();
 
     localZAI.initialize("ZAI", "xZAI", address(this));
     remoteZAI.initialize("ZAI", "xZAI", address(this));
