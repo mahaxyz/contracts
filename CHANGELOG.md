@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.1](https://github.com/mahaxyz/contracts/compare/v1.7.0...v1.7.1) (2024-08-27)
+
+
+### Features
+
+* Layer 2 hubs ([#25](https://github.com/mahaxyz/contracts/issues/25)) ([d23808b](https://github.com/mahaxyz/contracts/commit/d23808bc9c06155b57da54ee6fcd142c5f6f68ae))
+
+
+### Bug Fixes
+
+* fixed deployment of xlayer ([dcfe8dc](https://github.com/mahaxyz/contracts/commit/dcfe8dc00a950cb80da7f37a1293eb4f0be15031))
+
 ## [1.7.0](https://github.com/mahaxyz/contracts/compare/v1.6.1...v1.7.0) (2024-08-24)
 
 
