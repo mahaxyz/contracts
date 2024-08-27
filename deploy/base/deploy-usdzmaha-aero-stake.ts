@@ -1,6 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { deployProxy } from "../../scripts/utils";
-import { ZeroAddress } from "ethers";
+import { deployProxy, waitForTx } from "../../scripts/utils";
+import { MaxUint256, ZeroAddress } from "ethers";
 import assert from "assert";
 
 async function main(hre: HardhatRuntimeEnvironment) {
@@ -12,9 +12,9 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const usdcD = await deployments.get("USDC");
   const safe = "0x7427E82f5abCbcA2a45cAfE6e65cBC1FADf9ad9D";
 
-  const name = "Staked USDz/MAHA Pool"; // string memory _name,
+  const name = "Staked xUSDz/MAHA Pool"; // string memory _name,
   const symbol = "sUSDZMAHA"; // string memory _symbol,
-  const stakingToken = "0x2b58eb0a363b023d1840ff1a69fb5c9170172e1e";
+  const stakingToken = "0x6B22E989E1D74621ac4c8bcb62bcC7EE7c25b45A";
 
   const params = [
     name,
@@ -27,13 +27,22 @@ async function main(hre: HardhatRuntimeEnvironment) {
     ZeroAddress, // address _staking
   ];
 
-  await deployProxy(
+  const contractD = await deployProxy(
     hre,
     "StakingLPRewards",
     params,
     proxyAdminD.address,
     `StakingLPRewards-${symbol}`
   );
+
+  const lp = await hre.ethers.getContractAt("StakingLPRewards", stakingToken);
+  const contract = await hre.ethers.getContractAt(
+    "StakingLPRewards",
+    contractD.address
+  );
+
+  await waitForTx(await lp.approve(contract.target, MaxUint256));
+  await waitForTx(await contract.mint(1000, safe));
 }
 
 main.tags = ["StakingLPRewards-Aero-sUSDZMAHA"];
