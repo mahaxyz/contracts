@@ -1,5 +1,5 @@
 {
-  "address": "0x132eD59080dE3b5063B4859108bA36734B302bAC",
+  "address": "0x44D4B627997b41aBd2BF2ea05B731fE535f01C3D",
   "abi": [
     "constructor(string,string,address)",
     "error AddressEmptyCode(address)",
