@@ -29,20 +29,27 @@ async function main() {
   const contractD = await deployments.get("DDHub");
   const contract = await ethers.getContractAt("DDHubL1", contractD.address);
 
-  const hubD = await deployments.get("DDLayerZeroHub-Base-LZ");
-  const planD = await deployments.get("DDOperatorPlan-Base-LZ");
-  const cap = 10000000n * 10n ** 18n;
+  const hubD = await deployments.get("DDLayerZeroHub-OKX-LZ");
+  const planD = await deployments.get("DDOperatorPlan-OKX-LZ");
+  const cap = 500000n * 10n ** 18n;
 
-  const data = await contract.registerPool.populateTransaction(
-    hubD.address,
-    planD.address,
-    cap
+  const data1 = await contract.grantRole.populateTransaction(
+    "0xd8aa0f3194971a2a116679f7c2090f6939c8d4e01a2a8d7e41d55e5351469e63",
+    "0x1F09Ec21d7fd0A21879b919bf0f9C46e6b85CA8b"
   );
 
-  const executeTx = await timelock.schedule.populateTransaction(
-    data.to, // address target, arth
-    0, // uint256 value
-    data.data, // bytes calldata data, toggleTroveManager
+  // console.log(hubD.address, planD.address, cap);
+
+  const data2 = await contract.setGlobalDebtCeiling.populateTransaction(
+    "10000000000000000000000000"
+  );
+
+  console.log(data1, data2);
+
+  const executeTx = await timelock.scheduleBatch.populateTransaction(
+    [data1.to, data2.to], // address target, arth
+    [0, 0], // uint256 value
+    [data1.data, data2.data], // bytes calldata data, toggleTroveManager
     predecessor, // bytes32 predecessor,
     salt, // bytes32 salt,
     3600

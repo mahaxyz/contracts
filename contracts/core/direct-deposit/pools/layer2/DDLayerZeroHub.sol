@@ -63,7 +63,6 @@ contract DDLayerZeroHub is Initializable, DDBase {
   }
 
   function depositToBridge(uint256 wad) external payable {
-    bridged += wad;
     SendParam memory param = SendParam({
       dstEid: dstEid,
       to: bytes32(uint256(destinationL2)),
@@ -96,7 +95,7 @@ contract DDLayerZeroHub is Initializable, DDBase {
 
   /// @inheritdoc IDDPool
   function assetBalance() external view returns (uint256) {
-    return bridged + zai.balanceOf(me);
+    return bridged;
   }
 
   /// @inheritdoc IDDPool

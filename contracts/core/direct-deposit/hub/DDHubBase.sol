@@ -46,6 +46,7 @@ abstract contract DDHubBase is IDDHub, AccessControlEnumerableUpgradeable, Reent
 
   /// @inheritdoc IDDHub
   uint256 public globalDebtCeiling;
+  // TODO: globalDebtCeiling is not used globally but rather at a pool level. this needs to be fixed
 
   mapping(IDDPool => PoolInfo) internal _poolInfos;
 
