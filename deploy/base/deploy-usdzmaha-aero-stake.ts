@@ -12,9 +12,9 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const usdcD = await deployments.get("USDC");
   const safe = "0x7427E82f5abCbcA2a45cAfE6e65cBC1FADf9ad9D";
 
-  const name = "Staked xUSDz/USDC Pool"; // string memory _name,
-  const symbol = "sUSDZUSDC"; // string memory _symbol,
-  const stakingToken = "0x0A01B42F3B7CF0C56E5e04996FA090FC82A9B272";
+  const name = "Staked USDz/MAHA Pool"; // string memory _name,
+  const symbol = "sUSDZMAHA"; // string memory _symbol,
+  const stakingToken = "0x2b58eb0a363b023d1840ff1a69fb5c9170172e1e";
 
   const params = [
     name,
@@ -36,5 +36,5 @@ async function main(hre: HardhatRuntimeEnvironment) {
   );
 }
 
-main.tags = ["StakingLPRewards-Aero-sUSDZUSDC"];
+main.tags = ["StakingLPRewards-Aero-sUSDZMAHA"];
 export default main;
