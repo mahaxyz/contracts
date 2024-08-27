@@ -117,6 +117,7 @@ abstract contract MultiStakingRewardsERC4626 is
     staking = IOmnichainStaking(_staking);
 
     _grantRole(DEFAULT_ADMIN_ROLE, _governance);
+    _grantRole(DISTRIBUTOR_ROLE, _governance);
 
     if (_boostedTotalSupply == 0) {
       _boostedTotalSupply = totalSupply();
