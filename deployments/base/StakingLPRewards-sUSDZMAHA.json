@@ -1,5 +1,5 @@
 {
-  "address": "0x1097dFe9539350cb466dF9CA89A5e61195A520B0",
+  "address": "0x7D5a39744608A809c850f63CB1A3d3f9b4cAc586",
   "abi": [
     {
       "inputs": [],
@@ -1687,9 +1687,9 @@
     }
   ],
   "args": [
-    "Staked xUSDz/USDC Pool",
-    "sUSDZUSDC",
-    "0x72d509aff75753aaad6a10d3eb98f2dbc58c480d",
+    "Staked xUSDz/MAHA Pool",
+    "sUSDZMAHA",
+    "0x6B22E989E1D74621ac4c8bcb62bcC7EE7c25b45A",
     "0x7427E82f5abCbcA2a45cAfE6e65cBC1FADf9ad9D",
     "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
     "0x554bba833518793056CF105E66aBEA330672c0dE",

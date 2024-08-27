@@ -124,6 +124,10 @@ contract L2DepositCollateralL0 is OwnableUpgradeable, ReentrancyGuardUpgradeable
     allowedBridgeSweepers[_sweeper] = _allowed;
   }
 
+  function setStargatePool(address _stargate) external onlyOwner {
+    stargate = IStargate(_stargate);
+  }
+
   function recoverERC20(address _token, uint256 _amount, address _to) external onlyOwner {
     IERC20(_token).safeTransfer(_to, _amount);
   }

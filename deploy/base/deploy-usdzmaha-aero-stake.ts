@@ -7,15 +7,14 @@ async function main(hre: HardhatRuntimeEnvironment) {
   assert(hre.network.name === "base", "Wrong network");
   const { deployments } = hre;
 
-  const [deployer] = await hre.ethers.getSigners();
   const proxyAdminD = await deployments.get("ProxyAdmin");
   const mahaD = await deployments.get("MAHA");
   const usdcD = await deployments.get("USDC");
   const safe = "0x7427E82f5abCbcA2a45cAfE6e65cBC1FADf9ad9D";
 
-  const name = "Staked xUSDz/USDC Pool"; // string memory _name,
-  const symbol = "sUSDZUSDC"; // string memory _symbol,
-  const stakingToken = "0x72d509aff75753aaad6a10d3eb98f2dbc58c480d";
+  const name = "Staked xUSDz/MAHA Pool"; // string memory _name,
+  const symbol = "sUSDZMAHA"; // string memory _symbol,
+  const stakingToken = "0x6B22E989E1D74621ac4c8bcb62bcC7EE7c25b45A";
 
   const params = [
     name,
@@ -46,5 +45,5 @@ async function main(hre: HardhatRuntimeEnvironment) {
   await waitForTx(await contract.mint(1000, safe));
 }
 
-main.tags = ["StakingLPRewards-Aero-sUSDZUSDC"];
+main.tags = ["StakingLPRewards-Aero-sUSDZMAHA"];
 export default main;
