@@ -94,7 +94,7 @@ const config: HardhatUserConfig = {
     mainnet: _network("https://rpc.ankr.com/eth"),
     zircuit: _network("https://zircuit-mainnet.drpc.org"),
     optimism: _network("https://mainnet.optimism.io"),
-    scroll: _network("https://rpc.scroll.io", 1000000000),
+    scroll: _network("https://rpc.ankr.com/scroll", 1100000000),
     sepolia: _network("https://rpc2.sepolia.org"),
     xlayer: _network("https://xlayerrpc.okx.com"),
   },

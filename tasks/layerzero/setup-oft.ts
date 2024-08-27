@@ -13,20 +13,26 @@
   npx hardhat setup-oft --token zai --network scroll
 
  */
+import _ from "underscore";
+import { config, IL0Config, IL0ConfigKey } from "./config";
+import { EnforcedOptionParamStruct } from "../../types/@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT";
+import { Options } from "@layerzerolabs/lz-v2-utilities";
 import { task } from "hardhat/config";
 import { waitForTx } from "../../scripts/utils";
-import { config, IL0Config, IL0ConfigKey } from "./config";
-import _ from "underscore";
-import { Options } from "@layerzerolabs/lz-v2-utilities";
-import { EnforcedOptionParamStruct } from "../../types/@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT";
 
 const _fetchAndSortDVNS = (
   conf: IL0Config,
   dvns: string[] = [],
-  remoteDvns: string[] = []
+  remoteDvns: string[] = [],
+  limit: number = 5000
 ) => {
   const commonDVNs = _.intersection(dvns, remoteDvns);
-  return commonDVNs.map((dvn) => conf.dvns[dvn]).sort();
+  return _.first(commonDVNs.map((dvn) => conf.dvns[dvn]).sort(), limit);
+};
+
+const _fetchOptionalDVNs = (conf: IL0Config) => {
+  const dvns = Object.keys(conf.dvns);
+  return _.difference(dvns, conf.requiredDVNs);
 };
 
 task(`setup-oft`, `Sets up the OFT with the right DVNs`)
@@ -79,7 +85,12 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
       );
 
       const requiredDVNs = _fetchAndSortDVNS(c, c.requiredDVNs, r.requiredDVNs);
-      const optionalDVNs = _fetchAndSortDVNS(c, c.optionalDVNs, r.optionalDVNs);
+      const optionalDVNs = _fetchAndSortDVNS(
+        c,
+        _fetchOptionalDVNs(c),
+        _fetchOptionalDVNs(r),
+        5
+      );
 
       if (requiredDVNs.length === 0 && optionalDVNs.length === 0) {
         console.log("no DVNs to set up for remote network", remoteNetwork);
@@ -93,7 +104,10 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
         confirmations: c.confirmations,
         requiredDVNCount: requiredDVNs.length,
         optionalDVNCount: optionalDVNs.length,
-        optionalDVNThreshold: c.optionalDVNThreshold,
+        optionalDVNThreshold: Math.min(
+          c.optionalDVNThreshold,
+          optionalDVNs.length
+        ),
         requiredDVNs: requiredDVNs,
         optionalDVNs: optionalDVNs,
       };
@@ -138,8 +152,6 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
         r.eid,
         2
       );
-
-      const enforcedOptions = await oft.enforcedOptions(r.eid, 1);
 
       // setup the send config
       if (currentUlnSend != setConfigParamUlnSend.config)
