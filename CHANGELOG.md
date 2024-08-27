@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.2](https://github.com/mahaxyz/contracts/compare/v1.7.1...v1.7.2) (2024-08-27)
+
+
+### Bug Fixes
+
+* redeploy ofts ([#35](https://github.com/mahaxyz/contracts/issues/35)) ([26b6953](https://github.com/mahaxyz/contracts/commit/26b6953355e4dd22dceadc2737533a95012f1b7f))
+
 ## [1.7.1](https://github.com/mahaxyz/contracts/compare/v1.7.0...v1.7.1) (2024-08-27)
 
 
