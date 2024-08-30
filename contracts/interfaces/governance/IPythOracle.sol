@@ -13,18 +13,12 @@
 
 pragma solidity 0.8.21;
 
-interface IAggregatorV3Interface {
-  function decimals() external view returns (uint8);
+import {IAggregatorV3Interface} from "./IAggregatorV3Interface.sol";
 
-  function description() external pure returns (string memory);
+interface IPythOracle is IAggregatorV3Interface {
+  function priceId() external view returns (bytes32);
 
-  function getAnswer(uint256) external view returns (int256);
+  function pyth() external view returns (address);
 
-  function getTimestamp(uint256) external view returns (uint256);
-
-  function latestAnswer() external view returns (int256);
-
-  function latestTimestamp() external view returns (uint256);
-
-  function version() external pure returns (uint256);
+  function updateFeeds(bytes[] calldata priceUpdateData) external payable;
 }

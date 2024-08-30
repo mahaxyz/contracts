@@ -46,13 +46,13 @@ async function main() {
 
   console.log(data1, data2);
 
-  const executeTx = await timelock.scheduleBatch.populateTransaction(
+  const executeTx = await timelock.executeBatch.populateTransaction(
     [data1.to, data2.to], // address target, arth
     [0, 0], // uint256 value
     [data1.data, data2.data], // bytes calldata data, toggleTroveManager
     predecessor, // bytes32 predecessor,
-    salt, // bytes32 salt,
-    3600
+    salt // bytes32 salt,
+    // 3600
   );
   console.log(executeTx);
 
