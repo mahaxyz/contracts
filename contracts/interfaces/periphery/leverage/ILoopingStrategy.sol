@@ -32,7 +32,7 @@ interface ILoopingStrategy {
   struct IncreasePosParams {
     address tokenIn; // token to transfer from msg.sender
     uint256 amtIn; // amount to transfer from msg.sender
-    address collPool; // collateral pool (aToken)
+    address collPool; // collateral pool (aToken or LP token)
     address borrPool; // borrowing pool (debt token)
     uint256 borrAmt; // borrowing amount
     SwapInfo swapInfo; // swap info
