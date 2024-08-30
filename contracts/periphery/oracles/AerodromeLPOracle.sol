@@ -22,16 +22,16 @@ import {IUniswapV2Pair} from "../../interfaces/periphery/uniswap/IUniswapV2Pair.
 /// @dev Reference from
 /// https://github.com/AlphaFinanceLab/alpha-homora-v2-contract/blob/master/contracts/oracle/UniswapV2Oracle.sol
 contract AerodromeLPOracle is IAggregatorV3Interface {
-  uint8 public immutable decimals;
+  uint8 public immutable decimals = 8;
 
   IUniswapV2Pair public immutable pool;
   IAggregatorV3Interface public immutable tokenAPriceFeed;
   IAggregatorV3Interface public immutable tokenBPriceFeed;
 
-  constructor(uint8 _decimals, address _tokenAPriceFeed, address _tokenBPriceFeed) {
+  constructor(address _tokenAPriceFeed, address _tokenBPriceFeed, address _pool) {
     tokenAPriceFeed = IAggregatorV3Interface(_tokenAPriceFeed);
     tokenBPriceFeed = IAggregatorV3Interface(_tokenBPriceFeed);
-    decimals = _decimals;
+    pool = IUniswapV2Pair(_pool);
   }
 
   function description() public pure override returns (string memory) {
@@ -67,7 +67,7 @@ contract AerodromeLPOracle is IAggregatorV3Interface {
     require(px0 > 0 && px1 > 0, "Invalid Price");
 
     uint256 sqrtK = (sqrt(reserve0 * reserve1) * 1e18) / pool.totalSupply();
-    price = (sqrtK * 2 * sqrt(uint256(px0 * px1))) / 1e18;
+    price = (sqrtK * 2 * sqrt(uint256(px0 * px1))) / 1e22;
   }
 
   /// @notice Computes the square root of a given number using the Babylonian method.
