@@ -13,10 +13,10 @@
 
 pragma solidity 0.8.21;
 
-import {ZapCurvePoolBase} from "./ZapCurvePoolBase.sol";
+import {ZapBase} from "../../ZapBase.sol";
 
-contract ZapCurvePoolUSDC is ZapCurvePoolBase {
-  constructor(address _staking, address _psm) ZapCurvePoolBase(_staking, _psm) {
+contract ZapCurvePoolUSDC is ZapBase {
+  constructor(address _staking, address _psm) ZapBase(_staking, _psm) {
     // nothing
   }
 
@@ -34,11 +34,11 @@ contract ZapCurvePoolUSDC is ZapCurvePoolBase {
     uint256 zaiAmount = collateralAmount * decimalOffset / 2;
     psm.mint(address(this), zaiAmount);
 
-    // add liquidity
-    uint256[] memory amounts = new uint256[](2);
-    amounts[0] = collateralAmount / 2;
-    amounts[1] = zaiAmount;
-    pool.add_liquidity(amounts, minLpAmount, me);
+    // // add liquidity
+    // uint256[] memory amounts = new uint256[](2);
+    // amounts[0] = collateralAmount / 2;
+    // amounts[1] = zaiAmount;
+    // pool.add_liquidity(amounts, minLpAmount, me);
 
     // we now have LP tokens; deposit into staking contract for the user
     staking.deposit(pool.balanceOf(address(this)), msg.sender);

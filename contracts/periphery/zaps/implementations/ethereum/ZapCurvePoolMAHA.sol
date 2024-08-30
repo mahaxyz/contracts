@@ -13,15 +13,15 @@
 
 pragma solidity 0.8.21;
 
-import {IERC4626, ZapCurvePoolBase} from "./ZapCurvePoolBase.sol";
+import {ZapBase, ZapCurvePoolBase} from "../../ZapCurvePoolBase.sol";
+import {IERC20Metadata} from "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
 
-contract ZapCurvePoolsUSDz is ZapCurvePoolBase {
-  IERC4626 public stakingUSDz;
+contract ZapCurvePoolMAHA is ZapCurvePoolBase {
+  IERC20Metadata public maha;
 
-  constructor(address _staking, address _stakingUSDz, address _psm) ZapCurvePoolBase(_staking, _psm) {
-    stakingUSDz = IERC4626(_stakingUSDz);
-    zai.approve(address(stakingUSDz), type(uint256).max);
-    stakingUSDz.approve(address(pool), type(uint256).max);
+  constructor(address _staking, address _maha, address _psm) ZapBase(_staking, _psm) {
+    maha = IERC20Metadata(_maha);
+    maha.approve(address(pool), type(uint256).max);
   }
 
   /**
@@ -34,19 +34,18 @@ contract ZapCurvePoolsUSDz is ZapCurvePoolBase {
     // fetch tokens
     collateral.transferFrom(msg.sender, me, collateralAmount);
 
-    // convert 100% collateral for zai
+    // convert 50% collateral for zai
     uint256 zaiAmount = collateralAmount * decimalOffset;
     psm.mint(address(this), zaiAmount);
 
-    // stake 50% collateral for sUSDz
-    stakingUSDz.deposit(zaiAmount / 2, me);
+    // convert 50% collateral for maha
+    // todo
 
     // add liquidity
-    uint256[] memory amounts = new uint256[](2);
-    amounts[0] = zaiAmount / 2;
-    amounts[1] = zaiAmount / 2;
-
-    pool.add_liquidity(amounts, minLpAmount, me);
+    // uint256[2] memory amounts;
+    // amounts[0] = collateralAmount / 2;
+    // amounts[1] = collateralAmount / 2;
+    // router.add_liquidity(address(pool), amounts, minLpAmount);
 
     // we now have LP tokens; deposit into staking contract for the user
     staking.deposit(pool.balanceOf(address(this)), msg.sender);
@@ -54,7 +53,7 @@ contract ZapCurvePoolsUSDz is ZapCurvePoolBase {
     // sweep any dust
     _sweep(zai);
     _sweep(collateral);
-    _sweep(stakingUSDz);
+    _sweep(maha);
 
     emit Zapped(msg.sender, collateralAmount / 2, zaiAmount, pool.balanceOf(msg.sender));
   }

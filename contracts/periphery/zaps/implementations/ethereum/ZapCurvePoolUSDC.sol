@@ -13,14 +13,12 @@
 
 pragma solidity 0.8.21;
 
-import {IERC20Metadata, ZapCurvePoolBase} from "./ZapCurvePoolBase.sol";
+import {ICurveStableSwapNG} from "../../../../interfaces/periphery/ICurveStableSwapNG.sol";
+import {ZapBase, ZapCurvePoolBase} from "../../ZapCurvePoolBase.sol";
 
-contract ZapCurvePoolMAHA is ZapCurvePoolBase {
-  IERC20Metadata public maha;
-
-  constructor(address _staking, address _maha, address _psm) ZapCurvePoolBase(_staking, _psm) {
-    maha = IERC20Metadata(_maha);
-    maha.approve(address(pool), type(uint256).max);
+contract ZapCurvePoolUSDC is ZapCurvePoolBase {
+  constructor(address _staking, address _psm) ZapBase(_staking, _psm) {
+    // nothing
   }
 
   /**
@@ -34,17 +32,14 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
     collateral.transferFrom(msg.sender, me, collateralAmount);
 
     // convert 50% collateral for zai
-    uint256 zaiAmount = collateralAmount * decimalOffset;
+    uint256 zaiAmount = collateralAmount * decimalOffset / 2;
     psm.mint(address(this), zaiAmount);
 
-    // convert 50% collateral for maha
-    // todo
-
     // add liquidity
-    // uint256[2] memory amounts;
-    // amounts[0] = collateralAmount / 2;
-    // amounts[1] = collateralAmount / 2;
-    // router.add_liquidity(address(pool), amounts, minLpAmount);
+    uint256[] memory amounts = new uint256[](2);
+    amounts[0] = collateralAmount / 2;
+    amounts[1] = zaiAmount;
+    ICurveStableSwapNG(address(pool)).add_liquidity(amounts, minLpAmount, me);
 
     // we now have LP tokens; deposit into staking contract for the user
     staking.deposit(pool.balanceOf(address(this)), msg.sender);
@@ -52,7 +47,6 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
     // sweep any dust
     _sweep(zai);
     _sweep(collateral);
-    _sweep(maha);
 
     emit Zapped(msg.sender, collateralAmount / 2, zaiAmount, pool.balanceOf(msg.sender));
   }

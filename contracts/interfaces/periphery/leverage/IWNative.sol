@@ -13,8 +13,8 @@
 
 pragma solidity 0.8.21;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+interface IWNative {
+  function deposit() external payable;
 
-contract MorphoLeverage {
-// todo
+  function withdraw(uint256 wad) external;
 }

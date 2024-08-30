@@ -14,7 +14,7 @@
 pragma solidity 0.8.21;
 
 import {IAggregatorV3Interface} from "../../interfaces/governance/IAggregatorV3Interface.sol";
-import {IUniswapV2Pair} from "../../interfaces/periphery/uniswap/IUniswapV2Pair.sol";
+import {IUniswapV2Pair} from "../../interfaces/periphery/dex/IUniswapV2Pair.sol";
 
 /// @title AerodromeLPOracle
 /// @author maha.xyz

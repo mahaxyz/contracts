@@ -17,7 +17,7 @@ import {PegStabilityModule} from "../../../../contracts/core/psm/PegStabilityMod
 import {StakingLPRewards} from "../../../../contracts/periphery/staking/StakingLPRewards.sol";
 
 import {IERC20, MockCurvePool} from "../../../../contracts/mocks/MockCurvePool.sol";
-import {ZapCurvePoolUSDC} from "../../../../contracts/periphery/zaps/ZapCurvePoolUSDC.sol";
+import {ZapCurvePoolUSDC} from "../../../../contracts/periphery/zaps/implementations/ethereum/ZapCurvePoolUSDC.sol";
 import {BaseZaiTest, console} from "../../base/BaseZaiTest.sol";
 
 contract ZapCurvePoolUSDCTest is BaseZaiTest {
