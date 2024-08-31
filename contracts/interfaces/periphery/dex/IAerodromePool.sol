@@ -108,6 +108,8 @@ interface IAerodromePool {
   /// @notice Amount of unclaimed, but claimable tokens from fees of token1 for an LP
   function claimable1(address) external view returns (uint256);
 
+  function totalSupply() external view returns (uint256);
+
   /// @notice Returns the value of K in the Pool, based on its reserves.
   function getK() external returns (uint256);
 

@@ -14,7 +14,7 @@
 pragma solidity 0.8.21;
 
 import {IAggregatorV3Interface} from "../../interfaces/governance/IAggregatorV3Interface.sol";
-import {IUniswapV2Pair} from "../../interfaces/periphery/dex/IUniswapV2Pair.sol";
+import {IAerodromePool} from "../../interfaces/periphery/dex/IAerodromePool.sol";
 
 /// @title AerodromeLPOracle
 /// @author maha.xyz
@@ -24,14 +24,23 @@ import {IUniswapV2Pair} from "../../interfaces/periphery/dex/IUniswapV2Pair.sol"
 contract AerodromeLPOracle is IAggregatorV3Interface {
   uint8 public immutable decimals = 18;
 
-  IUniswapV2Pair public immutable pool;
+  IAerodromePool public immutable pool;
   IAggregatorV3Interface public immutable tokenAPriceFeed;
   IAggregatorV3Interface public immutable tokenBPriceFeed;
+
+  bool internal immutable stable;
+  uint256 internal immutable decimals0;
+  uint256 internal immutable decimals1;
 
   constructor(address _tokenAPriceFeed, address _tokenBPriceFeed, address _pool) {
     tokenAPriceFeed = IAggregatorV3Interface(_tokenAPriceFeed);
     tokenBPriceFeed = IAggregatorV3Interface(_tokenBPriceFeed);
-    pool = IUniswapV2Pair(_pool);
+    pool = IAerodromePool(_pool);
+    stable = pool.stable();
+
+    (uint256 dec0, uint256 dec1,,,,,) = pool.metadata();
+    decimals0 = dec0;
+    decimals1 = dec1;
   }
 
   function description() public pure override returns (string memory) {
@@ -66,8 +75,8 @@ contract AerodromeLPOracle is IAggregatorV3Interface {
 
     require(px0 > 0 && px1 > 0, "Invalid Price");
 
-    uint256 sqrtK = (sqrt(reserve0 * reserve1) * 1e18) / pool.totalSupply();
-    price = (sqrtK * 2 * sqrt(uint256(px0 * px1)));
+    uint256 sqrtK = (sqrt(_k(reserve0, reserve1)) * 1e18) / pool.totalSupply();
+    price = (sqrtK * 2 * sqrt(uint256(px0 * px1))) / 1e2;
   }
 
   /// @notice Computes the square root of a given number using the Babylonian method.
@@ -81,6 +90,18 @@ contract AerodromeLPOracle is IAggregatorV3Interface {
     while (z < y) {
       y = z;
       z = (x / z + z) / 2;
+    }
+  }
+
+  function _k(uint256 x, uint256 y) internal view returns (uint256) {
+    if (stable) {
+      uint256 _x = (x * 1e18) / decimals0;
+      uint256 _y = (y * 1e18) / decimals1;
+      uint256 _a = (_x * _y) / 1e18;
+      uint256 _b = ((_x * _x) / 1e18 + (_y * _y) / 1e18);
+      return (_a * _b) / 1e18; // x3y+y3x >= k
+    } else {
+      return x * y; // xy >= k
     }
   }
 
