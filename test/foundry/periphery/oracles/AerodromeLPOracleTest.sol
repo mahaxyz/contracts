@@ -15,6 +15,12 @@ pragma solidity 0.8.21;
 
 import {AerodromeLPOracle, IAerodromePool} from "../../../../contracts/periphery/oracles/AerodromeLPOracle.sol";
 import {FixedPriceOracle} from "../../../../contracts/periphery/oracles/FixedPriceOracle.sol";
+
+import {
+  AggregatorV3Interface,
+  IERC4626,
+  MorphoChainlinkOracleV2
+} from "../../../../lib/morpho-blue-oracles/src/morpho-chainlink/MorphoChainlinkOracleV2.sol";
 import {BaseZaiTest, IERC20, console} from "../../base/BaseZaiTest.sol";
 
 contract AerodromeLPOracleTest is BaseZaiTest {
@@ -30,16 +36,26 @@ contract AerodromeLPOracleTest is BaseZaiTest {
     pool = IAerodromePool(0x72d509aFF75753aAaD6A10d3EB98f2DBC58C480D);
 
     FixedPriceOracle fixedOracle = new FixedPriceOracle(1e8, 8);
-
     AerodromeLPOracle oracle = new AerodromeLPOracle(address(fixedOracle), address(fixedOracle), address(pool));
 
-    // assertGe(_pool.balanceOf(address(_staking)), 0, "!pool.balanceOf(staking)");
+    // 0.029999999999998 ETH = 60,000$ of LP at this block
+
     console.log("oracle.description():", oracle.getPriceFor(29_999_999_999_998_000));
-    assertEq(oracle.getPriceFor(29_999_999_999_998_000), 50_000, "!oracle.getPriceFor");
+    assertEq(oracle.getPriceFor(29_999_999_999_998_000), 60_000, "!oracle.getPriceFor");
 
-    // assertEq(_zai.balanceOf(address(_zap)), 0, "!zai.balanceOf(zap)");
-    // assertEq(_usdc.balanceOf(address(_zap)), 0, "!usdc.balanceOf(zap)");
+    MorphoChainlinkOracleV2 morphoOracle = new MorphoChainlinkOracleV2(
+      IERC4626(address(0)), // IERC4626 baseVault,
+      1, // uint256 baseVaultConversionSample,
+      AggregatorV3Interface(address(0)), // AggregatorV3Interface baseFeed1,
+      AggregatorV3Interface(address(0)), // AggregatorV3Interface baseFeed2,
+      1, // uint256 baseTokenDecimals,
+      IERC4626(address(0)), // IERC4626 quoteVault,
+      1, // uint256 quoteVaultConversionSample,
+      AggregatorV3Interface(address(0)), // AggregatorV3Interface quoteFeed1,
+      AggregatorV3Interface(address(0)), // AggregatorV3Interface quoteFeed2,
+      1 // uint256 quoteTokenDecimals
+    );
 
-    // assertApproxEqAbs(_staking.balanceOf(user), 100e18, 1e18, "!staking.balanceOf(user)");
+    assertEq(morphoOracle.price(), 50_000, "!morphoOracle.price");
   }
 }
