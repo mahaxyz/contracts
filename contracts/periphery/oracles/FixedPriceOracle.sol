@@ -27,27 +27,45 @@ contract FixedPriceOracle is IAggregatorV3Interface {
     price = _price;
   }
 
-  function description() external pure override returns (string memory) {
-    return "";
+  function description() public pure override returns (string memory) {
+    return "An oracle with a fixed price";
   }
 
-  function getAnswer(uint256) external view override returns (int256) {
+  function getAnswer(uint256) public view override returns (int256) {
     return price;
   }
 
-  function getTimestamp(uint256) external view override returns (uint256) {
+  function getTimestamp(uint256) public view override returns (uint256) {
     return block.timestamp;
   }
 
-  function latestAnswer() external view override returns (int256) {
+  function latestAnswer() public view override returns (int256) {
     return price;
   }
 
-  function latestTimestamp() external view override returns (uint256) {
+  function latestTimestamp() public view override returns (uint256) {
     return block.timestamp;
   }
 
-  function version() external pure override returns (uint256) {
+  function version() public pure override returns (uint256) {
     return 1;
+  }
+
+  function getRoundData(uint80)
+    public
+    view
+    override
+    returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
+  {
+    return (0, latestAnswer(), block.timestamp, block.timestamp, 0);
+  }
+
+  function latestRoundData()
+    public
+    view
+    override
+    returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
+  {
+    return getRoundData(0);
   }
 }

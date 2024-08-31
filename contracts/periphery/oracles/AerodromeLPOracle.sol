@@ -22,7 +22,7 @@ import {IUniswapV2Pair} from "../../interfaces/periphery/dex/IUniswapV2Pair.sol"
 /// @dev Reference from
 /// https://github.com/AlphaFinanceLab/alpha-homora-v2-contract/blob/master/contracts/oracle/UniswapV2Oracle.sol
 contract AerodromeLPOracle is IAggregatorV3Interface {
-  uint8 public immutable decimals = 8;
+  uint8 public immutable decimals = 18;
 
   IUniswapV2Pair public immutable pool;
   IAggregatorV3Interface public immutable tokenAPriceFeed;
@@ -35,7 +35,7 @@ contract AerodromeLPOracle is IAggregatorV3Interface {
   }
 
   function description() public pure override returns (string memory) {
-    return "";
+    return "An oracle that prices the LP tokens of Aerodrome";
   }
 
   function getAnswer(uint256) public view override returns (int256) {
@@ -51,7 +51,7 @@ contract AerodromeLPOracle is IAggregatorV3Interface {
   }
 
   function getPriceFor(uint256 amount) public view returns (int256) {
-    return latestAnswer() * int256(amount) / 1e8;
+    return (latestAnswer() * int256(amount)) / 1e18;
   }
 
   /// @notice Gets the price of the liquidity pool token.
@@ -67,7 +67,7 @@ contract AerodromeLPOracle is IAggregatorV3Interface {
     require(px0 > 0 && px1 > 0, "Invalid Price");
 
     uint256 sqrtK = (sqrt(reserve0 * reserve1) * 1e18) / pool.totalSupply();
-    price = (sqrtK * 2 * sqrt(uint256(px0 * px1))) / 1e22;
+    price = (sqrtK * 2 * sqrt(uint256(px0 * px1)));
   }
 
   /// @notice Computes the square root of a given number using the Babylonian method.
@@ -90,5 +90,23 @@ contract AerodromeLPOracle is IAggregatorV3Interface {
 
   function version() public pure override returns (uint256) {
     return 1;
+  }
+
+  function getRoundData(uint80)
+    public
+    view
+    override
+    returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
+  {
+    return (0, latestAnswer(), block.timestamp, block.timestamp, 0);
+  }
+
+  function latestRoundData()
+    public
+    view
+    override
+    returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)
+  {
+    return getRoundData(0);
   }
 }

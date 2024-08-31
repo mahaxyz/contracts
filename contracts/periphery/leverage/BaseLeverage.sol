@@ -66,6 +66,14 @@ abstract contract BaseLeverage is ReentrancyGuard, ILoopingStrategy {
 
   function _decreasePos(DecreasePosParams memory params) internal virtual returns (uint256 amtOut);
 
+  function _reducePos(
+    address collPool,
+    uint256 collAmt,
+    address borrToken,
+    uint256 repayAmt,
+    address onBehalfOf
+  ) internal virtual returns (uint256);
+
   function _ensureApprove(address _token, address _to, uint256 _amt) internal {
     if (IERC20(_token).allowance(address(this), _to) < _amt) {
       IERC20(_token).forceApprove(_to, type(uint256).max);

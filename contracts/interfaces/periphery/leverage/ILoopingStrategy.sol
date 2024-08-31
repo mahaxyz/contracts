@@ -67,6 +67,14 @@ interface ILoopingStrategy {
     REPAY_DEBT_WITH_COLLATERAL
   }
 
+  struct FlashLoanParams {
+    address caller; // user who initiated the transaction
+    bytes inputParams; // input params for transaction
+    address flashLoanToken;
+    uint256 flashLoanAmt;
+    OPERATION operation; // operation type
+  }
+
   /// @dev flash loan to execute increase position size
   function increasePos(IncreasePosParams calldata params) external;
 

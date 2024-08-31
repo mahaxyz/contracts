@@ -26,7 +26,7 @@ interface IZapIntoLP {
 /// @title MorphoLeverage
 /// @author maha.xyz
 /// @notice Leverages contract on Morpho with LP tokens
-abstract contract MorphoLeverage is BaseLeverageWithSwap {
+abstract contract MorphoLeverageLP is BaseLeverageWithSwap {
   using SafeERC20 for IERC20;
 
   address public immutable MORPHO;
