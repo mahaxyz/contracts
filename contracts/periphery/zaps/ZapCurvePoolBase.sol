@@ -14,7 +14,7 @@
 pragma solidity 0.8.21;
 
 import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
-import {ICurveStableSwapNG} from "../../interfaces/periphery/ICurveStableSwapNG.sol";
+import {ICurveStableSwapNG} from "../../interfaces/periphery/curve/ICurveStableSwapNG.sol";
 import {ZapBase} from "./ZapBase.sol";
 
 /**
@@ -36,10 +36,7 @@ abstract contract ZapCurvePoolBase is ZapBase {
     if (collateralAmount > 0) collateral.transferFrom(msg.sender, me, collateralAmount);
 
     // add liquidity
-    uint256[] memory amounts = new uint256[](2);
-    amounts[0] = zaiAmount;
-    amounts[1] = collateralAmount;
-    ICurveStableSwapNG(address(pool)).add_liquidity(amounts, minLpAmount, address(this));
+    _addLiquidity(zaiAmount, collateralAmount, minLpAmount);
 
     // we now have LP tokens; deposit into staking contract for the user
     staking.deposit(pool.balanceOf(address(this)), msg.sender);
@@ -50,4 +47,6 @@ abstract contract ZapCurvePoolBase is ZapBase {
 
     emit Zapped(msg.sender, collateralAmount, zaiAmount, pool.balanceOf(msg.sender));
   }
+
+  function _addLiquidity(uint256 zaiAmt, uint256 collatAmt, uint256 minLp) internal virtual;
 }

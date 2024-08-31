@@ -48,8 +48,8 @@ abstract contract MorphoLeverageLP is BaseLeverageWithSwap {
 
   function _decreasePos(DecreasePosParams memory params) internal override returns (uint256 amtOut) {
     // todo
-
     // swap LP tokens into USDC
     zap.zapOutOfLP(params.collAmt, 0);
+    amtOut = 0;
   }
 }

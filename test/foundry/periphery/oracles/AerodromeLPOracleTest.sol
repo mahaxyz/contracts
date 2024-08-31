@@ -22,7 +22,7 @@ contract AerodromeLPOracleTest is BaseZaiTest {
 
   string BASE_RPC_URL = vm.envString("BASE_RPC_URL");
 
-  function test_zap_fork() public {
+  function test_oracle_lp() public {
     uint256 mainnetFork = vm.createFork(BASE_RPC_URL);
     vm.selectFork(mainnetFork);
     vm.rollFork(19_141_574);
@@ -34,7 +34,8 @@ contract AerodromeLPOracleTest is BaseZaiTest {
     AerodromeLPOracle oracle = new AerodromeLPOracle(address(fixedOracle), address(fixedOracle), address(pool));
 
     // assertGe(_pool.balanceOf(address(_staking)), 0, "!pool.balanceOf(staking)");
-    // assertEq(oracle.getPriceFor(29_999_999_999_998_000), 50_000, "!oracle.getPriceFor");
+    console.log("oracle.description():", oracle.getPriceFor(29_999_999_999_998_000));
+    assertEq(oracle.getPriceFor(29_999_999_999_998_000), 50_000, "!oracle.getPriceFor");
 
     // assertEq(_zai.balanceOf(address(_zap)), 0, "!zai.balanceOf(zap)");
     // assertEq(_usdc.balanceOf(address(_zap)), 0, "!usdc.balanceOf(zap)");
