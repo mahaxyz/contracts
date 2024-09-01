@@ -40,7 +40,12 @@ contract AerodromeLPOracleTest is BaseZaiTest {
 
     // 0.029999999999998 ETH = 60,000$ of LP at this block
 
-    console.log("oracle.description():", oracle.getPriceFor(29_999_999_999_998_000));
+    // assertEq(oracle.getK(), pool.getK(), "!oracle.getK");
+
+    console.log("oracle.decimals0", oracle.decimals0());
+    console.log("oracle.decimals1", oracle.decimals1());
+    console.log("oracle.getPriceFor():", oracle.getPriceFor(29_999_999_999_998_000));
+
     assertEq(oracle.getPriceFor(29_999_999_999_998_000), 60_000, "!oracle.getPriceFor");
 
     MorphoChainlinkOracleV2 morphoOracle = new MorphoChainlinkOracleV2(
@@ -56,6 +61,6 @@ contract AerodromeLPOracleTest is BaseZaiTest {
       1 // uint256 quoteTokenDecimals
     );
 
-    assertEq(morphoOracle.price(), 50_000, "!morphoOracle.price");
+    assertEq(morphoOracle.price() / 1e36, 50_000, "!morphoOracle.price");
   }
 }

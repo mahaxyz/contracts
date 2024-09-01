@@ -28,9 +28,9 @@ contract AerodromeLPOracle is IAggregatorV3Interface {
   IAggregatorV3Interface public immutable tokenAPriceFeed;
   IAggregatorV3Interface public immutable tokenBPriceFeed;
 
-  bool internal immutable stable;
-  uint256 internal immutable decimals0;
-  uint256 internal immutable decimals1;
+  bool public immutable stable;
+  uint256 public immutable decimals0;
+  uint256 public immutable decimals1;
 
   constructor(address _tokenAPriceFeed, address _tokenBPriceFeed, address _pool) {
     tokenAPriceFeed = IAggregatorV3Interface(_tokenAPriceFeed);
@@ -68,22 +68,21 @@ contract AerodromeLPOracle is IAggregatorV3Interface {
   /// token price.
   /// @return price The price of the liquidity pool token.
   function getPrice() public view returns (uint256 price) {
-    (uint256 reserve0, uint256 reserve1,) = pool.getReserves();
-
-    int256 px0 = tokenAPriceFeed.latestAnswer();
-    int256 px1 = tokenBPriceFeed.latestAnswer();
+    uint256 k = getK();
+    uint256 px0 = uint256(tokenAPriceFeed.latestAnswer());
+    uint256 px1 = uint256(tokenBPriceFeed.latestAnswer());
 
     require(px0 > 0 && px1 > 0, "Invalid Price");
 
-    uint256 sqrtK = (sqrt(_k(reserve0, reserve1)) * 1e18) / pool.totalSupply();
-    price = (sqrtK * 2 * sqrt(uint256(px0 * px1))) / 1e2;
+    uint256 sqrtK = (_sqrt(k) * 1e18) / pool.totalSupply();
+    price = sqrtK * 2 * _sqrt(px0 * px1) / 1e18;
   }
 
   /// @notice Computes the square root of a given number using the Babylonian method.
   /// @dev This function uses an iterative method to compute the square root of a number.
   /// @param x The number to compute the square root of.
   /// @return y The square root of the given number.
-  function sqrt(uint256 x) internal pure returns (uint256 y) {
+  function _sqrt(uint256 x) internal pure returns (uint256 y) {
     if (x == 0) return 0; // Handle the edge case for 0
     uint256 z = (x + 1) / 2;
     y = x;
@@ -93,16 +92,21 @@ contract AerodromeLPOracle is IAggregatorV3Interface {
     }
   }
 
-  function _k(uint256 x, uint256 y) internal view returns (uint256) {
+  function _k(uint256 x, uint256 y, uint256 _decimals0, uint256 _decimals1) internal view returns (uint256) {
     if (stable) {
-      uint256 _x = (x * 1e18) / decimals0;
-      uint256 _y = (y * 1e18) / decimals1;
+      uint256 _x = (x * 1e18) / _decimals0;
+      uint256 _y = (y * 1e18) / _decimals1;
       uint256 _a = (_x * _y) / 1e18;
       uint256 _b = ((_x * _x) / 1e18 + (_y * _y) / 1e18);
       return (_a * _b) / 1e18; // x3y+y3x >= k
     } else {
       return x * y; // xy >= k
     }
+  }
+
+  function getK() public view returns (uint256) {
+    (uint256 reserve0, uint256 reserve1,) = pool.getReserves();
+    return _k(reserve0, reserve1, decimals0, decimals1);
   }
 
   function latestTimestamp() public view override returns (uint256) {
