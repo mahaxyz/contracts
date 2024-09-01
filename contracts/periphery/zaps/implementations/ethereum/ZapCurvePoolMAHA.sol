@@ -14,7 +14,7 @@
 pragma solidity 0.8.21;
 
 import {ICurveTwoCrypto} from "../../../../interfaces/periphery/curve/ICurveTwoCrypto.sol";
-import {ZapBase, ZapCurvePoolBase} from "../../ZapCurvePoolBase.sol";
+import {ZapBaseEthereum, ZapCurvePoolBase} from "./ZapCurvePoolBase.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
@@ -25,7 +25,7 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
   IERC20 public maha;
   address public odos;
 
-  constructor(address _staking, IERC20 _maha, address _psm, address _odos) ZapBase(_staking, _psm) {
+  constructor(address _staking, IERC20 _maha, address _psm, address _odos) ZapBaseEthereum(_staking, _psm) {
     maha = IERC20(_maha);
     odos = _odos;
     maha.approve(address(pool), type(uint256).max);

@@ -13,16 +13,14 @@
 
 pragma solidity 0.8.21;
 
-import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
-import {ICurveStableSwapNG} from "../../interfaces/periphery/curve/ICurveStableSwapNG.sol";
-import {ZapBase} from "./ZapBase.sol";
+import {ZapBaseEthereum} from "./ZapBaseEthereum.sol";
 
 /**
  * @title ZapCurvePool
  * @dev This contract allows users to perform a Zap operation by swapping collateral for zai tokens, adding liquidity to
  * curve LP, and staking the LP tokens.
  */
-abstract contract ZapCurvePoolBase is ZapBase {
+abstract contract ZapCurvePoolBase is ZapBaseEthereum {
   /**
    * @notice Zaps ZAI and collateral into LP tokens
    * @dev This function is used when the user already has ZAI tokens.

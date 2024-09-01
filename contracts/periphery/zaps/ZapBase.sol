@@ -13,7 +13,6 @@
 
 pragma solidity 0.8.21;
 
-import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
@@ -31,11 +30,9 @@ abstract contract ZapBase {
 
   IERC20Metadata public collateral;
 
-  IPegStabilityModule public psm;
-
   uint256 public decimalOffset;
 
-  address internal me;
+  address public me;
 
   error OdosSwapFailed();
   error CollateralTransferFailed();
@@ -48,22 +45,10 @@ abstract contract ZapBase {
   /**
    * @dev Initializes the contract with the required contracts
    */
-  constructor(address _staking, address _psm) {
+  constructor(address _staking) {
     staking = IERC4626(_staking);
-    psm = IPegStabilityModule(_psm);
-
     pool = IERC20Metadata(staking.asset());
-    zai = IERC20Metadata(address(psm.zai()));
-    collateral = IERC20Metadata(address(psm.collateral()));
-
-    decimalOffset = 10 ** (18 - collateral.decimals());
-
-    // give approvals
-    zai.approve(address(pool), type(uint256).max);
-    collateral.approve(address(pool), type(uint256).max);
-    collateral.approve(address(psm), type(uint256).max);
     pool.approve(_staking, type(uint256).max);
-
     me = address(this);
   }
 

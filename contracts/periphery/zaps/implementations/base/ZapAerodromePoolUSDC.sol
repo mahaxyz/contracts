@@ -14,12 +14,11 @@
 pragma solidity 0.8.21;
 
 import {IAerodromeRouter} from "../../../../interfaces/periphery/dex/IAerodromeRouter.sol";
-import {ZapBase} from "../../ZapBase.sol";
+import {ZapAerodromeBase} from "./ZapAerodromeBase.sol";
 
-contract ZapAerodromePoolUSDC is ZapBase {
-  constructor(address _staking, address _psm) ZapBase(_staking, _psm) {
+contract ZapAerodromePoolUSDC is ZapAerodromeBase {
+  constructor(address _staking, address _bridge) ZapAerodromeBase(_staking, _bridge) {
     // nothing
-    zai.approve(address(pool), type(uint256).max);
   }
 
   /**
@@ -32,8 +31,7 @@ contract ZapAerodromePoolUSDC is ZapBase {
     collateral.transferFrom(msg.sender, me, collateralAmount);
 
     // convert 50% collateral for zai
-    uint256 zaiAmount = collateralAmount * decimalOffset / 2;
-    psm.mint(me, zaiAmount);
+    uint256 zaiAmount = bridge.deposit(collateralAmount / 2);
 
     IAerodromeRouter(address(pool)).addLiquidity(
       address(collateral), address(zai), true, collateralAmount / 2, zaiAmount, 0, 0, me, block.timestamp

@@ -14,10 +14,10 @@
 pragma solidity 0.8.21;
 
 import {ICurveStableSwapNG} from "../../../../interfaces/periphery/curve/ICurveStableSwapNG.sol";
-import {ZapBase, ZapCurvePoolBase} from "../../ZapCurvePoolBase.sol";
+import {ZapBaseEthereum, ZapCurvePoolBase} from "./ZapCurvePoolBase.sol";
 
 contract ZapCurvePoolUSDC is ZapCurvePoolBase {
-  constructor(address _staking, address _psm) ZapBase(_staking, _psm) {
+  constructor(address _staking, address _psm) ZapBaseEthereum(_staking, _psm) {
     // nothing
   }
 
