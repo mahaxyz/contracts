@@ -50,7 +50,7 @@ contract ZapCurvePoolUSDC is ZapCurvePoolBase {
 
   function _addLiquidity(uint256 zaiAmt, uint256 collatAmt, uint256 minLp) internal virtual override {
     uint256[] memory amounts = new uint256[](2);
-    amounts[0] = collatAmt / 2;
+    amounts[0] = collatAmt;
     amounts[1] = zaiAmt;
     ICurveStableSwapNG(address(pool)).add_liquidity(amounts, minLp, me);
   }

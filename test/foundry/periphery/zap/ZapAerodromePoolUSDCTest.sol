@@ -26,12 +26,12 @@ contract ZapAerodromePoolUSDCTest is BaseZaiTest {
   PegStabilityModule internal psmUSDC;
   MockCurvePool internal pool;
 
-  string MAINNET_RPC_URL = vm.envString("MAINNET_RPC_URL");
+  string BASE_RPC_URL = vm.envString("BASE_RPC_URL");
 
   function test_zap_fork() public {
-    uint256 mainnetFork = vm.createFork(MAINNET_RPC_URL);
+    uint256 mainnetFork = vm.createFork(BASE_RPC_URL);
     vm.selectFork(mainnetFork);
-    vm.rollFork(20_478_389);
+    vm.rollFork(19_141_574);
 
     address user = 0x1F09Ec21d7fd0A21879b919bf0f9C46e6b85CA8b;
     IERC20 _usdc = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
