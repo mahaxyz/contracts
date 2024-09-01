@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.4](https://github.com/mahaxyz/contracts/compare/v1.7.3...v1.7.4) (2024-09-01)
+
+
+### Bug Fixes
+
+* fixed the github actions to include base ([b417ceb](https://github.com/mahaxyz/contracts/commit/b417ceb09954ab4b98c91d299612b2982b3a53ee))
+* fixed the lp address for maha/usdz ([b79becc](https://github.com/mahaxyz/contracts/commit/b79becc15167979f43c63880e9709d542a2e41c9))
+
 ## [1.7.3](https://github.com/mahaxyz/contracts/compare/v1.7.2...v1.7.3) (2024-08-27)
 
 
