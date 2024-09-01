@@ -39,14 +39,16 @@ contract AerodromeLPOracleTest is BaseZaiTest {
     AerodromeLPOracle oracle = new AerodromeLPOracle(address(fixedOracle), address(fixedOracle), address(pool));
 
     // 0.029999999999998 ETH = 60,000$ of LP at this block
-
     // assertEq(oracle.getK(), pool.getK(), "!oracle.getK");
 
     assertEq(oracle.sqrt(1e8), 1e4, "!oracle.sqrt");
 
+    console.log("oracle.getK", oracle.getK());
+    console.log("oracle.getY", oracle.getK());
+
     console.log("oracle.decimals0", oracle.decimals0());
-    console.log("oracle.decimals1", oracle.decimals1());
-    console.log("oracle.getPriceFor():", oracle.getPriceFor(29_999_999_999_998_000));
+    // console.log("oracle.decimals1", oracle.decimals1());
+    // console.log("oracle.getPriceFor():", oracle.getPriceFor(29_999_999_999_998_000));
 
     assertEq(oracle.getPriceFor(29_999_999_999_998_000), 60_000, "!oracle.getPriceFor");
 
