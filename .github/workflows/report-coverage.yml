@@ -37,6 +37,7 @@ jobs:
       - name: Run coverage
         run: |
           echo MAINNET_RPC_URL=${{ secrets.MAINNET_RPC_URL }} >> .env
+          echo BASE_RPC_URL=${{ secrets.BASE_RPC_URL }} >> .env
           yarn compile
           yarn coverage:html
 

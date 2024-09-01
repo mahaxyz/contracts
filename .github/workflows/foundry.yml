@@ -23,6 +23,7 @@ jobs:
           forge --version
           forge build
           echo MAINNET_RPC_URL=${{ secrets.MAINNET_RPC_URL }} >> .env
+          echo BASE_RPC_URL=${{ secrets.BASE_RPC_URL }} >> .env
         id: build
 
       - name: Run Forge tests
