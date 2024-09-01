@@ -13,25 +13,12 @@
 
 pragma solidity 0.8.21;
 
-import {ERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
-contract MockERC20 is ERC20 {
-  uint8 public decimals_;
-
-  constructor(string memory _name, string memory _symbol, uint8 _decimals) ERC20(_name, _symbol) {
-    // nothing
-    decimals_ = _decimals;
-  }
-
-  function mint(address _to, uint256 _amount) external {
-    _mint(_to, _amount);
-  }
-
-  function burn(address _to, uint256 _amount) external {
-    _burn(_to, _amount);
-  }
-
-  function decimals() public view virtual override returns (uint8) {
-    return decimals_;
-  }
+/// @title IMorphoFlashLoanCallback
+/// @notice Interface that users willing to use `flashLoan`'s callback must implement.
+interface IMorphoFlashLoanCallback {
+  /// @notice Callback called when a flash loan occurs.
+  /// @dev The callback is called only if data is not empty.
+  /// @param assets The amount of assets that was flash loaned.
+  /// @param data Arbitrary data passed to the `flashLoan` function.
+  function onMorphoFlashLoan(uint256 assets, bytes calldata data) external;
 }

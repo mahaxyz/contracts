@@ -13,10 +13,11 @@
 
 pragma solidity 0.8.21;
 
-import {ZapCurvePoolBase} from "./ZapCurvePoolBase.sol";
+import {ICurveStableSwapNG} from "../../../../interfaces/periphery/curve/ICurveStableSwapNG.sol";
+import {ZapBaseEthereum, ZapCurvePoolBase} from "./ZapCurvePoolBase.sol";
 
 contract ZapCurvePoolUSDC is ZapCurvePoolBase {
-  constructor(address _staking, address _psm) ZapCurvePoolBase(_staking, _psm) {
+  constructor(address _staking, address _psm) ZapBaseEthereum(_staking, _psm) {
     // nothing
   }
 
@@ -35,10 +36,7 @@ contract ZapCurvePoolUSDC is ZapCurvePoolBase {
     psm.mint(address(this), zaiAmount);
 
     // add liquidity
-    uint256[] memory amounts = new uint256[](2);
-    amounts[0] = collateralAmount / 2;
-    amounts[1] = zaiAmount;
-    pool.add_liquidity(amounts, minLpAmount, me);
+    _addLiquidity(zaiAmount, collateralAmount / 2, minLpAmount);
 
     // we now have LP tokens; deposit into staking contract for the user
     staking.deposit(pool.balanceOf(address(this)), msg.sender);
@@ -48,5 +46,12 @@ contract ZapCurvePoolUSDC is ZapCurvePoolBase {
     _sweep(collateral);
 
     emit Zapped(msg.sender, collateralAmount / 2, zaiAmount, pool.balanceOf(msg.sender));
+  }
+
+  function _addLiquidity(uint256 zaiAmt, uint256 collatAmt, uint256 minLp) internal virtual override {
+    uint256[] memory amounts = new uint256[](2);
+    amounts[0] = collatAmt;
+    amounts[1] = zaiAmt;
+    ICurveStableSwapNG(address(pool)).add_liquidity(amounts, minLp, me);
   }
 }

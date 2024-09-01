@@ -1,5 +1,5 @@
 {
-  "address": "0x6ee1955afb64146b126162b4ff018db1eb8f08c3",
+  "address": "0x72d509aff75753aaad6a10d3eb98f2dbc58c480d",
   "abi": [
     "event Approval(address indexed,address indexed,uint256)",
     "event Transfer(address indexed,address indexed,uint256)",

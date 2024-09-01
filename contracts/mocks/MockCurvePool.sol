@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {ICurveStableSwapNG} from "../interfaces/periphery/ICurveStableSwapNG.sol";
+import {ICurveStableSwapNG} from "../interfaces/periphery/curve/ICurveStableSwapNG.sol";
 import {ERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract MockCurvePool is ICurveStableSwapNG, ERC20 {

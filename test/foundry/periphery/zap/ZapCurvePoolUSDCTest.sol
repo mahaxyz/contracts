@@ -17,16 +17,16 @@ import {PegStabilityModule} from "../../../../contracts/core/psm/PegStabilityMod
 import {StakingLPRewards} from "../../../../contracts/periphery/staking/StakingLPRewards.sol";
 
 import {IERC20, MockCurvePool} from "../../../../contracts/mocks/MockCurvePool.sol";
-import {ZapCurvePoolUSDC} from "../../../../contracts/periphery/zaps/ZapCurvePoolUSDC.sol";
+import {ZapCurvePoolUSDC} from "../../../../contracts/periphery/zaps/implementations/ethereum/ZapCurvePoolUSDC.sol";
 import {BaseZaiTest, console} from "../../base/BaseZaiTest.sol";
 
 contract ZapCurvePoolUSDCTest is BaseZaiTest {
-  StakingLPRewards internal staking;
-  ZapCurvePoolUSDC internal zap;
-  PegStabilityModule internal psmUSDC;
-  MockCurvePool internal pool;
+  StakingLPRewards public staking;
+  ZapCurvePoolUSDC public zap;
+  PegStabilityModule public psmUSDC;
+  MockCurvePool public pool;
 
-  string MAINNET_RPC_URL = vm.envString("MAINNET_RPC_URL");
+  string public MAINNET_RPC_URL = vm.envString("MAINNET_RPC_URL");
 
   function test_zap_fork() public {
     uint256 mainnetFork = vm.createFork(MAINNET_RPC_URL);
@@ -50,6 +50,9 @@ contract ZapCurvePoolUSDCTest is BaseZaiTest {
     _zap.zapIntoLP(100e6, 0);
 
     vm.stopPrank();
+
+    //  74960013339750528199
+    // 100000000000000000000
 
     assertGe(_pool.balanceOf(address(_staking)), 0, "!pool.balanceOf(staking)");
     assertEq(_usdc.balanceOf(_psmUSDC), 203_970_597, "!usdc.balanceOf(psmUSDC)");

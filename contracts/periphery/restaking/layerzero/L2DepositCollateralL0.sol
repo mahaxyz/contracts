@@ -14,6 +14,8 @@
 pragma solidity 0.8.21;
 
 import {IStablecoinOFT} from "../../../interfaces/periphery/IStablecoinOFT.sol";
+
+import {IL2DepositCollateralL0} from "../../../interfaces/periphery/layerzero/IL2DepositCollateralL0.sol";
 import {IStargate} from "../../../interfaces/periphery/layerzero/IStargate.sol";
 
 import {IOFT, MessagingFee, SendParam} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/interfaces/IOFT.sol";
@@ -28,7 +30,7 @@ import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeE
  *          and funds are batched and bridged down to the L1 for depositing into the maha protocol.
  * @notice  Allows L2 minting of zai tokens in exchange for deposited assets
  */
-contract L2DepositCollateralL0 is OwnableUpgradeable, ReentrancyGuardUpgradeable {
+contract L2DepositCollateralL0 is IL2DepositCollateralL0, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   using SafeERC20 for IERC20;
 
   /// @notice The rate at which the deposit token is converted to OFT
@@ -54,9 +56,6 @@ contract L2DepositCollateralL0 is OwnableUpgradeable, ReentrancyGuardUpgradeable
 
   /// @notice The mapping of allowed addresses that can trigger the bridge function
   mapping(address => bool) public allowedBridgeSweepers;
-
-  event Deposit(address from, uint256 amountIn, uint256 amountOut);
-  event BridgeSwept(bytes32 bridgeTargetAddress, address caller, uint256 balance);
 
   function initialize(
     IStablecoinOFT _oft,

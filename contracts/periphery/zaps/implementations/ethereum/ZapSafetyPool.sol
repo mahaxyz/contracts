@@ -13,8 +13,8 @@
 
 pragma solidity 0.8.21;
 
-import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
-import {ILocker} from "../../interfaces/governance/ILocker.sol";
+import {IPegStabilityModule} from "../../../../interfaces/core/IPegStabilityModule.sol";
+import {ILocker} from "../../../../interfaces/governance/ILocker.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 

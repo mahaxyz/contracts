@@ -14,7 +14,7 @@
 pragma solidity 0.8.21;
 
 import {IMultiStakingRewardsERC4626} from "../../interfaces/core/IMultiStakingRewardsERC4626.sol";
-import {ICurveStableSwapNG} from "../../interfaces/periphery/ICurveStableSwapNG.sol";
+import {ICurveStableSwapNG} from "../../interfaces/periphery/curve/ICurveStableSwapNG.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20, IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 

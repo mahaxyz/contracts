@@ -11,6 +11,8 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
+pragma solidity 0.8.21;
+
 import {LayerZeroCustomOFT} from "./LayerZeroCustomOFT.sol";
 
 contract ZaiOFTWithRestaking is LayerZeroCustomOFT {

@@ -13,25 +13,23 @@
 
 pragma solidity 0.8.21;
 
-import {ERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {DumbAggregatorOracle, IAggregatorV3Interface} from "./DumbAggregatorOracle.sol";
 
-contract MockERC20 is ERC20 {
-  uint8 public decimals_;
+/// @title FixedPriceOracle
+/// @author maha.xyz
+/// @notice A contract that returns a fixed price
+contract FixedPriceOracle is DumbAggregatorOracle {
+  int256 private immutable price_;
 
-  constructor(string memory _name, string memory _symbol, uint8 _decimals) ERC20(_name, _symbol) {
-    // nothing
-    decimals_ = _decimals;
+  constructor(int256 _price, uint8 _decimals) DumbAggregatorOracle(_decimals, "Fixed Price Oracle") {
+    price_ = _price;
   }
 
-  function mint(address _to, uint256 _amount) external {
-    _mint(_to, _amount);
+  function getPrice() public view override returns (int256 price) {
+    price = price_;
   }
 
-  function burn(address _to, uint256 _amount) external {
-    _burn(_to, _amount);
-  }
-
-  function decimals() public view virtual override returns (uint8) {
-    return decimals_;
+  function getPriceFor(uint256 amount) public view returns (int256) {
+    return (latestAnswer() * int256(amount)) / int256(1 * 10 ** decimals());
   }
 }

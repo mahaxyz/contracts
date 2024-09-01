@@ -11,6 +11,8 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 
+pragma solidity 0.8.21;
+
 import {OFT} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT.sol";
 import {OFTAdapter} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFTAdapter.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
