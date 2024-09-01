@@ -29,6 +29,7 @@ jobs:
       - name: Publish to NPM
         run: |
           echo MAINNET_RPC_URL=${{ secrets.MAINNET_RPC_URL }} >> .env
+          echo BASE_RPC_URL=${{ secrets.BASE_RPC_URL }} >> .env
           npm publish
         if: ${{ steps.release.outputs.release_created }}
         env:
