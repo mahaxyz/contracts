@@ -42,6 +42,8 @@ contract AerodromeLPOracleTest is BaseZaiTest {
 
     // assertEq(oracle.getK(), pool.getK(), "!oracle.getK");
 
+    assertEq(oracle.sqrt(1e8), 1e4, "!oracle.sqrt");
+
     console.log("oracle.decimals0", oracle.decimals0());
     console.log("oracle.decimals1", oracle.decimals1());
     console.log("oracle.getPriceFor():", oracle.getPriceFor(29_999_999_999_998_000));
@@ -51,7 +53,7 @@ contract AerodromeLPOracleTest is BaseZaiTest {
     MorphoChainlinkOracleV2 morphoOracle = new MorphoChainlinkOracleV2(
       IERC4626(address(0)), // IERC4626 baseVault,
       1, // uint256 baseVaultConversionSample,
-      AggregatorV3Interface(address(0)), // AggregatorV3Interface baseFeed1,
+      AggregatorV3Interface(address(oracle)), // AggregatorV3Interface baseFeed1,
       AggregatorV3Interface(address(0)), // AggregatorV3Interface baseFeed2,
       1, // uint256 baseTokenDecimals,
       IERC4626(address(0)), // IERC4626 quoteVault,

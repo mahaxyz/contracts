@@ -16,7 +16,7 @@ pragma solidity 0.8.21;
 interface IAggregatorV3Interface {
   function decimals() external view returns (uint8);
 
-  function description() external pure returns (string memory);
+  function description() external view returns (string memory);
 
   function getAnswer(uint256) external view returns (int256);
 
