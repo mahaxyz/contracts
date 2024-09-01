@@ -53,7 +53,7 @@ contract AerodromeLPOracle is DumbAggregatorOracle {
   /// @dev This function fetches reserves from the Nile AMM and uses a pre-defined price for tokens to calculate the LP
   /// token price.
   /// @return price The price of the liquidity pool token.
-  function getPrice() public view override returns (uint256 price) {
+  function getPrice() public view override returns (int256 price) {
     uint256 k = getK();
     uint256 px0 = uint256(tokenAPriceFeed.latestAnswer());
     uint256 px1 = uint256(tokenBPriceFeed.latestAnswer());
@@ -61,7 +61,7 @@ contract AerodromeLPOracle is DumbAggregatorOracle {
     require(px0 > 0 && px1 > 0, "Invalid Price");
 
     uint256 sqrtK = (sqrt(k) * 1e18) / pool.totalSupply();
-    price = sqrtK * 2 * sqrt(px0 * px1) / 1e18;
+    price = int256(sqrtK * 2 * sqrt(px0 * px1) / 1e18);
   }
 
   /// @notice Computes the square root of a given number using the Babylonian method.

@@ -39,10 +39,10 @@ abstract contract DumbAggregatorOracle is IAggregatorV3Interface {
   }
 
   function latestAnswer() public view override returns (int256) {
-    return int256(getPrice());
+    return getPrice();
   }
 
-  function getPrice() public view virtual returns (uint256 price);
+  function getPrice() public view virtual returns (int256 price);
 
   function latestTimestamp() public view override returns (uint256) {
     return block.timestamp;
