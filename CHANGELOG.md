@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.3](https://github.com/mahaxyz/contracts/compare/v1.7.2...v1.7.3) (2024-08-27)
+
+
+### Bug Fixes
+
+* added LP tokens ([d9532ee](https://github.com/mahaxyz/contracts/commit/d9532eedddda30d72c60fd8939fd97e97f9069a1))
+
 ## [1.7.2](https://github.com/mahaxyz/contracts/compare/v1.7.1...v1.7.2) (2024-08-27)
 
 
