@@ -38,11 +38,13 @@ contract ZapAerodromePoolUSDCTest is BaseZaiTest {
     IERC20 _zai = IERC20(0x0A27E060C0406f8Ab7B64e3BEE036a37e5a62853);
     IERC20 _pool = IERC20(0x72d509aFF75753aAaD6A10d3EB98f2DBC58C480D);
     IERC20 _staking = IERC20(0x1097dFe9539350cb466dF9CA89A5e61195A520B0);
-    address _psmUSDC = 0xA07cf1c081F46524A133c1B6E8eE0B5f96A51255;
+    address _restaking = 0xA07cf1c081F46524A133c1B6E8eE0B5f96A51255;
+    address _router = 0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43;
 
     ZapAerodromePoolUSDC _zap = new ZapAerodromePoolUSDC(
       address(_staking), // lp staking pool
-      _psmUSDC // psm
+      _restaking, // bridge
+      _router
     );
 
     vm.startPrank(user);
@@ -52,11 +54,11 @@ contract ZapAerodromePoolUSDCTest is BaseZaiTest {
     vm.stopPrank();
 
     assertGe(_pool.balanceOf(address(_staking)), 0, "!pool.balanceOf(staking)");
-    assertEq(_usdc.balanceOf(_psmUSDC), 203_970_597, "!usdc.balanceOf(psmUSDC)");
+    assertEq(_usdc.balanceOf(_restaking), 50_100_000, "!usdc.balanceOf(psmUSDC)");
 
     assertEq(_zai.balanceOf(address(_zap)), 0, "!zai.balanceOf(zap)");
     assertEq(_usdc.balanceOf(address(_zap)), 0, "!usdc.balanceOf(zap)");
 
-    assertApproxEqAbs(_staking.balanceOf(user), 100e18, 1e18, "!staking.balanceOf(user)");
+    assertApproxEqAbs(_staking.balanceOf(user), 50 * 1e12, 1e12, "!staking.balanceOf(user)");
   }
 }

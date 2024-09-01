@@ -20,9 +20,11 @@ import {IERC20Metadata, ZapBase} from "../../ZapBase.sol";
 
 contract ZapAerodromeBase is ZapBase {
   IL2DepositCollateralL0 public bridge;
+  IAerodromeRouter public router;
 
-  constructor(address _staking, address _bridge) ZapBase(_staking) {
+  constructor(address _staking, address _bridge, address _router) ZapBase(_staking) {
     bridge = IL2DepositCollateralL0(_bridge);
+    router = IAerodromeRouter(_router);
 
     zai = IERC20Metadata(address(bridge.oft()));
     collateral = IERC20Metadata(address(bridge.depositToken()));
@@ -33,8 +35,8 @@ contract ZapAerodromeBase is ZapBase {
     decimalOffset = 10 ** (18 - collateral.decimals());
 
     // give approvals
-    zai.approve(address(pool), type(uint256).max);
-    collateral.approve(address(pool), type(uint256).max);
+    zai.approve(address(router), type(uint256).max);
+    collateral.approve(address(router), type(uint256).max);
     collateral.approve(address(bridge), type(uint256).max);
   }
 }

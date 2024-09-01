@@ -17,7 +17,7 @@ import {IAerodromeRouter} from "../../../../interfaces/periphery/dex/IAerodromeR
 import {ZapAerodromeBase} from "./ZapAerodromeBase.sol";
 
 contract ZapAerodromePoolUSDC is ZapAerodromeBase {
-  constructor(address _staking, address _bridge) ZapAerodromeBase(_staking, _bridge) {
+  constructor(address _staking, address _bridge, address _router) ZapAerodromeBase(_staking, _bridge, _router) {
     // nothing
   }
 
@@ -33,7 +33,7 @@ contract ZapAerodromePoolUSDC is ZapAerodromeBase {
     // convert 50% collateral for zai
     uint256 zaiAmount = bridge.deposit(collateralAmount / 2);
 
-    IAerodromeRouter(address(pool)).addLiquidity(
+    router.addLiquidity(
       address(collateral), address(zai), true, collateralAmount / 2, zaiAmount, 0, 0, me, block.timestamp
     );
 
@@ -66,7 +66,7 @@ contract ZapAerodromePoolUSDC is ZapAerodromeBase {
     // swap usdc into zai
     IAerodromeRouter.Route[] memory routes = new IAerodromeRouter.Route[](1);
     routes[0] = route;
-    IAerodromeRouter(address(pool)).swapExactTokensForTokens(zai.balanceOf(me), 0, routes, me, block.timestamp);
+    router.swapExactTokensForTokens(zai.balanceOf(me), 0, routes, me, block.timestamp);
 
     require(collateral.balanceOf(me) >= minCollateralAmount, "!insufficient");
 
