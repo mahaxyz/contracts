@@ -16,7 +16,7 @@ pragma solidity 0.8.21;
 import {IAerodromeRouter} from "../../../../interfaces/periphery/dex/IAerodromeRouter.sol";
 import {ZapBase} from "../../ZapBase.sol";
 
-contract ZapCurvePoolUSDC is ZapBase {
+contract ZapAerodromePoolUSDC is ZapBase {
   constructor(address _staking, address _psm) ZapBase(_staking, _psm) {
     // nothing
     zai.approve(address(pool), type(uint256).max);
