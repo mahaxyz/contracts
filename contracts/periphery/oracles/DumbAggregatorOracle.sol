@@ -14,8 +14,8 @@ pragma solidity 0.8.21;
 import {IAggregatorV3Interface} from "../../interfaces/governance/IAggregatorV3Interface.sol";
 
 abstract contract DumbAggregatorOracle is IAggregatorV3Interface {
-  uint8 private immutable decimals_ = 18;
-  string private description_;
+  uint8 internal decimals_ = 18;
+  string internal description_;
 
   constructor(uint8 _decimals, string memory _description) {
     decimals_ = _decimals;
@@ -26,7 +26,7 @@ abstract contract DumbAggregatorOracle is IAggregatorV3Interface {
     return latestAnswer();
   }
 
-  function decimals() external pure returns (uint8) {
+  function decimals() public view returns (uint8) {
     return decimals_;
   }
 
@@ -39,7 +39,7 @@ abstract contract DumbAggregatorOracle is IAggregatorV3Interface {
   }
 
   function latestAnswer() public view override returns (int256) {
-    return getPrice();
+    return int256(getPrice());
   }
 
   function getPrice() public view virtual returns (int256 price);
