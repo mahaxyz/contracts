@@ -84,7 +84,9 @@ task(
         console.log(`  owner looks good`);
       }
       if (owner.toLowerCase() != timelock.address.toLowerCase()) {
-        console.warn(`   NOTE: owner for ${name} is not the timelock`);
+        console.warn(
+          `   NOTE: owner for ${name} is not the timelock (${timelock.address})`
+        );
       }
     }
 
