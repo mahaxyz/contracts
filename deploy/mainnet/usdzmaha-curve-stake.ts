@@ -1,6 +1,6 @@
 import { ZeroAddress } from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { deployProxy } from "../scripts/utils";
+import { deployProxy } from "../../scripts/utils";
 
 async function main(hre: HardhatRuntimeEnvironment) {
   const { deployments } = hre;
@@ -43,5 +43,5 @@ async function main(hre: HardhatRuntimeEnvironment) {
   });
 }
 
-main.tags = ["DeployLpPool"];
+main.tags = ["StakingLPRewards-Curve-sUSDZMAHA"];
 export default main;

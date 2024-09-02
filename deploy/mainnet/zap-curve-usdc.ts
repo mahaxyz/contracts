@@ -1,7 +1,7 @@
 import { MaxUint256 } from "ethers";
 import { ethers } from "hardhat";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { deployContract, waitForTx } from "../scripts/utils";
+import { deployContract, waitForTx } from "../../scripts/utils";
 
 async function main(hre: HardhatRuntimeEnvironment) {
   const { deployments } = hre;

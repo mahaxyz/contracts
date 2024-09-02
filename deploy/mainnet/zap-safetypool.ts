@@ -1,7 +1,7 @@
 import { MaxUint256, ZeroAddress } from "ethers";
 import { ethers, network } from "hardhat";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { waitForTx } from "../scripts/utils";
+import { waitForTx } from "../../scripts/utils";
 
 async function main(hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
