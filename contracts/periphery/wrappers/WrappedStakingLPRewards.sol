@@ -38,34 +38,38 @@ contract WrappedStakingLPRewards is ERC20Upgradeable {
     underlying = IERC20(IERC4626(vault).asset());
     underlying.approve(vault, type(uint256).max);
 
+    rewardTokens = new IERC20[](_rewardTokens.length);
     for (uint256 i = 0; i < _rewardTokens.length; i++) {
       rewardTokens[i] = IERC20(_rewardTokens[i]);
     }
 
     _me = address(this);
+
+    _mint(_me, 1);
+    _burn(_me, 1);
   }
 
-  function deposit(uint256 _amount) external {
+  function deposit(uint256 _amount, address _to) external {
     for (uint256 i = 0; i < rewardTokens.length; i++) {
       IMultiStakingRewardsERC4626(vault).getReward(_me, rewardTokens[i]);
     }
 
     underlying.safeTransferFrom(msg.sender, address(this), _amount);
     uint256 shares = IERC4626(vault).deposit(_amount, _me);
-    _mint(msg.sender, shares);
+    _mint(_to, shares);
   }
 
-  function withdraw(uint256 _amount) external {
+  function withdraw(uint256 _amount, address _to) external {
     uint256 sharesToBurn = IERC4626(vault).previewWithdraw(_amount);
     uint256 percentageE18 = sharesToBurn * 1e18 / totalSupply();
 
     _burn(msg.sender, sharesToBurn);
 
-    IERC4626(vault).withdraw(_amount, msg.sender, _me);
+    IERC4626(vault).withdraw(_amount, _to, _me);
 
     for (uint256 i = 0; i < rewardTokens.length; i++) {
       IMultiStakingRewardsERC4626(vault).getReward(_me, rewardTokens[i]);
-      rewardTokens[i].safeTransfer(msg.sender, rewardTokens[i].balanceOf(_me) * percentageE18 / 1e18);
+      rewardTokens[i].safeTransfer(_to, rewardTokens[i].balanceOf(_me) * percentageE18 / 1e18);
     }
   }
 }
