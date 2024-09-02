@@ -38,6 +38,7 @@ contract DDPrivateMorphoLoan is ERC20Upgradeable, AccessControlEnumerableUpgrade
   function initialize(address _hub, address _admin, address _zai, address _collateral) external reinitializer(1) {
     __DDBBase_init(_zai, _hub);
     __AccessControlEnumerable_init();
+    // __ERC20_init(string memory name_, string memory symbol_);
 
     collateral = IERC20(_collateral);
 
