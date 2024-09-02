@@ -14,6 +14,8 @@
 pragma solidity 0.8.21;
 
 import {ILoopingStrategy} from "../../interfaces/periphery/leverage/ILoopingStrategy.sol";
+
+import {ISwapper} from "../../interfaces/periphery/leverage/ISwapper.sol";
 import {IWNative} from "../../interfaces/periphery/leverage/IWNative.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
@@ -60,6 +62,57 @@ abstract contract BaseLeverage is ReentrancyGuard, ILoopingStrategy {
     _repayDebtWithCollateral(params);
   }
 
+  function _swapExactIn(
+    address swapper,
+    address from,
+    address to,
+    uint256 amtIn,
+    uint256 minAmtOut,
+    bytes memory data
+  ) internal {
+    ISwapper.SwapExactInParams memory swapExactInParams = ISwapper.SwapExactInParams({from: from, to: to, data: data});
+    // transfer token to swapper
+    IERC20(from).safeTransfer(swapper, amtIn);
+    // call swap function on swapper
+    ISwapper(swapper).swapExactIn(swapExactInParams);
+    // verify that the swap was successful
+    uint256 amtOut = IERC20(to).balanceOf(address(this));
+    require(amtOut >= minAmtOut, "BaseLeverageWithSwap: insufficient amtOut");
+    emit Swap(swapper, from, to, amtIn, amtOut);
+  }
+
+  function _swapExactOut(
+    address swapper,
+    address from,
+    address to,
+    uint256 amtOut,
+    uint256 maxAmtIn,
+    bytes memory data
+  ) internal {
+    ISwapper.SwapExactOutParams memory swapExactOutParams = ISwapper.SwapExactOutParams({
+      from: from,
+      to: to,
+      amtOut: amtOut - IERC20(to).balanceOf(address(this)),
+      data: data
+    });
+    // transfer token to swapper
+    uint256 tokenInBalBf = IERC20(from).balanceOf(address(this));
+    IERC20(from).safeTransfer(swapper, tokenInBalBf);
+    // call swap function on swapper
+    ISwapper(swapper).swapExactOut(swapExactOutParams);
+    // verify that the swap was successful (slippage maxAmtIn)
+    uint256 amtIn = tokenInBalBf - IERC20(from).balanceOf(address(this));
+    require(amtIn <= maxAmtIn, "BaseLeverageWithSwap: exceed maxAmtIn");
+    require(IERC20(to).balanceOf(address(this)) >= amtOut, "BaseLeverageWithSwap: invalid amtOut");
+    emit Swap(swapper, from, to, amtIn, amtOut);
+  }
+
+  function _ensureApprove(address _token, address _to, uint256 _amt) internal {
+    if (IERC20(_token).allowance(address(this), _to) < _amt) {
+      IERC20(_token).forceApprove(_to, type(uint256).max);
+    }
+  }
+
   function _increasePos(IncreasePosParams calldata params) internal virtual;
 
   function _repayDebtWithCollateral(RepayDebtWithCollateralParams calldata params) internal virtual;
@@ -73,12 +126,6 @@ abstract contract BaseLeverage is ReentrancyGuard, ILoopingStrategy {
     uint256 repayAmt,
     address onBehalfOf
   ) internal virtual returns (uint256);
-
-  function _ensureApprove(address _token, address _to, uint256 _amt) internal {
-    if (IERC20(_token).allowance(address(this), _to) < _amt) {
-      IERC20(_token).forceApprove(_to, type(uint256).max);
-    }
-  }
 
   receive() external payable {
     require(msg.sender == WNATIVE, "BaseLeverage: not wnative");

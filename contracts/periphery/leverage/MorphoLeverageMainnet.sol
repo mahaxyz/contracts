@@ -15,13 +15,13 @@ pragma solidity 0.8.21;
 
 import {ILoopingStrategy} from "../../interfaces/periphery/leverage/ILoopingStrategy.sol";
 import {IMorpho, IMorphoBase} from "../../interfaces/periphery/morpho/IMorpho.sol";
-import {BaseLeverage, BaseLeverageWithSwap} from "./BaseLeverageWithSwap.sol";
+import {BaseLeverage} from "./BaseLeverage.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /// @title MorphoLeverageMainnet
 /// @author maha.xyz
 /// @notice Leverages contract on Morpho
-abstract contract MorphoLeverageMainnet is BaseLeverageWithSwap {
+abstract contract MorphoLeverageMainnet is BaseLeverage {
   IMorpho public immutable MORPHO;
   IMorphoBase.Id public marketId;
   IMorpho.MarketParams public marketParams;
@@ -49,7 +49,10 @@ abstract contract MorphoLeverageMainnet is BaseLeverageWithSwap {
     uint256 callerCollBalBf = position.supplyShares; // todo need to convert shares into amount
     uint256 callerDebtBalBf = position.borrowShares;
 
-    require(params.tokenIn == borrToken || params.tokenIn == collToken, "invalid tokenIn");
+    require(
+      marketParams.loanToken == borrToken || marketParams.collateralToken == collToken,
+      "LoopingStrategy: invalid tokens"
+    );
 
     // note: borr pool will be swapped to collPool's underlying token and supply in flashloan\
     _flashLoan(borrToken, params.borrAmt, abi.encode(params), OPERATION.INCREASE_POS);
@@ -70,7 +73,10 @@ abstract contract MorphoLeverageMainnet is BaseLeverageWithSwap {
     address borrToken = params.borrPool;
     address collToken = params.collPool;
 
-    require(params.tokenOut == borrToken || params.tokenOut == collToken, "LoopingStrategy: invalid tokenOut");
+    require(
+      marketParams.loanToken == borrToken || marketParams.collateralToken == collToken,
+      "LoopingStrategy: invalid tokens"
+    );
 
     // note: use balance difference to calculate real vaule to emit event
     IMorpho.Position memory position = MORPHO.position(marketId, msg.sender);
@@ -191,7 +197,7 @@ abstract contract MorphoLeverageMainnet is BaseLeverageWithSwap {
   ) internal {
     // decode params
     DecreasePosParams memory decreasePosParams = abi.decode(params.inputParams, (DecreasePosParams));
-    address borrToken = params.flashLoanToken;
+    address borrToken = flashLoanAsset;
     address collToken = decreasePosParams.collPool;
 
     // repay debt and withdraw collateral
