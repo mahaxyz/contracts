@@ -44,7 +44,7 @@ abstract contract BaseDDHubTest is BaseMorphoTest {
       governance // address _governance
     );
 
-    plan = new DDOperatorPlan(0, governance);
+    plan = new DDOperatorPlan(0, governance, 0);
     pool = new DDMetaMorpho();
     pool.initialize(address(hub), address(zai), address(vault));
 

@@ -134,4 +134,9 @@ contract L2DepositCollateralL0 is IL2DepositCollateralL0, OwnableUpgradeable, Re
   function setRate(uint256 _rate) external onlyOwner {
     rate = _rate;
   }
+
+  function flashLoan(uint256 _amount, bytes memory _data) external {
+    revert("unsupported");
+    // todo; add support for free flashloans
+  }
 }

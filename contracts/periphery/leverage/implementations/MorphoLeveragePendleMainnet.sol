@@ -13,27 +13,18 @@
 
 pragma solidity 0.8.21;
 
-import "../../contracts/core/direct-deposit/plans/DDOperatorPlan.sol";
-import {BaseZaiTest} from "./base/BaseZaiTest.sol";
+import {ILoopingStrategy} from "../../../interfaces/periphery/leverage/ILoopingStrategy.sol";
+import {IMorpho, MorphoLeverageMainnet} from "../MorphoLeverageMainnet.sol";
+import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract DDOperatorPlanTest is BaseZaiTest {
-  DDOperatorPlan private plan;
+/// @title MorphoLeveragePendleMainnet
+/// @author maha.xyz
+/// @notice Leverages contract on Morpho with Pendle PT Tokens
+contract MorphoLeveragePendleMainnet is MorphoLeverageMainnet {
+  using SafeERC20 for IERC20;
 
-  function setUp() public {
-    _setUpBase();
-    plan = new DDOperatorPlan(0, governance, 1000);
-
-    assertEq(plan.active(), true);
-    assertEq(plan.enabled(), 1);
-  }
-
-  function test_planDisable() public {
-    assertEq(plan.active(), true);
-
-    vm.prank(governance);
-    plan.disable();
-
-    assertEq(plan.active(), false);
-    assertEq(plan.enabled(), 0);
-  }
+  constructor(
+    address _morpho,
+    IMorpho.MarketParams memory _marketParams
+  ) MorphoLeverageMainnet(_morpho, _marketParams, address(0)) {}
 }

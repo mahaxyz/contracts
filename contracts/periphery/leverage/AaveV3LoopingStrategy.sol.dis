@@ -13,7 +13,7 @@
 
 pragma solidity 0.8.21;
 
-import {IAaveV3LoopingStrategy} from "./IAaveV3LoopingStrategy.sol";
+import {ILoopingStrategy} from "./ILoopingStrategy.sol";
 import {ISwapper} from "./ISwapper.sol";
 import {ReentrancyGuard} from "@openzeppelin-contracts/security/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin-contracts/token/ERC20/IERC20.sol";
@@ -58,7 +58,7 @@ interface IWNative {
   function withdraw(uint256 wad) external;
 }
 
-contract AaveV3LoopingStrategy is IAaveV3LoopingStrategy, ReentrancyGuard {
+contract LoopingStrategy is ILoopingStrategy, ReentrancyGuard {
   using SafeERC20 for IERC20;
 
   // constants variables
@@ -80,8 +80,8 @@ contract AaveV3LoopingStrategy is IAaveV3LoopingStrategy, ReentrancyGuard {
   }
 
   function increasePosNative(IncreasePosParams calldata params) external payable nonReentrant {
-    require(params.tokenIn == WNATIVE, "AaveV3LoopingStrategy: invalid tokenIn");
-    require(msg.value == params.amtIn, "AaveV3LoopingStrategy: invalid msg.value");
+    require(params.tokenIn == WNATIVE, "LoopingStrategy: invalid tokenIn");
+    require(msg.value == params.amtIn, "LoopingStrategy: invalid msg.value");
     // deposit native token to wnative
     IWNative(WNATIVE).deposit{value: msg.value}();
     _increasePos(params);
@@ -94,12 +94,12 @@ contract AaveV3LoopingStrategy is IAaveV3LoopingStrategy, ReentrancyGuard {
   }
 
   function decreasePosNative(DecreasePosParams calldata params) external nonReentrant {
-    require(params.tokenOut == WNATIVE, "AaveV3LoopingStrategy: invalid tokenOut");
+    require(params.tokenOut == WNATIVE, "LoopingStrategy: invalid tokenOut");
     uint256 amtOut = _decreasePos(params);
     // withdraw wnative to msg.sender
     IWNative(WNATIVE).withdraw(amtOut);
     (bool success,) = payable(msg.sender).call{value: amtOut}("");
-    require(success, "AaveV3LoopingStrategy: transfer native failed");
+    require(success, "LoopingStrategy: transfer native failed");
   }
 
   function repayDebtWithCollateral(RepayDebtWithCollateralParams calldata params) external nonReentrant {
@@ -132,9 +132,9 @@ contract AaveV3LoopingStrategy is IAaveV3LoopingStrategy, ReentrancyGuard {
     bytes calldata params
   ) external returns (bool) {
     // verify that initiator is this contract
-    require(msg.sender == POOL, "AaveV3LoopingStrategy: not pool");
-    require(initiator == address(this), "AaveV3LoopingStrategy: invalid initiator");
-    require(assets.length == 1, "AaveV3LoopingStrategy: invalid assets length");
+    require(msg.sender == POOL, "LoopingStrategy: not pool");
+    require(initiator == address(this), "LoopingStrategy: invalid initiator");
+    require(assets.length == 1, "LoopingStrategy: invalid assets length");
     // decode params
     FlashLoanParams memory flashLoanParams = abi.decode(params, (FlashLoanParams));
     // cases:
@@ -162,7 +162,7 @@ contract AaveV3LoopingStrategy is IAaveV3LoopingStrategy, ReentrancyGuard {
     // note: use balance difference to calculate real vaule to emit event
     uint256 callerCollBalBf = IERC20(params.collPool).balanceOf(msg.sender);
     uint256 callerDebtBalBf = IDebtToken(params.borrPool).balanceOf(msg.sender);
-    require(params.tokenIn == borrToken || params.tokenIn == collToken, "AaveV3LoopingStrategy: invalid tokenIn");
+    require(params.tokenIn == borrToken || params.tokenIn == collToken, "LoopingStrategy: invalid tokenIn");
     // flashloan from aave v3 (using interest rate mode 2)
     // note: borr pool will be swapped to collPool's underlying token and supply in flashloan\
     _flashLoan(borrToken, params.borrAmt, INTEREST_MODE_VARIABLE, abi.encode(params), OPERATION.INCREASE_POS);
@@ -179,7 +179,7 @@ contract AaveV3LoopingStrategy is IAaveV3LoopingStrategy, ReentrancyGuard {
     // validate tokenOut
     address borrToken = IDebtToken(params.borrPool).UNDERLYING_ASSET_ADDRESS();
     address collToken = IAToken(params.collPool).UNDERLYING_ASSET_ADDRESS();
-    require(params.tokenOut == borrToken || params.tokenOut == collToken, "AaveV3LoopingStrategy: invalid tokenOut");
+    require(params.tokenOut == borrToken || params.tokenOut == collToken, "LoopingStrategy: invalid tokenOut");
     // note: use balance difference to calculate real vaule to emit event
     uint256 callerCollBalBf = IERC20(params.collPool).balanceOf(msg.sender);
     uint256 callerDebtBalBf = IDebtToken(params.borrPool).balanceOf(msg.sender);
@@ -239,7 +239,7 @@ contract AaveV3LoopingStrategy is IAaveV3LoopingStrategy, ReentrancyGuard {
     );
     // supply coll token to coll pool on onBehalfOf
     uint256 supplyAmt = IERC20(collToken).balanceOf(address(this));
-    require(supplyAmt > 0, "AaveV3LoopingStrategy: supplyAmt is 0");
+    require(supplyAmt > 0, "LoopingStrategy: supplyAmt is 0");
     _ensureApprove(collToken, supplyAmt);
     IPool(POOL).supply(collToken, supplyAmt, params.caller, 0);
   }
@@ -338,7 +338,7 @@ contract AaveV3LoopingStrategy is IAaveV3LoopingStrategy, ReentrancyGuard {
     ISwapper(swapper).swapExactIn(swapExactInParams);
     // verify that the swap was successful
     uint256 amtOut = IERC20(to).balanceOf(address(this));
-    require(amtOut >= minAmtOut, "AaveV3LoopingStrategy: insufficient amtOut");
+    require(amtOut >= minAmtOut, "LoopingStrategy: insufficient amtOut");
     emit Swap(swapper, from, to, amtIn, amtOut);
   }
 
@@ -363,8 +363,8 @@ contract AaveV3LoopingStrategy is IAaveV3LoopingStrategy, ReentrancyGuard {
     ISwapper(swapper).swapExactOut(swapExactOutParams);
     // verify that the swap was successful (slippage maxAmtIn)
     uint256 amtIn = tokenInBalBf - IERC20(from).balanceOf(address(this));
-    require(amtIn <= maxAmtIn, "AaveV3LoopingStrategy: exceed maxAmtIn");
-    require(IERC20(to).balanceOf(address(this)) >= amtOut, "AaveV3LoopingStrategy: invalid amtOut");
+    require(amtIn <= maxAmtIn, "LoopingStrategy: exceed maxAmtIn");
+    require(IERC20(to).balanceOf(address(this)) >= amtOut, "LoopingStrategy: invalid amtOut");
     emit Swap(swapper, from, to, amtIn, amtOut);
   }
 
@@ -397,6 +397,6 @@ contract AaveV3LoopingStrategy is IAaveV3LoopingStrategy, ReentrancyGuard {
   }
 
   receive() external payable {
-    require(msg.sender == WNATIVE, "AaveV3LoopingStrategy: not wnative");
+    require(msg.sender == WNATIVE, "LoopingStrategy: not wnative");
   }
 }
