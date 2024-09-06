@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.8.0](https://github.com/mahaxyz/contracts/compare/v1.7.4...v1.8.0) (2024-09-06)
+
+
+### Features
+
+* added wrapper for the staking lp ([5333c3a](https://github.com/mahaxyz/contracts/commit/5333c3a96274f6563891744da3b0b21c0b82df43))
+* updated package.json types ([a32816d](https://github.com/mahaxyz/contracts/commit/a32816d36cd191e2758db1af329dcd83c6756345))
+* wrappers for aerodrome lp and gauge ([596fdc0](https://github.com/mahaxyz/contracts/commit/596fdc0faeb2fcaabf9f7e86052263a5131b788e))
+
+
+### Bug Fixes
+
+* added the xlayer gnosis safe ([1d62b50](https://github.com/mahaxyz/contracts/commit/1d62b50e65c0f12a45199a592e6ad876bed62427))
+* fixed unit tests ([eb7871c](https://github.com/mahaxyz/contracts/commit/eb7871c37ad2065a0fa7546a152270907245a4a5))
+* renamed the deployment scripts ([6d209bb](https://github.com/mahaxyz/contracts/commit/6d209bbc1e673783eb411a0392bc78628bb9452b))
+* wrote scripts to audit ownerhsip on base ([b898925](https://github.com/mahaxyz/contracts/commit/b8989251fea26d545ba523d82a83cfe7b6a1e4b3))
+
 ## [1.7.4](https://github.com/mahaxyz/contracts/compare/v1.7.3...v1.7.4) (2024-09-01)
 
 
