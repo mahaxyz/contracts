@@ -705,21 +705,5 @@
     "fantom-testnet": "0xfd53de8f107538c28148f0bcdf1fb1f1dfd5461b",
     "optimism": "0x313328609a9c38459cae56625fff7f2ad6dcde3b",
     "polygon": "0xc6d46f63578635e4a7140cdf4d0eea0fd7bb50ec"
-  },
-  "Zenrock": {
-    "arbitrum": "0x3b65e87e2a4690f14cae0483014259ded8215adc",
-    "avalanche": "0xe552485d02edd3067fe7fcbd4dd56bb1d3a998d2",
-    "base": "0x9e930731cb4a6bf7ecc11f695a295c60bdd212eb",
-    "bsc": "0xe5491fac6965aa664efd6d1ae5e7d1d56da4fdda",
-    "blast": "0x1383981c78393b36f59c4f8f4f12f1b4eb249ebf",
-    "celo": "0x1383981c78393b36f59c4f8f4f12f1b4eb249ebf",
-    "ethereum": "0xd42306df1a805d8053bc652ce0cd9f62bde80146",
-    "fantom": "0xae675d8a97a06dea4e74253d429bd324606ded24",
-    "gnosis": "0x07c05eab7716acb6f83ebf6268f8eecda8892ba1",
-    "optimism": "0xaf75bfd402f3d4ee84978179a6c87d16c4bd1724",
-    "polygon": "0xcd8ea69bbca0a2bb221aed59fa2704f01fc76a9f",
-    "scroll": "0x05aaefdf9db6e0f7d27fa3b6ee099edb33da029e",
-    "tron": "0x1de9dec8465638b07c198f53f1d4cb2a92be729c",
-    "zksync": "0xc4a1f52fda034a9a5e1b3b27d14451d15776fef6"
   }
 }

@@ -1,17 +1,15 @@
 /**
+  Script to setup OFTs for the token on the various networks.
 
-  Script to setup OFTs for the Zai and Maha tokens on the various networks.
-
-  npx hardhat setup-oft --token zai --network arbitrum
-  npx hardhat setup-oft --token zai --network base
-  npx hardhat setup-oft --token zai --network blast
-  npx hardhat setup-oft --token zai --network bsc
-  npx hardhat setup-oft --token zai --network linea
-  npx hardhat setup-oft --token zai --network optimism
-  npx hardhat setup-oft --token zai --network xlayer
-  npx hardhat setup-oft --token zai --network mainnet
-  npx hardhat setup-oft --token zai --network scroll
-
+  npx hardhat setup-oft --network arbitrum --token zai
+  npx hardhat setup-oft --network base --token zai
+  npx hardhat setup-oft --network blast --token zai
+  npx hardhat setup-oft --network bsc --token zai
+  npx hardhat setup-oft --network xlayer --token zai
+  npx hardhat setup-oft --network linea --token zai
+  npx hardhat setup-oft --network zircuit --token zai
+  npx hardhat setup-oft --network manta --token zai
+  npx hardhat setup-oft --network mainnet --token zai
  */
 import _ from "underscore";
 import { config, IL0Config, IL0ConfigKey } from "./config";
@@ -19,6 +17,8 @@ import { EnforcedOptionParamStruct } from "../../types/@layerzerolabs/lz-evm-oap
 import { Options } from "@layerzerolabs/lz-v2-utilities";
 import { task } from "hardhat/config";
 import { waitForTx } from "../../scripts/utils";
+import { get } from "../../scripts/helpers";
+import { zeroPadValue } from "ethers";
 
 const _fetchAndSortDVNS = (
   conf: IL0Config,
@@ -41,9 +41,6 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
     const c = config[hre.network.name];
     if (!c) throw new Error("cannot find connection");
 
-    const contractNameToken = token === "zai" ? "ZaiStablecoin" : "MAHA";
-    const contractName = `${contractNameToken}${c.contract}`;
-
     const remoteConnections = Object.keys(config).filter(
       (c) => c !== hre.network.name
     ) as IL0ConfigKey[];
@@ -55,8 +52,14 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
 
     const encoder = hre.ethers.AbiCoder.defaultAbiCoder();
 
+    const contractNameToken = token === "zai" ? "ZaiStablecoin" : "MAHA";
+    const contractName = `${contractNameToken}${c.contract}`;
+
     const oftD = await hre.deployments.get(contractName);
-    const oft = await hre.ethers.getContractAt("OFT", oftD.address);
+    const oft = await hre.ethers.getContractAt(
+      "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT.sol:OFT",
+      oftD.address
+    );
     const endpoint = await hre.ethers.getContractAt(
       "IL0EndpointV2",
       await oft.endpoint()
@@ -78,10 +81,11 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
       const r = config[remoteNetwork];
 
       console.log(
-        "setting up DVN routes from",
+        "\n\nsetting up DVN routes from",
         hre.network.name,
         "to remote network",
-        remoteNetwork
+        remoteNetwork,
+        r.eid
       );
 
       const requiredDVNs = _fetchAndSortDVNS(c, c.requiredDVNs, r.requiredDVNs);
@@ -92,12 +96,26 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
         5
       );
 
+      const remoteContractName = `${contractNameToken}${r.contract}`;
+
+      const remoteD = get(remoteContractName, remoteNetwork);
+      const remoteOft = zeroPadValue(remoteD, 32);
+
+      const peer = await oft.peers(r.eid);
+      console.log("received peer", peer);
+
+      if (peer.toLowerCase() != remoteOft.toLowerCase()) {
+        // if we can set the peer, we will set it here
+        console.log("setting peer for", remoteNetwork);
+        await waitForTx(await oft.setPeer(r.eid, remoteOft));
+      }
+
       if (requiredDVNs.length === 0 && optionalDVNs.length === 0) {
         console.log("no DVNs to set up for remote network", remoteNetwork);
         continue;
       } else {
-        // console.log("using requiredDVNs:", requiredDVNs);
-        // console.log("using optionalDVNs:", optionalDVNs);
+        console.log("using requiredDVNs:", requiredDVNs.length);
+        console.log("using optionalDVNs:", optionalDVNs.length);
       }
 
       const ulnConfigDataSend = {
@@ -116,7 +134,10 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
         confirmations: r.confirmations,
         requiredDVNCount: requiredDVNs.length,
         optionalDVNCount: optionalDVNs.length,
-        optionalDVNThreshold: r.optionalDVNThreshold,
+        optionalDVNThreshold: Math.min(
+          c.optionalDVNThreshold,
+          optionalDVNs.length
+        ),
         requiredDVNs: requiredDVNs,
         optionalDVNs: optionalDVNs,
       };
@@ -162,6 +183,7 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
           ]),
           2
         );
+      else console.log("send config already set");
 
       // setup the receive config
       if (currentUlnRecv != setConfigParamUlnRecv.config)
@@ -170,6 +192,7 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
             setConfigParamUlnRecv,
           ])
         );
+      else console.log("receive config already set");
 
       // set enforced options
       const setOptions = await oft.enforcedOptions(r.eid, 1);
@@ -182,6 +205,6 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
             options,
           }));
         await waitForTx(await oft.setEnforcedOptions(enforcedOptions));
-      }
+      } else console.log("enforced options already set");
     }
   });

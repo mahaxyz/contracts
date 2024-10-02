@@ -56,15 +56,6 @@ const pluckLibraries = (network: string) => {
 };
 
 export const config: IL0ConfigMapping = {
-  arbitrum: {
-    eid: 30110,
-    contract: "OFT",
-    confirmations: 15,
-    optionalDVNThreshold: 2,
-    libraries: pluckLibraries("arbitrum"),
-    dvns: pluckDVNs("arbitrum"),
-    requiredDVNs: ["LayerZero_Labs"],
-  },
   linea: {
     eid: 30183,
     contract: "OFT",
@@ -72,6 +63,15 @@ export const config: IL0ConfigMapping = {
     optionalDVNThreshold: 2,
     libraries: pluckLibraries("linea"),
     dvns: pluckDVNs("linea"),
+    requiredDVNs: ["LayerZero_Labs"],
+  },
+  arbitrum: {
+    eid: 30110,
+    contract: "OFT",
+    confirmations: 15,
+    optionalDVNThreshold: 2,
+    libraries: pluckLibraries("arbitrum"),
+    dvns: pluckDVNs("arbitrum"),
     requiredDVNs: ["LayerZero_Labs"],
   },
   mainnet: {

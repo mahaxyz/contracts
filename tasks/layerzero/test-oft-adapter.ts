@@ -2,14 +2,14 @@
 
   Script to send a test OFT to a target network
 
-  npx hardhat test-oft-adapter --amt 1 --targetnetwork arbitrum --token zai  --network mainnet
-  npx hardhat test-oft-adapter --amt 1 --targetnetwork base --token zai  --network mainnet
-  npx hardhat test-oft-adapter --amt 1 --targetnetwork blast --token zai  --network mainnet
-  npx hardhat test-oft-adapter --amt 1 --targetnetwork bsc --token zai  --network mainnet
-  npx hardhat test-oft-adapter --amt 1 --targetnetwork linea --token zai  --network mainnet
-  npx hardhat test-oft-adapter --amt 1 --targetnetwork optimism --token zai  --network mainnet
-  npx hardhat test-oft-adapter --amt 1 --targetnetwork xlayer --token zai  --network mainnet
-  npx hardhat test-oft-adapter --amt 1 --targetnetwork scroll --token zai  --network mainnet
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network arbitrum
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network base
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network blast
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network bsc
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network linea
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network optimism
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network xlayer
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network scroll
 
  */
 import { task } from "hardhat/config";
@@ -48,6 +48,18 @@ task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
       oftAdapterD.address
     );
 
+    console.log(
+      "\n\ni am",
+      deployer.address,
+      "sending",
+      amt,
+      "tokens to",
+      targetnetwork,
+      "from",
+      hre.network.name,
+      oftAdapterD.address
+    );
+
     // Defining the amount of tokens to send and constructing the parameters for the send operation
     const tokensToSend = parseEther(amt);
 
@@ -69,12 +81,19 @@ task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
 
     if (
       source.network === "mainnet" &&
-      (await erc20.allowance(deployer.address, oftAdapter.target)) == 0
+      (await erc20.allowance(deployer.address, oftAdapter.target)) <
+        tokensToSend
     ) {
       // If the source network is mainnet, we need to approve the OFT adapter to spend the tokens
       await waitForTx(await erc20.approve(oftAdapter.target, MaxUint256));
     }
 
+    console.log("quoting send", params);
+
+    console.log(
+      "params",
+      await oftAdapter.quoteSend.populateTransaction(params, false)
+    );
     const [nativeFee] = await oftAdapter.quoteSend(params, false);
 
     const fee: MessagingFeeStruct = {
