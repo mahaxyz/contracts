@@ -30,7 +30,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
   );
 
   await waitForTx(await usdc.approve(zap.target, MaxUint256));
-  await waitForTx(await zap.zapIntoLP(10e6, 0));
+  await waitForTx(await zap.zapIntoLP(1e6, 0));
 }
 
 main.tags = ["ZapAerodromePoolUSDC"];

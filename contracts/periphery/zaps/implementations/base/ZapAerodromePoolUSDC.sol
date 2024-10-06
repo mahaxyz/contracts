@@ -13,6 +13,7 @@
 
 pragma solidity 0.8.21;
 
+import {IAerodromePool} from "../../../../interfaces/periphery/dex/IAerodromePool.sol";
 import {IAerodromeRouter} from "../../../../interfaces/periphery/dex/IAerodromeRouter.sol";
 import {ZapAerodromeBase} from "./ZapAerodromeBase.sol";
 
@@ -30,6 +31,46 @@ contract ZapAerodromePoolUSDC is ZapAerodromeBase {
   function zapIntoLP(uint256 collateralAmount, uint256 minLpAmount) external {
     collateral.transferFrom(msg.sender, me, collateralAmount);
 
+    uint256 price = collateral.balanceOf(address(pool)) * 1e30 / zai.balanceOf(address(pool));
+    if (price < 90 * 1e16) {
+      // < 0.99
+      _zapDepegged(collateralAmount, minLpAmount);
+    } else {
+      _zapNormal(collateralAmount, minLpAmount);
+    }
+  }
+
+  function _zapDepegged(uint256 collateralAmount, uint256 minLpAmount) internal {
+    IAerodromeRouter.Route memory route =
+      IAerodromeRouter.Route({from: address(collateral), to: address(zai), stable: true, factory: factory});
+
+    IAerodromeRouter.Route[] memory routes = new IAerodromeRouter.Route[](1);
+    routes[0] = route;
+
+    router.swapExactTokensForTokens(
+      collateralAmount / 2, //       uint256 amountIn,
+      collateralAmount / 2 * 1e12, // uint256 amountOutMin,
+      routes, // Route[] calldata routes,
+      me, // address to,
+      block.timestamp // uint256 deadline
+    );
+
+    router.addLiquidity(
+      address(collateral), address(zai), true, collateralAmount / 2, zai.balanceOf(me), 0, 0, me, block.timestamp
+    );
+
+    require(pool.balanceOf(me) >= minLpAmount, "!insufficient");
+
+    // we now have LP tokens; deposit into staking contract for the user
+    staking.deposit(pool.balanceOf(me), msg.sender);
+
+    // sweep any dust
+    _sweep(collateral);
+
+    emit Zapped(msg.sender, collateralAmount, 0, pool.balanceOf(msg.sender));
+  }
+
+  function _zapNormal(uint256 collateralAmount, uint256 minLpAmount) internal {
     // convert 50% collateral for zai
     uint256 zaiAmount = bridge.deposit(collateralAmount / 2);
 
