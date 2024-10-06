@@ -21,11 +21,15 @@ async function main() {
     "0x0000000000000000000000000000000000000000000000000000000000000000";
   const salt = ethers.id("task1");
 
-  const contractD = await deployments.get("ZaiStablecoinOFT");
-  const contract = await ethers.getContractAt("OFTAdapter", contractD.address);
+  const contractD = await deployments.get("L2DepositCollateralL0");
+  const contract = await ethers.getContractAt(
+    "L2DepositCollateralL0",
+    contractD.address
+  );
 
-  const data1 = await contract.setDelegate.populateTransaction(
-    "0x1F09Ec21d7fd0A21879b919bf0f9C46e6b85CA8b"
+  const data1 = await contract.setAllowedBridgeSweeper.populateTransaction(
+    "0x24fF4165F1bc1621E23eFE9437ba8Bef8AC03D2A",
+    true
   );
 
   console.log(data1);
