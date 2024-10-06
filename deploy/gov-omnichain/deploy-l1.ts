@@ -1,3 +1,5 @@
+// npx hardhat deploy --tags OmnichainProposalSenderL1 --network mainnet
+
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployContract } from "../../scripts/utils";
 import { config } from "../../tasks/layerzero/config";
