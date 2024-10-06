@@ -93,7 +93,7 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
         c,
         _fetchOptionalDVNs(c),
         _fetchOptionalDVNs(r),
-        5
+        3
       );
 
       const remoteContractName = `${contractNameToken}${r.contract}`;
@@ -117,6 +117,11 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
         console.log("using requiredDVNs:", requiredDVNs.length);
         console.log("using optionalDVNs:", optionalDVNs.length);
       }
+
+      console.log(
+        "using optionalDVNThreshold:",
+        Math.min(c.optionalDVNThreshold, optionalDVNs.length)
+      );
 
       const ulnConfigDataSend = {
         confirmations: c.confirmations,
