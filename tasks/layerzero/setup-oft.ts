@@ -8,7 +8,6 @@
   npx hardhat setup-oft --network xlayer --token zai
   npx hardhat setup-oft --network linea --token zai
   npx hardhat setup-oft --network zircuit --token zai
-  npx hardhat setup-oft --network manta --token zai
   npx hardhat setup-oft --network mainnet --token zai
  */
 import _ from "underscore";

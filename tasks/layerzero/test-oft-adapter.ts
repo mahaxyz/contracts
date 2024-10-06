@@ -3,7 +3,7 @@
   Script to send a test OFT to a target network
 
   npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network arbitrum
-  npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network base
+  npx hardhat test-oft-adapter --amt 1 --targetnetwork linea --token zai  --network base
   npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network blast
   npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network bsc
   npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network linea
