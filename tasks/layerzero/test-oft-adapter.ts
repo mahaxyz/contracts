@@ -10,7 +10,6 @@
   npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network optimism
   npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network xlayer
   npx hardhat test-oft-adapter --amt 1 --targetnetwork mainnet --token zai  --network scroll
-
  */
 import { task } from "hardhat/config";
 import { waitForTx } from "../../scripts/utils";
