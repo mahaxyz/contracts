@@ -1,5 +1,150 @@
 # Changelog
 
+## [1.8.0](https://github.com/mahaxyz/contracts/compare/v1.7.4...v1.8.0) (2024-09-06)
+
+
+### Features
+
+* added wrapper for the staking lp ([5333c3a](https://github.com/mahaxyz/contracts/commit/5333c3a96274f6563891744da3b0b21c0b82df43))
+* updated package.json types ([a32816d](https://github.com/mahaxyz/contracts/commit/a32816d36cd191e2758db1af329dcd83c6756345))
+* wrappers for aerodrome lp and gauge ([596fdc0](https://github.com/mahaxyz/contracts/commit/596fdc0faeb2fcaabf9f7e86052263a5131b788e))
+
+
+### Bug Fixes
+
+* added the xlayer gnosis safe ([1d62b50](https://github.com/mahaxyz/contracts/commit/1d62b50e65c0f12a45199a592e6ad876bed62427))
+* fixed unit tests ([eb7871c](https://github.com/mahaxyz/contracts/commit/eb7871c37ad2065a0fa7546a152270907245a4a5))
+* renamed the deployment scripts ([6d209bb](https://github.com/mahaxyz/contracts/commit/6d209bbc1e673783eb411a0392bc78628bb9452b))
+* wrote scripts to audit ownerhsip on base ([b898925](https://github.com/mahaxyz/contracts/commit/b8989251fea26d545ba523d82a83cfe7b6a1e4b3))
+
+## [1.7.4](https://github.com/mahaxyz/contracts/compare/v1.7.3...v1.7.4) (2024-09-01)
+
+
+### Bug Fixes
+
+* fixed the github actions to include base ([b417ceb](https://github.com/mahaxyz/contracts/commit/b417ceb09954ab4b98c91d299612b2982b3a53ee))
+* fixed the lp address for maha/usdz ([b79becc](https://github.com/mahaxyz/contracts/commit/b79becc15167979f43c63880e9709d542a2e41c9))
+
+## [1.7.3](https://github.com/mahaxyz/contracts/compare/v1.7.2...v1.7.3) (2024-08-27)
+
+
+### Bug Fixes
+
+* added LP tokens ([d9532ee](https://github.com/mahaxyz/contracts/commit/d9532eedddda30d72c60fd8939fd97e97f9069a1))
+
+## [1.7.2](https://github.com/mahaxyz/contracts/compare/v1.7.1...v1.7.2) (2024-08-27)
+
+
+### Bug Fixes
+
+* redeploy ofts ([#35](https://github.com/mahaxyz/contracts/issues/35)) ([26b6953](https://github.com/mahaxyz/contracts/commit/26b6953355e4dd22dceadc2737533a95012f1b7f))
+
+## [1.7.1](https://github.com/mahaxyz/contracts/compare/v1.7.0...v1.7.1) (2024-08-27)
+
+
+### Features
+
+* Layer 2 hubs ([#25](https://github.com/mahaxyz/contracts/issues/25)) ([d23808b](https://github.com/mahaxyz/contracts/commit/d23808bc9c06155b57da54ee6fcd142c5f6f68ae))
+
+
+### Bug Fixes
+
+* fixed deployment of xlayer ([dcfe8dc](https://github.com/mahaxyz/contracts/commit/dcfe8dc00a950cb80da7f37a1293eb4f0be15031))
+
+## [1.7.0](https://github.com/mahaxyz/contracts/compare/v1.6.1...v1.7.0) (2024-08-24)
+
+
+### Features
+
+* Added layerzero native restaking ([#33](https://github.com/mahaxyz/contracts/issues/33)) ([0671863](https://github.com/mahaxyz/contracts/commit/06718634b7202b5c2884d23c9592c1f3b5d0804e))
+
+
+### Bug Fixes
+
+* added more multichain ofts ([#31](https://github.com/mahaxyz/contracts/issues/31)) ([4c0768d](https://github.com/mahaxyz/contracts/commit/4c0768dc5fdb0ed8d7ca52755807e795cb8ebc0e))
+
+## [1.6.1](https://github.com/mahaxyz/contracts/compare/v1.6.0...v1.6.1) (2024-08-20)
+
+
+### Features
+
+* maha oft ([#28](https://github.com/mahaxyz/contracts/issues/28)) ([0cdf8db](https://github.com/mahaxyz/contracts/commit/0cdf8dbc2543d09e020a167871195cb568f0aeac))
+
+
+### Bug Fixes
+
+* redeployed the xUSDz contract into base ([50f7e25](https://github.com/mahaxyz/contracts/commit/50f7e2593b225cec2e4921c870f9034975919729))
+
+## [1.6.0](https://github.com/mahaxyz/contracts/compare/v1.5.0...v1.6.0) (2024-08-20)
+
+
+### Features
+
+* added layerzero oft bridge ([#23](https://github.com/mahaxyz/contracts/issues/23)) ([06f5a77](https://github.com/mahaxyz/contracts/commit/06f5a775f0ca208016f4e69a7b9747a79037d35e))
+
+## [1.5.0](https://github.com/mahaxyz/contracts/compare/v1.4.1...v1.5.0) (2024-08-20)
+
+
+### Features
+
+* added staking pool for aerodrome sUSDzUSDC pool ([d9efb65](https://github.com/mahaxyz/contracts/commit/d9efb658cb9f63b16957ef9f1382166208b04f36))
+
+## [1.4.1](https://github.com/mahaxyz/contracts/compare/v1.4.0...v1.4.1) (2024-08-18)
+
+
+### Bug Fixes
+
+* added unit tests and deployed the zap for maha/usdz pool ([5cb5935](https://github.com/mahaxyz/contracts/commit/5cb593595751b59b4cb98efd29f1ca2ec7352831))
+* removed unwanted deployments and updated the audit script ([5366212](https://github.com/mahaxyz/contracts/commit/5366212043c91a5b8f7b868024bb9d60cb16e07d))
+
+## [1.4.0](https://github.com/mahaxyz/contracts/compare/v1.3.0...v1.4.0) (2024-08-08)
+
+
+### Features
+
+* deployed pool ui helper for APR calculations ([943c75c](https://github.com/mahaxyz/contracts/commit/943c75c5f72ac9ea4222c272f70938b04416b735))
+
+## [1.3.0](https://github.com/mahaxyz/contracts/compare/v1.2.3...v1.3.0) (2024-08-07)
+
+
+### Features
+
+* added zap contracts for mainnet ([07d0577](https://github.com/mahaxyz/contracts/commit/07d05777b6b3bcf53a87d23c1e8dea8655ae092b))
+* deployed the metamorpho vaults ([e14acaa](https://github.com/mahaxyz/contracts/commit/e14acaa567a89d28b18caedcbb6d46b4fd392927))
+
+## [1.2.3](https://github.com/mahaxyz/contracts/compare/v1.2.2...v1.2.3) (2024-08-05)
+
+
+### Features
+
+* native restaking with connext bridge ([#10](https://github.com/mahaxyz/contracts/issues/10)) ([c535c90](https://github.com/mahaxyz/contracts/commit/c535c9022a14fbb95d671810b29bf8a8834c4fde))
+
+
+### Bug Fixes
+
+* added pool staking contract ([3853fc3](https://github.com/mahaxyz/contracts/commit/3853fc3d6cfaf9be937f4c451937f8be99ff786c))
+
+## [1.2.2](https://github.com/mahaxyz/contracts/compare/v1.2.1...v1.2.2) (2024-08-01)
+
+
+### Bug Fixes
+
+* fixed releease script ([2a78fda](https://github.com/mahaxyz/contracts/commit/2a78fdae15c021e8aadb72989d0a0ecab78bbb6e))
+
+## [1.2.1](https://github.com/mahaxyz/contracts/compare/v1.2.0...v1.2.1) (2024-08-01)
+
+
+### Bug Fixes
+
+* updated readme file ([d29ffbc](https://github.com/mahaxyz/contracts/commit/d29ffbc0fecebd5be2734b0977eefa4eb47657a2))
+
+## [1.2.0](https://github.com/mahaxyz/contracts/compare/v1.1.1...v1.2.0) (2024-07-29)
+
+
+### Features
+
+* governance staking contracts ([#13](https://github.com/mahaxyz/contracts/issues/13)) ([176498e](https://github.com/mahaxyz/contracts/commit/176498e86aed03a1009cc0d4c8d5315eb114fdd1))
+
 ## [1.1.1](https://github.com/mahaxyz/contracts/compare/v1.1.0...v1.1.1) (2024-07-28)
 
 

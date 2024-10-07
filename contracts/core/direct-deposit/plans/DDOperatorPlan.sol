@@ -26,7 +26,13 @@ contract DDOperatorPlan is AccessControlDefaultAdminRules, IDDPlan {
   uint256 public targetAssets;
   bytes32 public immutable OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
-  constructor(uint48 _initialDelay, address _governance) AccessControlDefaultAdminRules(_initialDelay, _governance) {}
+  constructor(
+    uint48 _initialDelay,
+    address _governance,
+    uint256 _targetAssets
+  ) AccessControlDefaultAdminRules(_initialDelay, _governance) {
+    targetAssets = _targetAssets;
+  }
 
   function setTargetAssets(uint256 value) external onlyRole(OPERATOR_ROLE) {
     targetAssets = value;

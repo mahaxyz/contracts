@@ -117,6 +117,7 @@ abstract contract MultiStakingRewardsERC4626 is
     staking = IOmnichainStaking(_staking);
 
     _grantRole(DEFAULT_ADMIN_ROLE, _governance);
+    _grantRole(DISTRIBUTOR_ROLE, _governance);
 
     if (_boostedTotalSupply == 0) {
       _boostedTotalSupply = totalSupply();
@@ -345,6 +346,7 @@ abstract contract MultiStakingRewardsERC4626 is
   function _calculateBoostedBalance(address account)
     internal
     view
+    virtual
     returns (uint256 boostedBalance_, uint256 boostedTotalSupply_)
   {
     uint256 balance = balanceOf(account);

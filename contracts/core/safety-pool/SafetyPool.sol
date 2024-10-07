@@ -61,6 +61,8 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
     withdrawalTimestamp[msg.sender] = block.timestamp + withdrawalDelay;
     withdrawalAmount[msg.sender] = shares;
     emit SafetyPoolEvents.WithdrawalQueueUpdated(shares, withdrawalTimestamp[msg.sender], msg.sender);
+
+    _updateRewardDual(rewardToken1, rewardToken2, msg.sender);
   }
 
   /// @inheritdoc ISafetyPool
@@ -68,6 +70,8 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
     withdrawalTimestamp[msg.sender] = 0;
     withdrawalAmount[msg.sender] = 0;
     emit SafetyPoolEvents.WithdrawalQueueUpdated(0, 0, msg.sender);
+
+    _updateRewardDual(rewardToken1, rewardToken2, msg.sender);
   }
 
   /// @inheritdoc ISafetyPool
@@ -87,5 +91,19 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
     emit SafetyPoolEvents.WithdrawalQueueUpdated(0, 0, owner);
 
     super._withdraw(caller, receiver, owner, assets, shares);
+  }
+
+  /// @dev Override the _calculateBoostedBalance function to account for the withdrawal queue
+  function _calculateBoostedBalance(address account)
+    internal
+    view
+    override
+    returns (uint256 boostedBalance_, uint256 boostedTotalSupply_)
+  {
+    if (withdrawalTimestamp[account] > 0) {
+      return (0, _boostedTotalSupply);
+    }
+
+    (boostedBalance_, boostedTotalSupply_) = super._calculateBoostedBalance(account);
   }
 }

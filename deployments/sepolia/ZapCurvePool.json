@@ -1,0 +1,437 @@
+{
+  "address": "0x69E4C22105EE356bd1f57F40dF29129748544704",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_staking",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_psm",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_router",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "CollateralTransferFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "OdosSwapFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ZaiTransferFailed",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "collateralAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "zaiAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newStakedAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Zapped",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "collateral",
+      "outputs": [
+        {
+          "internalType": "contract IERC20Metadata",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "decimalOffset",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pool",
+      "outputs": [
+        {
+          "internalType": "contract ICurveStableSwapNG",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "psm",
+      "outputs": [
+        {
+          "internalType": "contract IPegStabilityModule",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "router",
+      "outputs": [
+        {
+          "internalType": "contract ICurveRouter",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "staking",
+      "outputs": [
+        {
+          "internalType": "contract IERC4626",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "sweep",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "zai",
+      "outputs": [
+        {
+          "internalType": "contract IERC20Metadata",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "collateralAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minLpAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "zapIntoLP",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "zaiAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "collateralAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minLpAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "zapWithZaiIntoLP",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x25d4a64256200662c37cad0edac167d6b03170f97afd0eced2696a76256ad289",
+  "receipt": {
+    "to": null,
+    "from": "0x1F09Ec21d7fd0A21879b919bf0f9C46e6b85CA8b",
+    "contractAddress": "0x69E4C22105EE356bd1f57F40dF29129748544704",
+    "transactionIndex": 32,
+    "gasUsed": "1083892",
+    "logsBloom": "0x00000000000000000000000000000000000000000004000200000040000000000000000000000000000000000000000000002000000000000000000000200000000000000000008000080000000000000000008000000001000000000000000000000000000000010000000000000000000000000008000100000800000000000000000000400000000000000000000000000000000000200000000000002000020000000000000020002000000000000000000000000000000000000000000000200000000000000000000000000000000000000000a00000000000001000000010000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xe16bddf972ee2bc0a02f0ab71ec9f2aa76e5595dade414ba6c2b738fbb66fdcf",
+    "transactionHash": "0x25d4a64256200662c37cad0edac167d6b03170f97afd0eced2696a76256ad289",
+    "logs": [
+      {
+        "transactionIndex": 32,
+        "blockNumber": 6410150,
+        "transactionHash": "0x25d4a64256200662c37cad0edac167d6b03170f97afd0eced2696a76256ad289",
+        "address": "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0",
+        "topics": [
+          "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+          "0x00000000000000000000000069e4c22105ee356bd1f57f40df29129748544704",
+          "0x0000000000000000000000005153c753bfaf3dffab76004ed004c79714f5aa78"
+        ],
+        "data": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "logIndex": 80,
+        "blockHash": "0xe16bddf972ee2bc0a02f0ab71ec9f2aa76e5595dade414ba6c2b738fbb66fdcf"
+      },
+      {
+        "transactionIndex": 32,
+        "blockNumber": 6410150,
+        "transactionHash": "0x25d4a64256200662c37cad0edac167d6b03170f97afd0eced2696a76256ad289",
+        "address": "0x14F35dd7Fc90EB577b79d3dE945a949c06D09DD2",
+        "topics": [
+          "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+          "0x00000000000000000000000069e4c22105ee356bd1f57f40df29129748544704",
+          "0x0000000000000000000000005153c753bfaf3dffab76004ed004c79714f5aa78"
+        ],
+        "data": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "logIndex": 81,
+        "blockHash": "0xe16bddf972ee2bc0a02f0ab71ec9f2aa76e5595dade414ba6c2b738fbb66fdcf"
+      },
+      {
+        "transactionIndex": 32,
+        "blockNumber": 6410150,
+        "transactionHash": "0x25d4a64256200662c37cad0edac167d6b03170f97afd0eced2696a76256ad289",
+        "address": "0x14F35dd7Fc90EB577b79d3dE945a949c06D09DD2",
+        "topics": [
+          "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+          "0x00000000000000000000000069e4c22105ee356bd1f57f40df29129748544704",
+          "0x000000000000000000000000569cf49beddfa221ded68af7819a3014491b883d"
+        ],
+        "data": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "logIndex": 82,
+        "blockHash": "0xe16bddf972ee2bc0a02f0ab71ec9f2aa76e5595dade414ba6c2b738fbb66fdcf"
+      },
+      {
+        "transactionIndex": 32,
+        "blockNumber": 6410150,
+        "transactionHash": "0x25d4a64256200662c37cad0edac167d6b03170f97afd0eced2696a76256ad289",
+        "address": "0x5153c753BFaf3dFFaB76004Ed004c79714f5aA78",
+        "topics": [
+          "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+          "0x00000000000000000000000069e4c22105ee356bd1f57f40df29129748544704",
+          "0x0000000000000000000000000992c8f1ce767a3015fb255881c716575cbfe6f3"
+        ],
+        "data": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "logIndex": 83,
+        "blockHash": "0xe16bddf972ee2bc0a02f0ab71ec9f2aa76e5595dade414ba6c2b738fbb66fdcf"
+      }
+    ],
+    "blockNumber": 6410150,
+    "cumulativeGasUsed": "9533165",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x0992C8F1CE767A3015Fb255881C716575cBFe6F3",
+    "0x569CF49beDDFA221deD68aF7819A3014491b883d",
+    "0x5153c753BFaf3dFFaB76004Ed004c79714f5aA78"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "bf587503504f04f1a1890cac65205583",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.21+commit.d9974bed\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_staking\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_psm\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_router\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"CollateralTransferFailed\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"OdosSwapFailed\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ZaiTransferFailed\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"collateralAmount\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"zaiAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newStakedAmount\",\"type\":\"uint256\"}],\"name\":\"Zapped\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"collateral\",\"outputs\":[{\"internalType\":\"contract IERC20Metadata\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"decimalOffset\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pool\",\"outputs\":[{\"internalType\":\"contract ICurveStableSwapNG\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"psm\",\"outputs\":[{\"internalType\":\"contract IPegStabilityModule\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"router\",\"outputs\":[{\"internalType\":\"contract ICurveRouter\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"staking\",\"outputs\":[{\"internalType\":\"contract IERC4626\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"sweep\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"zai\",\"outputs\":[{\"internalType\":\"contract IERC20Metadata\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"collateralAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minLpAmount\",\"type\":\"uint256\"}],\"name\":\"zapIntoLP\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"zaiAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"collateralAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minLpAmount\",\"type\":\"uint256\"}],\"name\":\"zapWithZaiIntoLP\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"This contract allows users to perform a Zap operation by swapping collateral for zai tokens, adding liquidity to curve LP, and staking the LP tokens.\",\"kind\":\"dev\",\"methods\":{\"constructor\":{\"details\":\"Initializes the contract with the required contracts\"},\"zapIntoLP(uint256,uint256)\":{\"details\":\"This function is used when the user only has collateral tokens.\",\"params\":{\"collateralAmount\":\"The amount of collateral to zap\",\"minLpAmount\":\"The minimum amount of LP tokens to stake\"}},\"zapWithZaiIntoLP(uint256,uint256,uint256)\":{\"details\":\"This function is used when the user already has ZAI tokens.\",\"params\":{\"collateralAmount\":\"The amount of collateral to zap\",\"minLpAmount\":\"The minimum amount of LP tokens to stake\",\"zaiAmount\":\"The amount of ZAI to zap\"}}},\"title\":\"ZapCurvePool\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"zapIntoLP(uint256,uint256)\":{\"notice\":\"Zaps collateral into ZAI LP tokens\"},\"zapWithZaiIntoLP(uint256,uint256,uint256)\":{\"notice\":\"Zaps ZAI and collateral into LP tokens\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/periphery/zaps/ZapCurvePool.sol\":\"ZapCurvePool\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/interfaces/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (interfaces/IERC20.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IERC20} from \\\"../token/ERC20/IERC20.sol\\\";\\n\",\"keccak256\":\"0xce41876e78d1badc0512229b4d14e4daf83bc1003d7f83978d18e0e56f965b9c\",\"license\":\"MIT\"},\"@openzeppelin/contracts/interfaces/IERC20Metadata.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (interfaces/IERC20Metadata.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IERC20Metadata} from \\\"../token/ERC20/extensions/IERC20Metadata.sol\\\";\\n\",\"keccak256\":\"0x00c23b80f74717a6765b606001c5c633116020d488ee8f53600685b8200e4bf3\",\"license\":\"MIT\"},\"@openzeppelin/contracts/interfaces/IERC4626.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (interfaces/IERC4626.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IERC20} from \\\"../token/ERC20/IERC20.sol\\\";\\nimport {IERC20Metadata} from \\\"../token/ERC20/extensions/IERC20Metadata.sol\\\";\\n\\n/**\\n * @dev Interface of the ERC4626 \\\"Tokenized Vault Standard\\\", as defined in\\n * https://eips.ethereum.org/EIPS/eip-4626[ERC-4626].\\n */\\ninterface IERC4626 is IERC20, IERC20Metadata {\\n    event Deposit(address indexed sender, address indexed owner, uint256 assets, uint256 shares);\\n\\n    event Withdraw(\\n        address indexed sender,\\n        address indexed receiver,\\n        address indexed owner,\\n        uint256 assets,\\n        uint256 shares\\n    );\\n\\n    /**\\n     * @dev Returns the address of the underlying token used for the Vault for accounting, depositing, and withdrawing.\\n     *\\n     * - MUST be an ERC-20 token contract.\\n     * - MUST NOT revert.\\n     */\\n    function asset() external view returns (address assetTokenAddress);\\n\\n    /**\\n     * @dev Returns the total amount of the underlying asset that is \\u201cmanaged\\u201d by Vault.\\n     *\\n     * - SHOULD include any compounding that occurs from yield.\\n     * - MUST be inclusive of any fees that are charged against assets in the Vault.\\n     * - MUST NOT revert.\\n     */\\n    function totalAssets() external view returns (uint256 totalManagedAssets);\\n\\n    /**\\n     * @dev Returns the amount of shares that the Vault would exchange for the amount of assets provided, in an ideal\\n     * scenario where all the conditions are met.\\n     *\\n     * - MUST NOT be inclusive of any fees that are charged against assets in the Vault.\\n     * - MUST NOT show any variations depending on the caller.\\n     * - MUST NOT reflect slippage or other on-chain conditions, when performing the actual exchange.\\n     * - MUST NOT revert.\\n     *\\n     * NOTE: This calculation MAY NOT reflect the \\u201cper-user\\u201d price-per-share, and instead should reflect the\\n     * \\u201caverage-user\\u2019s\\u201d price-per-share, meaning what the average user should expect to see when exchanging to and\\n     * from.\\n     */\\n    function convertToShares(uint256 assets) external view returns (uint256 shares);\\n\\n    /**\\n     * @dev Returns the amount of assets that the Vault would exchange for the amount of shares provided, in an ideal\\n     * scenario where all the conditions are met.\\n     *\\n     * - MUST NOT be inclusive of any fees that are charged against assets in the Vault.\\n     * - MUST NOT show any variations depending on the caller.\\n     * - MUST NOT reflect slippage or other on-chain conditions, when performing the actual exchange.\\n     * - MUST NOT revert.\\n     *\\n     * NOTE: This calculation MAY NOT reflect the \\u201cper-user\\u201d price-per-share, and instead should reflect the\\n     * \\u201caverage-user\\u2019s\\u201d price-per-share, meaning what the average user should expect to see when exchanging to and\\n     * from.\\n     */\\n    function convertToAssets(uint256 shares) external view returns (uint256 assets);\\n\\n    /**\\n     * @dev Returns the maximum amount of the underlying asset that can be deposited into the Vault for the receiver,\\n     * through a deposit call.\\n     *\\n     * - MUST return a limited value if receiver is subject to some deposit limit.\\n     * - MUST return 2 ** 256 - 1 if there is no limit on the maximum amount of assets that may be deposited.\\n     * - MUST NOT revert.\\n     */\\n    function maxDeposit(address receiver) external view returns (uint256 maxAssets);\\n\\n    /**\\n     * @dev Allows an on-chain or off-chain user to simulate the effects of their deposit at the current block, given\\n     * current on-chain conditions.\\n     *\\n     * - MUST return as close to and no more than the exact amount of Vault shares that would be minted in a deposit\\n     *   call in the same transaction. I.e. deposit should return the same or more shares as previewDeposit if called\\n     *   in the same transaction.\\n     * - MUST NOT account for deposit limits like those returned from maxDeposit and should always act as though the\\n     *   deposit would be accepted, regardless if the user has enough tokens approved, etc.\\n     * - MUST be inclusive of deposit fees. Integrators should be aware of the existence of deposit fees.\\n     * - MUST NOT revert.\\n     *\\n     * NOTE: any unfavorable discrepancy between convertToShares and previewDeposit SHOULD be considered slippage in\\n     * share price or some other type of condition, meaning the depositor will lose assets by depositing.\\n     */\\n    function previewDeposit(uint256 assets) external view returns (uint256 shares);\\n\\n    /**\\n     * @dev Mints shares Vault shares to receiver by depositing exactly amount of underlying tokens.\\n     *\\n     * - MUST emit the Deposit event.\\n     * - MAY support an additional flow in which the underlying tokens are owned by the Vault contract before the\\n     *   deposit execution, and are accounted for during deposit.\\n     * - MUST revert if all of assets cannot be deposited (due to deposit limit being reached, slippage, the user not\\n     *   approving enough underlying tokens to the Vault contract, etc).\\n     *\\n     * NOTE: most implementations will require pre-approval of the Vault with the Vault\\u2019s underlying asset token.\\n     */\\n    function deposit(uint256 assets, address receiver) external returns (uint256 shares);\\n\\n    /**\\n     * @dev Returns the maximum amount of the Vault shares that can be minted for the receiver, through a mint call.\\n     * - MUST return a limited value if receiver is subject to some mint limit.\\n     * - MUST return 2 ** 256 - 1 if there is no limit on the maximum amount of shares that may be minted.\\n     * - MUST NOT revert.\\n     */\\n    function maxMint(address receiver) external view returns (uint256 maxShares);\\n\\n    /**\\n     * @dev Allows an on-chain or off-chain user to simulate the effects of their mint at the current block, given\\n     * current on-chain conditions.\\n     *\\n     * - MUST return as close to and no fewer than the exact amount of assets that would be deposited in a mint call\\n     *   in the same transaction. I.e. mint should return the same or fewer assets as previewMint if called in the\\n     *   same transaction.\\n     * - MUST NOT account for mint limits like those returned from maxMint and should always act as though the mint\\n     *   would be accepted, regardless if the user has enough tokens approved, etc.\\n     * - MUST be inclusive of deposit fees. Integrators should be aware of the existence of deposit fees.\\n     * - MUST NOT revert.\\n     *\\n     * NOTE: any unfavorable discrepancy between convertToAssets and previewMint SHOULD be considered slippage in\\n     * share price or some other type of condition, meaning the depositor will lose assets by minting.\\n     */\\n    function previewMint(uint256 shares) external view returns (uint256 assets);\\n\\n    /**\\n     * @dev Mints exactly shares Vault shares to receiver by depositing amount of underlying tokens.\\n     *\\n     * - MUST emit the Deposit event.\\n     * - MAY support an additional flow in which the underlying tokens are owned by the Vault contract before the mint\\n     *   execution, and are accounted for during mint.\\n     * - MUST revert if all of shares cannot be minted (due to deposit limit being reached, slippage, the user not\\n     *   approving enough underlying tokens to the Vault contract, etc).\\n     *\\n     * NOTE: most implementations will require pre-approval of the Vault with the Vault\\u2019s underlying asset token.\\n     */\\n    function mint(uint256 shares, address receiver) external returns (uint256 assets);\\n\\n    /**\\n     * @dev Returns the maximum amount of the underlying asset that can be withdrawn from the owner balance in the\\n     * Vault, through a withdraw call.\\n     *\\n     * - MUST return a limited value if owner is subject to some withdrawal limit or timelock.\\n     * - MUST NOT revert.\\n     */\\n    function maxWithdraw(address owner) external view returns (uint256 maxAssets);\\n\\n    /**\\n     * @dev Allows an on-chain or off-chain user to simulate the effects of their withdrawal at the current block,\\n     * given current on-chain conditions.\\n     *\\n     * - MUST return as close to and no fewer than the exact amount of Vault shares that would be burned in a withdraw\\n     *   call in the same transaction. I.e. withdraw should return the same or fewer shares as previewWithdraw if\\n     *   called\\n     *   in the same transaction.\\n     * - MUST NOT account for withdrawal limits like those returned from maxWithdraw and should always act as though\\n     *   the withdrawal would be accepted, regardless if the user has enough shares, etc.\\n     * - MUST be inclusive of withdrawal fees. Integrators should be aware of the existence of withdrawal fees.\\n     * - MUST NOT revert.\\n     *\\n     * NOTE: any unfavorable discrepancy between convertToShares and previewWithdraw SHOULD be considered slippage in\\n     * share price or some other type of condition, meaning the depositor will lose assets by depositing.\\n     */\\n    function previewWithdraw(uint256 assets) external view returns (uint256 shares);\\n\\n    /**\\n     * @dev Burns shares from owner and sends exactly assets of underlying tokens to receiver.\\n     *\\n     * - MUST emit the Withdraw event.\\n     * - MAY support an additional flow in which the underlying tokens are owned by the Vault contract before the\\n     *   withdraw execution, and are accounted for during withdraw.\\n     * - MUST revert if all of assets cannot be withdrawn (due to withdrawal limit being reached, slippage, the owner\\n     *   not having enough shares, etc).\\n     *\\n     * Note that some implementations will require pre-requesting to the Vault before a withdrawal may be performed.\\n     * Those methods should be performed separately.\\n     */\\n    function withdraw(uint256 assets, address receiver, address owner) external returns (uint256 shares);\\n\\n    /**\\n     * @dev Returns the maximum amount of Vault shares that can be redeemed from the owner balance in the Vault,\\n     * through a redeem call.\\n     *\\n     * - MUST return a limited value if owner is subject to some withdrawal limit or timelock.\\n     * - MUST return balanceOf(owner) if owner is not subject to any withdrawal limit or timelock.\\n     * - MUST NOT revert.\\n     */\\n    function maxRedeem(address owner) external view returns (uint256 maxShares);\\n\\n    /**\\n     * @dev Allows an on-chain or off-chain user to simulate the effects of their redeemption at the current block,\\n     * given current on-chain conditions.\\n     *\\n     * - MUST return as close to and no more than the exact amount of assets that would be withdrawn in a redeem call\\n     *   in the same transaction. I.e. redeem should return the same or more assets as previewRedeem if called in the\\n     *   same transaction.\\n     * - MUST NOT account for redemption limits like those returned from maxRedeem and should always act as though the\\n     *   redemption would be accepted, regardless if the user has enough shares, etc.\\n     * - MUST be inclusive of withdrawal fees. Integrators should be aware of the existence of withdrawal fees.\\n     * - MUST NOT revert.\\n     *\\n     * NOTE: any unfavorable discrepancy between convertToAssets and previewRedeem SHOULD be considered slippage in\\n     * share price or some other type of condition, meaning the depositor will lose assets by redeeming.\\n     */\\n    function previewRedeem(uint256 shares) external view returns (uint256 assets);\\n\\n    /**\\n     * @dev Burns exactly shares from owner and sends assets of underlying tokens to receiver.\\n     *\\n     * - MUST emit the Withdraw event.\\n     * - MAY support an additional flow in which the underlying tokens are owned by the Vault contract before the\\n     *   redeem execution, and are accounted for during redeem.\\n     * - MUST revert if all of shares cannot be redeemed (due to withdrawal limit being reached, slippage, the owner\\n     *   not having enough shares, etc).\\n     *\\n     * NOTE: some implementations will require pre-requesting to the Vault before a withdrawal may be performed.\\n     * Those methods should be performed separately.\\n     */\\n    function redeem(uint256 shares, address receiver, address owner) external returns (uint256 assets);\\n}\\n\",\"keccak256\":\"0x207f64371bc0fcc5be86713aa5da109a870cc3a6da50e93b64ee881e369b593d\",\"license\":\"MIT\"},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/IERC20.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Interface of the ERC20 standard as defined in the EIP.\\n */\\ninterface IERC20 {\\n    /**\\n     * @dev Emitted when `value` tokens are moved from one account (`from`) to\\n     * another (`to`).\\n     *\\n     * Note that `value` may be zero.\\n     */\\n    event Transfer(address indexed from, address indexed to, uint256 value);\\n\\n    /**\\n     * @dev Emitted when the allowance of a `spender` for an `owner` is set by\\n     * a call to {approve}. `value` is the new allowance.\\n     */\\n    event Approval(address indexed owner, address indexed spender, uint256 value);\\n\\n    /**\\n     * @dev Returns the value of tokens in existence.\\n     */\\n    function totalSupply() external view returns (uint256);\\n\\n    /**\\n     * @dev Returns the value of tokens owned by `account`.\\n     */\\n    function balanceOf(address account) external view returns (uint256);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from the caller's account to `to`.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transfer(address to, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Returns the remaining number of tokens that `spender` will be\\n     * allowed to spend on behalf of `owner` through {transferFrom}. This is\\n     * zero by default.\\n     *\\n     * This value changes when {approve} or {transferFrom} are called.\\n     */\\n    function allowance(address owner, address spender) external view returns (uint256);\\n\\n    /**\\n     * @dev Sets a `value` amount of tokens as the allowance of `spender` over the\\n     * caller's tokens.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * IMPORTANT: Beware that changing an allowance with this method brings the risk\\n     * that someone may use both the old and the new allowance by unfortunate\\n     * transaction ordering. One possible solution to mitigate this race\\n     * condition is to first reduce the spender's allowance to 0 and set the\\n     * desired value afterwards:\\n     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\\n     *\\n     * Emits an {Approval} event.\\n     */\\n    function approve(address spender, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from `from` to `to` using the\\n     * allowance mechanism. `value` is then deducted from the caller's\\n     * allowance.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transferFrom(address from, address to, uint256 value) external returns (bool);\\n}\\n\",\"keccak256\":\"0xc6a8ff0ea489379b61faa647490411b80102578440ab9d84e9a957cc12164e70\",\"license\":\"MIT\"},\"@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/extensions/IERC20Metadata.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IERC20} from \\\"../IERC20.sol\\\";\\n\\n/**\\n * @dev Interface for the optional metadata functions from the ERC20 standard.\\n */\\ninterface IERC20Metadata is IERC20 {\\n    /**\\n     * @dev Returns the name of the token.\\n     */\\n    function name() external view returns (string memory);\\n\\n    /**\\n     * @dev Returns the symbol of the token.\\n     */\\n    function symbol() external view returns (string memory);\\n\\n    /**\\n     * @dev Returns the decimals places of the token.\\n     */\\n    function decimals() external view returns (uint8);\\n}\\n\",\"keccak256\":\"0xaa761817f6cd7892fcf158b3c776b34551cde36f48ff9703d53898bc45a94ea2\",\"license\":\"MIT\"},\"contracts/interfaces/IStablecoin.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0\\n\\n// \\u2588\\u2588\\u2588\\u2557   \\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2557  \\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2554\\u2588\\u2588\\u2588\\u2588\\u2554\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551\\u255a\\u2588\\u2588\\u2554\\u255d\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551 \\u255a\\u2550\\u255d \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\n// \\u255a\\u2550\\u255d     \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\n\\n// Website: https://maha.xyz\\n// Discord: https://discord.gg/mahadao\\n// Twitter: https://twitter.com/mahaxyz_\\n\\npragma solidity 0.8.21;\\n\\nimport {IERC20} from \\\"@openzeppelin/contracts/token/ERC20/IERC20.sol\\\";\\n\\ninterface IStablecoin is IERC20 {\\n  /**\\n   * @notice Used to mint ZAI\\n   * @dev This is only callable by verified managers approved by governance\\n   * @param _account The address to mint to\\n   * @param _amount The amount to mint\\n   */\\n  function mint(address _account, uint256 _amount) external;\\n\\n  /**\\n   * @notice Role for minting/burning ZAI\\n   */\\n  function MANAGER_ROLE() external view returns (bytes32);\\n\\n  /**\\n   * @notice Used to burn ZAI\\n   * @dev This is only callable by verified managers approved by governance\\n   * @param _account The address to burn from\\n   * @param _amount The amount to burn\\n   */\\n  function burn(address _account, uint256 _amount) external;\\n\\n  /**\\n   * @notice Grants the manager role to an account\\n   * @dev Can only be called by governance\\n   * @param _account The account to grant the role to\\n   */\\n  function grantManagerRole(address _account) external;\\n\\n  /**\\n   * @notice Revokes the manager role to an account\\n   * @dev Can only be called by governance\\n   * @param _account The account to revoke the role from\\n   */\\n  function revokeManagerRole(address _account) external;\\n\\n  /**\\n   * @notice Checks if an address is an approved manager\\n   * @param _account The address to check\\n   * @return what True iff the address is a manager\\n   */\\n  function isManager(address _account) external view returns (bool what);\\n}\\n\",\"keccak256\":\"0xaadb3432557810d9cddef1be599f06bba520273011d8c0a80f833082fff964f0\",\"license\":\"GPL-3.0\"},\"contracts/interfaces/core/IPegStabilityModule.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0\\n\\n// \\u2588\\u2588\\u2588\\u2557   \\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2557  \\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2554\\u2588\\u2588\\u2588\\u2588\\u2554\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551\\u255a\\u2588\\u2588\\u2554\\u255d\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551 \\u255a\\u2550\\u255d \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\n// \\u255a\\u2550\\u255d     \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\n\\n// Website: https://maha.xyz\\n// Discord: https://discord.gg/mahadao\\n// Twitter: https://twitter.com/mahaxyz_\\n\\npragma solidity 0.8.21;\\n\\nimport {IStablecoin} from \\\"../IStablecoin.sol\\\";\\nimport {IERC20} from \\\"@openzeppelin/contracts/interfaces/IERC20.sol\\\";\\n\\n/**\\n * @title Peg Stability Module\\n * @author maha.xyz\\n * @notice Used to mint ZAI with collateral at a pre-defined rate\\n */\\ninterface IPegStabilityModule {\\n  /**\\n   * @notice Returns the Zai stablecoin\\n   */\\n  function zai() external returns (IStablecoin);\\n\\n  /**\\n   * @notice Returns the collateral token\\n   */\\n  function collateral() external returns (IERC20);\\n\\n  /**\\n   * @notice Returns the supply cap\\n   */\\n  function supplyCap() external returns (uint256);\\n\\n  /**\\n   * @notice Returns the debt cap\\n   */\\n  function debtCap() external returns (uint256);\\n\\n  /**\\n   * @notice Returns the current debt held in this vault\\n   */\\n  function debt() external returns (uint256);\\n\\n  /**\\n   * @notice Returns the current rate of ZAI/Collateral\\n   */\\n  function rate() external returns (uint256);\\n\\n  /**\\n   * @notice The mint fee in BPS\\n   */\\n  function mintFeeBps() external returns (uint256);\\n\\n  /**\\n   * @notice The address where fees are sent\\n   */\\n  function feeDestination() external returns (address);\\n\\n  /**\\n   * @notice The redeem fee in BPS\\n   */\\n  function redeemFeeBps() external returns (uint256);\\n\\n  /**\\n   * @notice The maximum fee that can be charged\\n   */\\n  function MAX_FEE_BPS() external returns (uint256);\\n\\n  /**\\n   * @notice Mints ZAI with collateral\\n   * @dev This contract calculates how much collateral should be taken\\n   * @param destination Where the minted ZAI will be sent\\n   * @param shares The amount of zai to mint\\n   */\\n  function mint(address destination, uint256 shares) external;\\n\\n  /**\\n   * @notice Redeems ZAI for collateral\\n   * @dev This contract calculates how much collateral should be given\\n   * @param destination Where the collateral will be sent\\n   * @param shares The amount of zai to redeem\\n   */\\n  function redeem(address destination, uint256 shares) external;\\n\\n  /**\\n   * @notice Updates the supply and debt caps\\n   * @dev Only callable by the admin\\n   * @param _supplyCap How much collateral can be taken\\n   * @param _debtCap How much debt can be held\\n   */\\n  function updateCaps(uint256 _supplyCap, uint256 _debtCap) external;\\n\\n  /**\\n   * @notice Updates the rate of ZAI/Collateral\\n   * @dev Only callable by the admin\\n   * @param _newRate The new rate of ZAI/Collateral\\n   */\\n  function updateRate(uint256 _newRate) external;\\n\\n  /**\\n   * @notice Converts ZAI amount to collateral\\n   * @param _amount The amount of ZAI\\n   * @return collateralAmount The amount of collateral\\n   */\\n  function toCollateralAmount(uint256 _amount) external view returns (uint256 collateralAmount);\\n\\n  /**\\n   * @notice Converts ZAI amount to collateral with fee added\\n   * @dev Fee is calculated as (amount * (MAX_FEE_BPS + fee)) / MAX_FEE_BPS\\n   * @param _amount The amount of ZAI\\n   * @param _fee The fee to be charged in BPS\\n   */\\n  function toCollateralAmountWithFee(uint256 _amount, uint256 _fee) external view returns (uint256);\\n\\n  /**\\n   * @notice Converts ZAI amount to collateral with fee removed\\n   * @dev Fee is calculated as (amount * (MAX_FEE_BPS - fee)) / MAX_FEE_BPS\\n   * @param _amount The amount of ZAI\\n   * @param _fee The fee to be charged in BPS\\n   */\\n  function toCollateralAmountWithFeeInverse(uint256 _amount, uint256 _fee) external view returns (uint256);\\n\\n  /**\\n   * @notice Calculates how much ZAI should be minted for a given amount of collateral\\n   * @param amountAssetsIn The amount of collateral\\n   */\\n  function mintAmountIn(uint256 amountAssetsIn) external view returns (uint256 shares);\\n\\n  /**\\n   * @notice Calculates how much ZAI should be redeemed for a given amount of collateral\\n   * @param amountAssetsOut The amount of collateral\\n   */\\n  function redeemAmountOut(uint256 amountAssetsOut) external view returns (uint256 shares);\\n\\n  /**\\n   * @notice How much fees has been collected by the protocol\\n   * @return fees The amount of fees collected in ZAI\\n   */\\n  function feesCollected() external view returns (uint256 fees);\\n\\n  /**\\n   * @notice Updates the mint and redeem fees\\n   * @param _mintFeeBps The new mint fee in BPS\\n   * @param _redeemFeeBps The new redeem fee in BPS\\n   */\\n  function updateFees(uint256 _mintFeeBps, uint256 _redeemFeeBps) external;\\n\\n  /**\\n   * @notice Updates the fee destination\\n   * @param _feeDestination The new fee destination\\n   * @dev Only callable by the admin\\n   */\\n  function updateFeeDestination(address _feeDestination) external;\\n\\n  /**\\n   * @notice Initializes the contract\\n   * @param _zai The ZAI stablecoin\\n   * @param _collateral The collateral token\\n   * @param _governance Governance address\\n   * @param _newRate The new rate of ZAI/Collateral\\n   * @param _supplyCap The supply cap\\n   * @param _debtCap The debt cap\\n   * @param _mintFeeBps The mint fee in BPS\\n   * @param _redeemFeeBps The redeem fee in BPS\\n   * @param _feeDestination The address where fees are sent\\n   */\\n  function initialize(\\n    address _zai,\\n    address _collateral,\\n    address _governance,\\n    uint256 _newRate,\\n    uint256 _supplyCap,\\n    uint256 _debtCap,\\n    uint256 _mintFeeBps,\\n    uint256 _redeemFeeBps,\\n    address _feeDestination\\n  ) external;\\n}\\n\",\"keccak256\":\"0x67738e38566b982a71c6364c11176342f2a358922f165e1c68a5618ea95321a0\",\"license\":\"GPL-3.0\"},\"contracts/interfaces/periphery/ICurveStableSwapNG.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0\\n\\n// \\u2588\\u2588\\u2588\\u2557   \\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2557  \\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2554\\u2588\\u2588\\u2588\\u2588\\u2554\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551\\u255a\\u2588\\u2588\\u2554\\u255d\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551 \\u255a\\u2550\\u255d \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\n// \\u255a\\u2550\\u255d     \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\n\\n// Website: https://maha.xyz\\n// Discord: https://discord.gg/mahadao\\n// Twitter: https://twitter.com/mahaxyz_\\n\\npragma solidity 0.8.21;\\n\\nimport {IERC20} from \\\"@openzeppelin/contracts/interfaces/IERC20.sol\\\";\\n\\ninterface ICurveStableSwapNG is IERC20 {\\n  function add_liquidity(\\n    uint256[] memory _amounts,\\n    uint256 _min_mint_amount,\\n    address _receiver\\n  ) external returns (uint256);\\n\\n  function calc_token_amount(uint256[] memory _amounts, bool _is_deposit) external returns (uint256);\\n}\\n\",\"keccak256\":\"0x16b0a81ee5d0b11d1eb4e474ab030284d9647eff457a77eb79991900c0e498a5\",\"license\":\"GPL-3.0\"},\"contracts/periphery/zaps/ZapCurvePool.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0\\n\\n// \\u2588\\u2588\\u2588\\u2557   \\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2557  \\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2554\\u2588\\u2588\\u2588\\u2588\\u2554\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551\\u255a\\u2588\\u2588\\u2554\\u255d\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551 \\u255a\\u2550\\u255d \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\n// \\u255a\\u2550\\u255d     \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\n\\n// Website: https://maha.xyz\\n// Discord: https://discord.gg/mahadao\\n// Twitter: https://twitter.com/mahaxyz_\\n\\npragma solidity 0.8.21;\\n\\nimport {IPegStabilityModule} from \\\"../../interfaces/core/IPegStabilityModule.sol\\\";\\nimport {ICurveStableSwapNG} from \\\"../../interfaces/periphery/ICurveStableSwapNG.sol\\\";\\nimport {IERC20Metadata} from \\\"@openzeppelin/contracts/interfaces/IERC20Metadata.sol\\\";\\nimport {IERC4626} from \\\"@openzeppelin/contracts/interfaces/IERC4626.sol\\\";\\n\\ninterface ICurveRouter {\\n  function add_liquidity(\\n    address _pool,\\n    uint256[3] memory _deposit_amounts,\\n    uint256 _min_mint_amount\\n  ) external returns (uint256);\\n}\\n\\n/**\\n * @title ZapCurvePool\\n * @dev This contract allows users to perform a Zap operation by swapping collateral for zai tokens, adding liquidity to\\n * curve LP, and staking the LP tokens.\\n */\\ncontract ZapCurvePool {\\n  IERC4626 public staking;\\n\\n  ICurveStableSwapNG public pool;\\n\\n  ICurveRouter public router;\\n\\n  IERC20Metadata public zai;\\n\\n  IERC20Metadata public collateral;\\n\\n  IPegStabilityModule public psm;\\n\\n  uint256 public decimalOffset;\\n\\n  address private me;\\n\\n  error OdosSwapFailed();\\n  error CollateralTransferFailed();\\n  error ZaiTransferFailed();\\n\\n  event Zapped(\\n    address indexed user, uint256 indexed collateralAmount, uint256 indexed zaiAmount, uint256 newStakedAmount\\n  );\\n\\n  /**\\n   * @dev Initializes the contract with the required contracts\\n   */\\n  constructor(address _staking, address _psm, address _router) {\\n    staking = IERC4626(_staking);\\n    psm = IPegStabilityModule(_psm);\\n    router = ICurveRouter(_router);\\n\\n    pool = ICurveStableSwapNG(staking.asset());\\n    zai = IERC20Metadata(address(psm.zai()));\\n    collateral = IERC20Metadata(address(psm.collateral()));\\n\\n    decimalOffset = 10 ** (18 - collateral.decimals());\\n\\n    // give approvals\\n    zai.approve(address(_router), type(uint256).max);\\n    collateral.approve(address(_router), type(uint256).max);\\n    collateral.approve(address(psm), type(uint256).max);\\n    pool.approve(_staking, type(uint256).max);\\n\\n    me = address(this);\\n  }\\n\\n  /**\\n   * @notice Zaps collateral into ZAI LP tokens\\n   * @dev This function is used when the user only has collateral tokens.\\n   * @param collateralAmount The amount of collateral to zap\\n   * @param minLpAmount The minimum amount of LP tokens to stake\\n   */\\n  function zapIntoLP(uint256 collateralAmount, uint256 minLpAmount) external {\\n    // fetch tokens\\n    collateral.transferFrom(msg.sender, me, collateralAmount);\\n\\n    // convert 50% collateral for zai\\n    uint256 zaiAmount = collateralAmount * decimalOffset / 2;\\n    psm.mint(address(this), zaiAmount);\\n\\n    // add liquidity\\n    uint256[3] memory amounts;\\n    amounts[0] = zaiAmount;\\n    amounts[2] = collateralAmount / 2;\\n\\n    router.add_liquidity(address(pool), amounts, minLpAmount);\\n\\n    // we now have LP tokens; deposit into staking contract for the user\\n    staking.deposit(pool.balanceOf(address(this)), msg.sender);\\n\\n    // sweep any dust\\n    sweep();\\n\\n    emit Zapped(msg.sender, collateralAmount / 2, zaiAmount, pool.balanceOf(msg.sender));\\n  }\\n\\n  /**\\n   * @notice Zaps ZAI and collateral into LP tokens\\n   * @dev This function is used when the user already has ZAI tokens.\\n   * @param zaiAmount The amount of ZAI to zap\\n   * @param collateralAmount The amount of collateral to zap\\n   * @param minLpAmount The minimum amount of LP tokens to stake\\n   */\\n  function zapWithZaiIntoLP(uint256 zaiAmount, uint256 collateralAmount, uint256 minLpAmount) external {\\n    // fetch tokens\\n    if (zaiAmount > 0) zai.transferFrom(msg.sender, me, zaiAmount);\\n    if (collateralAmount > 0) collateral.transferFrom(msg.sender, me, collateralAmount);\\n\\n    // add liquidity\\n    uint256[] memory amounts = new uint256[](2);\\n    amounts[0] = zaiAmount;\\n    amounts[1] = collateralAmount;\\n    pool.add_liquidity(amounts, minLpAmount, address(this));\\n\\n    // we now have LP tokens; deposit into staking contract for the user\\n    staking.deposit(pool.balanceOf(address(this)), msg.sender);\\n\\n    // sweep any dust\\n    sweep();\\n\\n    emit Zapped(msg.sender, collateralAmount, zaiAmount, pool.balanceOf(msg.sender));\\n  }\\n\\n  function sweep() public {\\n    uint256 zaiB = zai.balanceOf(address(this));\\n    uint256 collateralB = collateral.balanceOf(address(this));\\n\\n    if (zaiB > 0 && !zai.transfer(msg.sender, zaiB)) {\\n      revert ZaiTransferFailed();\\n    }\\n\\n    if (collateralB > 0 && !collateral.transfer(msg.sender, collateralB)) {\\n      revert CollateralTransferFailed();\\n    }\\n  }\\n}\\n\",\"keccak256\":\"0x8722500068a278d915716f982c31c43927d74bd59f855685f8645f2ae33fc34f\",\"license\":\"GPL-3.0\"}},\"version\":1}",
+  "bytecode": "0x60806040523480156200001157600080fd5b5060405162001376380380620013768339810160408190526200003491620004a5565b600080546001600160a01b038086166001600160a01b03199283168117909355600580548683169084161790556002805491851691909216179055604080516338d52e0f60e01b815290516338d52e0f916004808201926020929091908290030181865afa158015620000ab573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190620000d19190620004f9565b600180546001600160a01b0319166001600160a01b03928316179055600554604080516301c502cd60e21b8152905191909216916307140b3491600480830192602092919082900301816000875af115801562000132573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190620001589190620004f9565b600380546001600160a01b0319166001600160a01b039283161790556005546040805163d8dfeb4560e01b81529051919092169163d8dfeb4591600480830192602092919082900301816000875af1158015620001b9573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190620001df9190620004f9565b600480546001600160a01b0319166001600160a01b039290921691821781556040805163313ce56760e01b8152905163313ce567928281019260209291908290030181865afa15801562000237573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906200025d919062000520565b6200026a9060126200055b565b6200027790600a6200067a565b60065560035460405163095ea7b360e01b81526001600160a01b03838116600483015260001960248301529091169063095ea7b3906044016020604051808303816000875af1158015620002cf573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190620002f591906200068b565b506004805460405163095ea7b360e01b81526001600160a01b0384811693820193909352600019602482015291169063095ea7b3906044016020604051808303816000875af11580156200034d573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906200037391906200068b565b506004805460055460405163095ea7b360e01b81526001600160a01b03918216938101939093526000196024840152169063095ea7b3906044016020604051808303816000875af1158015620003cd573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190620003f391906200068b565b5060015460405163095ea7b360e01b81526001600160a01b03858116600483015260001960248301529091169063095ea7b3906044016020604051808303816000875af115801562000449573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906200046f91906200068b565b5050600780546001600160a01b0319163017905550620006af9050565b6001600160a01b0381168114620004a257600080fd5b50565b600080600060608486031215620004bb57600080fd5b8351620004c8816200048c565b6020850151909350620004db816200048c565b6040850151909250620004ee816200048c565b809150509250925092565b6000602082840312156200050c57600080fd5b815162000519816200048c565b9392505050565b6000602082840312156200053357600080fd5b815160ff811681146200051957600080fd5b634e487b7160e01b600052601160045260246000fd5b60ff828116828216039081111562000577576200057762000545565b92915050565b600181815b80851115620005be578160001904821115620005a257620005a262000545565b80851615620005b057918102915b93841c939080029062000582565b509250929050565b600082620005d75750600162000577565b81620005e65750600062000577565b8160018114620005ff57600281146200060a576200062a565b600191505062000577565b60ff8411156200061e576200061e62000545565b50506001821b62000577565b5060208310610133831016604e8410600b84101617156200064f575081810a62000577565b6200065b83836200057d565b806000190482111562000672576200067262000545565b029392505050565b60006200051960ff841683620005c6565b6000602082840312156200069e57600080fd5b815180151581146200051957600080fd5b610cb780620006bf6000396000f3fe608060405234801561001057600080fd5b50600436106100be5760003560e01c806352d8e34f11610076578063d8dfeb451161005b578063d8dfeb4514610160578063f887ea4014610173578063fbbe5a331461018657600080fd5b806352d8e34f14610136578063d1b39ae51461014957600080fd5b806316f0115b116100a757806316f0115b1461010657806335faa416146101195780634cf088d91461012357600080fd5b806304bda262146100c357806307140b34146100f3575b600080fd5b6005546100d6906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b6003546100d6906001600160a01b031681565b6001546100d6906001600160a01b031681565b610121610199565b005b6000546100d6906001600160a01b031681565b610121610144366004610aeb565b6103f2565b61015260065481565b6040519081526020016100ea565b6004546100d6906001600160a01b031681565b6002546100d6906001600160a01b031681565b610121610194366004610b17565b61079d565b6003546040516370a0823160e01b81523060048201526000916001600160a01b0316906370a0823190602401602060405180830381865afa1580156101e2573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102069190610b39565b600480546040516370a0823160e01b815230928101929092529192506000916001600160a01b0316906370a0823190602401602060405180830381865afa158015610255573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102799190610b39565b90506000821180156102fd575060035460405163a9059cbb60e01b8152336004820152602481018490526001600160a01b039091169063a9059cbb906044016020604051808303816000875af11580156102d7573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102fb9190610b52565b155b15610334576040517f61a6da1b00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6000811180156103b757506004805460405163a9059cbb60e01b81523392810192909252602482018390526001600160a01b03169063a9059cbb906044016020604051808303816000875af1158015610391573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103b59190610b52565b155b156103ee576040517f4161287400000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b5050565b8215610479576003546007546040516323b872dd60e01b81523360048201526001600160a01b039182166024820152604481018690529116906323b872dd906064016020604051808303816000875af1158015610453573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104779190610b52565b505b811561050257600480546007546040516323b872dd60e01b815233938101939093526001600160a01b0390811660248401526044830185905216906323b872dd906064016020604051808303816000875af11580156104dc573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906105009190610b52565b505b604080516002808252606082018352600092602083019080368337019050509050838160008151811061053757610537610b7b565b602002602001018181525050828160018151811061055757610557610b7b565b60209081029190910101526001546040517fa7256d090000000000000000000000000000000000000000000000000000000081526001600160a01b039091169063a7256d09906105af90849086903090600401610b91565b6020604051808303816000875af11580156105ce573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906105f29190610b39565b506000546001546040516370a0823160e01b81523060048201526001600160a01b0392831692636e553f659216906370a0823190602401602060405180830381865afa158015610646573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061066a9190610b39565b6040517fffffffff0000000000000000000000000000000000000000000000000000000060e084901b16815260048101919091523360248201526044016020604051808303816000875af11580156106c6573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906106ea9190610b39565b506106f3610199565b6001546040516370a0823160e01b81523360048201819052869286927f8254cb1554a3a4f342e4d6bc29ea29f483d72ec4183e94e4a83410c93af84341916001600160a01b0316906370a08231906024015b602060405180830381865afa158015610762573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906107869190610b39565b60405190815260200160405180910390a450505050565b600480546007546040516323b872dd60e01b815233938101939093526001600160a01b0390811660248401526044830185905216906323b872dd906064016020604051808303816000875af11580156107fa573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061081e9190610b52565b5060006002600654846108319190610bec565b61083b9190610c17565b6005546040517f40c10f19000000000000000000000000000000000000000000000000000000008152306004820152602481018390529192506001600160a01b0316906340c10f1990604401600060405180830381600087803b1580156108a157600080fd5b505af11580156108b5573d6000803e3d6000fd5b505050506108c1610acd565b8181526108cf600285610c17565b81600260200201526002546001546040517fa31851790000000000000000000000000000000000000000000000000000000081526001600160a01b039283169263a3185179926109289291169085908890600401610c39565b6020604051808303816000875af1158015610947573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061096b9190610b39565b506000546001546040516370a0823160e01b81523060048201526001600160a01b0392831692636e553f659216906370a0823190602401602060405180830381865afa1580156109bf573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906109e39190610b39565b6040517fffffffff0000000000000000000000000000000000000000000000000000000060e084901b16815260048101919091523360248201526044016020604051808303816000875af1158015610a3f573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610a639190610b39565b50610a6c610199565b81610a78600286610c17565b6001546040516370a0823160e01b81523360048201819052917f8254cb1554a3a4f342e4d6bc29ea29f483d72ec4183e94e4a83410c93af84341916001600160a01b03909116906370a0823190602401610745565b60405180606001604052806003906020820280368337509192915050565b600080600060608486031215610b0057600080fd5b505081359360208301359350604090920135919050565b60008060408385031215610b2a57600080fd5b50508035926020909101359150565b600060208284031215610b4b57600080fd5b5051919050565b600060208284031215610b6457600080fd5b81518015158114610b7457600080fd5b9392505050565b634e487b7160e01b600052603260045260246000fd5b606080825284519082018190526000906020906080840190828801845b82811015610bca57815184529284019290840190600101610bae565b50505090830194909452506001600160a01b0391909116604090910152919050565b8082028115828204841417610c1157634e487b7160e01b600052601160045260246000fd5b92915050565b600082610c3457634e487b7160e01b600052601260045260246000fd5b500490565b6001600160a01b038416815260a0810160208083018560005b6003811015610c6f57815183529183019190830190600101610c52565b5050505082608083015294935050505056fea26469706673582212207d4faeff6b8ce54060a228166e6a264a630c66b2722e4677afe78d5682d7d46f64736f6c63430008150033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100be5760003560e01c806352d8e34f11610076578063d8dfeb451161005b578063d8dfeb4514610160578063f887ea4014610173578063fbbe5a331461018657600080fd5b806352d8e34f14610136578063d1b39ae51461014957600080fd5b806316f0115b116100a757806316f0115b1461010657806335faa416146101195780634cf088d91461012357600080fd5b806304bda262146100c357806307140b34146100f3575b600080fd5b6005546100d6906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b6003546100d6906001600160a01b031681565b6001546100d6906001600160a01b031681565b610121610199565b005b6000546100d6906001600160a01b031681565b610121610144366004610aeb565b6103f2565b61015260065481565b6040519081526020016100ea565b6004546100d6906001600160a01b031681565b6002546100d6906001600160a01b031681565b610121610194366004610b17565b61079d565b6003546040516370a0823160e01b81523060048201526000916001600160a01b0316906370a0823190602401602060405180830381865afa1580156101e2573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102069190610b39565b600480546040516370a0823160e01b815230928101929092529192506000916001600160a01b0316906370a0823190602401602060405180830381865afa158015610255573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102799190610b39565b90506000821180156102fd575060035460405163a9059cbb60e01b8152336004820152602481018490526001600160a01b039091169063a9059cbb906044016020604051808303816000875af11580156102d7573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102fb9190610b52565b155b15610334576040517f61a6da1b00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6000811180156103b757506004805460405163a9059cbb60e01b81523392810192909252602482018390526001600160a01b03169063a9059cbb906044016020604051808303816000875af1158015610391573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103b59190610b52565b155b156103ee576040517f4161287400000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b5050565b8215610479576003546007546040516323b872dd60e01b81523360048201526001600160a01b039182166024820152604481018690529116906323b872dd906064016020604051808303816000875af1158015610453573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906104779190610b52565b505b811561050257600480546007546040516323b872dd60e01b815233938101939093526001600160a01b0390811660248401526044830185905216906323b872dd906064016020604051808303816000875af11580156104dc573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906105009190610b52565b505b604080516002808252606082018352600092602083019080368337019050509050838160008151811061053757610537610b7b565b602002602001018181525050828160018151811061055757610557610b7b565b60209081029190910101526001546040517fa7256d090000000000000000000000000000000000000000000000000000000081526001600160a01b039091169063a7256d09906105af90849086903090600401610b91565b6020604051808303816000875af11580156105ce573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906105f29190610b39565b506000546001546040516370a0823160e01b81523060048201526001600160a01b0392831692636e553f659216906370a0823190602401602060405180830381865afa158015610646573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061066a9190610b39565b6040517fffffffff0000000000000000000000000000000000000000000000000000000060e084901b16815260048101919091523360248201526044016020604051808303816000875af11580156106c6573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906106ea9190610b39565b506106f3610199565b6001546040516370a0823160e01b81523360048201819052869286927f8254cb1554a3a4f342e4d6bc29ea29f483d72ec4183e94e4a83410c93af84341916001600160a01b0316906370a08231906024015b602060405180830381865afa158015610762573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906107869190610b39565b60405190815260200160405180910390a450505050565b600480546007546040516323b872dd60e01b815233938101939093526001600160a01b0390811660248401526044830185905216906323b872dd906064016020604051808303816000875af11580156107fa573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061081e9190610b52565b5060006002600654846108319190610bec565b61083b9190610c17565b6005546040517f40c10f19000000000000000000000000000000000000000000000000000000008152306004820152602481018390529192506001600160a01b0316906340c10f1990604401600060405180830381600087803b1580156108a157600080fd5b505af11580156108b5573d6000803e3d6000fd5b505050506108c1610acd565b8181526108cf600285610c17565b81600260200201526002546001546040517fa31851790000000000000000000000000000000000000000000000000000000081526001600160a01b039283169263a3185179926109289291169085908890600401610c39565b6020604051808303816000875af1158015610947573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061096b9190610b39565b506000546001546040516370a0823160e01b81523060048201526001600160a01b0392831692636e553f659216906370a0823190602401602060405180830381865afa1580156109bf573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906109e39190610b39565b6040517fffffffff0000000000000000000000000000000000000000000000000000000060e084901b16815260048101919091523360248201526044016020604051808303816000875af1158015610a3f573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610a639190610b39565b50610a6c610199565b81610a78600286610c17565b6001546040516370a0823160e01b81523360048201819052917f8254cb1554a3a4f342e4d6bc29ea29f483d72ec4183e94e4a83410c93af84341916001600160a01b03909116906370a0823190602401610745565b60405180606001604052806003906020820280368337509192915050565b600080600060608486031215610b0057600080fd5b505081359360208301359350604090920135919050565b60008060408385031215610b2a57600080fd5b50508035926020909101359150565b600060208284031215610b4b57600080fd5b5051919050565b600060208284031215610b6457600080fd5b81518015158114610b7457600080fd5b9392505050565b634e487b7160e01b600052603260045260246000fd5b606080825284519082018190526000906020906080840190828801845b82811015610bca57815184529284019290840190600101610bae565b50505090830194909452506001600160a01b0391909116604090910152919050565b8082028115828204841417610c1157634e487b7160e01b600052601160045260246000fd5b92915050565b600082610c3457634e487b7160e01b600052601260045260246000fd5b500490565b6001600160a01b038416815260a0810160208083018560005b6003811015610c6f57815183529183019190830190600101610c52565b5050505082608083015294935050505056fea26469706673582212207d4faeff6b8ce54060a228166e6a264a630c66b2722e4677afe78d5682d7d46f64736f6c63430008150033",
+  "devdoc": {
+    "details": "This contract allows users to perform a Zap operation by swapping collateral for zai tokens, adding liquidity to curve LP, and staking the LP tokens.",
+    "kind": "dev",
+    "methods": {
+      "constructor": {
+        "details": "Initializes the contract with the required contracts"
+      },
+      "zapIntoLP(uint256,uint256)": {
+        "details": "This function is used when the user only has collateral tokens.",
+        "params": {
+          "collateralAmount": "The amount of collateral to zap",
+          "minLpAmount": "The minimum amount of LP tokens to stake"
+        }
+      },
+      "zapWithZaiIntoLP(uint256,uint256,uint256)": {
+        "details": "This function is used when the user already has ZAI tokens.",
+        "params": {
+          "collateralAmount": "The amount of collateral to zap",
+          "minLpAmount": "The minimum amount of LP tokens to stake",
+          "zaiAmount": "The amount of ZAI to zap"
+        }
+      }
+    },
+    "title": "ZapCurvePool",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "zapIntoLP(uint256,uint256)": {
+        "notice": "Zaps collateral into ZAI LP tokens"
+      },
+      "zapWithZaiIntoLP(uint256,uint256,uint256)": {
+        "notice": "Zaps ZAI and collateral into LP tokens"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 29084,
+        "contract": "contracts/periphery/zaps/ZapCurvePool.sol:ZapCurvePool",
+        "label": "staking",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_contract(IERC4626)8628"
+      },
+      {
+        "astId": 29087,
+        "contract": "contracts/periphery/zaps/ZapCurvePool.sol:ZapCurvePool",
+        "label": "pool",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(ICurveStableSwapNG)27978"
+      },
+      {
+        "astId": 29090,
+        "contract": "contracts/periphery/zaps/ZapCurvePool.sol:ZapCurvePool",
+        "label": "router",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_contract(ICurveRouter)29080"
+      },
+      {
+        "astId": 29093,
+        "contract": "contracts/periphery/zaps/ZapCurvePool.sol:ZapCurvePool",
+        "label": "zai",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_contract(IERC20Metadata)10836"
+      },
+      {
+        "astId": 29096,
+        "contract": "contracts/periphery/zaps/ZapCurvePool.sol:ZapCurvePool",
+        "label": "collateral",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_contract(IERC20Metadata)10836"
+      },
+      {
+        "astId": 29099,
+        "contract": "contracts/periphery/zaps/ZapCurvePool.sol:ZapCurvePool",
+        "label": "psm",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_contract(IPegStabilityModule)27143"
+      },
+      {
+        "astId": 29101,
+        "contract": "contracts/periphery/zaps/ZapCurvePool.sol:ZapCurvePool",
+        "label": "decimalOffset",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 29103,
+        "contract": "contracts/periphery/zaps/ZapCurvePool.sol:ZapCurvePool",
+        "label": "me",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_address"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_contract(ICurveRouter)29080": {
+        "encoding": "inplace",
+        "label": "contract ICurveRouter",
+        "numberOfBytes": "20"
+      },
+      "t_contract(ICurveStableSwapNG)27978": {
+        "encoding": "inplace",
+        "label": "contract ICurveStableSwapNG",
+        "numberOfBytes": "20"
+      },
+      "t_contract(IERC20Metadata)10836": {
+        "encoding": "inplace",
+        "label": "contract IERC20Metadata",
+        "numberOfBytes": "20"
+      },
+      "t_contract(IERC4626)8628": {
+        "encoding": "inplace",
+        "label": "contract IERC4626",
+        "numberOfBytes": "20"
+      },
+      "t_contract(IPegStabilityModule)27143": {
+        "encoding": "inplace",
+        "label": "contract IPegStabilityModule",
+        "numberOfBytes": "20"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

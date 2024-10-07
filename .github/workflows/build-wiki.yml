@@ -22,7 +22,7 @@ jobs:
       - uses: ./.github/actions/install
 
       - name: Generate Docs
-        run: yarn docs
+        run: SKIP_LOAD=true yarn docs
 
       - name: Deploy to Wiki Pages
         id: deployment

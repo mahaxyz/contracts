@@ -13,46 +13,11 @@
 
 pragma solidity 0.8.21;
 
-import {ZaiStablecoin} from "../../contracts/core/ZaiStablecoin.sol";
-import {PegStabilityModule} from "../../contracts/core/psm/PegStabilityModule.sol";
-import {BaseZaiTest} from "./base/BaseZaiTest.sol";
+import {BasePsmTest} from "./base/BasePsmTest.sol";
 
-contract PegStabilityModuleTest is BaseZaiTest {
-  PegStabilityModule public psmUSDC;
-  PegStabilityModule public psmDAI;
-
+contract PegStabilityModuleTest is BasePsmTest {
   function setUp() public {
-    _setUpBase();
-
-    psmUSDC = new PegStabilityModule();
-    psmUSDC.initialize(
-      address(zai), // address _zai,
-      address(usdc), // address _collateral,
-      governance, // address _governance,
-      1e6, // uint256 _newRate,
-      100_000 * 1e6, // uint256 _supplyCap,
-      100_000 * 1e18, // uint256 _debtCap
-      100, // supplyFeeBps 1%
-      100, // redeemFeeBps 1%
-      feeDestination
-    );
-
-    psmDAI = new PegStabilityModule();
-    psmDAI.initialize(
-      address(zai), // address _zai,
-      address(dai), // address _collateral,
-      governance, // address _governance,
-      1e18, // uint256 _newRate,
-      100_000 * 1e18, // uint256 _supplyCap,
-      100_000 * 1e18, // uint256 _debtCap
-      100, // supplyFeeBps 1%
-      100, // redeemFeeBps 1%
-      feeDestination
-    );
-
-    // give permissions
-    zai.grantManagerRole(address(psmUSDC));
-    zai.grantManagerRole(address(psmDAI));
+    _setUpPSM();
   }
 
   function test_values() public view {

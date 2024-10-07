@@ -1,12 +1,12 @@
-import hre, { ethers, network } from "hardhat";
-import { buildBytecode } from "./create2";
-import { waitForTx } from "../utils";
+import { network } from "hardhat";
+import { get } from "../guess/_helpers";
+import { executeCreate2Proxy } from "./helpers";
+import assert from "assert";
 
 async function main() {
-  const factory = await hre.ethers.getContractFactory("MAHAProxy");
-  const impl = await hre.ethers.getContractFactory("PegStabilityModule");
+  assert(network.name === "mainnet", "not mainnet");
 
-  const implArgs = [
+  const implArgs: any[] = [
     "0x69000405f9dce69bd4cbf4f2865b79144a69bfe0", // address _zai,
     "0xdac17f958d2ee523a2206206994597c13d831ec7", // address _collateral,
     "0x1F09Ec21d7fd0A21879b919bf0f9C46e6b85CA8b", // address _governance,
@@ -18,55 +18,16 @@ async function main() {
     "0x6357EDbfE5aDA570005ceB8FAd3139eF5A8863CC", // address _feeDestination
   ];
 
-  const initData = impl.interface.encodeFunctionData("initialize", implArgs);
-
-  const constructorArgs: any[] = [
-    "0x6A661312938D22A2A0e27F585073E4406903990a",
-    "0x6900064e7a3920c114e25b5fe4780f26520e3231",
-    initData,
-  ];
-  const salt =
-    "0x7e8fb0add4a06b3338408ee58cad371d97539af6e9ae9671213152017b6e43f4";
-  const address = "0x690006c6bcd62d06b935050729b3004e962ba708";
-
-  const [wallet] = await hre.ethers.getSigners();
-  const deployer = await hre.ethers.getContractAt(
-    "Deployer",
-    "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0"
+  await executeCreate2Proxy(
+    "PegStabilityModule-USDT",
+    "PegStabilityModule-USDT-Proxy",
+    "PegStabilityModule",
+    implArgs,
+    get("PegStabilityModule-impl", "mainnet"),
+    "mainnet",
+    "0x7e8fb0add4a06b3338408ee58cad371d97539af6e9ae9671213152017b6e43f4",
+    "0x690006c6bcd62d06b935050729b3004e962ba708"
   );
-
-  const bytecode = buildBytecode(
-    ["address", "address", "bytes"],
-    constructorArgs,
-    factory.bytecode
-  );
-
-  const txPopulated = await deployer.deploy.populateTransaction(
-    bytecode,
-    ethers.id(salt)
-  );
-
-  const txR = await waitForTx(await wallet.sendTransaction(txPopulated));
-  console.log(txR?.logs);
-
-  if (network.name !== "hardhat") {
-    await hre.deployments.save("PegStabilityModule-USDT", {
-      address: address,
-      args: implArgs,
-      abi: impl.interface.format(true),
-    });
-
-    await hre.deployments.save("PegStabilityModule-USDT-Proxy", {
-      address: address,
-      args: constructorArgs,
-      abi: factory.interface.format(true),
-    });
-
-    await hre.run("verify:verify", {
-      address: address,
-      constructorArguments: constructorArgs,
-    });
-  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere

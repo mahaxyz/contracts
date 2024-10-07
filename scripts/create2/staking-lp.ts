@@ -29,8 +29,8 @@ async function main() {
     initData,
   ];
   const salt =
-    "0x7e8fb0add4a06b3338408ee58cad371d97539af6e9ae9671213152017b6e43f4";
-  const address = "0x0aad7fc97a30670714957e91276c2296d3b7e9d0";
+    "0xd5f6ce2e8bdbc58dd3b7d5c92c852778ad2ade41e24a825f5e699b04bdcf68dd";
+  const address = "0x6900066d9f8df0bfaf1e25ef89c0453e8e12373d";
 
   const deployer = await hre.ethers.getContractAt(
     "Deployer",
@@ -43,9 +43,9 @@ async function main() {
     factory.bytecode
   );
 
-  await waitForTx(
-    await deployer.deployWithAssert(bytecode, ethers.id(salt), address)
-  );
+  // await waitForTx(
+  //   await deployer.deployWithAssert(bytecode, ethers.id(salt), address)
+  // );
 
   if (network.name !== "hardhat") {
     await hre.deployments.save(`StakingLPRewards-${implArgs[1]}`, {

@@ -21,7 +21,7 @@ contract DDOperatorPlanTest is BaseZaiTest {
 
   function setUp() public {
     _setUpBase();
-    plan = new DDOperatorPlan(0, governance);
+    plan = new DDOperatorPlan(0, governance, 1000);
 
     assertEq(plan.active(), true);
     assertEq(plan.enabled(), 1);

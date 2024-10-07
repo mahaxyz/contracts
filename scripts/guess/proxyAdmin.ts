@@ -4,13 +4,14 @@ import { getCreate2Address } from "../create2/create2";
 
 // declare deployment parameters
 import contractArtifact from "../../artifacts/@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol/ProxyAdmin.json";
+import { get } from "./_helpers";
 
 const constructorTypes = contractArtifact.abi
   .find((v) => v.type === "constructor")
   ?.inputs.map((t) => t.type);
 
-const factoryAddress = "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0";
-const constructorArgs: any[] = ["0x690002da1f2d828d72aa89367623df7a432e85a9"];
+const factoryAddress = get("Deployer", "arbitrum");
+const constructorArgs: any[] = [get("MAHATimelockController", "arbitrum")];
 
 console.log("constructor parameters", constructorTypes, constructorArgs);
 
