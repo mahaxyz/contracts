@@ -16,13 +16,14 @@ import {Test, console} from "forge-std/Test.sol";
 import {IStablecoin} from "../../contracts/interfaces/IStablecoin.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {PegStabilityModuleYield, IPegStabilityModuleYield} from "../../contracts/core/psm/PegStabilityModuleYield.sol";
+import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 contract PegStabilityModuleYieldFork is Test {
   uint256 mainnetFork;
   string public MAINNET_RPC_URL = vm.envString("MAINNET_RPC_URL");
   IStablecoin public USDZ;
   IERC4626 public sUSDe;
-  IPegStabilityModuleYield public psm;
+  PegStabilityModuleYield public psm;
   address public GOVERNANCE;
   address public FEEDISTRIBUTOR;
   address public constant ROLE_ADMIN =
@@ -45,7 +46,7 @@ contract PegStabilityModuleYieldFork is Test {
       address(USDZ),
       address(sUSDe),
       GOVERNANCE,
-     0.9090 * 1e18,
+      0.9090 * 1e18,
       100_000 * 1e18,
       100_000 * 1e18,
       0,
@@ -60,7 +61,7 @@ contract PegStabilityModuleYieldFork is Test {
     vm.stopPrank();
   }
 
-  function testInitValues() public {
+  function testInitValues() public view {
     assertEq(psm.rate(), 1e18);
     assertEq(address(psm.usdz()), address(USDZ));
     assertEq(address(psm.collateral()), address(sUSDe));
@@ -68,78 +69,98 @@ contract PegStabilityModuleYieldFork is Test {
   }
 
   function testTransferYieldToFeeDistributor() external {
-    // 1. Set up the test account with sUSDe (a whale with sufficient sUSDe)
-    address sUSDeWhale = 0xb99a2c4C1C4F1fc27150681B740396F6CE1cBcF5;
-    uint256 initialAmount = 10_000 * 1e18; // 9,090.91 sUSDe, representing $10,000 at $1.10 rate
 
-    // 2. Start Prank with whale account to transfer sUSDe to PSM
+    address sUSDeWhale = 0xb99a2c4C1C4F1fc27150681B740396F6CE1cBcF5;
+    uint256 initialAmount = 10000 ether;
+
     vm.startPrank(sUSDeWhale);
 
-    // Ensure sUSDeWhale has enough balance and approve the transfer
     sUSDe.approve(address(psm), UINT256_MAX);
 
-    console.log("Before Balance Collateral", sUSDe.balanceOf(address(psm)));
-    uint256 beforeBalance = sUSDe.balanceOf(sUSDeWhale);
+    console.log(
+      "Before Mint PSM Collateral Balance",
+      sUSDe.balanceOf(address(psm))
+    );
+
+    uint256 exchangeRateBeforeDeposit = psm.getAssetsFromShares(); // 1.11
+    console.log("Exchange Rate Before Deposit",exchangeRateBeforeDeposit);
 
     // Transfer sUSDe to the PSM contract
-    psm.mint(address(this), initialAmount); // TODO: use user here
-    console.log("ZAI", USDZ.balanceOf(address(this)));
+    address alice = makeAddr("alice");
+    psm.mint(alice, initialAmount); 
+    console.log("ZAI Balance of Alice After Mint", USDZ.balanceOf(alice)); //10000
 
-    console.log("After Collateral Balance", sUSDe.balanceOf(address(psm))); // ZAI
-    console.log("Wahle", sUSDe.balanceOf(address(sUSDeWhale))); // ZAI
-    uint256 whaleBalance = sUSDe.balanceOf(address(sUSDeWhale));
+    console.log(
+      "After Mint PSM Collateral Balance",
+      sUSDe.balanceOf(address(psm))
+    );
+
+    uint256 sUSDePriceBeforeWhaleDeposit = (sUSDe.balanceOf(address(psm)) * psm.getAssetsFromShares()) / 1e18; // 10000
+
+    console.log(
+      "sUSDe Price Before Deposit -> ",
+      sUSDePriceBeforeWhaleDeposit
+    );
+
     vm.stopPrank();
 
-    // 3. Advance time by 6 months (approximately 180 days)
     uint256 sixMonthsInSeconds = 180 days;
     vm.warp(block.timestamp + sixMonthsInSeconds);
 
-    // 3. Mock price increase after 6 months to $1.155
-    uint256 newPrice = 0.865 * 1e18; // Six months later price is $1.155
-    console.log("New Rate",newPrice);
+    _whaleDepositToVault();
 
-    // // Update the rate in the PSM (assuming a price oracle mechanism or manual setting for the test)
-    vm.startPrank(GOVERNANCE);
-    psm.updateRate(newPrice);
-    vm.stopPrank();
+    uint256 feeDistributorBalanceBefore = sUSDe.balanceOf(FEEDISTRIBUTOR);
 
-    // // Calculate expected yield after price increase
-    // uint256 expectedNewValue = (initialAmount * newPrice) / 1e18; // New value of collateral in terms of USD
-    // console.log("ExpectedNewValue", expectedNewValue);
-    // console.log("CovertToAssets",)
-    // uint256 debtValue = 10_000 * 1e18; // Targeted debt value is $10,000
-    // console.log("Debt Value", debtValue);
-
-    // uint256 excessValue = expectedNewValue - debtValue;
-    // console.log("Excess Value", excessValue);
-    // uint256 expectedYieldShares = (excessValue * 1e18) / newPrice;
-    // console.log("Expected Yield Shares", expectedYieldShares);
-
-    // // 4. Call transferYieldToFeeDistributor
+    console.log("FEE Distributor Before Balance", feeDistributorBalanceBefore);
+    uint256 exchangeRateAfterDeposit = psm.getAssetsFromShares(); // 1.15
+    console.log(
+      "After deposit exchange rate should change",
+      exchangeRateAfterDeposit
+    );
+    uint sUSDePriceAfterWhaleDeposit = (sUSDe.balanceOf(address(psm)) * exchangeRateAfterDeposit) /
+      1e18;
+    console.log(
+      "sUSDe Price After Deposit -> ",
+      sUSDePriceAfterWhaleDeposit);
+    assertGt(exchangeRateAfterDeposit, exchangeRateBeforeDeposit);
+    assertGt(sUSDePriceAfterWhaleDeposit, sUSDePriceBeforeWhaleDeposit);
+   
     psm.transferYieldToFeeDistributor();
 
-    // // 5. Check final balance of feeDistributor
-    uint256 feeDistributorBalance = sUSDe.balanceOf(FEEDISTRIBUTOR);
-    console.log("Fee Distributor Balance", feeDistributorBalance);
-    // assertGe(
-    //   feeDistributorBalance,
-    //   expectedYieldShares,
-    //   "Incorrect yield amount transferred"
-    // );
+    uint256 feeDistributorBalanceAfter = sUSDe.balanceOf(FEEDISTRIBUTOR);
+    console.log("Fee Distributor Balance", feeDistributorBalanceAfter);
 
-    // // Additional Assertions (Optional)
-    // // Ensure the PSM debt remains consistent at the target
-    // assertEq(
-    //   psm.debt(),
-    //   debtValue,
-    //   "Debt value should remain at $10,000 equivalent"
-    // );
-    // // Ensure no additional sUSDe left as yield in the PSM contract beyond target
-    // uint256 remainingYield = psm.feesCollected();
-    // assertEq(
-    //   remainingYield,
-    //   0,
-    //   "No excess yield should remain in the PSM after transfer"
-    // );
+    assertApproxEqAbs(
+      feeDistributorBalanceAfter,
+      ((sUSDePriceAfterWhaleDeposit - sUSDePriceBeforeWhaleDeposit) * 1e18) /
+        psm.getAssetsFromShares(),5, "!distributorBalance"
+    );
+
+    console.log(
+      "After Mint PSM Collateral Balance",
+      sUSDe.balanceOf(address(psm))
+    );
+  }
+
+  function testExchangeRate() external {
+    uint256 rate1 = psm.getAssetsFromShares();
+    uint256 sixMonthsInSeconds = 180 days;
+    vm.warp(block.timestamp + sixMonthsInSeconds);
+
+    _whaleDepositToVault();
+    uint rate = psm.getAssetsFromShares();
+    assertLt(rate, rate1);
+  }
+
+  function _whaleDepositToVault() internal {
+    // Now Deposit in the vault to change the vault exchage rate
+    address USDe = 0x4c9EDD5852cd905f086C759E8383e09bff1E68B3;
+    address WHALE_USDe = 0x88a1493366D48225fc3cEFbdae9eBb23E323Ade3;
+    uint256 assetAmount = 1000 ether;
+
+    vm.startPrank(WHALE_USDe);
+    IERC20(USDe).approve(address(sUSDe), assetAmount);
+    sUSDe.deposit(assetAmount, WHALE_USDe);
+    vm.stopPrank();
   }
 }
