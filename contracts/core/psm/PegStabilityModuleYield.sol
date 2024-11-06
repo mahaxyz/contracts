@@ -22,161 +22,34 @@ import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeE
 
 import {PSMErrors} from "../../interfaces/errors/PSMErrors.sol";
 import {PSMEventsLib} from "../../interfaces/events/PSMEventsLib.sol";
+import {IPegStabilityModule, PegStabilityModuleBase} from "./PegStabilityModuleBase.sol";
 
-contract PegStabilityModuleYield is
-  Ownable2StepUpgradeable,
-  ReentrancyGuardUpgradeable,
-  IPegStabilityModuleYield
-{
+contract PegStabilityModuleYield is PegStabilityModuleBase, IPegStabilityModuleYield {
   using SafeERC20 for IERC20;
   using SafeERC20 for IERC4626;
 
-  uint256 public supplyCap;
-  uint256 public debtCap;
-  uint256 public rate;
-  uint256 public mintFeeBps;
-  uint256 public redeemFeeBps;
-
-  uint256 public debt;
-
-  IStablecoin public usdz;
-  IERC4626 public collateral;
-  address public feeDistributor;
-
-  uint256 public constant MAX_FEE_BPS = 10_000;
-
   function initialize(
-    address usdz_,
-    address collateral_,
-    address governance,
-    uint256 newRate_,
-    uint256 supplyCap_,
-    uint256 debtCap_,
-    uint256 mintFeeBps_,
-    uint256 redeemFeeBps_,
-    address feeDistributor_
-  ) external initializer {
-    ensureNonZeroAddress(usdz_);
-    ensureNonZeroAddress(collateral_);
-    ensureNonZeroAddress(governance);
-    ensureNonZeroAddress(feeDistributor_);
-
-    ensureNonZeroValue(newRate_);
-    ensureNonZeroValue(supplyCap_);
-    ensureNonZeroValue(debtCap_);
-
-    usdz = IStablecoin(usdz_);
-    collateral = IERC4626(collateral_);
-
-    __Ownable_init(governance);
-    __ReentrancyGuard_init();
-
-    _updateFees(mintFeeBps_, redeemFeeBps_);
-    _updateRate(newRate_);
-    _updateCaps(supplyCap_, debtCap_);
-    _updateFeeDistributor(feeDistributor_);
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function mint(address dest, uint256 shares) external nonReentrant {
-    uint256 amount = toCollateralAmountWithFee(shares, mintFeeBps);
-
-    if (amount == 0) revert PSMErrors.NotZeroValue();
-    if (shares == 0) revert PSMErrors.NotZeroValue();
-
-    if (collateral.balanceOf(address(this)) + amount > supplyCap)
-      revert PSMErrors.SupplyCapReached();
-    if (debt + shares > debtCap) revert PSMErrors.DebtCapReached();
-
-    collateral.safeTransferFrom(msg.sender, address(this), amount);
-    usdz.mint(dest, shares);
-
-    debt += shares;
-    emit PSMEventsLib.Mint(dest, shares, amount, debt, supplyCap, msg.sender);
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function redeem(address dest, uint256 shares) external nonReentrant {
-    uint256 amount = toCollateralAmountWithFeeInverse(shares, redeemFeeBps);
-
-    if (amount == 0) revert PSMErrors.NotZeroValue();
-    if (shares == 0) revert PSMErrors.NotZeroValue();
-
-    usdz.transferFrom(msg.sender, address(this), shares);
-    usdz.burn(address(this), shares);
-    collateral.safeTransfer(dest, amount);
-
-    debt -= shares;
-    emit PSMEventsLib.Redeem(dest, shares, amount, debt, supplyCap, msg.sender);
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function updateCaps(uint256 _supplyCap, uint256 _debtCap) external onlyOwner {
-    _updateCaps(_supplyCap, _debtCap);
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function updateRate(uint256 _newRate) external onlyOwner {
-    _updateRate(_newRate);
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function updateFees(
+    address _zai,
+    address _collateral,
+    address _governance,
+    uint256 _supplyCap,
+    uint256 _debtCap,
     uint256 _mintFeeBps,
-    uint256 _redeemFeeBps
-  ) external onlyOwner {
-    _updateFees(_mintFeeBps, _redeemFeeBps);
+    uint256 _redeemFeeBps,
+    address _feeDestination
+  ) external reinitializer(2) {
+    __PegStabilityModule_init(
+      _zai, _collateral, _governance, _supplyCap, _debtCap, _mintFeeBps, _redeemFeeBps, _feeDestination
+    );
   }
 
-  /// @inheritdoc IPegStabilityModuleYield
-  function updateFeeDistributor(address _newFeeDistributor) external onlyOwner {
-    _updateFeeDistributor(_newFeeDistributor);
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function toCollateralAmount(uint256 _amount) public view returns (uint256) {
-    return (_amount * 1e18) / getAssetsFromShares();
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function toCollateralAmountWithFee(
-    uint256 _amount,
-    uint256 _fee
-  ) public view returns (uint256) {
-    return (toCollateralAmount(_amount) * (MAX_FEE_BPS + _fee)) / MAX_FEE_BPS;
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function toCollateralAmountWithFeeInverse(
-    uint256 _amount,
-    uint256 _fee
-  ) public view returns (uint256) {
-    return (toCollateralAmount(_amount) * (MAX_FEE_BPS - _fee)) / MAX_FEE_BPS;
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function mintAmountIn(
-    uint256 amountAssetsIn
-  ) external view returns (uint256 shares) {
-    shares =
-      (amountAssetsIn * 1e18 * MAX_FEE_BPS) /
-      (MAX_FEE_BPS + mintFeeBps) /
-      rate;
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function redeemAmountOut(
-    uint256 amountAssetsOut
-  ) external view returns (uint256 shares) {
-    shares =
-      (amountAssetsOut * 1e18 * MAX_FEE_BPS) /
-      (MAX_FEE_BPS - redeemFeeBps) /
-      rate;
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function feesCollected() public view returns (uint256) {
-    return collateral.balanceOf(address(this)) - toCollateralAmount(debt);
+  function toCollateralAmount(uint256 _amount)
+    public
+    view
+    override (IPegStabilityModule, PegStabilityModuleBase)
+    returns (uint256)
+  {
+    return (_amount * 1e18) / rate();
   }
 
   /**
@@ -184,89 +57,28 @@ contract PegStabilityModuleYield is
    * @dev Uses total assets and total supply from the collateral to compute the ratio.
    * @return The asset value per share in 18 decimal precision.
    */
-  function getAssetsFromShares() public view returns (uint256) {
-    return (collateral.totalAssets() * 1e18) / collateral.totalSupply();
+  function rate() public view returns (uint256) {
+    return (IERC4626(address(collateral)).totalAssets() * 1e18) / collateral.totalSupply();
   }
 
-  /**
-   * @notice Ensures that a given address is not the zero address.
-   * @dev Reverts with `PSMErrors.NotZeroAddress` if the provided address is zero.
-   * @param address_ The address to check.
-   */
-  function ensureNonZeroAddress(address address_) internal pure {
-    if (address_ == address(0)) {
-      revert PSMErrors.NotZeroAddress();
-    }
+  /// @inheritdoc IPegStabilityModule
+  function mintAmountIn(uint256 amountAssetsIn)
+    external
+    view
+    override (IPegStabilityModule, PegStabilityModuleBase)
+    returns (uint256 shares)
+  {
+    shares = (amountAssetsIn * 1e18 * MAX_FEE_BPS) / (MAX_FEE_BPS + mintFeeBps) / rate();
   }
 
-  /**
-   * @notice Ensures that a given value is non-zero.
-   * @dev Reverts with `PSMErrors.NotZeroValue` if the provided value is zero.
-   * @param value_ The value to check.
-   */
-  function ensureNonZeroValue(uint256 value_) internal pure {
-    if (value_ == 0) {
-      revert PSMErrors.NotZeroValue();
-    }
-  }
-
-  function _updateCaps(uint256 _supplyCap, uint256 _debtCap) internal {
-    uint256 oldSupplyCap = supplyCap;
-    uint256 olsDebtCap = debtCap;
-
-    supplyCap = _supplyCap;
-    debtCap = _debtCap;
-
-    emit PSMEventsLib.SupplyCapUpdated(
-      _supplyCap,
-      _debtCap,
-      oldSupplyCap,
-      olsDebtCap,
-      msg.sender
-    );
-  }
-
-  /**
-   * @notice Updates the rate of USDz/Collateral
-   * @param _rate the new rate of USDz/Collateral
-   */
-  function _updateRate(uint256 _rate) internal {
-    uint256 oldRate = rate;
-    rate = _rate;
-    emit PSMEventsLib.RateUpdated(oldRate, _rate, msg.sender);
-  }
-
-  /**
-   * @notice Updates the fee destination
-   * @param _newFeeDistributor the new fee destination
-   */
-  function _updateFeeDistributor(address _newFeeDistributor) internal {
-    address oldFeeDestination = feeDistributor;
-    feeDistributor = _newFeeDistributor;
-    emit PSMEventsLib.FeeDestinationUpdated(
-      _newFeeDistributor,
-      oldFeeDestination,
-      msg.sender
-    );
-  }
-
-  /**
-   * @notice Updates the mint and redeem fees
-   * @param _mintFeeBps the new mint fee in BPS
-   * @param _redeemFeeBps the new redeem fee in BPS
-   */
-  function _updateFees(uint256 _mintFeeBps, uint256 _redeemFeeBps) internal {
-    uint256 oldMintFeeBps = mintFeeBps;
-    uint256 oldRedeemFeeBps = redeemFeeBps;
-    mintFeeBps = _mintFeeBps;
-    redeemFeeBps = _redeemFeeBps;
-    emit PSMEventsLib.FeesUpdated(
-      _mintFeeBps,
-      _redeemFeeBps,
-      oldMintFeeBps,
-      oldRedeemFeeBps,
-      msg.sender
-    );
+  /// @inheritdoc IPegStabilityModule
+  function redeemAmountOut(uint256 amountAssetsOut)
+    external
+    view
+    override (IPegStabilityModule, PegStabilityModuleBase)
+    returns (uint256 shares)
+  {
+    shares = (amountAssetsOut * 1e18 * MAX_FEE_BPS) / (MAX_FEE_BPS - redeemFeeBps) / rate();
   }
 
   /**
@@ -277,10 +89,10 @@ contract PegStabilityModuleYield is
    */
   function transferYieldToFeeDistributor() public {
     uint256 bal = collateral.balanceOf(address(this));
-    uint256 val = ((bal * getAssetsFromShares()) / 1e18);
+    uint256 val = ((bal * rate()) / 1e18);
     if (val > debt) {
-      uint256 yield = ((val - debt) * 1e18) / getAssetsFromShares();
-      collateral.safeTransfer(feeDistributor, yield);
+      uint256 yield = ((val - debt) * 1e18) / rate();
+      collateral.safeTransfer(feeDestination, yield);
     }
   }
 }
