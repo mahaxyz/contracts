@@ -39,9 +39,9 @@
   },
   "homepage": "https://github.com/mahaxyz/contracts#readme",
   "devDependencies": {
+    "@ethersproject/bignumber": "^5.6.2",
     "@gelatonetwork/automate-sdk": "^3.0.28",
     "@gelatonetwork/web3-functions-sdk": "^2.4.4",
-    "@ethersproject/bignumber": "^5.6.2",
     "@layerzerolabs/lz-evm-oapp-v2": "^2.3.36",
     "@layerzerolabs/lz-evm-protocol-v2": "^2.3.36",
     "@layerzerolabs/lz-v2-utilities": "^2.3.36",
@@ -56,6 +56,7 @@
     "@openzeppelin/contracts-upgradeable": "^5.0.2",
     "@openzeppelin/hardhat-upgrades": "^3.2.0",
     "@pythnetwork/pyth-sdk-solidity": "^2.4.1",
+    "@stargatefinance/stg-evm-v2": "^1.1.3",
     "@tenderly/hardhat-tenderly": "1.1.0-beta.5",
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
@@ -97,6 +98,5 @@
     "ethers": "^5.7.2",
     "hardhat-deploy": "^0.12.1",
     "@openzeppelin/contracts": "^5.0.0"
-  },
-  "dependencies": {}
+  }
 }
