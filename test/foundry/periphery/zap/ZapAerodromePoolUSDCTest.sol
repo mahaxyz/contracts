@@ -40,11 +40,13 @@ contract ZapAerodromePoolUSDCTest is BaseZaiTest {
     IERC20 _staking = IERC20(0x1097dFe9539350cb466dF9CA89A5e61195A520B0);
     address _restaking = 0xA07cf1c081F46524A133c1B6E8eE0B5f96A51255;
     address _router = 0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43;
+    address odos = 0x19cEeAd7105607Cd444F5ad10dd51356436095a1;
 
     ZapAerodromePoolUSDC _zap = new ZapAerodromePoolUSDC(
       address(_staking), // lp staking pool
       _restaking, // bridge
-      _router
+      _router,
+      odos
     );
 
     vm.startPrank(user);
@@ -74,11 +76,13 @@ contract ZapAerodromePoolUSDCTest is BaseZaiTest {
     IERC20 _staking = IERC20(0x1097dFe9539350cb466dF9CA89A5e61195A520B0);
     address _restaking = 0xA07cf1c081F46524A133c1B6E8eE0B5f96A51255;
     address _router = 0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43;
+    address odos = 0x19cEeAd7105607Cd444F5ad10dd51356436095a1;
 
     ZapAerodromePoolUSDC _zap = new ZapAerodromePoolUSDC(
       address(_staking), // lp staking pool
       _restaking, // bridge
-      _router
+      _router,
+      odos
     );
 
     vm.startPrank(user);
