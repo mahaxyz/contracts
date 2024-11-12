@@ -108,7 +108,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
     require(balanceUSDC > 0, "Zero balance");
     uint256 amount = calculatePercentage(balanceUSDC, 5000); // 50% of balance to send for buyback/burn on base chain.
     // Sending 50% revenue to sUSDz stakers contract.
-    IERC20(usdc).transfer(sUSDz, amount);
+    IERC20(usdc).safeTransfer(sUSDz, amount);
     _distributeRevenue(
       _stargateUSDCPool,
       _destinationEndPoint,
