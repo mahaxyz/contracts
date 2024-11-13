@@ -23,17 +23,12 @@ import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeE
 import {PSMErrors} from "../../interfaces/errors/PSMErrors.sol";
 import {PSMEventsLib} from "../../interfaces/events/PSMEventsLib.sol";
 
-contract PegStabilityModuleYield is
-  Ownable2StepUpgradeable,
-  ReentrancyGuardUpgradeable,
-  IPegStabilityModuleYield
-{
+contract PegStabilityModuleYield is Ownable2StepUpgradeable, ReentrancyGuardUpgradeable, IPegStabilityModuleYield {
   using SafeERC20 for IERC20;
   using SafeERC20 for IERC4626;
 
   uint256 public supplyCap;
   uint256 public debtCap;
-  uint256 public rate;
   uint256 public mintFeeBps;
   uint256 public redeemFeeBps;
 
@@ -49,7 +44,6 @@ contract PegStabilityModuleYield is
     address usdz_,
     address collateral_,
     address governance,
-    uint256 newRate_,
     uint256 supplyCap_,
     uint256 debtCap_,
     uint256 mintFeeBps_,
@@ -61,7 +55,6 @@ contract PegStabilityModuleYield is
     ensureNonZeroAddress(governance);
     ensureNonZeroAddress(feeDistributor_);
 
-    ensureNonZeroValue(newRate_);
     ensureNonZeroValue(supplyCap_);
     ensureNonZeroValue(debtCap_);
 
@@ -72,7 +65,6 @@ contract PegStabilityModuleYield is
     __ReentrancyGuard_init();
 
     _updateFees(mintFeeBps_, redeemFeeBps_);
-    _updateRate(newRate_);
     _updateCaps(supplyCap_, debtCap_);
     _updateFeeDistributor(feeDistributor_);
   }
@@ -84,8 +76,9 @@ contract PegStabilityModuleYield is
     if (amount == 0) revert PSMErrors.NotZeroValue();
     if (shares == 0) revert PSMErrors.NotZeroValue();
 
-    if (collateral.balanceOf(address(this)) + amount > supplyCap)
+    if (collateral.balanceOf(address(this)) + amount > supplyCap) {
       revert PSMErrors.SupplyCapReached();
+    }
     if (debt + shares > debtCap) revert PSMErrors.DebtCapReached();
 
     collateral.safeTransferFrom(msg.sender, address(this), amount);
@@ -116,62 +109,32 @@ contract PegStabilityModuleYield is
   }
 
   /// @inheritdoc IPegStabilityModuleYield
-  function updateRate(uint256 _newRate) external onlyOwner {
-    _updateRate(_newRate);
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function updateFees(
-    uint256 _mintFeeBps,
-    uint256 _redeemFeeBps
-  ) external onlyOwner {
+  function updateFees(uint256 _mintFeeBps, uint256 _redeemFeeBps) external onlyOwner {
     _updateFees(_mintFeeBps, _redeemFeeBps);
   }
 
   /// @inheritdoc IPegStabilityModuleYield
-  function updateFeeDistributor(address _newFeeDistributor) external onlyOwner {
+  function updateFeeDistributor(
+    address _newFeeDistributor
+  ) external onlyOwner {
     _updateFeeDistributor(_newFeeDistributor);
   }
 
   /// @inheritdoc IPegStabilityModuleYield
-  function toCollateralAmount(uint256 _amount) public view returns (uint256) {
+  function toCollateralAmount(
+    uint256 _amount
+  ) public view returns (uint256) {
     return (_amount * 1e18) / getAssetsFromShares();
   }
 
   /// @inheritdoc IPegStabilityModuleYield
-  function toCollateralAmountWithFee(
-    uint256 _amount,
-    uint256 _fee
-  ) public view returns (uint256) {
+  function toCollateralAmountWithFee(uint256 _amount, uint256 _fee) public view returns (uint256) {
     return (toCollateralAmount(_amount) * (MAX_FEE_BPS + _fee)) / MAX_FEE_BPS;
   }
 
   /// @inheritdoc IPegStabilityModuleYield
-  function toCollateralAmountWithFeeInverse(
-    uint256 _amount,
-    uint256 _fee
-  ) public view returns (uint256) {
+  function toCollateralAmountWithFeeInverse(uint256 _amount, uint256 _fee) public view returns (uint256) {
     return (toCollateralAmount(_amount) * (MAX_FEE_BPS - _fee)) / MAX_FEE_BPS;
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function mintAmountIn(
-    uint256 amountAssetsIn
-  ) external view returns (uint256 shares) {
-    shares =
-      (amountAssetsIn * 1e18 * MAX_FEE_BPS) /
-      (MAX_FEE_BPS + mintFeeBps) /
-      rate;
-  }
-
-  /// @inheritdoc IPegStabilityModuleYield
-  function redeemAmountOut(
-    uint256 amountAssetsOut
-  ) external view returns (uint256 shares) {
-    shares =
-      (amountAssetsOut * 1e18 * MAX_FEE_BPS) /
-      (MAX_FEE_BPS - redeemFeeBps) /
-      rate;
   }
 
   /// @inheritdoc IPegStabilityModuleYield
@@ -193,7 +156,9 @@ contract PegStabilityModuleYield is
    * @dev Reverts with `PSMErrors.NotZeroAddress` if the provided address is zero.
    * @param address_ The address to check.
    */
-  function ensureNonZeroAddress(address address_) internal pure {
+  function ensureNonZeroAddress(
+    address address_
+  ) internal pure {
     if (address_ == address(0)) {
       revert PSMErrors.NotZeroAddress();
     }
@@ -204,7 +169,9 @@ contract PegStabilityModuleYield is
    * @dev Reverts with `PSMErrors.NotZeroValue` if the provided value is zero.
    * @param value_ The value to check.
    */
-  function ensureNonZeroValue(uint256 value_) internal pure {
+  function ensureNonZeroValue(
+    uint256 value_
+  ) internal pure {
     if (value_ == 0) {
       revert PSMErrors.NotZeroValue();
     }
@@ -217,37 +184,19 @@ contract PegStabilityModuleYield is
     supplyCap = _supplyCap;
     debtCap = _debtCap;
 
-    emit PSMEventsLib.SupplyCapUpdated(
-      _supplyCap,
-      _debtCap,
-      oldSupplyCap,
-      olsDebtCap,
-      msg.sender
-    );
-  }
-
-  /**
-   * @notice Updates the rate of USDz/Collateral
-   * @param _rate the new rate of USDz/Collateral
-   */
-  function _updateRate(uint256 _rate) internal {
-    uint256 oldRate = rate;
-    rate = _rate;
-    emit PSMEventsLib.RateUpdated(oldRate, _rate, msg.sender);
+    emit PSMEventsLib.SupplyCapUpdated(_supplyCap, _debtCap, oldSupplyCap, olsDebtCap, msg.sender);
   }
 
   /**
    * @notice Updates the fee destination
    * @param _newFeeDistributor the new fee destination
    */
-  function _updateFeeDistributor(address _newFeeDistributor) internal {
+  function _updateFeeDistributor(
+    address _newFeeDistributor
+  ) internal {
     address oldFeeDestination = feeDistributor;
     feeDistributor = _newFeeDistributor;
-    emit PSMEventsLib.FeeDestinationUpdated(
-      _newFeeDistributor,
-      oldFeeDestination,
-      msg.sender
-    );
+    emit PSMEventsLib.FeeDestinationUpdated(_newFeeDistributor, oldFeeDestination, msg.sender);
   }
 
   /**
@@ -260,13 +209,7 @@ contract PegStabilityModuleYield is
     uint256 oldRedeemFeeBps = redeemFeeBps;
     mintFeeBps = _mintFeeBps;
     redeemFeeBps = _redeemFeeBps;
-    emit PSMEventsLib.FeesUpdated(
-      _mintFeeBps,
-      _redeemFeeBps,
-      oldMintFeeBps,
-      oldRedeemFeeBps,
-      msg.sender
-    );
+    emit PSMEventsLib.FeesUpdated(_mintFeeBps, _redeemFeeBps, oldMintFeeBps, oldRedeemFeeBps, msg.sender);
   }
 
   /**

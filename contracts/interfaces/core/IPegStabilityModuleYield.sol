@@ -44,12 +44,6 @@ interface IPegStabilityModuleYield {
   function debt() external returns (uint256);
 
   /**
-   * @notice Returns the current exchange rate of USDz to collateral.
-   * @return rate The current rate of USDz/Collateral.
-   */
-  function rate() external returns (uint256);
-
-  /**
    * @notice Returns the minting fee in basis points (BPS).
    * @return mintFeeBps The mint fee in BPS.
    */
@@ -66,13 +60,7 @@ interface IPegStabilityModuleYield {
    * @return redeemFeeBps The redeem fee in BPS.
    */
   function redeemFeeBps() external returns (uint256);
-
-  /**
-   * @notice Returns the maximum fee limit in BPS that can be charged.
-   * @return MAX_FEE_BPS The maximum allowable fee in BPS.
-   */
-  function MAX_FEE_BPS() external returns (uint256);
-
+  
   /**
    * @notice Mints USDz using collateral.
    * @dev Calculates the amount of collateral required for minting the specified USDz.
@@ -97,12 +85,6 @@ interface IPegStabilityModuleYield {
    */
   function updateCaps(uint256 _supplyCap, uint256 _debtCap) external;
 
-  /**
-   * @notice Updates the exchange rate between USDz and collateral.
-   * @dev Restricted to the contract's administrator.
-   * @param _newRate The new rate of USDz/Collateral.
-   */
-  function updateRate(uint256 _newRate) external;
 
   /**
    * @notice Converts an amount of USDz to its equivalent collateral value.
@@ -138,24 +120,6 @@ interface IPegStabilityModuleYield {
   ) external view returns (uint256);
 
   /**
-   * @notice Calculates the USDz amount to mint for a given collateral input.
-   * @param amountAssetsIn The collateral amount.
-   * @return shares The corresponding USDz amount to mint.
-   */
-  function mintAmountIn(
-    uint256 amountAssetsIn
-  ) external view returns (uint256 shares);
-
-  /**
-   * @notice Calculates the USDz amount to redeem for a given collateral output.
-   * @param amountAssetsOut The collateral amount.
-   * @return shares The corresponding USDz amount to redeem.
-   */
-  function redeemAmountOut(
-    uint256 amountAssetsOut
-  ) external view returns (uint256 shares);
-
-  /**
    * @notice Returns the total fees collected by the protocol in USDz.
    * @return fees The amount of fees collected.
    */
@@ -180,7 +144,6 @@ interface IPegStabilityModuleYield {
    * @param usdz_ The USDz stablecoin address.
    * @param collateral_ The collateral token address.
    * @param governance_ The governance address.
-   * @param newRate_ The initial USDz/Collateral rate.
    * @param supplyCap_ The initial supply cap.
    * @param debtCap_ The initial debt cap.
    * @param mintFeeBps_ The mint fee in BPS.
@@ -191,7 +154,6 @@ interface IPegStabilityModuleYield {
     address usdz_,
     address collateral_,
     address governance_,
-    uint256 newRate_,
     uint256 supplyCap_,
     uint256 debtCap_,
     uint256 mintFeeBps_,
