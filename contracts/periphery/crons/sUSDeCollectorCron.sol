@@ -67,9 +67,13 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
    * @notice Executes a swap from sUSDz to USDC via the ODOS router.
    * @dev This function can only be called by the contract owner.
    * @param data Encoded data required by the ODOS router for executing the swap.
+   * @param amount How much sUSDe you want ODOS router to swap
    */
-  function swapToUSDC(bytes calldata data) external onlyOwner {
-    _swapSUSDzToUSDC(data);
+  function swapToUSDC(
+    bytes calldata data,
+    uint256 amount
+  ) external payable onlyOwner {
+    _swapSUSDzToUSDC(data, amount);
   }
 
   /**
@@ -88,6 +92,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
    *      and transfers it to the sUSDz contract, subsequently calling `_distributeRevenue`.
    * @param _stargateUSDCPool The address of the Stargate USDC pool.
    * @param _destinationEndPoint The endpoint identifier for the Stargate pool.
+   * @param _amount How much sUSDe you want ODOS router to swap
    * @param _receiver The address that will receive the distributed revenue.
    * @param _refundAddress The address to receive any excess funds from fees etc. on the source chain.
    * @param _odos Optional calldata to perform a swap from sUSDz to USDC if provided.
@@ -95,6 +100,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
   function distributeRevenue(
     address _stargateUSDCPool,
     uint32 _destinationEndPoint,
+    uint256 _amount,
     address _receiver,
     address _refundAddress,
     bytes calldata _odos
@@ -102,7 +108,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
     ensureNonzeroAddress(_stargateUSDCPool);
     ensureNonzeroAddress(_receiver);
     if (_odos.length > 0) {
-      _swapSUSDzToUSDC(_odos);
+      _swapSUSDzToUSDC(_odos, _amount);
     }
     uint256 balanceUSDC = IERC20(usdc).balanceOf(address(this));
     require(balanceUSDC > 0, "Zero balance");
@@ -112,7 +118,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
     _distributeRevenue(
       _stargateUSDCPool,
       _destinationEndPoint,
-      amount,
+      balanceUSDC - amount,
       _receiver,
       _refundAddress
     );
@@ -123,9 +129,11 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
    * @dev Executes a low-level call to `odos` using the provided calldata.
    *      Reverts if the `odos` call fails.
    * @param data Encoded call data required by the `odos` contract to perform the swap.
+   * @param _amount How much sUSDe you want ODOS router to swap
    */
-  function _swapSUSDzToUSDC(bytes calldata data) internal {
-    (bool ok, ) = odos.call(data);
+  function _swapSUSDzToUSDC(bytes calldata data, uint256 _amount) internal {
+    IERC20(sUSDz).approve(odos, _amount);
+    (bool ok, ) = odos.call{value: msg.value}(data);
     require(ok, "odos call failed");
   }
 
@@ -244,5 +252,14 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
   ) internal pure returns (uint256) {
     require((amount * bps) >= 10_000, "amount * bps > 10_000");
     return (amount * bps) / 10_000;
+  }
+
+  /**
+   * @notice Refunds the specified token balance held by the contract to the caller.
+   * @dev Only callable by owner of the contract
+   * @param token The ERC20 token to be refunded.
+   */
+  function refund(IERC20 token) external onlyOwner {
+    token.safeTransfer(msg.sender, token.balanceOf(address(this)));
   }
 }
