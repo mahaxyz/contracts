@@ -18,7 +18,7 @@ pragma solidity 0.8.21;
 import {StablecoinBase} from "./StablecoinBase.sol";
 
 /**
- * @title Zai Stablecoin "USDz"
+ * @title Zai Stablecoin "ZAI"
  * @author maha.xyz
  * @notice Represents the ZAI stablecoin.
  */

@@ -8,7 +8,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
 
   const args = [
     (await deployments.get("StakingLPRewards-ssUSDzUSDz")).address,
-    (await deployments.get("SafetyPool-USDz")).address,
+    (await deployments.get("SafetyPool-ZAI")).address,
     (await deployments.get("PegStabilityModule-USDC")).address,
   ];
 

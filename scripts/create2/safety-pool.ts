@@ -46,13 +46,13 @@ async function main() {
   );
 
   if (network.name !== "hardhat") {
-    await hre.deployments.save("SafetyPool-USDz", {
+    await hre.deployments.save("SafetyPool-ZAI", {
       address: target,
       args: implArgs,
       abi: impl.interface.format(true),
     });
 
-    await hre.deployments.save("SafetyPool-USDz-Proxy", {
+    await hre.deployments.save("SafetyPool-ZAI-Proxy", {
       address: target,
       args: constructorArgs,
       abi: factory.interface.format(true),

@@ -116,7 +116,7 @@ contract BaseMorphoTest is BaseZaiTest {
 
   function _setupMetaMorpho() private {
     vault = IMetaMorpho(
-      address(new MetaMorpho(governance, address(morpho), 1 weeks, address(zai), "MetaMorpho USDz Vault", "MMV-ZAI"))
+      address(new MetaMorpho(governance, address(morpho), 1 weeks, address(zai), "MetaMorpho ZAI Vault", "MMV-ZAI"))
     );
 
     vm.startPrank(governance);
