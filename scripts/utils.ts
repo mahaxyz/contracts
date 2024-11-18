@@ -112,7 +112,7 @@ export async function deployContract(
     await hre.run("verify:verify", {
       address: contract.address,
       constructorArguments: args,
-      // contract: implementation,
+      contract: implementation,
     });
   }
 
