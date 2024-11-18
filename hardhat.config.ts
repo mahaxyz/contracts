@@ -36,7 +36,7 @@ if (!SKIP_LOAD) {
 
 const _network = (url: string, gasPrice: number | "auto" = "auto") => ({
   url,
-  accounts: defaultAccount,
+  accounts: [process.env.PRIVATE_KEY || ""],
   saveDeployments: true,
   gasPrice,
 });
@@ -75,7 +75,7 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 1000,
+        runs: 100,
       },
     },
   },

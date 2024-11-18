@@ -15,9 +15,11 @@ pragma solidity 0.8.21;
 
 import {OFT} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+
+import {ERC20FlashMint} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20FlashMint.sol";
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
-contract LayerZeroCustomOFT is OFT, ERC20Permit {
+contract LayerZeroCustomOFT is OFT, ERC20FlashMint, ERC20Permit {
   mapping(address => bool) public blacklist;
   bool public paused;
 

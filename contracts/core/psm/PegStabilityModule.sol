@@ -25,8 +25,7 @@ import {IPegStabilityModule, PegStabilityModuleBase} from "./PegStabilityModuleB
  * @dev https://docs.maha.xyz/mechanics/peg-mechanics/peg-stablility-module-psm
  */
 contract PegStabilityModule is PegStabilityModuleBase {
-  /// @inheritdoc IPegStabilityModule
-  uint256 public rate;
+  uint256 private _rate;
 
   function initialize(
     address _zai,
@@ -49,33 +48,23 @@ contract PegStabilityModule is PegStabilityModuleBase {
     _updateRate(_newRate);
   }
 
-  /// @inheritdoc IPegStabilityModule
+  //// @inheritdoc IPegStabilityModule
   function updateRate(uint256 _newRate) external onlyOwner {
     _updateRate(_newRate);
   }
 
   /// @inheritdoc IPegStabilityModule
-  function toCollateralAmount(uint256 _amount) public view override returns (uint256) {
-    return (_amount * rate) / 1e18;
-  }
-
-  /// @inheritdoc IPegStabilityModule
-  function mintAmountIn(uint256 amountAssetsIn) external view override returns (uint256 shares) {
-    shares = (amountAssetsIn * 1e18 * MAX_FEE_BPS) / (MAX_FEE_BPS + mintFeeBps) / rate;
-  }
-
-  /// @inheritdoc IPegStabilityModule
-  function redeemAmountOut(uint256 amountAssetsOut) external view override returns (uint256 shares) {
-    shares = (amountAssetsOut * 1e18 * MAX_FEE_BPS) / (MAX_FEE_BPS - redeemFeeBps) / rate;
+  function rate() public view override returns (uint256) {
+    return _rate;
   }
 
   /**
    * @notice Updates the rate of ZAI/Collateral
-   * @param _rate the new rate of ZAI/Collateral
+   * @param rate_ the new rate of ZAI/Collateral
    */
-  function _updateRate(uint256 _rate) internal {
-    uint256 oldRate = rate;
-    rate = _rate;
+  function _updateRate(uint256 rate_) internal {
+    uint256 oldRate = rate_;
+    _rate = rate_;
     emit PSMEventsLib.RateUpdated(oldRate, _rate, msg.sender);
   }
 }

@@ -28,7 +28,6 @@ contract BasePsmYieldTest is BaseUsdzTest {
       address(usdz),
       address(sUsdc),
       governance,
-      1e6,
       100_000 * 1e6, // supplyCap
       100_000 * 1e18, // debtCap
       100, // supplyFeeBps

@@ -23,7 +23,7 @@ import {StablecoinBase} from "./StablecoinBase.sol";
  * @notice Represents the ZAI stablecoin.
  */
 contract ZaiStablecoin is StablecoinBase {
-  constructor(address _owner) StablecoinBase("ZAI Stablecoin", "USDz", _owner) {
+  constructor(address _owner) StablecoinBase("ZAI Stablecoin", "ZAI", _owner) {
     // nothing
   }
 }

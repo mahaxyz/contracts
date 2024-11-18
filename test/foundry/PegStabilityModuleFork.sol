@@ -12,11 +12,11 @@
 // Twitter: https://twitter.com/mahaxyz_
 pragma solidity 0.8.21;
 
-import {Test, console} from "forge-std/Test.sol";
+import {IPegStabilityModuleYield, PegStabilityModuleYield} from "../../contracts/core/psm/PegStabilityModuleYield.sol";
 import {IStablecoin} from "../../contracts/interfaces/IStablecoin.sol";
-import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
-import {PegStabilityModuleYield, IPegStabilityModuleYield} from "../../contracts/core/psm/PegStabilityModuleYield.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
+import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
+import {Test, console} from "forge-std/Test.sol";
 
 contract PegStabilityModuleYieldFork is Test {
   uint256 mainnetFork;
@@ -26,8 +26,7 @@ contract PegStabilityModuleYieldFork is Test {
   PegStabilityModuleYield public psm;
   address public GOVERNANCE;
   address public FEEDISTRIBUTOR;
-  address public constant ROLE_ADMIN =
-    0x690002dA1F2d828D72Aa89367623dF7A432E85A9;
+  address public constant ROLE_ADMIN = 0x690002dA1F2d828D72Aa89367623dF7A432E85A9;
 
   function setUp() public {
     mainnetFork = vm.createFork(MAINNET_RPC_URL);
@@ -42,17 +41,7 @@ contract PegStabilityModuleYieldFork is Test {
     psm = new PegStabilityModuleYield();
 
     // Initialize the PSM
-    psm.initialize(
-      address(USDZ),
-      address(sUSDe),
-      GOVERNANCE,
-      0.9090 * 1e18,
-      100_000 * 1e18,
-      100_000 * 1e18,
-      0,
-      100,
-      FEEDISTRIBUTOR
-    );
+    psm.initialize(address(USDZ), address(sUSDe), GOVERNANCE, 100_000 * 1e18, 100_000 * 1e18, 0, 100, FEEDISTRIBUTOR);
 
     vm.startPrank(ROLE_ADMIN);
     USDZ.grantManagerRole(GOVERNANCE);
@@ -63,44 +52,34 @@ contract PegStabilityModuleYieldFork is Test {
 
   function testInitValues() public view {
     assertEq(psm.rate(), 1e18);
-    assertEq(address(psm.usdz()), address(USDZ));
+    assertEq(address(psm.zai()), address(USDZ));
     assertEq(address(psm.collateral()), address(sUSDe));
-    assertEq(psm.feeDistributor(), FEEDISTRIBUTOR);
+    assertEq(psm.feeDestination(), FEEDISTRIBUTOR);
   }
 
   function testTransferYieldToFeeDistributor() external {
-
     address sUSDeWhale = 0xb99a2c4C1C4F1fc27150681B740396F6CE1cBcF5;
-    uint256 initialAmount = 10000 ether;
+    uint256 initialAmount = 10_000 ether;
 
     vm.startPrank(sUSDeWhale);
 
     sUSDe.approve(address(psm), UINT256_MAX);
 
-    console.log(
-      "Before Mint PSM Collateral Balance",
-      sUSDe.balanceOf(address(psm))
-    );
+    console.log("Before Mint PSM Collateral Balance", sUSDe.balanceOf(address(psm)));
 
-    uint256 exchangeRateBeforeDeposit = psm.getAssetsFromShares(); // 1.11
-    console.log("Exchange Rate Before Deposit",exchangeRateBeforeDeposit);
+    uint256 exchangeRateBeforeDeposit = psm.rate(); // 1.11
+    console.log("Exchange Rate Before Deposit", exchangeRateBeforeDeposit);
 
     // Transfer sUSDe to the PSM contract
     address alice = makeAddr("alice");
-    psm.mint(alice, initialAmount); 
+    psm.mint(alice, initialAmount);
     console.log("ZAI Balance of Alice After Mint", USDZ.balanceOf(alice)); //10000
 
-    console.log(
-      "After Mint PSM Collateral Balance",
-      sUSDe.balanceOf(address(psm))
-    );
+    console.log("After Mint PSM Collateral Balance", sUSDe.balanceOf(address(psm)));
 
-    uint256 sUSDePriceBeforeWhaleDeposit = (sUSDe.balanceOf(address(psm)) * psm.getAssetsFromShares()) / 1e18; // 10000
+    uint256 sUSDePriceBeforeWhaleDeposit = (sUSDe.balanceOf(address(psm)) * psm.rate()) / 1e18; // 10000
 
-    console.log(
-      "sUSDe Price Before Deposit -> ",
-      sUSDePriceBeforeWhaleDeposit
-    );
+    console.log("sUSDe Price Before Deposit -> ", sUSDePriceBeforeWhaleDeposit);
 
     vm.stopPrank();
 
@@ -112,19 +91,13 @@ contract PegStabilityModuleYieldFork is Test {
     uint256 feeDistributorBalanceBefore = sUSDe.balanceOf(FEEDISTRIBUTOR);
 
     console.log("FEE Distributor Before Balance", feeDistributorBalanceBefore);
-    uint256 exchangeRateAfterDeposit = psm.getAssetsFromShares(); // 1.15
-    console.log(
-      "After deposit exchange rate should change",
-      exchangeRateAfterDeposit
-    );
-    uint sUSDePriceAfterWhaleDeposit = (sUSDe.balanceOf(address(psm)) * exchangeRateAfterDeposit) /
-      1e18;
-    console.log(
-      "sUSDe Price After Deposit -> ",
-      sUSDePriceAfterWhaleDeposit);
+    uint256 exchangeRateAfterDeposit = psm.rate(); // 1.15
+    console.log("After deposit exchange rate should change", exchangeRateAfterDeposit);
+    uint256 sUSDePriceAfterWhaleDeposit = (sUSDe.balanceOf(address(psm)) * exchangeRateAfterDeposit) / 1e18;
+    console.log("sUSDe Price After Deposit -> ", sUSDePriceAfterWhaleDeposit);
     assertGt(exchangeRateAfterDeposit, exchangeRateBeforeDeposit);
     assertGt(sUSDePriceAfterWhaleDeposit, sUSDePriceBeforeWhaleDeposit);
-   
+
     psm.transferYieldToFeeDistributor();
 
     uint256 feeDistributorBalanceAfter = sUSDe.balanceOf(FEEDISTRIBUTOR);
@@ -132,23 +105,21 @@ contract PegStabilityModuleYieldFork is Test {
 
     assertApproxEqAbs(
       feeDistributorBalanceAfter,
-      ((sUSDePriceAfterWhaleDeposit - sUSDePriceBeforeWhaleDeposit) * 1e18) /
-        psm.getAssetsFromShares(),5, "!distributorBalance"
+      ((sUSDePriceAfterWhaleDeposit - sUSDePriceBeforeWhaleDeposit) * 1e18) / psm.rate(),
+      5,
+      "!distributorBalance"
     );
 
-    console.log(
-      "After Mint PSM Collateral Balance",
-      sUSDe.balanceOf(address(psm))
-    );
+    console.log("After Mint PSM Collateral Balance", sUSDe.balanceOf(address(psm)));
   }
 
   function testExchangeRate() external {
-    uint256 rate1 = psm.getAssetsFromShares();
+    uint256 rate1 = psm.rate();
     uint256 sixMonthsInSeconds = 180 days;
     vm.warp(block.timestamp + sixMonthsInSeconds);
 
     _whaleDepositToVault();
-    uint rate = psm.getAssetsFromShares();
+    uint256 rate = psm.rate();
     assertLt(rate, rate1);
   }
 
