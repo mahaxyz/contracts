@@ -4,12 +4,13 @@
 
   npx hardhat connect-oft --token zai --network arbitrum
   npx hardhat connect-oft --token zai --network base
-  npx hardhat connect-oft --token zai --network blast
   npx hardhat connect-oft --token zai --network bsc
   npx hardhat connect-oft --token zai --network linea
-  npx hardhat connect-oft --token zai --network optimism
   npx hardhat connect-oft --token zai --network xlayer
   npx hardhat connect-oft --token zai --network mainnet
+
+  npx hardhat connect-oft --token zai --network blast
+  npx hardhat connect-oft --token zai --network optimism
   npx hardhat connect-oft --token zai --network scroll
 
  */
@@ -72,7 +73,7 @@ task(`connect-oft`, `Connects of all the OFT connections`)
           console.log("setting peer for", remoteNetwork);
           await waitForTx(
             await oft.setPeer(r.eid, remoteOft, {
-              gasPrice: 1000000000,
+              // gasPrice: 1000000000,
             })
           );
         } else {

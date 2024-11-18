@@ -3,11 +3,9 @@
 
   npx hardhat setup-oft --network arbitrum --token zai
   npx hardhat setup-oft --network base --token zai
-  npx hardhat setup-oft --network blast --token zai
   npx hardhat setup-oft --network bsc --token zai
   npx hardhat setup-oft --network xlayer --token zai
   npx hardhat setup-oft --network linea --token zai
-  npx hardhat setup-oft --network zircuit --token zai
   npx hardhat setup-oft --network mainnet --token zai
  */
 import _ from "underscore";
@@ -102,6 +100,7 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
 
       const peer = await oft.peers(r.eid);
       console.log("received peer", peer);
+      console.log("target address", remoteD);
 
       if (peer.toLowerCase() != remoteOft.toLowerCase()) {
         // if we can set the peer, we will set it here
