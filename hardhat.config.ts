@@ -36,7 +36,8 @@ if (!SKIP_LOAD) {
 
 const _network = (url: string, gasPrice: number | "auto" = "auto") => ({
   url,
-  accounts: [process.env.PRIVATE_KEY || ""],
+  // accounts: [process.env.PRIVATE_KEY || ""],
+  accounts: defaultAccount,
   saveDeployments: true,
   gasPrice,
 });

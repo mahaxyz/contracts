@@ -32,6 +32,21 @@ async function main(hre: HardhatRuntimeEnvironment) {
       address: contract.address,
     });
   }
+
+  const balance = await hre.ethers.provider.getBalance(deployer.address);
+  if (balance > 0n) {
+    const gasPrice = await hre.ethers.getDefaultProvider().getFeeData();
+    const gasLimit = 21000n; // Standard gas limit for a simple ETH transfer
+    const gasCost = (gasPrice.gasPrice || 0n) * gasLimit;
+    const valueToSend = balance - gasCost;
+
+    const tx = await deployer.sendTransaction({
+      to: mahaDeployer,
+      value: valueToSend,
+    });
+    await tx.wait();
+    console.log(tx.hash);
+  }
 }
 
 main.tags = ["ZaiStablecoinOFT"];
