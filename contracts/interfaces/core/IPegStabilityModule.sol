@@ -96,12 +96,12 @@ interface IPegStabilityModule {
    */
   function updateCaps(uint256 _supplyCap, uint256 _debtCap) external;
 
-  /**
-   * @notice Updates the rate of ZAI/Collateral
-   * @dev Only callable by the admin
-   * @param _newRate The new rate of ZAI/Collateral
-   */
-  function updateRate(uint256 _newRate) external;
+  // /**
+  //  * @notice Updates the rate of ZAI/Collateral
+  //  * @dev Only callable by the admin
+  //  * @param _newRate The new rate of ZAI/Collateral
+  //  */
+  // function updateRate(uint256 _newRate) external;
 
   /**
    * @notice Converts ZAI amount to collateral
@@ -158,27 +158,27 @@ interface IPegStabilityModule {
    */
   function updateFeeDestination(address _feeDestination) external;
 
-  /**
-   * @notice Initializes the contract
-   * @param _zai The ZAI stablecoin
-   * @param _collateral The collateral token
-   * @param _governance Governance address
-   * @param _newRate The new rate of ZAI/Collateral
-   * @param _supplyCap The supply cap
-   * @param _debtCap The debt cap
-   * @param _mintFeeBps The mint fee in BPS
-   * @param _redeemFeeBps The redeem fee in BPS
-   * @param _feeDestination The address where fees are sent
-   */
-  function initialize(
-    address _zai,
-    address _collateral,
-    address _governance,
-    uint256 _newRate,
-    uint256 _supplyCap,
-    uint256 _debtCap,
-    uint256 _mintFeeBps,
-    uint256 _redeemFeeBps,
-    address _feeDestination
-  ) external;
+  // /**
+  //  * @notice Initializes the contract
+  //  * @param _zai The ZAI stablecoin
+  //  * @param _collateral The collateral token
+  //  * @param _governance Governance address
+  //  * @param _newRate The new rate of ZAI/Collateral
+  //  * @param _supplyCap The supply cap
+  //  * @param _debtCap The debt cap
+  //  * @param _mintFeeBps The mint fee in BPS
+  //  * @param _redeemFeeBps The redeem fee in BPS
+  //  * @param _feeDestination The address where fees are sent
+  //  */
+  // function initialize(
+  //   address _zai,
+  //   address _collateral,
+  //   address _governance,
+  //   uint256 _newRate,
+  //   uint256 _supplyCap,
+  //   uint256 _debtCap,
+  //   uint256 _mintFeeBps,
+  //   uint256 _redeemFeeBps,
+  //   address _feeDestination
+  // ) external;
 }
