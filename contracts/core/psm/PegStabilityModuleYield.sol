@@ -49,7 +49,7 @@ contract PegStabilityModuleYield is PegStabilityModuleBase, IPegStabilityModuleY
    * @return The asset value per share in 18 decimal precision.
    */
   function rate() public view override (IPegStabilityModule, PegStabilityModuleBase) returns (uint256) {
-    return (IERC4626(address(collateral)).totalAssets() * 1e18) / collateral.totalSupply();
+    return IERC4626(address(collateral)).previewMint(1 ether);
   }
 
   /**
@@ -60,10 +60,10 @@ contract PegStabilityModuleYield is PegStabilityModuleBase, IPegStabilityModuleY
    */
   function transferYieldToFeeDistributor() public {
     uint256 bal = collateral.balanceOf(address(this));
-    uint256 val = ((bal * rate()) / 1e18);
-    if (val > debt) {
-      uint256 yield = ((val - debt) * 1e18) / rate();
-      collateral.safeTransfer(feeDestination, yield);
-    }
+    uint256 usdValue = (bal * rate()) / 1e18;
+    require(usdValue >= debt, "no yield to transfer");
+
+    uint256 yield = ((usdValue - debt) * 1e18) / rate();
+    collateral.safeTransfer(feeDestination, yield);
   }
 }
