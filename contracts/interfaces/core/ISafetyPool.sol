@@ -36,14 +36,4 @@ interface ISafetyPool {
   ) external;
 
   function MANAGER_ROLE() external view returns (bytes32);
-
-  function queueWithdrawal(uint256 shares) external;
-
-  function withdrawalDelay() external view returns (uint256);
-
-  function withdrawalAmount(address who) external view returns (uint256);
-
-  function withdrawalTimestamp(address who) external view returns (uint256);
-
-  function cancelWithdrawal() external;
 }

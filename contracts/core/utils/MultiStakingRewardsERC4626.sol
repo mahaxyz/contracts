@@ -18,6 +18,7 @@ import {AccessControlEnumerableUpgradeable} from
 import {ERC4626Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
 import {IMultiStakingRewardsERC4626, IMultiTokenRewards} from "../../interfaces/core/IMultiStakingRewardsERC4626.sol";
+import {IMultiTokenRewardsWithWithdrawalDelay} from "../../interfaces/core/IMultiTokenRewardsWithWithdrawalDelay.sol";
 import {IOmnichainStaking} from "../../interfaces/governance/IOmnichainStaking.sol";
 import {MulticallUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/MulticallUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
@@ -41,7 +42,7 @@ abstract contract MultiStakingRewardsERC4626 is
   ERC4626Upgradeable,
   ReentrancyGuardUpgradeable,
   MulticallUpgradeable,
-  IMultiStakingRewardsERC4626
+  IMultiTokenRewardsWithWithdrawalDelay
 {
   using SafeERC20 for IERC20;
 
@@ -90,11 +91,21 @@ abstract contract MultiStakingRewardsERC4626 is
   /// @dev Boosted balances that are used to compute the rewards
   mapping(address who => uint256 boostedBalance) internal _boostedBalances;
 
+  /// @inheritdoc IMultiTokenRewardsWithWithdrawalDelay
+  uint256 public withdrawalDelay;
+
+  /// @inheritdoc IMultiTokenRewardsWithWithdrawalDelay
+  mapping(address => uint256) public withdrawalTimestamp;
+
+  /// @inheritdoc IMultiTokenRewardsWithWithdrawalDelay
+  mapping(address => uint256) public withdrawalAmount;
+
   /// @notice Initializes the staking contract with a first set of parameters
   function __MultiStakingRewardsERC4626_init(
     string memory name,
     string memory symbol,
     address _stakingToken,
+    uint256 _withdrawalDelay,
     address _governance,
     address _rewardToken1,
     address _rewardToken2,
@@ -126,6 +137,27 @@ abstract contract MultiStakingRewardsERC4626 is
     // register the erc20 event
     _mint(msg.sender, 1e18);
     _burn(msg.sender, 1e18);
+
+    withdrawalDelay = _withdrawalDelay;
+  }
+
+  /// @inheritdoc IMultiTokenRewardsWithWithdrawalDelay
+  function queueWithdrawal(uint256 shares) external {
+    require(shares <= balanceOf(msg.sender), "insufficient balance");
+    withdrawalTimestamp[msg.sender] = block.timestamp + withdrawalDelay;
+    withdrawalAmount[msg.sender] = shares;
+    emit WithdrawalQueueUpdated(shares, withdrawalTimestamp[msg.sender], msg.sender);
+
+    _updateRewardDual(rewardToken1, rewardToken2, msg.sender);
+  }
+
+  /// @inheritdoc IMultiTokenRewardsWithWithdrawalDelay
+  function cancelWithdrawal() external {
+    withdrawalTimestamp[msg.sender] = 0;
+    withdrawalAmount[msg.sender] = 0;
+    emit WithdrawalQueueUpdated(0, 0, msg.sender);
+
+    _updateRewardDual(rewardToken1, rewardToken2, msg.sender);
   }
 
   /// @inheritdoc IMultiTokenRewards
@@ -240,13 +272,16 @@ abstract contract MultiStakingRewardsERC4626 is
   }
 
   /// @inheritdoc ERC4626Upgradeable
-  function _withdraw(
-    address caller,
-    address receiver,
-    address owner,
-    uint256 assets,
-    uint256 shares
-  ) internal virtual override {
+  function _withdraw(address caller, address receiver, address owner, uint256 assets, uint256 shares) internal override {
+    uint256 amount = withdrawalAmount[owner];
+
+    require(withdrawalTimestamp[owner] <= block.timestamp, "withdrawal not ready");
+    require(shares == amount && amount > 0, "invalid withdrawal");
+
+    withdrawalTimestamp[owner] = 0;
+    withdrawalAmount[owner] = 0;
+    emit WithdrawalQueueUpdated(0, 0, owner);
+
     _updateRewardDual(rewardToken1, rewardToken2, owner);
     super._withdraw(caller, receiver, owner, assets, shares);
   }

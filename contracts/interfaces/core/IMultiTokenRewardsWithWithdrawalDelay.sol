@@ -13,21 +13,19 @@
 
 pragma solidity 0.8.21;
 
-import {MultiStakingRewardsERC4626} from "../../core/utils/MultiStakingRewardsERC4626.sol";
+import {IMultiStakingRewardsERC4626} from "./IMultiStakingRewardsERC4626.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract StakingLPRewards is MultiStakingRewardsERC4626 {
-  function initialize(
-    string memory _name,
-    string memory _symbol,
-    address _stakingToken,
-    address _governance,
-    address _rewardToken1,
-    address _rewardToken2,
-    uint256 _rewardsDuration,
-    address _staking
-  ) external reinitializer(1) {
-    __MultiStakingRewardsERC4626_init(
-      _name, _symbol, _stakingToken, 3 days, _governance, _rewardToken1, _rewardToken2, _rewardsDuration, _staking
-    );
-  }
+interface IMultiTokenRewardsWithWithdrawalDelay is IMultiStakingRewardsERC4626 {
+  event WithdrawalQueueUpdated(uint256 indexed amt, uint256 indexed unlockTime, address indexed caller);
+
+  function queueWithdrawal(uint256 shares) external;
+
+  function withdrawalDelay() external view returns (uint256);
+
+  function withdrawalAmount(address who) external view returns (uint256);
+
+  function withdrawalTimestamp(address who) external view returns (uint256);
+
+  function cancelWithdrawal() external;
 }
