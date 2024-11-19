@@ -11,13 +11,13 @@ async function main(hre: HardhatRuntimeEnvironment) {
 
   const params = [
     safe, // address _feeCollector,
-    100000n * 10n ** 18n, // uint256 _globalDebtCeiling,
+    1000000n * 10n ** 18n, // uint256 _globalDebtCeiling,
     zaiD.address, // address _zai,
     deployer.address, // address _governance
   ];
 
-  await deployProxy(hre, "DDHub", params, proxyAdminD.address, `DDHub`);
+  await deployProxy(hre, "DDHubL1", params, proxyAdminD.address, `DDHub`);
 }
 
-main.tags = ["DeployDDHub"];
+main.tags = ["DeployDDHubL1"];
 export default main;
