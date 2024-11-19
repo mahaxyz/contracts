@@ -43,42 +43,13 @@ contract PegStabilityModuleYield is PegStabilityModuleBase, IPegStabilityModuleY
     );
   }
 
-  function toCollateralAmount(uint256 _amount)
-    public
-    view
-    override (IPegStabilityModule, PegStabilityModuleBase)
-    returns (uint256)
-  {
-    return (_amount * 1e18) / rate();
-  }
-
   /**
    * @notice Calculates the value of assets per share in the collateral pool.
    * @dev Uses total assets and total supply from the collateral to compute the ratio.
    * @return The asset value per share in 18 decimal precision.
    */
-  function rate() public view returns (uint256) {
-    return (IERC4626(address(collateral)).totalAssets() * 1e18) / collateral.totalSupply();
-  }
-
-  /// @inheritdoc IPegStabilityModule
-  function mintAmountIn(uint256 amountAssetsIn)
-    external
-    view
-    override (IPegStabilityModule, PegStabilityModuleBase)
-    returns (uint256 shares)
-  {
-    shares = (amountAssetsIn * 1e18 * MAX_FEE_BPS) / (MAX_FEE_BPS + mintFeeBps) / rate();
-  }
-
-  /// @inheritdoc IPegStabilityModule
-  function redeemAmountOut(uint256 amountAssetsOut)
-    external
-    view
-    override (IPegStabilityModule, PegStabilityModuleBase)
-    returns (uint256 shares)
-  {
-    shares = (amountAssetsOut * 1e18 * MAX_FEE_BPS) / (MAX_FEE_BPS - redeemFeeBps) / rate();
+  function rate() public view override (IPegStabilityModule, PegStabilityModuleBase) returns (uint256) {
+    return IERC4626(address(collateral)).previewMint(1 ether);
   }
 
   /**
@@ -89,10 +60,10 @@ contract PegStabilityModuleYield is PegStabilityModuleBase, IPegStabilityModuleY
    */
   function transferYieldToFeeDistributor() public {
     uint256 bal = collateral.balanceOf(address(this));
-    uint256 val = ((bal * rate()) / 1e18);
-    if (val > debt) {
-      uint256 yield = ((val - debt) * 1e18) / rate();
-      collateral.safeTransfer(feeDestination, yield);
-    }
+    uint256 usdValue = (bal * rate()) / 1e18;
+    require(usdValue >= debt, "no yield to transfer");
+
+    uint256 yield = ((usdValue - debt) * 1e18) / rate();
+    collateral.safeTransfer(feeDestination, yield);
   }
 }
