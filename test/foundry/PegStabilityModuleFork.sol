@@ -58,7 +58,8 @@ contract PegStabilityModuleYieldFork is Test {
 
     console.log("After Mint PSM Collateral Balance", sUSDe.balanceOf(address(psm)));
 
-    uint256 sUSDePriceBeforeWhaleDeposit = (sUSDe.balanceOf(address(psm)) * psm.getAssetsFromShares()) / 1e18; // 10000
+    uint256 sUSDePriceBeforeWhaleDeposit = (sUSDe.balanceOf(address(psm)) *
+      psm.getAssetsFromShares()) / 1e18; // 10000
 
     console.log("sUSDe Price Before Deposit -> ", sUSDePriceBeforeWhaleDeposit);
 
@@ -79,6 +80,7 @@ contract PegStabilityModuleYieldFork is Test {
     assertGt(exchangeRateAfterDeposit, exchangeRateBeforeDeposit);
     assertGt(sUSDePriceAfterWhaleDeposit, sUSDePriceBeforeWhaleDeposit);
 
+
     psm.transferYieldToFeeDistributor();
 
     uint256 feeDistributorBalanceAfter = sUSDe.balanceOf(psm.feeDistributor());
@@ -94,7 +96,7 @@ contract PegStabilityModuleYieldFork is Test {
     console.log("After Mint PSM Collateral Balance", sUSDe.balanceOf(address(psm)));
   }
 
-  function testExchangeRate() external {
+  function testExchangeRate() public {
     uint256 rate1 = psm.getAssetsFromShares();
     uint256 sixMonthsInSeconds = 180 days;
     vm.warp(block.timestamp + sixMonthsInSeconds);
