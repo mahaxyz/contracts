@@ -53,7 +53,7 @@ contract ZapAerodromePoolUSDC is ZapAerodromeBase {
    * @param minLpAmount The minimum LP tokens to receive after zapping
    */
   function _zapIntoLP(uint256 collateralAmount, uint256 minLpAmount) internal {
-    uint256 price = collateral.balanceOf(address(pool)) * 1e30 / zai.balanceOf(address(pool));
+    uint256 price = (collateral.balanceOf(address(pool)) * 1e30) / zai.balanceOf(address(pool));
     if (price < 90 * 1e16) {
       // < 0.99
       _zapDepegged(collateralAmount, minLpAmount);
@@ -75,13 +75,13 @@ contract ZapAerodromePoolUSDC is ZapAerodromeBase {
     uint256 minLpAmount,
     bytes memory odosCallData
   ) external payable {
-    // Transfer swapAsset from user
     if (address(swapAsset) != address(0)) {
-      swapAsset.safeTransferFrom(msg.sender,me, swapAmount);
+      // Transfer swapAsset from user
+      swapAsset.safeTransferFrom(msg.sender, me, swapAmount);
+      // Approve Odos to spend swapAsset and perform the swap
+      swapAsset.approve(odos, swapAmount);
     }
 
-    // Approve Odos to spend swapAsset and perform the swap
-    swapAsset.approve(odos, swapAmount);
     (bool success,) = odos.call{value: msg.value}(odosCallData);
     require(success, "Odos swap failed");
 
@@ -98,7 +98,7 @@ contract ZapAerodromePoolUSDC is ZapAerodromeBase {
 
     router.swapExactTokensForTokens(
       collateralAmount / 2, //       uint256 amountIn,
-      collateralAmount / 2 * 1e12, // uint256 amountOutMin,
+      (collateralAmount / 2) * 1e12, // uint256 amountOutMin,
       routes, // Route[] calldata routes,
       me, // address to,
       block.timestamp // uint256 deadline
