@@ -13,9 +13,9 @@
 
 pragma solidity 0.8.21;
 
+import {ILocker} from "../../governance/locker/BaseLocker.sol";
 import {OmnichainStakingToken} from "../../governance/locker/staking/OmnichainStakingToken.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
-import {ILocker} from "../../governance/locker/BaseLocker.sol";
 
 /// @title MahaUIHelper
 /// @notice Utility contract to retrieve and format user’s staking and locking information,
@@ -37,7 +37,9 @@ contract MahaUIHelper {
 
   /// @notice Constructor initializes the MahaUIHelper with the address of the OmnichainStakingToken contract.
   /// @param _omnichainStakingToken The address of the OmnichainStakingToken contract.
-  constructor(address _omnichainStakingToken) {
+  constructor(
+    address _omnichainStakingToken
+  ) {
     omnichainStaking = OmnichainStakingToken(_omnichainStakingToken);
   }
 
@@ -50,35 +52,25 @@ contract MahaUIHelper {
   function getLockDetails(
     address _userAddress
   ) external view returns (LockedBalanceWithApr[] memory) {
-    (
-      uint256[] memory tokenIds,
-      ILocker.LockedBalance[] memory lockedBalances
-    ) = omnichainStaking.getLockedNftDetails(_userAddress);
+    (uint256[] memory tokenIds, ILocker.LockedBalance[] memory lockedBalances) =
+      omnichainStaking.getLockedNftDetails(_userAddress);
 
-    uint256 rewardRate1 = omnichainStaking.rewardRate(
-      omnichainStaking.rewardToken1()
-    );
-    uint256 rewardRate2 = omnichainStaking.rewardRate(
-      omnichainStaking.rewardToken2()
-    );
+    uint256 rewardRate1 = omnichainStaking.rewardRate(omnichainStaking.rewardToken1());
+    uint256 rewardRate2 = omnichainStaking.rewardRate(omnichainStaking.rewardToken2());
 
     uint256 totalSupply = omnichainStaking.totalSupply();
     uint256 totalTokenIds = tokenIds.length;
-    LockedBalanceWithApr[] memory lockDetails = new LockedBalanceWithApr[](
-      totalTokenIds
-    );
+    LockedBalanceWithApr[] memory lockDetails = new LockedBalanceWithApr[](totalTokenIds);
 
-    for (uint256 i; i < totalTokenIds; ) {
+    for (uint256 i; i < totalTokenIds;) {
       LockedBalanceWithApr memory lock;
       ILocker.LockedBalance memory lockedBalance = lockedBalances[i];
-
-      uint256 vePower = omnichainStaking.getTokenPower(lockedBalance.amount);
 
       uint256 scale = (lockedBalance.power != 0 && lockedBalance.amount != 0)
         ? (lockedBalance.power * 1e18) / lockedBalance.amount
         : 1e18;
 
-      uint256 poolRewardAnnual = (rewardRate1 + rewardRate2) * 31536000;
+      uint256 poolRewardAnnual = (rewardRate1 + rewardRate2) * 31_536_000;
       uint256 apr = (poolRewardAnnual * 1000) / totalSupply;
       uint256 aprScaled = (apr * scale) / 1000;
 
@@ -86,7 +78,7 @@ contract MahaUIHelper {
       lock.amount = lockedBalance.amount;
       lock.start = lockedBalance.start;
       lock.end = lockedBalance.end;
-      lock.power = vePower;
+      lock.power = lockedBalance.power;
       lock.apr = aprScaled;
 
       lockDetails[i] = lock;
