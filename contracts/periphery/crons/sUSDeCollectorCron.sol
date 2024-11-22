@@ -13,10 +13,13 @@
 
 pragma solidity 0.8.21;
 
-import {OwnableUpgradeable, Ownable2StepUpgradeable} from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import {PSMErrors} from "../../interfaces/errors/PSMErrors.sol";
-import {IStargate} from "@stargatefinance/stg-evm-v2/src/interfaces/IStargate.sol";
+import {IStargate} from "../../interfaces/periphery/layerzero/IStargate.sol";
 import {MessagingFee, OFTReceipt, SendParam} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/interfaces/IOFT.sol";
+import {
+  Ownable2StepUpgradeable,
+  OwnableUpgradeable
+} from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
@@ -50,11 +53,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
    * @param _sUsde Address of the sUSDz token contract.
    * @param _usdc Address of the USDC token contract.
    */
-  function initialize(
-    address _odos,
-    address _sUsde,
-    address _usdc
-  ) public initializer {
+  function initialize(address _odos, address _sUsde, address _usdc) public initializer {
     ensureNonzeroAddress(_sUsde);
     ensureNonzeroAddress(_usdc);
     __Ownable_init(msg.sender);
@@ -69,10 +68,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
    * @param data Encoded data required by the ODOS router for executing the swap.
    * @param amount How much sUSDe you want ODOS router to swap
    */
-  function swapToUSDC(
-    bytes calldata data,
-    uint256 amount
-  ) external payable onlyOwner {
+  function swapToUSDC(bytes calldata data, uint256 amount) external payable onlyOwner {
     _swapSUSDzToUSDC(data, amount);
   }
 
@@ -115,13 +111,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
     uint256 amount = calculatePercentage(balanceUSDC, 5000); // 50% of balance to send for buyback/burn on base chain.
     // Sending 50% revenue to sUSDz stakers contract.
     IERC20(usdc).safeTransfer(sUSDz, amount);
-    _distributeRevenue(
-      _stargateUSDCPool,
-      _destinationEndPoint,
-      balanceUSDC - amount,
-      _receiver,
-      _refundAddress
-    );
+    _distributeRevenue(_stargateUSDCPool, _destinationEndPoint, balanceUSDC - amount, _receiver, _refundAddress);
   }
 
   /**
@@ -133,7 +123,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
    */
   function _swapSUSDzToUSDC(bytes calldata data, uint256 _amount) internal {
     IERC20(sUSDz).approve(odos, _amount);
-    (bool ok, ) = odos.call{value: msg.value}(data);
+    (bool ok,) = odos.call{value: msg.value}(data);
     require(ok, "odos call failed");
   }
 
@@ -153,16 +143,9 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
     address _receiver,
     address _refundAddress
   ) internal {
-    (
-      uint256 valueToSend,
-      SendParam memory sendParam,
-      MessagingFee memory messagingFee
-    ) = prepareTakeTaxi(_stargate, _dstEid, _amount, _receiver);
-    IStargate(_stargate).sendToken{value: valueToSend}(
-      sendParam,
-      messagingFee,
-      _refundAddress
-    );
+    (uint256 valueToSend, SendParam memory sendParam, MessagingFee memory messagingFee) =
+      prepareTakeTaxi(_stargate, _dstEid, _amount, _receiver);
+    IStargate(_stargate).sendToken{value: valueToSend}(sendParam, messagingFee, _refundAddress);
 
     emit RevenueDistributed(_receiver, _amount);
   }
@@ -175,7 +158,8 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
    * @param _dstEid The destination chain ID where the tokens will be sent.
    * @param _amount The amount of tokens to send, denominated in local decimals (LD).
    * @param _receiver The address on the destination chain to receive the tokens.
-   * @return valueToSend The total native fee required to send the transaction, including the amount if Stargate is on a native chain.
+   * @return valueToSend The total native fee required to send the transaction, including the amount if Stargate is on a
+   * native chain.
    * @return sendParam The `SendParam` structure containing all details needed for the cross-chain transaction.
    * @return messagingFee The `MessagingFee` structure containing the estimated native fees for the transaction.
    */
@@ -184,15 +168,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
     uint32 _dstEid,
     uint256 _amount,
     address _receiver
-  )
-    internal
-    view
-    returns (
-      uint256 valueToSend,
-      SendParam memory sendParam,
-      MessagingFee memory messagingFee
-    )
-  {
+  ) internal view returns (uint256 valueToSend, SendParam memory sendParam, MessagingFee memory messagingFee) {
     sendParam = SendParam({
       dstEid: _dstEid,
       to: addressToBytes32(_receiver),
@@ -205,7 +181,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
 
     IStargate stargate = IStargate(_stargate);
 
-    (, , OFTReceipt memory receipt) = stargate.quoteOFT(sendParam);
+    (,, OFTReceipt memory receipt) = stargate.quoteOFT(sendParam);
     sendParam.minAmountLD = receipt.amountReceivedLD;
 
     messagingFee = stargate.quoteSend(sendParam, false);
@@ -246,10 +222,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
    * @param bps The basis points (bps) representing the percentage (e.g., 5000 for 50%).
    * @return The calculated percentage of `amount` based on `bps`.
    */
-  function calculatePercentage(
-    uint256 amount,
-    uint256 bps
-  ) internal pure returns (uint256) {
+  function calculatePercentage(uint256 amount, uint256 bps) internal pure returns (uint256) {
     require((amount * bps) >= 10_000, "amount * bps > 10_000");
     return (amount * bps) / 10_000;
   }
