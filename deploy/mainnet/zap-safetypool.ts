@@ -9,7 +9,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const { deployer } = await getNamedAccounts();
 
   const args = [
-    (await deployments.get("SafetyPool-USDz")).address,
+    (await deployments.get("SafetyPool-ZAI")).address,
     (await deployments.get("ZaiStablecoin")).address,
   ];
 

@@ -39,6 +39,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
     [
       3600, // uint48 _initialDelay,
       deployer.address, // address _governance
+      10n ** 24n, // uint256 _targetAssets, - 1mn ZAI
     ],
     `DDOperatorPlan-OKX-LZ`
   );

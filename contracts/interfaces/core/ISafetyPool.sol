@@ -24,10 +24,7 @@ interface ISafetyPool {
   function coverBadDebt(uint256 amount) external;
 
   function initialize(
-    string memory _name,
-    string memory _symbol,
     address _zai,
-    uint256 withdrawalDelay,
     address _governance,
     address _rewardToken1,
     address _rewardToken2,
@@ -36,14 +33,4 @@ interface ISafetyPool {
   ) external;
 
   function MANAGER_ROLE() external view returns (bytes32);
-
-  function queueWithdrawal(uint256 shares) external;
-
-  function withdrawalDelay() external view returns (uint256);
-
-  function withdrawalAmount(address who) external view returns (uint256);
-
-  function withdrawalTimestamp(address who) external view returns (uint256);
-
-  function cancelWithdrawal() external;
 }

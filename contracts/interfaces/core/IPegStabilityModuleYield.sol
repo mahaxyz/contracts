@@ -9,10 +9,10 @@ import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
 /**
  * @title Peg Stability Module Yield Interface
- * @dev Interface for the Peg Stability Module that allows minting USDz using ERC4626-compatible collateral, supporting
+ * @dev Interface for the Peg Stability Module that allows minting ZAI using ERC4626-compatible collateral, supporting
  * yield generation.
- *      Enables minting and redeeming of USDz, adjusting caps, rates, and fees, and collecting yield.
- * @notice This interface defines the functions to mint and redeem USDz at a pre-defined rate using yield-bearing
+ *      Enables minting and redeeming of ZAI, adjusting caps, rates, and fees, and collecting yield.
+ * @notice This interface defines the functions to mint and redeem ZAI at a pre-defined rate using yield-bearing
  * collateral.
  * @custom:author maha.xyz
  */

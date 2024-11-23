@@ -120,6 +120,11 @@ abstract contract PegStabilityModuleBase is OwnableUpgradeable, ReentrancyGuardU
     emit PSMEventsLib.Redeem(dest, shares, amount, debt, supplyCap, msg.sender);
   }
 
+  /**
+   * @notice Returns the current rate of ZAI/Collateral
+   */
+  function rate() public view virtual returns (uint256);
+
   function sweepFees() external {
     collateral.safeTransfer(feeDestination, feesCollected());
   }
@@ -137,6 +142,21 @@ abstract contract PegStabilityModuleBase is OwnableUpgradeable, ReentrancyGuardU
   /// @inheritdoc IPegStabilityModule
   function updateFeeDestination(address _feeDestination) external onlyOwner {
     _updateFeeDestination(_feeDestination);
+  }
+
+  /// @inheritdoc IPegStabilityModule
+  function toCollateralAmount(uint256 _amount) public view returns (uint256) {
+    return (_amount * rate()) / 1e18;
+  }
+
+  /// @inheritdoc IPegStabilityModule
+  function mintAmountIn(uint256 amountAssetsIn) external view override returns (uint256 shares) {
+    shares = (amountAssetsIn * 1e18 * MAX_FEE_BPS) / (MAX_FEE_BPS + mintFeeBps) / rate();
+  }
+
+  /// @inheritdoc IPegStabilityModule
+  function redeemAmountOut(uint256 amountAssetsOut) external view override returns (uint256 shares) {
+    shares = (amountAssetsOut * 1e18 * MAX_FEE_BPS) / (MAX_FEE_BPS - redeemFeeBps) / rate();
   }
 
   /// @inheritdoc IPegStabilityModule
