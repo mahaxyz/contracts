@@ -38,7 +38,8 @@ export async function deployProxy(
   implementation: string,
   args: any[],
   proxyAdmin: string,
-  name: string
+  name: string,
+  sender?: string
 ) {
   const { deploy, save } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
@@ -59,7 +60,7 @@ export async function deployProxy(
   const argsInit = contract.interface.encodeFunctionData("initialize", args);
 
   const proxy = await deploy(`${name}-Proxy`, {
-    from: deployer,
+    from: sender || deployer,
     contract: "MAHAProxy",
     skipIfAlreadyDeployed: true,
     args: [implementationD.address, proxyAdmin, argsInit],

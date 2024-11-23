@@ -10,7 +10,7 @@ const job = () => {
   let i = 0;
 
   while (true) {
-    const salt = ethers.id("zai" + i);
+    const salt = ethers.id("szai" + i);
 
     const wallet = new ethers.Wallet(salt);
 
