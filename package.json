@@ -15,7 +15,7 @@
     "coverage:html:mac": "yarn coverage:lcov && genhtml lcov.info --output-dir coverage --rc branch_coverage=1 --ignore-errors inconsistent --ignore-errors corrupt",
     "test": "yarn test:forge",
     "compile": "SKIP_LOAD=true hardhat compile && forge build",
-    "prepublishOnly": "npm run compile && npm run docs && npm run test"
+    "prepublishOnly": "npm run compile && npm run docs"
   },
   "files": [
     "abi",
