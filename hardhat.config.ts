@@ -14,6 +14,7 @@ import "@nomicfoundation/hardhat-chai-matchers";
 
 import dotenv from "dotenv";
 import { loadTasks } from "./scripts/utils";
+import { keccak256 } from "ethers";
 dotenv.config();
 
 // const defaultAccount = {
@@ -27,9 +28,9 @@ dotenv.config();
 // };
 
 const defaultAccount = [
-  process.env.DEPLOYER_KEY || "",
-  process.env.ZAI_DEPLOYER_KEY || "",
-  process.env.SZAI_DEPLOYER_KEY || "",
+  process.env.DEPLOYER_KEY || keccak256("123"),
+  process.env.ZAI_DEPLOYER_KEY || keccak256("1234"),
+  process.env.SZAI_DEPLOYER_KEY || keccak256("12345"),
 ];
 
 const SKIP_LOAD = process.env.SKIP_LOAD === "true";
