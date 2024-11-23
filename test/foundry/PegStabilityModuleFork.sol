@@ -12,7 +12,7 @@
 // Twitter: https://twitter.com/mahaxyz_
 pragma solidity 0.8.21;
 
-import {IPegStabilityModuleYield, PegStabilityModuleYield} from "../../contracts/core/psm/PegStabilityModuleYield.sol";
+import {IPegStabilityModule, PegStabilityModuleYield} from "../../contracts/core/psm/PegStabilityModuleYield.sol";
 import {IStablecoin} from "../../contracts/interfaces/IStablecoin.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
@@ -52,7 +52,7 @@ contract PegStabilityModuleYieldFork is Test {
   }
 
   function testInitValues() public view {
-    assertEq(psm.rate(), 1e18);
+    assertEq(psm.rate(), 890_650_384_866_953_367);
     assertEq(address(psm.zai()), address(USDZ));
     assertEq(address(psm.collateral()), address(sUSDe));
     assertEq(psm.feeDestination(), FEEDISTRIBUTOR);
@@ -83,21 +83,13 @@ contract PegStabilityModuleYieldFork is Test {
 
     sUSDe.approve(address(psm), UINT256_MAX);
 
-    console.log("Before Mint PSM Collateral Balance", sUSDe.balanceOf(address(psm)));
-
     uint256 exchangeRateBeforeDeposit = psm.rate(); // 1.11
-    console.log("Exchange Rate Before Deposit", exchangeRateBeforeDeposit);
 
     // Transfer sUSDe to the PSM contract
     address alice = makeAddr("alice");
     psm.mint(alice, initialAmount);
-    console.log("ZAI Balance of Alice After Mint", USDZ.balanceOf(alice)); //10000
-
-    console.log("After Mint PSM Collateral Balance", sUSDe.balanceOf(address(psm)));
 
     uint256 sUSDePriceBeforeWhaleDeposit = (sUSDe.balanceOf(address(psm)) * psm.rate()) / 1e18; // 10000
-
-    console.log("sUSDe Price Before Deposit -> ", sUSDePriceBeforeWhaleDeposit);
 
     vm.stopPrank();
 
@@ -106,20 +98,14 @@ contract PegStabilityModuleYieldFork is Test {
 
     _whaleDepositToVault();
 
-    uint256 feeDistributorBalanceBefore = sUSDe.balanceOf(FEEDISTRIBUTOR);
-
-    console.log("FEE Distributor Before Balance", feeDistributorBalanceBefore);
     uint256 exchangeRateAfterDeposit = psm.rate(); // 1.15
-    console.log("After deposit exchange rate should change", exchangeRateAfterDeposit);
     uint256 sUSDePriceAfterWhaleDeposit = (sUSDe.balanceOf(address(psm)) * exchangeRateAfterDeposit) / 1e18;
-    console.log("sUSDe Price After Deposit -> ", sUSDePriceAfterWhaleDeposit);
-    assertGt(exchangeRateAfterDeposit, exchangeRateBeforeDeposit);
-    assertGt(sUSDePriceAfterWhaleDeposit, sUSDePriceBeforeWhaleDeposit);
+    assertLt(exchangeRateAfterDeposit, exchangeRateBeforeDeposit);
+    assertLt(sUSDePriceAfterWhaleDeposit, sUSDePriceBeforeWhaleDeposit);
 
-    psm.transferYieldToFeeDistributor();
+    psm.sweepFees();
 
     uint256 feeDistributorBalanceAfter = sUSDe.balanceOf(FEEDISTRIBUTOR);
-    console.log("Fee Distributor Balance", feeDistributorBalanceAfter);
 
     assertApproxEqAbs(
       feeDistributorBalanceAfter,
@@ -127,8 +113,6 @@ contract PegStabilityModuleYieldFork is Test {
       5,
       "!distributorBalance"
     );
-
-    console.log("After Mint PSM Collateral Balance", sUSDe.balanceOf(address(psm)));
   }
 
   function testExchangeRate() external {

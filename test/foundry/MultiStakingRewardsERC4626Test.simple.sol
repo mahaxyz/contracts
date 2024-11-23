@@ -89,6 +89,10 @@ contract MultiStakingRewardsERC4626SimpleTest is BaseZaiTest {
     staker.mint(100 ether, whale);
 
     vm.prank(whale);
+    staker.queueWithdrawal(10 ether);
+    vm.warp(block.timestamp + 10 days);
+
+    vm.prank(whale);
     staker.redeem(10 ether, whale, whale);
 
     assertEq(zai.balanceOf(whale), 10 ether);
@@ -107,6 +111,10 @@ contract MultiStakingRewardsERC4626SimpleTest is BaseZaiTest {
     assertEq(staker.totalBoostedSupply(), 20 ether);
 
     vm.prank(whale);
+    staker.queueWithdrawal(10 ether);
+    vm.warp(block.timestamp + 10 days);
+
+    vm.prank(whale);
     staker.redeem(10 ether, whale, whale);
 
     assertEq(staker.totalBoostedSupply(), 18 ether);
@@ -121,6 +129,10 @@ contract MultiStakingRewardsERC4626SimpleTest is BaseZaiTest {
 
     assertEq(staker.boostedBalance(whale), 20 ether);
     assertEq(staker.balanceOf(whale), 100 ether);
+
+    vm.prank(whale);
+    staker.queueWithdrawal(10 ether);
+    vm.warp(block.timestamp + 10 days);
 
     vm.prank(whale);
     staker.redeem(10 ether, whale, whale);
