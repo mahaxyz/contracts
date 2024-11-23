@@ -16,26 +16,30 @@ import dotenv from "dotenv";
 import { loadTasks } from "./scripts/utils";
 dotenv.config();
 
-const defaultAccount = {
-  mnemonic:
-    process.env.SEED_PHRASE ||
-    "test test test test test test test test test test test junk",
-  path: "m/44'/60'/0'/0",
-  initialIndex: 0,
-  count: 20,
-  passphrase: "",
-};
+// const defaultAccount = {
+//   mnemonic:
+//     process.env.SEED_PHRASE ||
+//     "test test test test test test test test test test test junk",
+//   path: "m/44'/60'/0'/0",
+//   initialIndex: 0,
+//   count: 20,
+//   passphrase: "",
+// };
+
+const defaultAccount = [
+  process.env.DEPLOYER_KEY || "",
+  process.env.ZAI_DEPLOYER_KEY || "",
+  process.env.SZAI_DEPLOYER_KEY || "",
+];
 
 const SKIP_LOAD = process.env.SKIP_LOAD === "true";
-const TASK_FOLDERS = ["connext", "misc", "layerzero"];
 
 // Prevent to load tasks before compilation and typechain
-if (!SKIP_LOAD) {
-  loadTasks(TASK_FOLDERS);
-}
+if (!SKIP_LOAD) loadTasks(["misc", "layerzero"]);
 
 const _network = (url: string, gasPrice: number | "auto" = "auto") => ({
   url,
+  // accounts: [process.env.PRIVATE_KEY || ""],
   accounts: defaultAccount,
   saveDeployments: true,
   gasPrice,
@@ -75,7 +79,7 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 1000,
+        runs: 100,
       },
     },
   },
@@ -84,7 +88,10 @@ const config: HardhatUserConfig = {
       // forking: {
       //   url: `https://rpc.ankr.com/eth`,
       // },
-      accounts: defaultAccount,
+      accounts: defaultAccount.map((pk) => ({
+        balance: "1000000000000000000000000",
+        privateKey: pk,
+      })),
     },
     arbitrum: _network("https://arb1.arbitrum.io/rpc"),
     base: _network("https://mainnet.base.org"),
@@ -100,7 +107,8 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: 0,
-    proxyAdmin: 1,
+    zaiDeployer: 1,
+    szaiDeployer: 2,
   },
   etherscan: {
     apiKey: {

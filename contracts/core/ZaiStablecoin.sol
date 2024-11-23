@@ -18,12 +18,12 @@ pragma solidity 0.8.21;
 import {StablecoinBase} from "./StablecoinBase.sol";
 
 /**
- * @title Zai Stablecoin "USDz"
+ * @title Zai Stablecoin "ZAI"
  * @author maha.xyz
  * @notice Represents the ZAI stablecoin.
  */
 contract ZaiStablecoin is StablecoinBase {
-  constructor(address _owner) StablecoinBase("ZAI Stablecoin", "USDz", _owner) {
+  constructor(address _owner) StablecoinBase("ZAI Stablecoin", "ZAI", _owner) {
     // nothing
   }
 }

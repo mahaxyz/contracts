@@ -21,12 +21,12 @@ export interface IL0Config {
 export type IL0ConfigKey =
   | "arbitrum"
   | "base"
-  | "blast"
+  // | "blast"
   | "bsc"
   | "linea"
   | "mainnet"
-  | "optimism"
-  | "scroll"
+  // | "optimism"
+  // | "scroll"
   | "xlayer";
 
 export type IL0ConfigMapping = {
@@ -92,15 +92,15 @@ export const config: IL0ConfigMapping = {
     dvns: pluckDVNs("base"),
     requiredDVNs: ["LayerZero_Labs"],
   },
-  blast: {
-    eid: 30243,
-    contract: "OFT",
-    confirmations: 15,
-    optionalDVNThreshold: 2,
-    libraries: pluckLibraries("blast"),
-    dvns: pluckDVNs("blast"),
-    requiredDVNs: ["LayerZero_Labs"],
-  },
+  // blast: {
+  //   eid: 30243,
+  //   contract: "OFT",
+  //   confirmations: 15,
+  //   optionalDVNThreshold: 2,
+  //   libraries: pluckLibraries("blast"),
+  //   dvns: pluckDVNs("blast"),
+  //   requiredDVNs: ["LayerZero_Labs"],
+  // },
   bsc: {
     eid: 30102,
     contract: "OFT",
@@ -119,22 +119,22 @@ export const config: IL0ConfigMapping = {
     dvns: pluckDVNs("xlayer"),
     requiredDVNs: ["LayerZero_Labs"],
   },
-  scroll: {
-    eid: 30214,
-    contract: "OFT",
-    confirmations: 15,
-    optionalDVNThreshold: 2,
-    libraries: pluckLibraries("scroll"),
-    dvns: pluckDVNs("scroll"),
-    requiredDVNs: ["LayerZero_Labs"],
-  },
-  optimism: {
-    eid: 30111,
-    contract: "OFT",
-    confirmations: 15,
-    optionalDVNThreshold: 2,
-    libraries: pluckLibraries("optimism"),
-    dvns: pluckDVNs("optimism"),
-    requiredDVNs: ["LayerZero_Labs"],
-  },
+  // scroll: {
+  //   eid: 30214,
+  //   contract: "OFT",
+  //   confirmations: 15,
+  //   optionalDVNThreshold: 2,
+  //   libraries: pluckLibraries("scroll"),
+  //   dvns: pluckDVNs("scroll"),
+  //   requiredDVNs: ["LayerZero_Labs"],
+  // },
+  // optimism: {
+  //   eid: 30111,
+  //   contract: "OFT",
+  //   confirmations: 15,
+  //   optionalDVNThreshold: 2,
+  //   libraries: pluckLibraries("optimism"),
+  //   dvns: pluckDVNs("optimism"),
+  //   requiredDVNs: ["LayerZero_Labs"],
+  // },
 };

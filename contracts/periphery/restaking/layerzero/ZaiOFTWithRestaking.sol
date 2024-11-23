@@ -18,13 +18,14 @@ import {LayerZeroCustomOFT} from "./LayerZeroCustomOFT.sol";
 contract ZaiOFTWithRestaking is LayerZeroCustomOFT {
   address public restaker;
 
-  constructor(
-    string memory name,
-    string memory symbol,
-    address _lzEndpoint
-  ) LayerZeroCustomOFT(name, symbol, _lzEndpoint) {}
+  constructor(address _lzEndpoint, address _owner) LayerZeroCustomOFT("ZAI Stablecoin", "ZAI", _lzEndpoint) {
+    _transferOwnership(_owner);
+    endpoint.setDelegate(_owner);
+    _mint(msg.sender, 69_420 ether);
+    _burn(msg.sender, 69_420 ether);
+  }
 
-  function setRestaker(address _restaking) external onlyOwner {
+  function setRestakerZAI(address _restaking) external onlyOwner {
     restaker = _restaking;
   }
 

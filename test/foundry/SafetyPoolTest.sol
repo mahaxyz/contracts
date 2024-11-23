@@ -24,9 +24,7 @@ contract SafetyPoolTest is BaseZaiTest {
     zai.mint(whale, 1000 ether);
 
     safetyPool = new SafetyPool();
-    safetyPool.initialize(
-      "Safety Pool", "sZAI", address(zai), 10 days, governance, address(usdc), address(maha), 7 days, address(0)
-    );
+    safetyPool.initialize(address(zai), governance, address(usdc), address(maha), 7 days, address(0));
 
     bytes32 role = safetyPool.MANAGER_ROLE();
     vm.prank(governance);
