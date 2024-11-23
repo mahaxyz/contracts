@@ -46,11 +46,13 @@ contract BaseGovernanceTest is BaseZaiTest {
   function _setupLockers() internal {
     _setupGovernance();
 
-    lockerToken.init(address(maha), address(omnichainStakingToken), address(0));
-    omnichainStakingToken.init(address(lockerToken), address(weth), address(maha), 7 days, governance, distributor);
+    lockerToken.initialize(address(maha), address(omnichainStakingToken), address(0));
+    omnichainStakingToken.initialize(
+      address(lockerToken), address(weth), address(maha), 7 days, governance, distributor
+    );
 
-    lockerLP.init(address(maha), address(omnichainStakingToken));
-    omnichainStakingLP.init(
+    lockerLP.initialize(address(maha), address(omnichainStakingToken));
+    omnichainStakingLP.initialize(
       address(lockerToken), address(weth), address(maha), 7 days, oracle, aggregator, governance, distributor
     );
   }

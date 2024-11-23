@@ -18,16 +18,16 @@ import {ILPOracle} from "../../../interfaces/governance/ILPOracle.sol";
 import {OmnichainStakingBase} from "./OmnichainStakingBase.sol";
 
 contract OmnichainStakingToken is OmnichainStakingBase {
-  function init(
+  function initialize(
     address _locker,
-    address _weth,
+    address _zai,
     address _maha,
     uint256 _rewardsDuration,
     address _owner,
     address _distributor
   ) external reinitializer(1) {
     super.__OmnichainStakingBase_init(
-      "MAHA Voting Power", "MAHAvp", _locker, _weth, _maha, _weth, _rewardsDuration, _distributor
+      "MAHA Voting Power", "MAHAvp", _locker, _zai, _maha, _zai, _rewardsDuration, _distributor
     );
 
     _transferOwnership(_owner);

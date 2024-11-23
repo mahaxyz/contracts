@@ -46,7 +46,7 @@ contract ZapSafetyPoolTest is BaseZaiTest {
 
     zai.grantManagerRole(address(psmUSDC));
 
-    zap = new ZapSafetyPool(address(safetyPool), address(zai));
+    zap = new ZapSafetyPool(address(safetyPool), address(zai), address(0));
 
     bytes32 role = safetyPool.MANAGER_ROLE();
     vm.prank(governance);

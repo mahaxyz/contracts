@@ -16,7 +16,7 @@ pragma solidity 0.8.21;
 import {BaseLocker} from "./BaseLocker.sol";
 
 contract LockerLP is BaseLocker {
-  function init(address _token, address _staking) external initializer {
+  function initialize(address _token, address _staking) external initializer {
     __BaseLocker_init("Locked MAHA/ETH LP", "MAHAETHX", _token, _staking, 365 * 86_400);
   }
 }

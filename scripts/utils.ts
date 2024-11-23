@@ -39,7 +39,8 @@ export async function deployProxy(
   args: any[],
   proxyAdmin: string,
   name: string,
-  sender?: string
+  sender?: string,
+  skipInit = false
 ) {
   const { deploy, save } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
@@ -57,7 +58,9 @@ export async function deployProxy(
     implementationD.address
   );
 
-  const argsInit = contract.interface.encodeFunctionData("initialize", args);
+  const argsInit = skipInit
+    ? "0x"
+    : contract.interface.encodeFunctionData("initialize", args);
 
   const proxy = await deploy(`${name}-Proxy`, {
     from: sender || deployer,
@@ -74,17 +77,17 @@ export async function deployProxy(
     args: args,
   });
 
-  if (hre.network.name !== "hardhat") {
-    console.log("verifying contracts");
-    await hre.run("verify:verify", {
-      address: implementationD.address,
-      constructorArguments: [],
-    });
-    await hre.run("verify:verify", {
-      address: proxy.address,
-      constructorArguments: [implementationD.address, proxyAdmin, argsInit],
-    });
-  }
+  // if (hre.network.name !== "hardhat") {
+  //   console.log("verifying contracts");
+  //   await hre.run("verify:verify", {
+  //     address: implementationD.address,
+  //     constructorArguments: [],
+  //   });
+  //   await hre.run("verify:verify", {
+  //     address: proxy.address,
+  //     constructorArguments: [implementationD.address, proxyAdmin, argsInit],
+  //   });
+  // }
 
   return proxy;
 }

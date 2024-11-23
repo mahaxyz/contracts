@@ -24,7 +24,7 @@ contract OmnichainStakingLP is OmnichainStakingBase {
   ILPOracle public oracleLP;
   IAggregatorV3Interface public oracleMAHA;
 
-  function init(
+  function initialize(
     address _locker,
     address _weth,
     address _maha,
