@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.3](https://github.com/mahaxyz/contracts/compare/v1.8.2...v1.8.3) (2024-11-23)
+
+
+### Bug Fixes
+
+* fixed npm packages ([5cc2c2d](https://github.com/mahaxyz/contracts/commit/5cc2c2df9b91d0491afdb2620ee3f7e48d7c82e7))
+
 ## [1.8.2](https://github.com/mahaxyz/contracts/compare/v1.8.1...v1.8.2) (2024-11-23)
 
 
