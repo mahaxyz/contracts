@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/mahaxyz/contracts/compare/v1.8.0...v1.8.1) (2024-11-23)
+
+
+### Features
+
+* migrated contracts to use the new ZAI contract and new yield bearing functionalities ([#50](https://github.com/mahaxyz/contracts/issues/50)) ([3f2c748](https://github.com/mahaxyz/contracts/commit/3f2c74870667e5f5b6ca16b206088442d9c933b4))
+
 ## [1.8.0](https://github.com/mahaxyz/contracts/compare/v1.7.4...v1.8.0) (2024-09-06)
 
 
