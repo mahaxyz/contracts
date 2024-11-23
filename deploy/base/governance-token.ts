@@ -12,8 +12,6 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const mahaD = await deployments.get("MAHA");
   const zaiD = await deployments.get("ZaiStablecoinOFT");
   const safe = await deployments.get("GnosisSafe");
-
-  const WETH_BASE = "0x4200000000000000000000000000000000000006";
   const REWARD_DURATION = 86400 * 7; // 7 Days
 
   const lockerTokenProxyD = await deployProxy(
