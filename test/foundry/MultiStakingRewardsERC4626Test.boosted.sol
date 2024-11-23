@@ -92,6 +92,10 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
     staker.notifyRewardAmount(maha, 100 ether);
 
     vm.prank(whale);
+    staker.queueWithdrawal(10 ether);
+    vm.warp(block.timestamp + 10 days);
+
+    vm.prank(whale);
     staker.redeem(10 ether, whale, whale);
     staker.updateRewards(maha, whale);
 
@@ -120,6 +124,10 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
     assertEq(staker.totalBoostedSupply(), 20 ether, "!totalBoostedSupply");
     assertEq(staker.totalSupply(), 100 ether, "!totalSupply");
     assertEq(staker.votingPower(ant), 0 ether, "!votingPower");
+
+    vm.prank(ant);
+    staker.queueWithdrawal(10 ether);
+    vm.warp(block.timestamp + 10 days);
 
     vm.prank(ant);
     staker.redeem(10 ether, ant, ant);
