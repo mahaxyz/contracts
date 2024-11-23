@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.2](https://github.com/mahaxyz/contracts/compare/v1.8.1...v1.8.2) (2024-11-23)
+
+
+### Bug Fixes
+
+* added zai contract ([6cd93c8](https://github.com/mahaxyz/contracts/commit/6cd93c88e2f39acdeaf241d6fbca51440459eef5))
+
 ## [1.8.1](https://github.com/mahaxyz/contracts/compare/v1.8.0...v1.8.1) (2024-11-23)
 
 
