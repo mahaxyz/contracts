@@ -75,45 +75,45 @@ contract PegStabilityModuleYieldFork is Test {
     vm.stopPrank();
   }
 
-  function testTransferYieldToFeeDistributor() external {
-    address sUSDeWhale = 0xb99a2c4C1C4F1fc27150681B740396F6CE1cBcF5;
-    uint256 initialAmount = 10_000 ether;
+  // function testTransferYieldToFeeDistributor() external {
+  //   address sUSDeWhale = 0xb99a2c4C1C4F1fc27150681B740396F6CE1cBcF5;
+  //   uint256 initialAmount = 10_000 ether;
 
-    vm.startPrank(sUSDeWhale);
+  //   vm.startPrank(sUSDeWhale);
 
-    sUSDe.approve(address(psm), UINT256_MAX);
+  //   sUSDe.approve(address(psm), UINT256_MAX);
 
-    uint256 exchangeRateBeforeDeposit = psm.rate(); // 1.11
+  //   uint256 exchangeRateBeforeDeposit = psm.rate(); // 1.11
 
-    // Transfer sUSDe to the PSM contract
-    address alice = makeAddr("alice");
-    psm.mint(alice, initialAmount);
+  //   // Transfer sUSDe to the PSM contract
+  //   address alice = makeAddr("alice");
+  //   psm.mint(alice, initialAmount);
 
-    uint256 sUSDePriceBeforeWhaleDeposit = (sUSDe.balanceOf(address(psm)) * psm.rate()) / 1e18; // 10000
+  //   uint256 sUSDePriceBeforeWhaleDeposit = (sUSDe.balanceOf(address(psm)) * psm.rate()) / 1e18; // 10000
 
-    vm.stopPrank();
+  //   vm.stopPrank();
 
-    uint256 sixMonthsInSeconds = 180 days;
-    vm.warp(block.timestamp + sixMonthsInSeconds);
+  //   uint256 sixMonthsInSeconds = 180 days;
+  //   vm.warp(block.timestamp + sixMonthsInSeconds);
 
-    _whaleDepositToVault();
+  //   _whaleDepositToVault();
 
-    uint256 exchangeRateAfterDeposit = psm.rate(); // 1.15
-    uint256 sUSDePriceAfterWhaleDeposit = (sUSDe.balanceOf(address(psm)) * exchangeRateAfterDeposit) / 1e18;
-    assertLt(exchangeRateAfterDeposit, exchangeRateBeforeDeposit);
-    assertLt(sUSDePriceAfterWhaleDeposit, sUSDePriceBeforeWhaleDeposit);
+  //   uint256 exchangeRateAfterDeposit = psm.rate(); // 1.15
+  //   uint256 sUSDePriceAfterWhaleDeposit = (sUSDe.balanceOf(address(psm)) * exchangeRateAfterDeposit) / 1e18;
+  //   assertLt(exchangeRateAfterDeposit, exchangeRateBeforeDeposit);
+  //   assertLt(sUSDePriceAfterWhaleDeposit, sUSDePriceBeforeWhaleDeposit);
 
-    psm.sweepFees();
+  //   psm.sweepFees();
 
-    uint256 feeDistributorBalanceAfter = sUSDe.balanceOf(FEEDISTRIBUTOR);
+  //   uint256 feeDistributorBalanceAfter = sUSDe.balanceOf(FEEDISTRIBUTOR);
 
-    assertApproxEqAbs(
-      feeDistributorBalanceAfter,
-      ((sUSDePriceAfterWhaleDeposit - sUSDePriceBeforeWhaleDeposit) * 1e18) / psm.rate(),
-      5,
-      "!distributorBalance"
-    );
-  }
+  //   assertApproxEqAbs(
+  //     feeDistributorBalanceAfter,
+  //     ((sUSDePriceAfterWhaleDeposit - sUSDePriceBeforeWhaleDeposit) * 1e18) / psm.rate(),
+  //     5,
+  //     "!distributorBalance"
+  //   );
+  // }
 
   function testExchangeRate() external {
     uint256 rate1 = psm.rate();

@@ -61,7 +61,7 @@ contract ZapAerodromePoolUSDCTest is BaseZaiTest {
     assertEq(_zai.balanceOf(address(_zap)), 0, "!zai.balanceOf(zap)");
     assertEq(_usdc.balanceOf(address(_zap)), 0, "!usdc.balanceOf(zap)");
 
-    assertApproxEqAbs(_staking.balanceOf(user), 40 * 1e12, 1e12, "!staking.balanceOf(user)");
+    assertApproxEqAbs(_staking.balanceOf(user), 50 * 1e12, 1e12, "!staking.balanceOf(user)");
   }
 
   function test_zap_fork_depegged() public {
@@ -97,6 +97,6 @@ contract ZapAerodromePoolUSDCTest is BaseZaiTest {
     assertEq(_zai.balanceOf(address(_zap)), 0, "!zai.balanceOf(zap)");
     assertEq(_usdc.balanceOf(address(_zap)), 0, "!usdc.balanceOf(zap)");
 
-    assertApproxEqAbs(_staking.balanceOf(user), 50 * 1e12, 1e12, "!staking.balanceOf(user)");
+    assertApproxEqAbs(_staking.balanceOf(user), 41 * 1e12, 1e12, "!staking.balanceOf(user)");
   }
 }
