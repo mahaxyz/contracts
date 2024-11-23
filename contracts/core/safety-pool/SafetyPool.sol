@@ -16,7 +16,7 @@ pragma solidity 0.8.21;
 import {ISafetyPool} from "../../interfaces/core/ISafetyPool.sol";
 import {SafetyPoolEvents} from "../../interfaces/events/SafetyPoolEvents.sol";
 
-import {IERC20, MultiStakingRewardsERC4626} from "../utils/MultiStakingRewardsERC4626.sol";
+import {IERC20, IOmnichainStaking, MultiStakingRewardsERC4626} from "../utils/MultiStakingRewardsERC4626.sol";
 
 /**
  * @title The SafetyPool contract
@@ -30,10 +30,7 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
 
   /// @inheritdoc ISafetyPool
   function initialize(
-    string memory _name,
-    string memory _symbol,
     address _stablecoin,
-    uint256 _withdrawalDelay,
     address _governance,
     address _rewardToken1,
     address _rewardToken2,
@@ -41,10 +38,10 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
     address _stakingBoost
   ) external reinitializer(1) {
     __MultiStakingRewardsERC4626_init(
-      _name,
-      _symbol,
+      "Staked ZAI",
+      "sZAI",
       _stablecoin,
-      _withdrawalDelay,
+      86_400 * 10,
       _governance,
       _rewardToken1,
       _rewardToken2,
@@ -59,6 +56,10 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
     emit SafetyPoolEvents.BadDebtCovered(amount, msg.sender);
   }
 
+  function setStakingBoost(address _stakingBoost) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    staking = IOmnichainStaking(_stakingBoost);
+  }
+
   /// @dev Override the _calculateBoostedBalance function to account for the withdrawal queue
   function _calculateBoostedBalance(address account)
     internal
@@ -66,10 +67,7 @@ contract SafetyPool is MultiStakingRewardsERC4626, ISafetyPool {
     override
     returns (uint256 boostedBalance_, uint256 boostedTotalSupply_)
   {
-    if (withdrawalTimestamp[account] > 0) {
-      return (0, _boostedTotalSupply);
-    }
-
+    if (withdrawalTimestamp[account] > 0) return (0, _boostedTotalSupply);
     (boostedBalance_, boostedTotalSupply_) = super._calculateBoostedBalance(account);
   }
 }

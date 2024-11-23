@@ -13,33 +13,36 @@
 
 pragma solidity 0.8.21;
 
+import {IMultiStakingRewardsERC4626} from "../../interfaces/core/IMultiStakingRewardsERC4626.sol";
 import {PSMErrors} from "../../interfaces/errors/PSMErrors.sol";
 import {IStargate} from "../../interfaces/periphery/layerzero/IStargate.sol";
 import {MessagingFee, OFTReceipt, SendParam} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/interfaces/IOFT.sol";
-import {
-  Ownable2StepUpgradeable,
-  OwnableUpgradeable
-} from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
- * @title SUSDECollectorCron
+ * @title sUSDeCollectorCron
  * @notice A contract that manages revenue distribution through USDC transfers, using Stargate for cross-chain messaging
  *         and optionally performing swaps via the ODOS router.
  * @dev The contract is upgradeable and inherits `Ownable2StepUpgradeable`. It supports setting an ODOS router,
- *      defining sUSDz and USDC tokens, and has functions for swapping and cross-chain revenue distribution.
+ *      defining sZAI and USDC tokens, and has functions for swapping and cross-chain revenue distribution.
  */
-contract SUSDECollectorCron is Ownable2StepUpgradeable {
+contract sUSDeCollectorCron is AccessControlEnumerable {
   using SafeERC20 for IERC20;
+
+  bytes32 public immutable EXECUTOR_ROLE = keccak256("EXECUTOR_ROLE");
 
   /// @notice Address of the ODOS router for executing swaps.
   address public odos;
 
-  /// @notice Address of the sUSDz token contract.
-  address public sUSDz;
+  /// @notice Address of the sZAI token contract.
+  IMultiStakingRewardsERC4626 public sZAI;
 
   /// @notice Interface for the USDC token contract.
   IERC20 public usdc;
+
+  /// @notice Interface for the sUSDe token contract.
+  IERC20 public sUSDe;
 
   /// @notice Emitted when revenue is distributed to a receiver.
   /// @param receiver The address that receives the distributed revenue.
@@ -47,84 +50,58 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
   event RevenueDistributed(address indexed receiver, uint256 indexed amount);
 
   /**
-   * @notice Initializes the contract with addresses for the ODOS router, sUSDz, and USDC tokens.
+   * @notice Initializes the contract with addresses for the ODOS router, sZAI, and USDC tokens.
    * @dev Ensures non-zero addresses for essential contracts, initializes the owner, and sets the ODOS router.
    * @param _odos Address of the ODOS router.
-   * @param _sUsde Address of the sUSDz token contract.
+   * @param _sZAI Address of the sZAI token contract.
    * @param _usdc Address of the USDC token contract.
    */
-  function initialize(address _odos, address _sUsde, address _usdc) public initializer {
-    ensureNonzeroAddress(_sUsde);
+  constructor(address _odos, address _sZAI, address _sUSDe, address _usdc) {
+    ensureNonzeroAddress(_sZAI);
     ensureNonzeroAddress(_usdc);
-    __Ownable_init(msg.sender);
-    sUSDz = _sUsde;
+
+    sZAI = IMultiStakingRewardsERC4626(_sZAI);
+    sUSDe = IERC20(_sUSDe);
     usdc = IERC20(_usdc);
-    setOdos(_odos);
-  }
-
-  /**
-   * @notice Executes a swap from sUSDz to USDC via the ODOS router.
-   * @dev This function can only be called by the contract owner.
-   * @param data Encoded data required by the ODOS router for executing the swap.
-   * @param amount How much sUSDe you want ODOS router to swap
-   */
-  function swapToUSDC(bytes calldata data, uint256 amount) external payable onlyOwner {
-    _swapSUSDzToUSDC(data, amount);
-  }
-
-  /**
-   * @notice Sets the address for the ODOS router.
-   * @dev Can only be called by the contract owner.
-   * @param _odos New address of the ODOS router.
-   */
-  function setOdos(address _odos) public onlyOwner {
     odos = _odos;
+
+    sUSDe.approve(odos, type(uint256).max);
+    usdc.approve(address(sZAI), type(uint256).max);
+
+    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    _grantRole(EXECUTOR_ROLE, msg.sender);
   }
 
   /**
    * @notice Distributes revenue by transferring 50% of the contract's current USDC balance.
-   *         If `_odos` calldata is provided, it performs a swap from sUSDz to USDC before distribution.
-   * @dev Calls `_swapSUSDzToUSDC` if `odos` calldata is provided. Then calculates 50% of the USDC balance
-   *      and transfers it to the sUSDz contract, subsequently calling `_distributeRevenue`.
+   *         If `_odos` calldata is provided, it performs a swap from sZAI to USDC before distribution.
+   * @dev Calls `_swapsUSDeToUSDC` if `odos` calldata is provided. Then calculates 50% of the USDC balance
+   *      and transfers it to the sZAI contract, subsequently calling `_distributeRevenue`.
    * @param _stargateUSDCPool The address of the Stargate USDC pool.
    * @param _destinationEndPoint The endpoint identifier for the Stargate pool.
-   * @param _amount How much sUSDe you want ODOS router to swap
    * @param _receiver The address that will receive the distributed revenue.
    * @param _refundAddress The address to receive any excess funds from fees etc. on the source chain.
-   * @param _odos Optional calldata to perform a swap from sUSDz to USDC if provided.
+   * @param _odos Optional calldata to perform a swap from sZAI to USDC if provided.
    */
   function distributeRevenue(
     address _stargateUSDCPool,
     uint32 _destinationEndPoint,
-    uint256 _amount,
     address _receiver,
     address _refundAddress,
     bytes calldata _odos
-  ) public payable onlyOwner {
+  ) public payable onlyRole(EXECUTOR_ROLE) {
     ensureNonzeroAddress(_stargateUSDCPool);
     ensureNonzeroAddress(_receiver);
-    if (_odos.length > 0) {
-      _swapSUSDzToUSDC(_odos, _amount);
-    }
-    uint256 balanceUSDC = IERC20(usdc).balanceOf(address(this));
-    require(balanceUSDC > 0, "Zero balance");
-    uint256 amount = calculatePercentage(balanceUSDC, 5000); // 50% of balance to send for buyback/burn on base chain.
-    // Sending 50% revenue to sUSDz stakers contract.
-    IERC20(usdc).safeTransfer(sUSDz, amount);
-    _distributeRevenue(_stargateUSDCPool, _destinationEndPoint, balanceUSDC - amount, _receiver, _refundAddress);
-  }
 
-  /**
-   * @notice Internal function to swap sUSDz to USDC by calling the `odos` contract.
-   * @dev Executes a low-level call to `odos` using the provided calldata.
-   *      Reverts if the `odos` call fails.
-   * @param data Encoded call data required by the `odos` contract to perform the swap.
-   * @param _amount How much sUSDe you want ODOS router to swap
-   */
-  function _swapSUSDzToUSDC(bytes calldata data, uint256 _amount) internal {
-    IERC20(sUSDz).approve(odos, _amount);
-    (bool ok,) = odos.call{value: msg.value}(data);
+    (bool ok,) = odos.call{value: msg.value}(_odos);
     require(ok, "odos call failed");
+
+    uint256 balanceUSDC = IERC20(usdc).balanceOf(address(this));
+    uint256 amount = calculatePercentage(balanceUSDC, 5000); // 50% of balance to send for buyback/burn on base chain.
+
+    // Sending 50% revenue to sZAI stakers contract.
+    sZAI.notifyRewardAmount(usdc, amount);
+    _distributeRevenue(_stargateUSDCPool, _destinationEndPoint, balanceUSDC - amount, _receiver, _refundAddress);
   }
 
   /**
@@ -146,7 +123,6 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
     (uint256 valueToSend, SendParam memory sendParam, MessagingFee memory messagingFee) =
       prepareTakeTaxi(_stargate, _dstEid, _amount, _receiver);
     IStargate(_stargate).sendToken{value: valueToSend}(sendParam, messagingFee, _refundAddress);
-
     emit RevenueDistributed(_receiver, _amount);
   }
 
@@ -232,7 +208,7 @@ contract SUSDECollectorCron is Ownable2StepUpgradeable {
    * @dev Only callable by owner of the contract
    * @param token The ERC20 token to be refunded.
    */
-  function refund(IERC20 token) external onlyOwner {
+  function refund(IERC20 token) external onlyRole(DEFAULT_ADMIN_ROLE) {
     token.safeTransfer(msg.sender, token.balanceOf(address(this)));
   }
 }

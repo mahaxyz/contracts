@@ -49,7 +49,7 @@ contract PegStabilityModuleYield is PegStabilityModuleBase, IPegStabilityModuleY
    * @return The asset value per share in 18 decimal precision.
    */
   function rate() public view override (IPegStabilityModule, PegStabilityModuleBase) returns (uint256) {
-    return IERC4626(address(collateral)).previewMint(1 ether);
+    return IERC4626(address(collateral)).previewWithdraw(1 ether);
   }
 
   /**

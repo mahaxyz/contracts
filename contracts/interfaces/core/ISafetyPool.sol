@@ -24,10 +24,7 @@ interface ISafetyPool {
   function coverBadDebt(uint256 amount) external;
 
   function initialize(
-    string memory _name,
-    string memory _symbol,
     address _zai,
-    uint256 withdrawalDelay,
     address _governance,
     address _rewardToken1,
     address _rewardToken2,

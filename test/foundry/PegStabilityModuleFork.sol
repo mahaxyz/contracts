@@ -26,13 +26,14 @@ contract PegStabilityModuleYieldFork is Test {
   PegStabilityModuleYield public psm;
   address public GOVERNANCE;
   address public FEEDISTRIBUTOR;
-  address public constant ROLE_ADMIN = 0x690002dA1F2d828D72Aa89367623dF7A432E85A9;
+  address public constant ROLE_ADMIN = 0x1F09Ec21d7fd0A21879b919bf0f9C46e6b85CA8b;
 
   function setUp() public {
     mainnetFork = vm.createFork(MAINNET_RPC_URL);
     vm.selectFork(mainnetFork);
+    vm.rollFork(21_249_044);
 
-    USDZ = IStablecoin(0x69000405f9DcE69BD4Cbf4f2865b79144A69BFE0);
+    USDZ = IStablecoin(0x69000dFD5025E82f48Eb28325A2B88a241182CEd);
     sUSDe = IERC4626(0x9D39A5DE30e57443BfF2A8307A4256c8797A3497);
     GOVERNANCE = 0x4E88E72bd81C7EA394cB410296d99987c3A242fE;
     FEEDISTRIBUTOR = makeAddr("feeDistributor");
@@ -55,6 +56,23 @@ contract PegStabilityModuleYieldFork is Test {
     assertEq(address(psm.zai()), address(USDZ));
     assertEq(address(psm.collateral()), address(sUSDe));
     assertEq(psm.feeDestination(), FEEDISTRIBUTOR);
+  }
+
+  function testMint() public {
+    assertEq(psm.rate(), 890_650_384_866_953_367);
+
+    address whale = 0xb99a2c4C1C4F1fc27150681B740396F6CE1cBcF5;
+    vm.startPrank(whale);
+
+    uint256 balBefore = sUSDe.balanceOf(whale);
+    sUSDe.approve(address(psm), UINT256_MAX);
+    psm.mint(whale, 1 ether);
+
+    uint256 balAfter = sUSDe.balanceOf(whale);
+    assertEq(USDZ.balanceOf(whale), 1 ether);
+    assertEq(balBefore - balAfter, 890_650_384_866_953_367);
+
+    vm.stopPrank();
   }
 
   function testTransferYieldToFeeDistributor() external {
