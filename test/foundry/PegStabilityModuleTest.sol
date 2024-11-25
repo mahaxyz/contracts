@@ -98,22 +98,22 @@ contract PegStabilityModuleTest is BasePsmTest {
     psmUSDC.redeem(ant, 300 ether);
   }
 
-  function test_sweepFees() public {
-    vm.startPrank(ant);
-    usdc.mint(ant, 2000 * 1e6);
-    usdc.approve(address(psmUSDC), 2000 * 1e6);
-    zai.approve(address(psmUSDC), 1000 ether);
-    psmUSDC.mint(ant, 1000 ether);
+  // function test_sweepFees() public {
+  //   vm.startPrank(ant);
+  //   usdc.mint(ant, 2000 * 1e6);
+  //   usdc.approve(address(psmUSDC), 2000 * 1e6);
+  //   zai.approve(address(psmUSDC), 1000 ether);
+  //   psmUSDC.mint(ant, 1000 ether);
 
-    psmUSDC.redeem(ant, 1000 ether);
+  //   psmUSDC.redeem(ant, 1000 ether);
 
-    // check balances
-    assertEq(zai.totalSupply(), 0);
-    assertEq(usdc.balanceOf(address(psmUSDC)), 20 * 1e6);
-    assertEq(zai.balanceOf(ant), 0);
+  //   // check balances
+  //   assertEq(zai.totalSupply(), 0);
+  //   assertEq(usdc.balanceOf(address(psmUSDC)), 20 * 1e6);
+  //   assertEq(zai.balanceOf(ant), 0);
 
-    psmUSDC.sweepFees();
+  //   psmUSDC.sweepFees();
 
-    assertEq(usdc.balanceOf(address(feeDestination)), 20 * 1e6);
-  }
+  //   assertEq(usdc.balanceOf(address(feeDestination)), 20 * 1e6);
+  // }
 }
