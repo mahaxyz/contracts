@@ -28,9 +28,9 @@ dotenv.config();
 // };
 
 const defaultAccount = [
-  process.env.DEPLOYER_KEY || keccak256("123"),
-  process.env.ZAI_DEPLOYER_KEY || keccak256("1234"),
-  process.env.SZAI_DEPLOYER_KEY || keccak256("12345"),
+  process.env.DEPLOYER_KEY || keccak256("0x1212"),
+  process.env.ZAI_DEPLOYER_KEY || keccak256("0x1234"),
+  process.env.SZAI_DEPLOYER_KEY || keccak256("0x1233"),
 ];
 
 const SKIP_LOAD = process.env.SKIP_LOAD === "true";
