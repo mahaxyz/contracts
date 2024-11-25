@@ -21,15 +21,11 @@ async function main() {
     "0x0000000000000000000000000000000000000000000000000000000000000000";
   const salt = ethers.id("task1");
 
-  const contractD = await deployments.get("L2DepositCollateralL0");
-  const contract = await ethers.getContractAt(
-    "L2DepositCollateralL0",
-    contractD.address
-  );
+  const contractD = await deployments.get("ProxyAdmin");
+  const contract = await ethers.getContractAt("ProxyAdmin", contractD.address);
 
-  const data1 = await contract.setAllowedBridgeSweeper.populateTransaction(
-    "0x24fF4165F1bc1621E23eFE9437ba8Bef8AC03D2A",
-    true
+  const data1 = await contract.transferOwnership.populateTransaction(
+    "0x77cd66d59ac48a0E7CE54fF16D9235a5fffF335E"
   );
 
   console.log(data1);
@@ -40,7 +36,7 @@ async function main() {
     data1.data,
     predecessor, // bytes32 predecessor,
     salt, // bytes32 salt,
-    3600
+    await timelock.getMinDelay()
   );
   console.log("schedule tx", schedule);
 

@@ -170,9 +170,7 @@ abstract contract PegStabilityModuleBase is OwnableUpgradeable, ReentrancyGuardU
   }
 
   /// @inheritdoc IPegStabilityModule
-  function feesCollected() public view returns (uint256) {
-    return collateral.balanceOf(address(this)) - toCollateralAmount(debt);
-  }
+  function feesCollected() public view virtual returns (uint256);
 
   function _updateCaps(uint256 _supplyCap, uint256 _debtCap) internal {
     uint256 oldSupplyCap = supplyCap;

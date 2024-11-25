@@ -78,8 +78,10 @@ task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
       oftCmd: "0x",
     };
 
+    console.log("params", params);
+
     if (
-      source.network === "mainnet" &&
+      hre.network.name === "mainnet" &&
       (await erc20.allowance(deployer.address, oftAdapter.target)) <
         tokensToSend
     ) {
@@ -87,12 +89,6 @@ task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
       await waitForTx(await erc20.approve(oftAdapter.target, MaxUint256));
     }
 
-    console.log("quoting send", params);
-
-    console.log(
-      "params",
-      await oftAdapter.quoteSend.populateTransaction(params, false)
-    );
     const [nativeFee] = await oftAdapter.quoteSend(params, false);
 
     const fee: MessagingFeeStruct = {

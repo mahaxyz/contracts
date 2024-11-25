@@ -67,4 +67,8 @@ contract PegStabilityModule is PegStabilityModuleBase {
     _rate = rate_;
     emit PSMEventsLib.RateUpdated(oldRate, _rate, msg.sender);
   }
+
+  function feesCollected() public pure override returns (uint256) {
+    return 0;
+  }
 }

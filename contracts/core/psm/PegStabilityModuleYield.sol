@@ -14,7 +14,6 @@
 pragma solidity 0.8.21;
 
 import {IStablecoin} from "../../interfaces/IStablecoin.sol";
-import {IPegStabilityModuleYield} from "../../interfaces/core/IPegStabilityModuleYield.sol";
 import {Ownable2StepUpgradeable} from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
@@ -24,7 +23,7 @@ import {PSMErrors} from "../../interfaces/errors/PSMErrors.sol";
 import {PSMEventsLib} from "../../interfaces/events/PSMEventsLib.sol";
 import {IPegStabilityModule, PegStabilityModuleBase} from "./PegStabilityModuleBase.sol";
 
-contract PegStabilityModuleYield is PegStabilityModuleBase, IPegStabilityModuleYield {
+contract PegStabilityModuleYield is PegStabilityModuleBase {
   using SafeERC20 for IERC20;
   using SafeERC20 for IERC4626;
 
@@ -37,7 +36,7 @@ contract PegStabilityModuleYield is PegStabilityModuleBase, IPegStabilityModuleY
     uint256 _mintFeeBps,
     uint256 _redeemFeeBps,
     address _feeDestination
-  ) external reinitializer(2) {
+  ) external reinitializer(4) {
     __PegStabilityModule_init(
       _zai, _collateral, _governance, _supplyCap, _debtCap, _mintFeeBps, _redeemFeeBps, _feeDestination
     );
@@ -48,7 +47,7 @@ contract PegStabilityModuleYield is PegStabilityModuleBase, IPegStabilityModuleY
    * @dev Uses total assets and total supply from the collateral to compute the ratio.
    * @return The asset value per share in 18 decimal precision.
    */
-  function rate() public view override (IPegStabilityModule, PegStabilityModuleBase) returns (uint256) {
+  function rate() public view override returns (uint256) {
     return IERC4626(address(collateral)).previewWithdraw(1 ether);
   }
 
@@ -58,12 +57,10 @@ contract PegStabilityModuleYield is PegStabilityModuleBase, IPegStabilityModuleY
    *      the current value of collateral exceeds the outstanding debt.
    *      Uses `safeTransfer` to ensure secure transfer of assets.
    */
-  function transferYieldToFeeDistributor() public {
+  function feesCollected() public view override returns (uint256) {
     uint256 bal = collateral.balanceOf(address(this));
-    uint256 usdValue = (bal * rate()) / 1e18;
+    uint256 usdValue = (bal * 1e18) / rate();
     require(usdValue >= debt, "no yield to transfer");
-
-    uint256 yield = ((usdValue - debt) * 1e18) / rate();
-    collateral.safeTransfer(feeDestination, yield);
+    return ((usdValue - debt) * 1e18) / rate();
   }
 }
