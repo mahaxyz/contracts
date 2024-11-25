@@ -67,11 +67,11 @@ interface IPegStabilityModuleYield {
    */
   function redeemFeeBps() external returns (uint256);
 
-  /**
-   * @notice Returns the maximum fee limit in BPS that can be charged.
-   * @return MAX_FEE_BPS The maximum allowable fee in BPS.
-   */
-  function MAX_FEE_BPS() external returns (uint256);
+  // /**
+  //  * @notice Returns the maximum fee limit in BPS that can be charged.
+  //  * @return MAX_FEE_BPS The maximum allowable fee in BPS.
+  //  */
+  // function MAX_FEE_BPS() external returns (uint256);
 
   /**
    * @notice Mints USDz using collateral.
