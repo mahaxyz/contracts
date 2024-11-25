@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.1](https://github.com/mahaxyz/contracts/compare/v1.9.0...v1.9.1) (2024-11-25)
+
+
+### Bug Fixes
+
+* fixed the hardhat config ([fb966de](https://github.com/mahaxyz/contracts/commit/fb966ded0daba49f87bb1cfb0688cf3a9db49c74))
+
 ## [1.9.0](https://github.com/mahaxyz/contracts/compare/v1.8.3...v1.9.0) (2024-11-25)
 
 
