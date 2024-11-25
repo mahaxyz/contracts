@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.9.0](https://github.com/mahaxyz/contracts/compare/v1.8.3...v1.9.0) (2024-11-25)
+
+
+### Features
+
+* added usdz migrator ([fd93fd3](https://github.com/mahaxyz/contracts/commit/fd93fd352fa8bb1dcd47b31b532a300dc8c6abd1))
+
+
+### Bug Fixes
+
+* fixed psm test ([285f10a](https://github.com/mahaxyz/contracts/commit/285f10ab091809487d594586c6421ef9cee5ca40))
+
 ## [1.8.3](https://github.com/mahaxyz/contracts/compare/v1.8.2...v1.8.3) (2024-11-23)
 
 
