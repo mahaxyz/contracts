@@ -27,7 +27,7 @@ contract StakingLPRewards is MultiStakingRewardsERC4626 {
     address _staking
   ) external reinitializer(1) {
     __MultiStakingRewardsERC4626_init(
-      _name, _symbol, _stakingToken, 3 days, _governance, _rewardToken1, _rewardToken2, _rewardsDuration, _staking
+      _name, _symbol, _stakingToken, 21 days, _governance, _rewardToken1, _rewardToken2, _rewardsDuration, _staking
     );
   }
 }

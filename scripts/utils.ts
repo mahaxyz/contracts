@@ -77,17 +77,17 @@ export async function deployProxy(
     args: args,
   });
 
-  // if (hre.network.name !== "hardhat") {
-  //   console.log("verifying contracts");
-  //   await hre.run("verify:verify", {
-  //     address: implementationD.address,
-  //     constructorArguments: [],
-  //   });
-  //   await hre.run("verify:verify", {
-  //     address: proxy.address,
-  //     constructorArguments: [implementationD.address, proxyAdmin, argsInit],
-  //   });
-  // }
+  if (hre.network.name !== "hardhat") {
+    console.log("verifying contracts");
+    await hre.run("verify:verify", {
+      address: implementationD.address,
+      constructorArguments: [],
+    });
+    await hre.run("verify:verify", {
+      address: proxy.address,
+      constructorArguments: [implementationD.address, proxyAdmin, argsInit],
+    });
+  }
 
   return proxy;
 }
