@@ -93,7 +93,7 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
 
     vm.prank(whale);
     staker.queueWithdrawal(10 ether);
-    vm.warp(block.timestamp + 10 days);
+    vm.warp(block.timestamp + 22 days);
 
     vm.prank(whale);
     staker.redeem(10 ether, whale, whale);
@@ -127,7 +127,7 @@ contract MultiStakingRewardsERC4626BoostedTest is BaseZaiTest {
 
     vm.prank(ant);
     staker.queueWithdrawal(10 ether);
-    vm.warp(block.timestamp + 10 days);
+    vm.warp(block.timestamp + 22 days);
 
     vm.prank(ant);
     staker.redeem(10 ether, ant, ant);
