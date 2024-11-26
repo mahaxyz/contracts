@@ -1,0 +1,17 @@
+{
+  "address": "0x93EdC603D7A2eA03518Ac55219cAD320010a58e4",
+  "abi": [
+    "event Approval(address indexed,address indexed,uint256)",
+    "event Transfer(address indexed,address indexed,uint256)",
+    "function allowance(address,address) view returns (uint256)",
+    "function approve(address,uint256) returns (bool)",
+    "function balanceOf(address) view returns (uint256)",
+    "function decimals() view returns (uint8)",
+    "function name() view returns (string)",
+    "function symbol() view returns (string)",
+    "function totalSupply() view returns (uint256)",
+    "function transfer(address,uint256) returns (bool)",
+    "function transferFrom(address,address,uint256) returns (bool)"
+  ],
+  "numDeployments": 2
+}
