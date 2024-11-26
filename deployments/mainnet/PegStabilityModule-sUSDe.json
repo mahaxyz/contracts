@@ -1,5 +1,5 @@
 {
-  "address": "0x5E888116cDcA24268B42162538fEdeb5C99Ea5BC",
+  "address": "0xEEc58Cd30D88c70894B331b2fe0ECc2BF535656B",
   "abi": [
     {
       "inputs": [
@@ -668,13 +668,6 @@
         }
       ],
       "name": "transferOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "transferYieldToFeeDistributor",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
