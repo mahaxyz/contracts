@@ -3,7 +3,7 @@ import { MerkleTree } from "merkletreejs";
 import fs from "fs";
 import path from "path";
 import csv from "csv-parser";
-import { keccak256 } from "@layerzerolabs/lz-v2-utilities";
+import { keccak256 } from "ethers";
 
 type UserDetails = {
   user: string;
@@ -22,7 +22,7 @@ const parseCSV = async (filePath: string): Promise<UserDetails[]> => {
       .on("data", (data) => {
         try {
           const userDetail: UserDetails = {
-            user: data.user,
+            user: ethers.getAddress(data.user.toLowerCase()),
             nftId: parseInt(data.nftId, 10),
             mahaLocked: Number(data.mahaLocked),
             startDate: data.startDate,
