@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.2](https://github.com/mahaxyz/contracts/compare/v1.9.1...v1.9.2) (2024-11-26)
+
+
+### Bug Fixes
+
+* fixed the unit tests ([d9d37e6](https://github.com/mahaxyz/contracts/commit/d9d37e671473eee85dca81c53dbbb91f60ed2b38))
+
 ## [1.9.1](https://github.com/mahaxyz/contracts/compare/v1.9.0...v1.9.1) (2024-11-25)
 
 
