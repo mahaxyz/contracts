@@ -9,44 +9,51 @@ type UserDetails = {
   user: string;
   nftId: number;
   mahaLocked: number;
-  startDate: string;
-  endDate: string;
+  startDate: number;
+  endDate: number;
   bonus: number;
 };
 
 const parseCSV = async (filePath: string): Promise<UserDetails[]> => {
   return new Promise((resolve, reject) => {
-    const result: UserDetails[] = [];
+    const results: UserDetails[] = [];
     fs.createReadStream(filePath)
       .pipe(csv())
       .on("data", (data) => {
         try {
-          const userDetail: UserDetails = {
-            user: ethers.getAddress(data.user.toLowerCase()),
+          const userAddress = ethers.getAddress(data.user.toLowerCase()); // Normalize and checksum address
+
+          const userDetails: UserDetails = {
+            user: userAddress,
             nftId: parseInt(data.nftId, 10),
             mahaLocked: Number(data.mahaLocked),
-            startDate: data.startDate,
-            endDate: data.endDate,
+            startDate: parseInt(data.startDate, 10),
+            endDate: parseInt(data.endDate, 10),
             bonus: Number(data.bonus),
           };
 
+          // Validate the data
           if (
-            !userDetail.user ||
-            isNaN(userDetail.nftId) ||
-            isNaN(userDetail.mahaLocked) ||
-            !userDetail.startDate ||
-            !userDetail.endDate ||
-            isNaN(userDetail.bonus)
+            !ethers.isAddress(userDetails.user) ||
+            isNaN(userDetails.nftId) ||
+            isNaN(userDetails.mahaLocked) ||
+            isNaN(userDetails.startDate) ||
+            isNaN(userDetails.endDate) ||
+            isNaN(userDetails.bonus)
           ) {
-            throw new Error(`Invalid data in ${JSON.stringify(data)}`);
+            throw new Error(`Invalid data format: ${JSON.stringify(data)}`);
           }
 
-          result.push(userDetail);
+          if (userDetails.endDate <= userDetails.startDate) {
+            throw new Error(`End date must be greater than start date: ${JSON.stringify(data)}`);
+          }
+
+          results.push(userDetails);
         } catch (err) {
-          console.error("Error processing row:", data, err);
+          console.error("Skipping invalid row:", data, err);
         }
       })
-      .on("end", () => resolve(result))
+      .on("end", () => resolve(results))
       .on("error", (error) => reject(error));
   });
 };
@@ -55,14 +62,14 @@ const hashLeafNode = (
   user: string,
   nftId: number,
   mahaLocked: number,
-  startDate: string,
-  endDate: string,
+  startDate: number,
+  endDate: number,
   bonus: number
 ): Buffer => {
   return Buffer.from(
     keccak256(
       ethers.AbiCoder.defaultAbiCoder().encode(
-        ["address", "uint256", "uint256", "string", "string", "uint256"],
+        ["address", "uint256", "uint256", "uint256", "uint256", "uint256"],
         [user, nftId, mahaLocked, startDate, endDate, bonus]
       )
     ).substring(2), // Remove the "0x" prefix
@@ -70,16 +77,7 @@ const hashLeafNode = (
   );
 };
 
-async function main() {
-  const csvFilePath = path.resolve(__dirname, "./userDetails.csv");
-  const outputFilePath = path.resolve(__dirname, "./merkleTreeOutput.json");
-
-  if (!csvFilePath) {
-    throw new Error("Please provide the path to the CSV file as an argument.");
-  }
-
-  const userDetails: UserDetails[] = await parseCSV(csvFilePath);
-
+const generateMerkleTree = (userDetails: UserDetails[]) => {
   const leafNodes = userDetails.map((detail) =>
     hashLeafNode(
       detail.user,
@@ -92,24 +90,38 @@ async function main() {
   );
 
   const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
-
   const merkleRoot = merkleTree.getHexRoot();
 
   console.log("Merkle Tree Root:", merkleRoot);
 
-  const output = {
+  return {
     root: merkleRoot,
     leaves: userDetails.map((data, index) => ({
       data,
       proof: merkleTree.getHexProof(leafNodes[index]),
     })),
   };
+};
 
-  fs.writeFileSync(outputFilePath, JSON.stringify(output, null, 2));
-  console.log("Merkle tree written into:", outputFilePath);
+async function main() {
+  const csvFilePath = path.resolve(__dirname, "./userDetails.csv");
+  const outputFilePath = path.resolve(__dirname, "./merkleTreeOutput.json");
+
+  try {
+    const userDetails = await parseCSV(csvFilePath);
+
+    if (userDetails.length === 0) {
+      throw new Error("No valid data found in the CSV file.");
+    }
+
+    const merkleTreeData = generateMerkleTree(userDetails);
+
+    fs.writeFileSync(outputFilePath, JSON.stringify(merkleTreeData, null, 2));
+    console.log("Merkle tree written to:", outputFilePath);
+  } catch (err) {
+    console.error("An error occurred:", err);
+    process.exitCode = 1;
+  }
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+main();
