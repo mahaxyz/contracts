@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/mahaxyz/contracts/compare/v1.9.2...v1.10.0) (2024-11-26)
+
+
+### Features
+
+* added staking contracts for base ([f917982](https://github.com/mahaxyz/contracts/commit/f91798253a161e112177e857ebf2d3bf0a79d526))
+
 ## [1.9.2](https://github.com/mahaxyz/contracts/compare/v1.9.1...v1.9.2) (2024-11-26)
 
 
