@@ -21,6 +21,7 @@ import {IERC20, IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol"
 contract PoolUIHelper {
   IERC20 maha;
   IERC20 zai;
+  IERC20 szai;
   IERC20 usdc;
 
   struct PoolInfoResponse {
@@ -36,11 +37,14 @@ contract PoolUIHelper {
     uint256 userShareE18;
     uint256 zaiTotalSupply;
     uint256 zaiUserBalance;
+    uint256 szaiTotalSupply;
+    uint256 szaiUserBalance;
   }
 
-  constructor(address _maha, address _zai, address _usdc) {
+  constructor(address _maha, address _zai, address _szai, address _usdc) {
     maha = IERC20(_maha);
     zai = IERC20(_zai);
+    szai = IERC20(_szai);
     usdc = IERC20(_usdc);
   }
 
@@ -55,10 +59,12 @@ contract PoolUIHelper {
 
     res.mahaTotalSupply = maha.balanceOf(address(pool));
     res.zaiTotalSupply = zai.balanceOf(address(pool));
+    res.szaiTotalSupply = szai.balanceOf(address(pool));
     res.usdcTotalSupply = usdc.balanceOf(address(pool));
 
-    res.poolUsdTVLE8 =
-      (res.mahaTotalSupply * _mahaPriceE8 / 1e8 + res.usdcTotalSupply * 1e12 + res.zaiTotalSupply) / 1e10;
+    res.poolUsdTVLE8 = (
+      res.mahaTotalSupply * _mahaPriceE8 / 1e8 + res.usdcTotalSupply * 1e12 + res.zaiTotalSupply + res.szaiTotalSupply
+    ) / 1e10;
 
     uint256 totalSupply = stakingPool4626.totalSupply();
     res.userShareE18 = totalSupply == 0 ? 0 : stakingPool4626.balanceOf(_who) * 1e18 / totalSupply;
@@ -66,6 +72,7 @@ contract PoolUIHelper {
     res.mahaUserBalance = res.mahaTotalSupply * res.userShareE18 / 1e18;
     res.usdcUserBalance = res.usdcTotalSupply * res.userShareE18 / 1e18;
     res.zaiUserBalance = res.zaiTotalSupply * res.userShareE18 / 1e18;
+    res.szaiUserBalance = res.szaiTotalSupply * res.userShareE18 / 1e18;
 
     res.mahaRewardsPerYearE18 = stakingPool.rewardRate(maha) * 365 days;
     res.usdcRewardsPerYearE6 = stakingPool.rewardRate(usdc) * 365 days;

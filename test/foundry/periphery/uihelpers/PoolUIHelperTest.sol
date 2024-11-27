@@ -42,6 +42,7 @@ contract PoolUIHelperTest is BaseZaiTest {
     PoolUIHelper helper = new PoolUIHelper(
       address(_maha), // maha
       address(_zai), // zai
+      address(_zai), // zai
       address(_usdc) // usdc
     );
 

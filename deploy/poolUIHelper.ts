@@ -7,11 +7,12 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const usdcD = await deployments.get("USDC");
   const mahaD = await deployments.get("MAHA");
   const zaiD = await deployments.get("ZaiStablecoin");
+  const sZAID = await deployments.get("sZAI");
 
   await deployContract(
     hre,
     "PoolUIHelper",
-    [mahaD.address, zaiD.address, usdcD.address],
+    [mahaD.address, zaiD.address, sZAID.address, usdcD.address],
     `PoolUIHelper`
   );
 }
