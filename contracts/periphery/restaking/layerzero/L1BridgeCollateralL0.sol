@@ -15,7 +15,7 @@ pragma solidity 0.8.21;
 
 import {IPegStabilityModule} from "../../../interfaces/core/IPegStabilityModule.sol";
 import {OApp, Origin} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OApp.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
@@ -23,8 +23,10 @@ import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeE
  * @author maha.xyz
  * @notice Credits any collateral bridged from various L2s via layerzero into the adapter for accounting purposes.
  */
-contract L1BridgeCollateralL0 is OApp {
+contract L1BridgeCollateralL0 is AccessControlEnumerable {
   using SafeERC20 for IERC20;
+
+  bytes32 public constant EXECUTOR_ROLE = keccak256("EXECUTOR_ROLE");
 
   /// @notice The layerzero OFT adapter on mainnet
   address public immutable adapter;
@@ -38,34 +40,19 @@ contract L1BridgeCollateralL0 is OApp {
   /// @notice The collateral token address - will be sent via bridge from L2
   IERC20 public immutable collateral;
 
-  constructor(
-    IPegStabilityModule _psm,
-    address _adapter,
-    address _endpoint
-  ) OApp(_endpoint, msg.sender) Ownable(msg.sender) {
+  /// @notice The odos contract address
+  address public immutable odos;
+
+  constructor(IPegStabilityModule _psm, address _adapter) {
     require(address(_psm) != address(0), "Invalid PSM address");
     psm = _psm;
     adapter = _adapter;
     stablecoin = _psm.zai();
     collateral = _psm.collateral();
     collateral.approve(address(psm), type(uint256).max);
-  }
 
-  /**
-   * @dev Internal function to handle the receive on the LayerZero endpoint.
-   * @dev _executor The address of the executor.
-   * @dev _extraData Additional data.
-   */
-  function _lzReceive(
-    Origin calldata,
-    bytes32,
-    bytes calldata,
-    address, /*_executor*/ // @dev unused in the default implementation.
-    bytes calldata /*_extraData*/ // @dev unused in the default implementation.
-  ) internal virtual override {
-    // for any message that gets sent to the contract from the endpoint
-    // we just simply mint ZAI with whatever collateral is sent to the contract
-    process();
+    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    _grantRole(EXECUTOR_ROLE, msg.sender);
   }
 
   function process() public {
@@ -78,7 +65,17 @@ contract L1BridgeCollateralL0 is OApp {
     }
   }
 
-  function recall(address _token) external onlyOwner {
+  function processWithOdos(IERC20 token, bytes memory data) public onlyRole(EXECUTOR_ROLE) {
+    token.approve(odos, type(uint256).max);
+
+    // swap on odos
+    (bool success,) = odos.call(data);
+    require(success, "odos call failed");
+
+    process();
+  }
+
+  function recall(address _token) external onlyRole(DEFAULT_ADMIN_ROLE) {
     IERC20(_token).transfer(msg.sender, IERC20(_token).balanceOf(address(this)));
   }
 }
