@@ -127,6 +127,11 @@ contract L2DepositCollateralL0 is IL2DepositCollateralL0, OwnableUpgradeable, Re
     stargate = IStargate(_stargate);
   }
 
+  function setSlippage(uint256 _slippage) external onlyOwner {
+    require(_slippage <= MAX_SLIPPAGE, "invalid slippage");
+    slippage = _slippage;
+  }
+
   function recoverERC20(address _token, uint256 _amount, address _to) external onlyOwner {
     IERC20(_token).safeTransfer(_to, _amount);
   }

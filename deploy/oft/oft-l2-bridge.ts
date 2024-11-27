@@ -35,7 +35,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
     "L2DepositCollateralL0"
   );
 
-  await waitForTx(await zai.setRestaker(restaker.address));
+  await waitForTx(await zai.setRestakerZAI(restaker.address));
 }
 
 main.tags = ["L2DepositCollateralL0"];
