@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.0](https://github.com/mahaxyz/contracts/compare/v1.10.0...v1.11.0) (2024-11-27)
+
+
+### Features
+
+* added pool ui helpers and added szai onto base ([bdcc089](https://github.com/mahaxyz/contracts/commit/bdcc08907fd3c7daf77148100108239634c49909))
+
 ## [1.10.0](https://github.com/mahaxyz/contracts/compare/v1.9.2...v1.10.0) (2024-11-26)
 
 
