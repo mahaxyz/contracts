@@ -19,6 +19,7 @@ import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/ut
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+import "../../../lib/forge-std/src/console.sol";
 import {PSMErrors} from "../../interfaces/errors/PSMErrors.sol";
 import {PSMEventsLib} from "../../interfaces/events/PSMEventsLib.sol";
 import {IPegStabilityModule, PegStabilityModuleBase} from "./PegStabilityModuleBase.sol";
@@ -36,7 +37,7 @@ contract PegStabilityModuleYield is PegStabilityModuleBase {
     uint256 _mintFeeBps,
     uint256 _redeemFeeBps,
     address _feeDestination
-  ) external reinitializer(4) {
+  ) external reinitializer(1) {
     __PegStabilityModule_init(
       _zai, _collateral, _governance, _supplyCap, _debtCap, _mintFeeBps, _redeemFeeBps, _feeDestination
     );
@@ -48,7 +49,7 @@ contract PegStabilityModuleYield is PegStabilityModuleBase {
    * @return The asset value per share in 18 decimal precision.
    */
   function rate() public view override returns (uint256) {
-    return IERC4626(address(collateral)).previewWithdraw(1 ether);
+    return IERC4626(address(collateral)).previewDeposit(1 ether); // ZAI / sUSDe
   }
 
   /**
@@ -57,10 +58,10 @@ contract PegStabilityModuleYield is PegStabilityModuleBase {
    *      the current value of collateral exceeds the outstanding debt.
    *      Uses `safeTransfer` to ensure secure transfer of assets.
    */
-  function feesCollected() public view override returns (uint256) {
-    uint256 bal = collateral.balanceOf(address(this));
-    uint256 usdValue = (bal * 1e18) / rate();
-    require(usdValue >= debt, "no yield to transfer");
-    return ((usdValue - debt) * 1e18) / rate();
+  function feesCollected() public view override returns (uint256 yield) {
+    uint256 expectedCollateral = debt * rate() / 1e18; // sUSDE
+    uint256 balance = collateral.balanceOf(address(this)); // sUSDE
+    require(balance > expectedCollateral, "no yield to transfer");
+    yield = balance - expectedCollateral; // sUSDE
   }
 }

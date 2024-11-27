@@ -13,10 +13,10 @@ const main: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const collateral = "0x9D39A5DE30e57443BfF2A8307A4256c8797A3497"; // sUSDe
   const governance = deployer;
-  const supplyCap = parseEther("10000");
-  const debtCap = parseEther("10000");
+  const supplyCap = parseEther("10000000");
+  const debtCap = parseEther("10000000");
   const mintFeeBps = 0; //1%
-  const redeemFeeBps = 100; // 1%
+  const redeemFeeBps = 1000; // 1%
 
   const params = [
     zaiD.address,

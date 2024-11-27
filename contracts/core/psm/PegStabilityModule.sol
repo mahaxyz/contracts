@@ -49,7 +49,7 @@ contract PegStabilityModule is PegStabilityModuleBase {
   }
 
   //// @inheritdoc IPegStabilityModule
-  function updateRate(uint256 _newRate) external onlyOwner {
+  function updateRate(uint256 _newRate) external onlyRole(DEFAULT_ADMIN_ROLE) {
     _updateRate(_newRate);
   }
 

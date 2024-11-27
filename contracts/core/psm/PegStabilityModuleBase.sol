@@ -18,7 +18,9 @@ import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol
 
 import {PSMErrors} from "../../interfaces/errors/PSMErrors.sol";
 import {PSMEventsLib} from "../../interfaces/events/PSMEventsLib.sol";
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {AccessControlEnumerableUpgradeable} from
+  "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
+import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -29,8 +31,16 @@ import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeE
  * @notice Used to mint ZAI with collateral at a pre-defined rate
  * @dev https://docs.maha.xyz/mechanics/peg-mechanics/peg-stablility-module-psm
  */
-abstract contract PegStabilityModuleBase is OwnableUpgradeable, ReentrancyGuardUpgradeable, IPegStabilityModule {
+abstract contract PegStabilityModuleBase is
+  AccessControlEnumerableUpgradeable,
+  ReentrancyGuardUpgradeable,
+  PausableUpgradeable,
+  IPegStabilityModule
+{
   using SafeERC20 for IERC20;
+
+  bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+  bytes32 public constant FEE_COLLECTOR_ROLE = keccak256("FEE_COLLECTOR_ROLE");
 
   /// @inheritdoc IPegStabilityModule
   IStablecoin public zai;
@@ -69,6 +79,10 @@ abstract contract PegStabilityModuleBase is OwnableUpgradeable, ReentrancyGuardU
     uint256 _redeemFeeBps,
     address _feeDestination
   ) internal {
+    __Pausable_init();
+    __AccessControlEnumerable_init();
+    __ReentrancyGuard_init();
+
     zai = IStablecoin(_zai);
     collateral = IERC20(_collateral);
 
@@ -80,8 +94,9 @@ abstract contract PegStabilityModuleBase is OwnableUpgradeable, ReentrancyGuardU
       revert PSMErrors.NotZeroValue();
     }
 
-    __Ownable_init(_governance);
-    __ReentrancyGuard_init();
+    _grantRole(DEFAULT_ADMIN_ROLE, _governance);
+    _grantRole(PAUSER_ROLE, _governance);
+    _grantRole(FEE_COLLECTOR_ROLE, _governance);
 
     _updateFees(_mintFeeBps, _redeemFeeBps);
     _updateCaps(_supplyCap, _debtCap);
@@ -89,7 +104,7 @@ abstract contract PegStabilityModuleBase is OwnableUpgradeable, ReentrancyGuardU
   }
 
   /// @inheritdoc IPegStabilityModule
-  function mint(address dest, uint256 shares) external nonReentrant {
+  function mint(address dest, uint256 shares) external nonReentrant whenNotPaused {
     uint256 amount = toCollateralAmountWithFee(shares, mintFeeBps);
 
     if (amount == 0) revert PSMErrors.NotZeroValue();
@@ -106,7 +121,7 @@ abstract contract PegStabilityModuleBase is OwnableUpgradeable, ReentrancyGuardU
   }
 
   /// @inheritdoc IPegStabilityModule
-  function redeem(address dest, uint256 shares) external nonReentrant {
+  function redeem(address dest, uint256 shares) external nonReentrant whenNotPaused {
     uint256 amount = toCollateralAmountWithFeeInverse(shares, redeemFeeBps);
 
     if (amount == 0) revert PSMErrors.NotZeroValue();
@@ -120,33 +135,38 @@ abstract contract PegStabilityModuleBase is OwnableUpgradeable, ReentrancyGuardU
     emit PSMEventsLib.Redeem(dest, shares, amount, debt, supplyCap, msg.sender);
   }
 
-  /**
-   * @notice Returns the current rate of ZAI/Collateral
-   */
+  /// @notice Returns the current rate of ZAI/Collateral
   function rate() public view virtual returns (uint256);
 
-  function sweepFees() external {
+  /// @notice Collects fees from the collateral pool
+  function sweepFees() external whenNotPaused onlyRole(FEE_COLLECTOR_ROLE) {
     collateral.safeTransfer(feeDestination, feesCollected());
   }
 
+  /// @notice Pauses the contract
+  function togglePause() external onlyRole(PAUSER_ROLE) {
+    if (paused()) _unpause();
+    else _pause();
+  }
+
   /// @inheritdoc IPegStabilityModule
-  function updateCaps(uint256 _supplyCap, uint256 _debtCap) external onlyOwner {
+  function updateCaps(uint256 _supplyCap, uint256 _debtCap) external onlyRole(DEFAULT_ADMIN_ROLE) {
     _updateCaps(_supplyCap, _debtCap);
   }
 
   /// @inheritdoc IPegStabilityModule
-  function updateFees(uint256 _mintFeeBps, uint256 _redeemFeeBps) external onlyOwner {
+  function updateFees(uint256 _mintFeeBps, uint256 _redeemFeeBps) external onlyRole(DEFAULT_ADMIN_ROLE) {
     _updateFees(_mintFeeBps, _redeemFeeBps);
   }
 
   /// @inheritdoc IPegStabilityModule
-  function updateFeeDestination(address _feeDestination) external onlyOwner {
+  function updateFeeDestination(address _feeDestination) external onlyRole(DEFAULT_ADMIN_ROLE) {
     _updateFeeDestination(_feeDestination);
   }
 
   /// @inheritdoc IPegStabilityModule
-  function toCollateralAmount(uint256 _amount) public view returns (uint256) {
-    return (_amount * rate()) / 1e18;
+  function toCollateralAmount(uint256 _shares) public view returns (uint256) {
+    return (_shares * rate()) / 1e18;
   }
 
   /// @inheritdoc IPegStabilityModule

@@ -52,14 +52,14 @@ contract PegStabilityModuleYieldFork is Test {
   }
 
   function testInitValues() public view {
-    assertEq(psm.rate(), 890_650_384_866_953_367);
+    assertEq(psm.rate(), 890_650_384_866_953_366);
     assertEq(address(psm.zai()), address(USDZ));
     assertEq(address(psm.collateral()), address(sUSDe));
     assertEq(psm.feeDestination(), FEEDISTRIBUTOR);
   }
 
   function testMint() public {
-    assertEq(psm.rate(), 890_650_384_866_953_367);
+    assertEq(psm.rate(), 890_650_384_866_953_366);
 
     address whale = 0xb99a2c4C1C4F1fc27150681B740396F6CE1cBcF5;
     vm.startPrank(whale);
@@ -70,7 +70,7 @@ contract PegStabilityModuleYieldFork is Test {
 
     uint256 balAfter = sUSDe.balanceOf(whale);
     assertEq(USDZ.balanceOf(whale), 1 ether);
-    assertEq(balBefore - balAfter, 890_650_384_866_953_367);
+    assertEq(balBefore - balAfter, 890_650_384_866_953_366);
 
     vm.stopPrank();
   }
