@@ -9,13 +9,14 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const ODOS_ROUTER_BASE = "0x19cEeAd7105607Cd444F5ad10dd51356436095a1";
   const MAHA = await deployments.get("MAHA");
   const USDC = await deployments.get("USDC");
+  const ProxyAdmin = await deployments.get("ProxyAdmin");
   const DISTRIBUTOR = deployer;
 
   const BuyBackBurnProxy = await deployProxy(
     hre,
     "BuyBackBurnMaha",
     [MAHA.address, USDC.address, ODOS_ROUTER_BASE, DISTRIBUTOR],
-    deployer,
+    ProxyAdmin.address,
     "BuyBackBurnMaha"
   );
 
