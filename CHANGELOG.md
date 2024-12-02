@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.12.0](https://github.com/mahaxyz/contracts/compare/v1.11.0...v1.12.0) (2024-11-27)
+
+
+### Features
+
+* added l2 deposit contract ([b58b80e](https://github.com/mahaxyz/contracts/commit/b58b80e7c7a1c85cb5377ab55cad9bdefb6cc6dc))
+
+
+### Bug Fixes
+
+* fixed a bug with the PSM contracts ([6fc3076](https://github.com/mahaxyz/contracts/commit/6fc307677eb2620e8ffee1ac65c1cd3362aec445))
+
 ## [1.11.0](https://github.com/mahaxyz/contracts/compare/v1.10.0...v1.11.0) (2024-11-27)
 
 
