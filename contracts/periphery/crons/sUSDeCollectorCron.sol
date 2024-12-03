@@ -13,8 +13,6 @@
 
 pragma solidity 0.8.21;
 
-import {MessagingFee, OFTReceipt, SendParam} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/interfaces/IOFT.sol";
-import {IOFT} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/interfaces/IOFT.sol";
 import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -32,26 +30,23 @@ contract sUSDeCollectorCron is AccessControlEnumerable {
   bytes32 public immutable EXECUTOR_ROLE = keccak256("EXECUTOR_ROLE");
   address public immutable ODOS;
   IERC4626 public immutable SZAI;
-  IOFT public immutable OFT_ADAPTER;
   IERC20 public immutable ZAI;
   IERC20 public immutable SUSDE;
 
   address public treasury;
-  address public remoteDestination;
-  uint32 public remoteEID;
+  address public mahaBuyback;
+  address public mahaStakers;
 
   event RevenueDistributed(address indexed receiver, uint256 indexed amount);
   event RevenueCollected(uint256 indexed amount);
 
-  constructor(address _odos, address _sZAI, address _sUSDe, address _adapter) {
+  constructor(address _odos, address _sZAI, address _sUSDe) {
     SZAI = IERC4626(_sZAI);
     SUSDE = IERC20(_sUSDe);
     ZAI = IERC20(SZAI.asset());
     ODOS = _odos;
-    OFT_ADAPTER = IOFT(_adapter);
 
     SUSDE.approve(ODOS, type(uint256).max);
-    ZAI.approve(address(OFT_ADAPTER), type(uint256).max);
 
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     _grantRole(EXECUTOR_ROLE, msg.sender);
@@ -73,31 +68,33 @@ contract sUSDeCollectorCron is AccessControlEnumerable {
     ZAI.transfer(address(SZAI), amountsZAI);
     emit RevenueDistributed(address(SZAI), amountsZAI);
 
-    // send 20% to MAHA stakers
-    uint256 amountsMAHA = _calculatePercentage(balance, 2000);
-    ZAI.transfer(address(SZAI), amountsMAHA);
-    emit RevenueDistributed(remoteDestination, amountsMAHA);
+    // send 12.5% to MAHA stakers
+    uint256 amountsMAHA = _calculatePercentage(balance, 1250);
+    ZAI.transfer(mahaStakers, amountsMAHA);
+    emit RevenueDistributed(mahaStakers, amountsMAHA);
+
+    // send 12.5% to Buyback and Burn
+    uint256 amountsBuyback = _calculatePercentage(balance, 1250);
+    ZAI.transfer(mahaBuyback, amountsMAHA);
+    emit RevenueDistributed(mahaBuyback, amountsMAHA);
 
     // rest to treasury
-    uint256 amountsTreasury = balance - amountsZAI - amountsMAHA;
+    uint256 amountsTreasury = balance - amountsZAI - amountsMAHA - amountsBuyback;
     ZAI.transfer(treasury, amountsTreasury);
     emit RevenueDistributed(treasury, amountsTreasury);
   }
 
   /**
    * @notice Sets the destination addresses for cross-chain transfers.
-   * @param _treasury The address of the treasury.
-   * @param _remoteAddr The address of the remote destination.
-   * @param _dstEID The destination Endpoint ID from layerzero
    */
   function setDestinationAddresses(
     address _treasury,
-    address _remoteAddr,
-    uint32 _dstEID
+    address _mahaStakers,
+    address _mahaBuybacks
   ) external onlyRole(DEFAULT_ADMIN_ROLE) {
     treasury = _treasury;
-    remoteDestination = _remoteAddr;
-    remoteEID = _dstEID;
+    mahaBuyback = _mahaBuybacks;
+    mahaStakers = _mahaStakers;
   }
 
   /**
@@ -107,35 +104,6 @@ contract sUSDeCollectorCron is AccessControlEnumerable {
    */
   function refund(IERC20 token) external onlyRole(DEFAULT_ADMIN_ROLE) {
     token.safeTransfer(msg.sender, token.balanceOf(address(this)));
-  }
-
-  /**
-   * @notice Bridges the specified amount of ZAI to the remote chain.
-   * @param _amount The amount of ZAI to be bridged.
-   */
-  function _bridgeToBase(uint256 _amount) internal {
-    SendParam memory sendParam = SendParam({
-      dstEid: remoteEID,
-      to: _addressToBytes32(remoteDestination),
-      amountLD: _amount,
-      minAmountLD: _amount,
-      extraOptions: new bytes(0),
-      composeMsg: new bytes(0),
-      oftCmd: ""
-    });
-
-    MessagingFee memory messagingFee = OFT_ADAPTER.quoteSend(sendParam, false);
-    OFT_ADAPTER.send{value: messagingFee.nativeFee}(sendParam, messagingFee, address(this));
-  }
-
-  /**
-   * @notice Converts an address to a bytes32 format.
-   * @dev This is necessary for cross-chain transfers where addresses need to be converted to bytes32.
-   * @param _addr The address to convert.
-   * @return The converted bytes32 representation of the address.
-   */
-  function _addressToBytes32(address _addr) internal pure returns (bytes32) {
-    return bytes32(uint256(uint160(_addr)));
   }
 
   /**
