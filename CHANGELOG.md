@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.1](https://github.com/mahaxyz/contracts/compare/v1.13.0...v1.13.1) (2024-12-03)
+
+
+### Bug Fixes
+
+* fixed forge tests ([085bb15](https://github.com/mahaxyz/contracts/commit/085bb154b4e79ec750af7f76e68e25076898f77e))
+
 ## [1.13.0](https://github.com/mahaxyz/contracts/compare/v1.12.0...v1.13.0) (2024-12-03)
 
 
