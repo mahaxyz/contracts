@@ -43,12 +43,13 @@ contract L1BridgeCollateralL0 is AccessControlEnumerable {
   /// @notice The odos contract address
   address public immutable odos;
 
-  constructor(IPegStabilityModule _psm, address _adapter) {
+  constructor(IPegStabilityModule _psm, address _adapter, address _odos) {
     require(address(_psm) != address(0), "Invalid PSM address");
     psm = _psm;
     adapter = _adapter;
     stablecoin = _psm.zai();
     collateral = _psm.collateral();
+    odos = _odos;
     collateral.approve(address(psm), type(uint256).max);
 
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
