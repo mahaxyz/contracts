@@ -1,6 +1,6 @@
 {
   "name": "@mahaxyz/contracts",
-  "version": "1.12.0",
+  "version": "1.13.0",
   "license": "GPL-3.0",
   "scripts": {
     "build:blue": "cd lib/morpho-blue/ && yarn build:forge && cd ../..",

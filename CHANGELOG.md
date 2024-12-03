@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0](https://github.com/mahaxyz/contracts/compare/v1.12.0...v1.13.0) (2024-12-03)
+
+
+### Features
+
+* deployed the l1 bridge ([2bbf4f4](https://github.com/mahaxyz/contracts/commit/2bbf4f48bf47e043acdd5d80a072af03f22ff5d7))
+
 ## [1.12.0](https://github.com/mahaxyz/contracts/compare/v1.11.0...v1.12.0) (2024-11-27)
 
 
