@@ -8,7 +8,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
   assert(hre.network.name !== "mainnet", "wrong network");
   const l1Contract = get("L1BridgeCollateralL0", "mainnet");
   const zaiD = await hre.deployments.get("ZaiStablecoinOFT");
-  const usdc = await hre.deployments.get("sUSDe");
+  const usdc = await hre.deployments.get("USDC");
   const stargate = await hre.deployments.getOrNull("StargateUSDCPool");
   const { deployments, getNamedAccounts } = hre;
   const { deployer } = await getNamedAccounts();
