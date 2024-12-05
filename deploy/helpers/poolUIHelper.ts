@@ -1,5 +1,5 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { deployContract } from "../scripts/utils";
+import { deployContract } from "../../scripts/utils";
 
 async function main(hre: HardhatRuntimeEnvironment) {
   const { deployments } = hre;
