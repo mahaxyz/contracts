@@ -70,6 +70,15 @@ contract BalancesUIHelper {
     totalSupplies = new uint256[](tokens.length);
 
     for (uint256 i = 0; i < tokens.length; i++) {
+      if (tokens[i] == MOCK_ETH_ADDRESS) {
+        names[i] = "Ethereum";
+        symbols[i] = "ETH";
+        decimals[i] = 18;
+        totalSupplies[i] = 100_000 ether;
+        prices[i] = IAggregatorV3Interface(chainlinkOracles[i]).latestAnswer();
+        continue;
+      }
+
       names[i] = IERC20Metadata(tokens[i]).name();
       symbols[i] = IERC20Metadata(tokens[i]).symbol();
       decimals[i] = IERC20Metadata(tokens[i]).decimals();
