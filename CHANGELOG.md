@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.14.0](https://github.com/mahaxyz/contracts/compare/v1.13.1...v1.14.0) (2024-12-06)
+
+
+### Features
+
+* added helper for ui balances ([66d83d1](https://github.com/mahaxyz/contracts/commit/66d83d1ad5c2c509804a370726c955d211a0453b))
+
+
+### Bug Fixes
+
+* redeployed helpers ([19bbd2f](https://github.com/mahaxyz/contracts/commit/19bbd2f41e48d3ee5f4d52c7f2fad9f9e1572f8a))
+* updated balance ui helper ([cff661f](https://github.com/mahaxyz/contracts/commit/cff661fc268451f3471a96d97894850847795de1))
+
 ## [1.13.1](https://github.com/mahaxyz/contracts/compare/v1.13.0...v1.13.1) (2024-12-03)
 
 
