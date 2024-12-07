@@ -17,8 +17,7 @@ contract BuyBackBurnMaha is AccessControlUpgradeable {
   bytes32 public constant DISTRIBUTOR_ROLE = keccak256("DISTRIBUTOR_ROLE");
 
   /// @notice Address representing the burn address (tokens sent here are considered burned).
-  address public constant DEAD_ADDRESS =
-    0x0000000000000000000000000000000000000000;
+  address public constant DEAD_ADDRESS = 0x0000000000000000000000000000000000000000;
 
   /// @notice Address of the ODOS router used for swapping USDC to MAHA.
   address public odos;
@@ -36,19 +35,13 @@ contract BuyBackBurnMaha is AccessControlUpgradeable {
    * @param _odos Address of the ODOS router used for swaps.
    * @param _distributor Address to be assigned the DISTRIBUTOR_ROLE.
    */
-  function initialize(
-    address _maha,
-    address _usdc,
-    address _odos,
-    address _distributor
-  ) external initializer {
+  function initialize(address _maha, address _usdc, address _odos, address _distributor) external initializer {
     __AccessControl_init();
     maha = IERC20(_maha);
     usdc = IERC20(_usdc);
-
-    setOdos(_odos);
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     _grantRole(DISTRIBUTOR_ROLE, _distributor);
+    setOdos(_odos);
   }
 
   /**
@@ -56,7 +49,9 @@ contract BuyBackBurnMaha is AccessControlUpgradeable {
    * @dev Only callable by an account with the DEFAULT_ADMIN_ROLE.
    * @param _newOdos New address of the ODOS router.
    */
-  function setOdos(address _newOdos) public onlyRole(DEFAULT_ADMIN_ROLE) {
+  function setOdos(
+    address _newOdos
+  ) public onlyRole(DEFAULT_ADMIN_ROLE) {
     odos = _newOdos;
   }
 
@@ -67,13 +62,10 @@ contract BuyBackBurnMaha is AccessControlUpgradeable {
    * @param odosData Encoded data for the ODOS router call to perform the swap.
    * @param amount How much USDC you want ODOS router to swap
    */
-  function buyMahaBurn(
-    bytes calldata odosData,
-    uint256 amount
-  ) external payable onlyRole(DISTRIBUTOR_ROLE) {
+  function buyMahaBurn(bytes calldata odosData, uint256 amount) external payable onlyRole(DISTRIBUTOR_ROLE) {
     IERC20(usdc).approve(odos, amount);
 
-    (bool ok, ) = odos.call{value: msg.value}(odosData);
+    (bool ok,) = odos.call{value: msg.value}(odosData);
     require(ok, "odos call failed");
 
     uint256 mahaBalanceAfterSwap = IERC20(maha).balanceOf(address(this));
@@ -88,7 +80,9 @@ contract BuyBackBurnMaha is AccessControlUpgradeable {
    * @dev Only callable by an account with the DEFAULT_ADMIN_ROLE.
    * @param token The ERC20 token to be refunded.
    */
-  function refund(IERC20 token) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function refund(
+    IERC20 token
+  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
     token.safeTransfer(msg.sender, token.balanceOf(address(this)));
   }
 }
