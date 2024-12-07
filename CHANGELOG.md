@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0](https://github.com/mahaxyz/contracts/compare/v1.15.0...v1.16.0) (2024-12-07)
+
+
+### Features
+
+* added zap for PSM minting ([7dece57](https://github.com/mahaxyz/contracts/commit/7dece573d3df1d8f909ff2afea6f405271b87600))
+
 ## [1.15.0](https://github.com/mahaxyz/contracts/compare/v1.14.0...v1.15.0) (2024-12-07)
 
 
