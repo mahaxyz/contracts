@@ -13,6 +13,7 @@
 
 pragma solidity 0.8.21;
 
+import {IOmnichainStaking} from "../../interfaces/governance/IOmnichainStaking.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 
@@ -33,6 +34,7 @@ contract MigrateTokenLocks is OwnableUpgradeable, ReentrancyGuardUpgradeable, Pa
   bytes32 public merkleRoot;
   IERC20 public maha;
   IMahaLocker public locker;
+  IOmnichainStaking public staker;
 
   mapping(uint256 => bool) public isTokenIdMigrated;
   mapping(uint256 => bool) public isTokenIdBanned;

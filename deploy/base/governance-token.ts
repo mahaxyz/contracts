@@ -11,6 +11,8 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const proxyAdminD = await deployments.get("ProxyAdmin");
   const mahaD = await deployments.get("MAHA");
   const zaiD = await deployments.get("ZaiStablecoinOFT");
+  const wethD = await deployments.get("WETH");
+  const zeroD = await deployments.get("ZERO");
   const safe = await deployments.get("GnosisSafe");
   const REWARD_DURATION = 86400 * 7; // 7 Days
 
@@ -59,8 +61,8 @@ async function main(hre: HardhatRuntimeEnvironment) {
     await waitForTx(
       await omnichainStaking.initialize(
         lockerTokenProxyD.address,
-        zaiD.address,
-        mahaD.address,
+        wethD.address,
+        [mahaD.address, zaiD.address, zeroD.address],
         REWARD_DURATION,
         safe.address,
         deployer

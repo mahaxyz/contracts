@@ -27,7 +27,7 @@ contract OmnichainStakingLP is OmnichainStakingBase {
   function initialize(
     address _locker,
     address _weth,
-    address _maha,
+    address[] memory _rewardTokens,
     uint256 _rewardsDuration,
     address _lpOracle,
     address _aggreagator,
@@ -35,7 +35,7 @@ contract OmnichainStakingLP is OmnichainStakingBase {
     address _distributor
   ) external reinitializer(1) {
     super.__OmnichainStakingBase_init(
-      "MAHA LP Voting Power", "MAHAvp-LP", _locker, _weth, _weth, _maha, _rewardsDuration, _distributor
+      "MAHA LP Voting Power", "MAHAvp-LP", _locker, _weth, _rewardTokens, _rewardsDuration, _distributor
     );
 
     oracleLP = ILPOracle(_lpOracle);

@@ -64,11 +64,8 @@ abstract contract OmnichainStakingBase is
   /// @inheritdoc IMultiTokenRewards
   uint256 public rewardsDuration;
 
-  /// @inheritdoc IMultiTokenRewards
-  IERC20 public rewardToken1;
-
-  /// @inheritdoc IMultiTokenRewards
-  IERC20 public rewardToken2;
+  /// @notice The reward tokens for the staking contract
+  IERC20[] public rewardTokens;
 
   /// @inheritdoc IOmnichainStaking
   IERC20 public weth;
@@ -93,8 +90,7 @@ abstract contract OmnichainStakingBase is
     string memory symbol,
     address _locker,
     address _weth,
-    address _rewardToken1,
-    address _rewardToken2,
+    address[] memory _rewardTokens,
     uint256 _rewardsDuration,
     address _distributor
   ) internal {
@@ -105,14 +101,27 @@ abstract contract OmnichainStakingBase is
 
     locker = ILocker(_locker);
     weth = IERC20(_weth);
-    rewardToken1 = IERC20(_rewardToken1);
-    rewardToken2 = IERC20(_rewardToken2);
     rewardsDuration = _rewardsDuration;
+    distributor = _distributor;
+
+    for (uint256 i = 0; i < _rewardTokens.length; i++) {
+      rewardTokens.push(IERC20(_rewardTokens[i]));
+    }
 
     // give approvals for increase lock functions
     locker.underlying().approve(_locker, type(uint256).max);
+  }
 
-    distributor = _distributor;
+  function rewardToken1() public view returns (IERC20) {
+    return rewardTokens[0];
+  }
+
+  function rewardToken2() public view returns (IERC20) {
+    return rewardTokens[1];
+  }
+
+  function registerNewRewardToken(IERC20 token) external onlyOwner {
+    rewardTokens.push(token);
   }
 
   /// @inheritdoc IOmnichainStaking
@@ -147,7 +156,7 @@ abstract contract OmnichainStakingBase is
 
   /// @inheritdoc IOmnichainStaking
   function unstakeToken(uint256 tokenId) external {
-    _updateRewardDual(rewardToken1, rewardToken2, msg.sender);
+    _updateRewardsAll(msg.sender);
     require(lockedByToken[tokenId] != address(0), "!tokenId");
     address lockedBy_ = lockedByToken[tokenId];
     if (_msgSender() != lockedBy_) {
@@ -171,10 +180,7 @@ abstract contract OmnichainStakingBase is
     require(msg.sender == lockedByToken[tokenId], "!tokenId");
     locker.increaseUnlockTime(tokenId, newLockDuration);
 
-    // update voting power
-    _burn(msg.sender, power[tokenId]);
-    power[tokenId] = _getTokenPower(locker.balanceOfNFT(tokenId));
-    _mint(msg.sender, power[tokenId]);
+    _updateVotingPower(msg.sender, tokenId);
   }
 
   /// @inheritdoc IOmnichainStaking
@@ -185,10 +191,7 @@ abstract contract OmnichainStakingBase is
     locker.underlying().transferFrom(msg.sender, address(this), newLockAmount);
     locker.increaseAmount(tokenId, newLockAmount);
 
-    // update voting power
-    _burn(msg.sender, power[tokenId]);
-    power[tokenId] = _getTokenPower(locker.balanceOfNFT(tokenId));
-    _mint(msg.sender, power[tokenId]);
+    _updateVotingPower(msg.sender, tokenId);
   }
 
   /// @inheritdoc IOmnichainStaking
@@ -258,20 +261,13 @@ abstract contract OmnichainStakingBase is
 
   /// @inheritdoc IMultiTokenRewards
   function getRewardDual(address who) public nonReentrant {
-    _updateRewardDual(rewardToken1, rewardToken2, who);
+    getReward(who, rewardTokens[0]);
+    getReward(who, rewardTokens[1]);
+  }
 
-    uint256 reward1 = rewards[rewardToken1][who];
-    if (reward1 > 0) {
-      rewards[rewardToken1][who] = 0;
-      rewardToken1.safeTransfer(who, reward1);
-      emit RewardClaimed(rewardToken1, reward1, who, msg.sender);
-    }
-
-    uint256 reward2 = rewards[rewardToken2][who];
-    if (reward2 > 0) {
-      rewards[rewardToken2][who] = 0;
-      rewardToken2.safeTransfer(who, reward2);
-      emit RewardClaimed(rewardToken2, reward2, who, msg.sender);
+  function getRewardAll(address who) public nonReentrant {
+    for (uint256 i = 0; i < rewardTokens.length; i++) {
+      getReward(who, rewardTokens[0]);
     }
   }
 
@@ -340,7 +336,7 @@ abstract contract OmnichainStakingBase is
       (, from,) = abi.decode(data, (bool, address, uint256));
     }
 
-    _updateRewardDual(rewardToken1, rewardToken2, from);
+    _updateRewardsAll(from);
 
     // track nft id
     lockedByToken[tokenId] = from;
@@ -367,9 +363,7 @@ abstract contract OmnichainStakingBase is
     uint256 count;
 
     for (uint256 i = 0; i < length; i++) {
-      if (elements[i] != element) {
-        count++;
-      }
+      if (elements[i] != element) count++;
     }
 
     uint256[] memory updatedArray = new uint256[](count);
@@ -402,21 +396,18 @@ abstract contract OmnichainStakingBase is
 
   /**
    * @notice Called frequently to update the staking parameters associated to an address
-   * @param token1 The first token for which the rewards are updated
-   * @param token2 The second token for which the rewards are updated
    * @param account The account for which the rewards are updated
    */
-  function _updateRewardDual(IERC20 token1, IERC20 token2, address account) internal {
-    rewardPerTokenStored[token1] = _rewardPerToken(token1);
-    lastUpdateTime[token1] = lastTimeRewardApplicable(token1);
-    rewardPerTokenStored[token2] = _rewardPerToken(token2);
-    lastUpdateTime[token2] = lastTimeRewardApplicable(token2);
+  function _updateRewardsAll(address account) internal {
+    for (uint256 i = 0; i < rewardTokens.length; i++) {
+      IERC20 token = rewardTokens[i];
+      rewardPerTokenStored[token] = _rewardPerToken(token);
+      lastUpdateTime[token] = lastTimeRewardApplicable(token);
 
-    if (account != address(0)) {
-      rewards[token1][account] = _earned(token1, account);
-      rewards[token2][account] = _earned(token2, account);
-      userRewardPerTokenPaid[token1][account] = rewardPerTokenStored[token1];
-      userRewardPerTokenPaid[token2][account] = rewardPerTokenStored[token2];
+      if (account != address(0)) {
+        rewards[token][account] = _earned(token, account);
+        userRewardPerTokenPaid[token][account] = rewardPerTokenStored[token];
+      }
     }
   }
 
@@ -429,6 +420,17 @@ abstract contract OmnichainStakingBase is
   function _earned(IERC20 token_, address account_) internal view returns (uint256) {
     return (balanceOf(account_) * (_rewardPerToken(token_) - userRewardPerTokenPaid[token_][account_])) / 1e18
       + rewards[token_][account_];
+  }
+
+  /**
+   * @notice Computes the amount of voting power for a given amount of tokens
+   * @param who The account for which the voting power is computed
+   * @param tokenId The token ID for which the voting power is computed
+   */
+  function _updateVotingPower(address who, uint256 tokenId) internal {
+    _burn(who, power[tokenId]);
+    power[tokenId] = _getTokenPower(locker.balanceOfNFT(tokenId));
+    _mint(who, power[tokenId]);
   }
 
   function _rewardPerToken(IERC20 _token) internal view returns (uint256) {

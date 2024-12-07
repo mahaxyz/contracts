@@ -17,9 +17,8 @@ import {OmnichainStakingBase} from "../governance/locker/staking/OmnichainStakin
 
 contract MockOmnichainStaking is OmnichainStakingBase {
   function init() external reinitializer(1) {
-    super.__OmnichainStakingBase_init(
-      "TEST", "TESTvp", address(this), address(this), address(this), address(this), 0, address(0)
-    );
+    address[] memory _rewardTokens;
+    super.__OmnichainStakingBase_init("TEST", "TESTvp", address(this), address(this), _rewardTokens, 0, address(0));
   }
 
   function initWithData(
@@ -29,9 +28,10 @@ contract MockOmnichainStaking is OmnichainStakingBase {
     uint256 _rewardsDuration,
     address _distributor
   ) external reinitializer(1) {
-    super.__OmnichainStakingBase_init(
-      "TEST", "TESTvp", _locker, _weth, _weth, _rewardToken1, _rewardsDuration, _distributor
-    );
+    address[] memory _rewardTokens = new address[](2);
+    _rewardTokens[0] = _rewardToken1;
+    _rewardTokens[1] = _weth;
+    super.__OmnichainStakingBase_init("TEST", "TESTvp", _locker, _weth, _rewardTokens, _rewardsDuration, _distributor);
   }
 
   function mint(address _to, uint256 _amount) external {
