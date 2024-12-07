@@ -51,8 +51,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
     await waitForTx(
       await lockerToken.initialize(
         mahaD.address,
-        omnichainStakingTokenProxyD.address,
-        ZeroAddress
+        omnichainStakingTokenProxyD.address
       )
     );
   }
