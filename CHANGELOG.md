@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.15.0](https://github.com/mahaxyz/contracts/compare/v1.14.0...v1.15.0) (2024-12-07)
+
+
+### Features
+
+* updated the omnichain staking contracts to have multiple rewards ([cf4d642](https://github.com/mahaxyz/contracts/commit/cf4d6428b6b0d3d24c9ad227cae423068d33ac97))
+
+
+### Bug Fixes
+
+* deployed govrernance contracts ([08fb3f4](https://github.com/mahaxyz/contracts/commit/08fb3f4746ff4ba864c48e6e5ec2072b5791b37d))
+
 ## [1.14.0](https://github.com/mahaxyz/contracts/compare/v1.13.1...v1.14.0) (2024-12-06)
 
 
