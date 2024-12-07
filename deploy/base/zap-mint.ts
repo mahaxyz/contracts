@@ -5,12 +5,12 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const { deployments } = hre;
 
   const args = [
-    (await deployments.get("PegStabilityModule-sUSDe")).address,
-    "0xcf5540fffcdc3d510b18bfca6d2b9987b0772559", // address _odos,
+    (await deployments.get("L2DepositCollateralL0")).address,
+    "0x19cEeAd7105607Cd444F5ad10dd51356436095a1", // address _odos,
   ];
 
-  await deployContract(hre, "ZapMintMainnet", args, "ZapMintMainnet");
+  await deployContract(hre, "ZapMintBase", args, "ZapMintBase");
 }
 
-main.tags = ["ZapMintMainnet"];
+main.tags = ["ZapMintBase"];
 export default main;

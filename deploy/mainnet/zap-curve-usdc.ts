@@ -9,6 +9,8 @@ async function main(hre: HardhatRuntimeEnvironment) {
   const args = [
     (await deployments.get("StakingLPRewards-ssUSDzUSDz")).address,
     (await deployments.get("PegStabilityModule-USDC")).address,
+    (await deployments.get("USDC")).address,
+    "0xcf5540fffcdc3d510b18bfca6d2b9987b0772559", // address _odos,
   ];
 
   const zapD = await deployContract(
@@ -18,14 +20,14 @@ async function main(hre: HardhatRuntimeEnvironment) {
     "ZapCurvePoolUSDC"
   );
 
-  const zap = await ethers.getContractAt("ZapCurvePoolUSDC", zapD.address);
-  const usdc = await ethers.getContractAt(
-    "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
-    "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-  );
+  // const zap = await ethers.getContractAt("ZapCurvePoolUSDC", zapD.address);
+  // const usdc = await ethers.getContractAt(
+  //   "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
+  //   "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+  // );
 
-  await waitForTx(await usdc.approve(zap.target, MaxUint256));
-  await waitForTx(await zap.zapIntoLP(10e6, 0));
+  // await waitForTx(await usdc.approve(zap.target, MaxUint256));
+  // await waitForTx(await zap.zapIntoLP(10e6, 0));
 }
 
 main.tags = ["ZapCurvePoolUSDC"];

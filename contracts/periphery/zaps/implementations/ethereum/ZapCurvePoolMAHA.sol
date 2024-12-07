@@ -29,17 +29,7 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
     maha = IERC20(_maha);
     odos = _odos;
     maha.approve(address(pool), type(uint256).max);
-  }
-
-  /**
-   * @notice Zaps collateral into ZAI LP tokens
-   * @dev This function is used when the user only has collateral tokens.
-   * @param collateralAmount The amount of collateral to zap
-   * @param minLpAmount The minimum amount of LP tokens to stake
-   */
-  function zapIntoLP(uint256 collateralAmount, uint256 minLpAmount) public {
-    collateral.safeTransferFrom(msg.sender, me, collateralAmount);
-    _zapIntoLP(collateralAmount, minLpAmount);
+    zai.approve(address(pool), type(uint256).max);
   }
 
   function zapIntoLPWithOdos(
@@ -50,23 +40,20 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
   ) external payable {
     if (swapAsset != IERC20(address(0))) {
       swapAsset.safeTransferFrom(msg.sender, me, swapAmount);
+      swapAsset.approve(odos, swapAmount);
     }
 
-    // swap on odos
-    swapAsset.approve(odos, swapAmount);
+    // swap on odos to 50-50 collateral and maha
     (bool success,) = odos.call{value: msg.value}(odosCallData);
     require(success, "odos call failed");
 
-    _zapIntoLP(collateral.balanceOf(me), minLpAmount);
-  }
+    // convert collateral for zai
+    uint256 zaiToMint = psm.mintAmountIn(collateral.balanceOf(me));
+    psm.mint(address(this), zaiToMint);
 
-  function _zapIntoLP(uint256 collateralAmount, uint256 minLpAmount) internal {
-    // convert 100% collateral for zai
-    uint256 zaiAmount = collateralAmount * decimalOffset;
-    psm.mint(address(this), zaiAmount);
-
-    // add liquidity
-    _addLiquidity(zaiAmount, 0, minLpAmount);
+    // add liquidity with maha and ZAI
+    uint256 mahaAmount = maha.balanceOf(me);
+    _addLiquidity(zaiToMint, mahaAmount, minLpAmount);
 
     // we now have LP tokens; deposit into staking contract for the user
     staking.deposit(pool.balanceOf(address(this)), msg.sender);
@@ -74,9 +61,10 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
     // sweep any dust
     _sweep(zai);
     _sweep(collateral);
-    _sweep(IERC20Metadata(address(maha)));
+    _sweep(swapAsset);
+    _sweep(maha);
 
-    emit Zapped(msg.sender, collateralAmount / 2, zaiAmount, pool.balanceOf(msg.sender));
+    emit Zapped(msg.sender, mahaAmount, zaiToMint, pool.balanceOf(msg.sender));
   }
 
   function _addLiquidity(uint256 zaiAmt, uint256 collatAmt, uint256 minLp) internal virtual override {

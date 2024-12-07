@@ -18,7 +18,7 @@ import {IERC20Metadata} from "@openzeppelin/contracts/interfaces/IERC20Metadata.
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract ZapMint {
+contract ZapMintMainnet {
   using SafeERC20 for IERC20;
   using SafeERC20 for IERC20Metadata;
 
@@ -55,6 +55,10 @@ contract ZapMint {
   }
 
   function _sweep(IERC20 token) internal {
+    if (token == IERC20(address(0))) {
+      payable(msg.sender).transfer(address(this).balance);
+      return;
+    }
     uint256 tokenB = token.balanceOf(address(this));
     if (tokenB > 0 && !token.transfer(msg.sender, tokenB)) {
       revert TokenTransferFailed();
@@ -69,12 +73,15 @@ contract ZapMint {
   ) external payable {
     if (swapAsset != IERC20Metadata(address(0))) {
       swapAsset.safeTransferFrom(msg.sender, me, swapAmount);
-      swapAsset.approve(odos, swapAmount);
+      swapAsset.forceApprove(odos, swapAmount);
     }
 
-    // swap on odos
-    (bool success,) = odos.call{value: msg.value}(odosCallData);
-    require(success, "odos call failed");
+    if (swapAsset != collateral) {
+      // swap on odos
+      (bool success,) = odos.call{value: msg.value}(odosCallData);
+      require(success, "odos call failed");
+      _sweep(swapAsset);
+    }
 
     // mint ZAI
     uint256 zaiToMint = psm.mintAmountIn(collateral.balanceOf(me));
@@ -84,10 +91,6 @@ contract ZapMint {
     uint256 beforeBal = zai.balanceOf(msg.sender);
     uint256 afterBal = zai.balanceOf(msg.sender);
     require(afterBal - beforeBal >= minAmount, "insufficient tokens minted");
-
-    // sweep any dust
-    _sweep(collateral);
-    _sweep(swapAsset);
 
     emit Zapped(msg.sender, address(swapAsset), swapAmount, zaiToMint, afterBal);
   }

@@ -14,7 +14,7 @@
 pragma solidity 0.8.21;
 
 import {IERC20Metadata} from "@openzeppelin/contracts/interfaces/IERC20Metadata.sol";
-import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
+import {IERC20, IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 
 /**
  * @title ZapBase
@@ -52,7 +52,7 @@ abstract contract ZapBase {
     me = address(this);
   }
 
-  function _sweep(IERC20Metadata token) internal {
+  function _sweep(IERC20 token) internal {
     uint256 tokenB = token.balanceOf(address(this));
     if (tokenB > 0 && !token.transfer(msg.sender, tokenB)) {
       revert TokenTransferFailed();
