@@ -59,7 +59,8 @@ task(
 
     if (
       (!isOwnable(d) && !isProxy(d) && !isAccessControl(d)) ||
-      name.endsWith("-impl")
+      name.endsWith("-impl") ||
+      name.endsWith("-Impl")
     )
       continue;
 
