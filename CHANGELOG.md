@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.0](https://github.com/mahaxyz/contracts/compare/v1.16.0...v1.17.0) (2024-12-08)
+
+
+### Features
+
+* added a zap feature for minting ([7f32114](https://github.com/mahaxyz/contracts/commit/7f321147115f0372c0264b479f32f3c844790c7c))
+
 ## [1.16.0](https://github.com/mahaxyz/contracts/compare/v1.15.0...v1.16.0) (2024-12-07)
 
 
