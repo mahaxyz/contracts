@@ -32,18 +32,7 @@ contract ZapAerodromePoolUSDC is ZapAerodromeBase {
     address _router,
     address _odos
   ) ZapAerodromeBase(_staking, _bridge, _router) {
-    // nothing
     odos = _odos;
-  }
-
-  /**
-   * @notice Wrapper function for directly zapping with USDC collateral
-   * @param collateralAmount The amount of USDC to deposit into the LP
-   * @param minLpAmount The minimum LP tokens to receive after zapping
-   */
-  function zapIntoLP(uint256 collateralAmount, uint256 minLpAmount) public {
-    collateral.safeTransferFrom(msg.sender, me, collateralAmount);
-    _zapIntoLP(collateralAmount, minLpAmount);
   }
 
   /**
@@ -69,7 +58,7 @@ contract ZapAerodromePoolUSDC is ZapAerodromeBase {
    * @param minLpAmount The minimum LP tokens to receive after zapping
    * @param odosCallData Encoded Odos swap data
    */
-  function zapIntoLPWithOdos(
+  function zapWithOdos(
     IERC20 swapAsset,
     uint256 swapAmount,
     uint256 minLpAmount,
@@ -77,13 +66,15 @@ contract ZapAerodromePoolUSDC is ZapAerodromeBase {
   ) external payable {
     // Transfer swapAsset from user
     if (address(swapAsset) != address(0)) {
-      swapAsset.safeTransferFrom(msg.sender,me, swapAmount);
+      swapAsset.safeTransferFrom(msg.sender, me, swapAmount);
+      swapAsset.forceApprove(odos, swapAmount);
     }
 
-    // Approve Odos to spend swapAsset and perform the swap
-    swapAsset.approve(odos, swapAmount);
-    (bool success,) = odos.call{value: msg.value}(odosCallData);
-    require(success, "Odos swap failed");
+    // Swap swapAsset for USDC using Odos
+    if (address(swapAsset) != address(collateral)) {
+      (bool success,) = odos.call{value: msg.value}(odosCallData);
+      require(success, "Odos swap failed");
+    }
 
     // Now we have USDC in contract, call internal zap function
     _zapIntoLP(collateral.balanceOf(me), minLpAmount);
@@ -137,31 +128,5 @@ contract ZapAerodromePoolUSDC is ZapAerodromeBase {
     _sweep(collateral);
 
     emit Zapped(msg.sender, collateralAmount / 2, zaiAmount, pool.balanceOf(msg.sender));
-  }
-
-  function zapOutOfLP(uint256 amount, uint256 minCollateralAmount) external {
-    staking.withdraw(amount, msg.sender, me);
-
-    IAerodromeRouter(address(pool)).removeLiquidity(
-      address(collateral), address(zai), true, pool.balanceOf(me), 0, 0, me, block.timestamp
-    );
-
-    IAerodromeRouter.Route memory route = IAerodromeRouter.Route({
-      from: address(zai),
-      to: address(collateral),
-      stable: true,
-      factory: IAerodromeRouter(address(pool)).defaultFactory()
-    });
-
-    // swap usdc into zai
-    IAerodromeRouter.Route[] memory routes = new IAerodromeRouter.Route[](1);
-    routes[0] = route;
-    router.swapExactTokensForTokens(zai.balanceOf(me), 0, routes, me, block.timestamp);
-
-    require(collateral.balanceOf(me) >= minCollateralAmount, "!insufficient");
-
-    // sweep any dust
-    _sweep(zai);
-    _sweep(collateral);
   }
 }
