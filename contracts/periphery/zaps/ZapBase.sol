@@ -53,6 +53,12 @@ abstract contract ZapBase {
   }
 
   function _sweep(IERC20 token) internal {
+    if (token == IERC20(address(0))) {
+      if (address(this).balance == 0) return;
+      (bool success,) = msg.sender.call{value: address(this).balance}("");
+      if (!success) revert TokenTransferFailed();
+      return;
+    }
     uint256 tokenB = token.balanceOf(address(this));
     if (tokenB > 0 && !token.transfer(msg.sender, tokenB)) {
       revert TokenTransferFailed();

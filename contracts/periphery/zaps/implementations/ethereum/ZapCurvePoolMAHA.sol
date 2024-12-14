@@ -25,14 +25,14 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
   IERC20 public maha;
   address public odos;
 
-  constructor(address _staking, IERC20 _maha, address _psm, address _odos) ZapBaseEthereum(_staking, _psm) {
+  constructor(address _staking, address _psm, IERC20 _maha, address _odos) ZapBaseEthereum(_staking, _psm) {
     maha = IERC20(_maha);
     odos = _odos;
     maha.approve(address(pool), type(uint256).max);
     zai.approve(address(pool), type(uint256).max);
   }
 
-  function zapIntoLPWithOdos(
+  function zapWithOdos(
     IERC20 swapAsset,
     uint256 swapAmount,
     uint256 minLpAmount,
@@ -40,7 +40,7 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
   ) external payable {
     if (swapAsset != IERC20(address(0))) {
       swapAsset.safeTransferFrom(msg.sender, me, swapAmount);
-      swapAsset.approve(odos, swapAmount);
+      swapAsset.forceApprove(odos, swapAmount);
     }
 
     // swap on odos to 50-50 collateral and maha
@@ -69,8 +69,8 @@ contract ZapCurvePoolMAHA is ZapCurvePoolBase {
 
   function _addLiquidity(uint256 zaiAmt, uint256 collatAmt, uint256 minLp) internal virtual override {
     uint256[2] memory amounts; // = new uint256[2]();
-    amounts[0] = collatAmt;
-    amounts[1] = zaiAmt;
+    amounts[0] = zaiAmt;
+    amounts[1] = collatAmt;
     ICurveTwoCrypto(address(pool)).add_liquidity(amounts, minLp);
   }
 }

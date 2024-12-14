@@ -42,7 +42,7 @@ contract ZapCurvePoolUSDC is ZapCurvePoolBase {
   ) external payable {
     if (swapAsset != IERC20(address(0))) {
       swapAsset.safeTransferFrom(msg.sender, me, swapAmount);
-      swapAsset.approve(odos, swapAmount);
+      swapAsset.forceApprove(odos, swapAmount);
     }
 
     // swap on odos to 50-50 collateral and USDC
