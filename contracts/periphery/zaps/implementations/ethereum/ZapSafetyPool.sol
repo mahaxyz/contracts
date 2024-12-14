@@ -78,10 +78,10 @@ contract ZapSafetyPool {
   ) external payable {
     if (swapAsset != IERC20(address(0))) {
       swapAsset.safeTransferFrom(msg.sender, me, swapAmount);
+      swapAsset.forceApprove(odos, swapAmount);
     }
 
     // swap on odos
-    swapAsset.approve(odos, swapAmount);
     (bool success,) = odos.call{value: msg.value}(odosCallData);
     require(success, "odos call failed");
 
