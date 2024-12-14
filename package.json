@@ -15,7 +15,9 @@
     "coverage:html:mac": "yarn coverage:lcov && genhtml lcov.info --output-dir coverage --rc branch_coverage=1 --ignore-errors inconsistent --ignore-errors corrupt",
     "test": "yarn test:forge",
     "compile": "SKIP_LOAD=true hardhat compile && forge build",
-    "prepublishOnly": "npm run compile && npm run docs"
+    "prepublishOnly": "npm run compile && npm run docs",
+    "deploy-w3f-fees-distribute-mainnet": "w3f deploy web3-functions/fees-distribute-mainnet/index.ts",
+    "test-w3f-fees-distribute-mainnet": "hardhat w3f-run fees-distribute-mainnet --network mainnet --logs"
   },
   "files": [
     "abi",

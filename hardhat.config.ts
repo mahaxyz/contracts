@@ -1,20 +1,19 @@
-import { HardhatUserConfig } from "hardhat/config";
+import "@gelatonetwork/web3-functions-sdk/hardhat-plugin";
+import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomicfoundation/hardhat-ethers";
 import "@nomicfoundation/hardhat-toolbox";
-import "hardhat-dependency-compiler";
-import "hardhat-abi-exporter";
 import "@openzeppelin/hardhat-upgrades";
+import "@typechain/hardhat";
+import "hardhat-abi-exporter";
+import "hardhat-dependency-compiler";
 import "hardhat-deploy";
+import "hardhat-tracer";
 import "solidity-coverage";
 import "solidity-docgen";
-import "hardhat-tracer";
-
-import "@typechain/hardhat";
-import "@nomicfoundation/hardhat-chai-matchers";
-
-import dotenv from "dotenv";
-import { loadTasks } from "./scripts/utils";
+import { HardhatUserConfig } from "hardhat/config";
 import { keccak256 } from "ethers";
+import { loadTasks } from "./scripts/utils";
+import dotenv from "dotenv";
 dotenv.config();
 
 // const defaultAccount = {
@@ -40,13 +39,17 @@ if (!SKIP_LOAD) loadTasks(["misc", "layerzero"]);
 
 const _network = (url: string, gasPrice: number | "auto" = "auto") => ({
   url,
-  // accounts: [process.env.PRIVATE_KEY || ""],
   accounts: defaultAccount,
   saveDeployments: true,
   gasPrice,
 });
 
 const config: HardhatUserConfig = {
+  w3f: {
+    rootDir: "./web3-functions",
+    debug: false,
+    networks: ["linea", "base", "mainnet"], // (multiChainProvider) injects provider for these networks
+  },
   abiExporter: {
     path: "./abi",
     runOnCompile: true,
