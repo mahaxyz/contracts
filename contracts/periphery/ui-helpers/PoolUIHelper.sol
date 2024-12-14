@@ -41,6 +41,10 @@ contract PoolUIHelper {
     uint256 withdrawalTimestamp;
     uint256 zaiTotalSupply;
     uint256 zaiUserBalance;
+    uint256 poolTotalSupply;
+    uint256 lpTotalSupply;
+    uint256 lpPriceE8;
+    uint256 userUsdBalanceStaked;
   }
 
   constructor(address _maha, address _zai, address _szai, address _usdc) {
@@ -70,10 +74,9 @@ contract PoolUIHelper {
       res.mahaTotalSupply * _mahaPriceE8 / 1e8 + res.usdcTotalSupply * 1e12 + res.zaiTotalSupply + res.szaiTotalSupply
     ) / 1e10;
 
-    uint256 totalSupply = stakingPool4626.totalSupply();
-    if (totalSupply > 0) {
-      res.userShareE18 = totalSupply == 0 ? 0 : stakingPool4626.balanceOf(_who) * 1e18 / totalSupply;
-    }
+    res.poolTotalSupply = stakingPool4626.totalSupply();
+    res.lpTotalSupply = IERC4626(pool).totalSupply();
+    res.userShareE18 = res.poolTotalSupply == 0 ? 0 : stakingPool4626.balanceOf(_who) * 1e18 / res.poolTotalSupply;
 
     res.mahaUserBalance = res.mahaTotalSupply * res.userShareE18 / 1e18;
     res.usdcUserBalance = res.usdcTotalSupply * res.userShareE18 / 1e18;
@@ -90,6 +93,9 @@ contract PoolUIHelper {
 
     res.withdrawalAmount = stakingPool.withdrawalAmount(_who);
     res.withdrawalTimestamp = stakingPool.withdrawalTimestamp(_who);
+
+    res.lpPriceE8 = res.lpTotalSupply == 0 ? 0 : res.poolUsdTVLE8 * 1e18 / res.lpTotalSupply;
+    res.userUsdBalanceStaked = res.poolUsdTVLE8 * res.userShareE18 / 1e18;
   }
 
   function getPoolInfoMultiple(
