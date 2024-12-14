@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.18.0](https://github.com/mahaxyz/contracts/compare/v1.17.0...v1.18.0) (2024-12-14)
+
+
+### Features
+
+* added zap contracts for base ([9894e52](https://github.com/mahaxyz/contracts/commit/9894e520950be359a172fecc2b5858b1f2c794dc))
+* added zap for curve pools on eth mainnet ([1c302c8](https://github.com/mahaxyz/contracts/commit/1c302c89d12810122ba8d57b3331e01c32e3f1d6))
+
+
+### Bug Fixes
+
+* fixed the pool ui helper ([aead225](https://github.com/mahaxyz/contracts/commit/aead225a71f456f23afad3a816219b6ee6bab26f))
+* fixed zap for safety pool ([95b64d8](https://github.com/mahaxyz/contracts/commit/95b64d83582084fea3ab6af2baddff9134273862))
+
 ## [1.17.0](https://github.com/mahaxyz/contracts/compare/v1.16.0...v1.17.0) (2024-12-08)
 
 
