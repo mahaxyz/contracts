@@ -31,7 +31,7 @@ task(
   const timelock = await hre.deployments.get("MAHATimelockController");
 
   const deploymentNames = Object.keys(deployments);
-  const proxyAdmin = await hre.deployments.get("ProxyAdmin");
+  const proxyAdmin = await hre.deployments.getOrNull("ProxyAdmin");
 
   const isOwnable = (deployment: Deployment) =>
     deployment.abi.findIndex(
@@ -82,7 +82,7 @@ task(
       ) {
         console.warn(`   WARN!! owner for ${name} is`, owner);
       } else {
-        console.log(`  owner looks good`);
+        console.log(`  owner looks good`, owner);
       }
       if (owner.toLowerCase() != timelock.address.toLowerCase()) {
         console.warn(
@@ -91,13 +91,13 @@ task(
       }
     }
 
-    if (isProxy(d)) {
+    if (isProxy(d) && proxyAdmin) {
       const inst = await hre.ethers.getContractAt("MAHAProxy", d.address);
       const owner = await inst.proxyAdmin();
       if (owner.toLowerCase() != proxyAdmin.address.toLowerCase()) {
         console.warn(`   WARN!! proxyAdmin for ${name} is`, owner);
       } else {
-        console.log(`  proxyAdmin looks good`);
+        console.log(`  proxyAdmin looks good`, owner);
       }
     }
 

@@ -163,6 +163,14 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
         config: encoder.encode([configTypeExecutorStruct], [execConfigData]),
       };
 
+      console.log(
+        oft.target,
+        c.libraries.sendLib302,
+        ulnConfigDataSend,
+        ulnConfigDataRecv,
+        endpoint.target
+      );
+
       const currentUlnSend = await endpoint.getConfig(
         oft.target,
         c.libraries.sendLib302,

@@ -21,7 +21,7 @@ export interface IL0Config {
 export type IL0ConfigKey =
   | "arbitrum"
   | "base"
-  // | "blast"
+  | "sonic"
   | "bsc"
   | "linea"
   | "mainnet"
@@ -55,86 +55,70 @@ const pluckLibraries = (network: string) => {
   };
 };
 
+const pluckEid = (network: string) => deployments[network].eid;
+
 export const config: IL0ConfigMapping = {
   linea: {
-    eid: 30183,
+    eid: pluckEid("Linea-Mainnet"),
     contract: "OFT",
     confirmations: 15,
     optionalDVNThreshold: 2,
-    libraries: pluckLibraries("linea"),
+    libraries: pluckLibraries("Linea-Mainnet"),
     dvns: pluckDVNs("linea"),
     requiredDVNs: ["LayerZero_Labs"],
   },
+  sonic: {
+    eid: pluckEid("Sonic"),
+    contract: "OFT",
+    confirmations: 15,
+    optionalDVNThreshold: 1,
+    libraries: pluckLibraries("Sonic"),
+    dvns: pluckDVNs("sonic"),
+    requiredDVNs: ["LayerZero_Labs"],
+  },
   arbitrum: {
-    eid: 30110,
+    eid: pluckEid("Arbitrum-Mainnet"),
     contract: "OFT",
     confirmations: 15,
     optionalDVNThreshold: 2,
-    libraries: pluckLibraries("arbitrum"),
+    libraries: pluckLibraries("Arbitrum-Mainnet"),
     dvns: pluckDVNs("arbitrum"),
     requiredDVNs: ["LayerZero_Labs"],
   },
   mainnet: {
-    eid: 30101,
+    eid: pluckEid("Ethereum-Mainnet"),
     contract: "OFTAdapter",
     confirmations: 5,
     optionalDVNThreshold: 2,
-    libraries: pluckLibraries("ethereum"),
+    libraries: pluckLibraries("Ethereum-Mainnet"),
     dvns: pluckDVNs("ethereum"),
     requiredDVNs: ["LayerZero_Labs"],
   },
   base: {
-    eid: 30184,
+    eid: pluckEid("Base-Mainnet"),
     contract: "OFT",
     confirmations: 15,
     optionalDVNThreshold: 2,
-    libraries: pluckLibraries("base"),
+    libraries: pluckLibraries("Base-Mainnet"),
     dvns: pluckDVNs("base"),
     requiredDVNs: ["LayerZero_Labs"],
   },
-  // blast: {
-  //   eid: 30243,
-  //   contract: "OFT",
-  //   confirmations: 15,
-  //   optionalDVNThreshold: 2,
-  //   libraries: pluckLibraries("blast"),
-  //   dvns: pluckDVNs("blast"),
-  //   requiredDVNs: ["LayerZero_Labs"],
-  // },
   bsc: {
-    eid: 30102,
+    eid: pluckEid("Binance-Smart-Chain-Mainnet"),
     contract: "OFT",
     confirmations: 15,
     optionalDVNThreshold: 2,
-    libraries: pluckLibraries("bsc"),
+    libraries: pluckLibraries("Binance-Smart-Chain-Mainnet"),
     dvns: pluckDVNs("bsc"),
     requiredDVNs: ["LayerZero_Labs"],
   },
   xlayer: {
-    eid: 30274,
+    eid: pluckEid("X-Layer-Mainnet"),
     contract: "OFT",
     confirmations: 15,
     optionalDVNThreshold: 2,
-    libraries: pluckLibraries("xlayer"),
+    libraries: pluckLibraries("X-Layer-Mainnet"),
     dvns: pluckDVNs("xlayer"),
     requiredDVNs: ["LayerZero_Labs"],
   },
-  // scroll: {
-  //   eid: 30214,
-  //   contract: "OFT",
-  //   confirmations: 15,
-  //   optionalDVNThreshold: 2,
-  //   libraries: pluckLibraries("scroll"),
-  //   dvns: pluckDVNs("scroll"),
-  //   requiredDVNs: ["LayerZero_Labs"],
-  // },
-  // optimism: {
-  //   eid: 30111,
-  //   contract: "OFT",
-  //   confirmations: 15,
-  //   optionalDVNThreshold: 2,
-  //   libraries: pluckLibraries("optimism"),
-  //   dvns: pluckDVNs("optimism"),
-  //   requiredDVNs: ["LayerZero_Labs"],
-  // },
 };
