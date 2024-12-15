@@ -53,6 +53,11 @@ interface IPegStabilityModule {
   function rate() external returns (uint256);
 
   /**
+   * @notice Sweeps fees to the fee destination
+   */
+  function sweepFees() external;
+
+  /**
    * @notice The mint fee in BPS
    */
   function mintFeeBps() external returns (uint256);

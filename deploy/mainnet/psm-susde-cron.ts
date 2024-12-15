@@ -5,16 +5,20 @@ import { deployContract } from "../../scripts/utils";
 const main: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments } = hre;
   const szaiD = await deployments.get("SafetyPool-sZAI");
-  const sUSDe = await deployments.get("sUSDe");
+  const psm = await deployments.get("PegStabilityModule-sUSDe");
+  const safe = await deployments.get("GnosisSafe");
   const oftAdapter = await deployments.get("ZaiStablecoinOFTAdapter");
 
   const params = [
-    "0xcf5540fffcdc3d510b18bfca6d2b9987b0772559", // address _odos,
-    szaiD.address, // address _sZAI,
-    sUSDe.address, // address _sUSDe
+    psm.address,
+    szaiD.address,
     oftAdapter.address,
+    safe.address, // address _treasury,
+    safe.address, // address _mahaBuybacks,
+    997, // uint256 _remoteSlippage,
+    safe.address, // address _remoteAddr,
+    30184, // uint32 _dstEID
   ];
-
   await deployContract(hre, "sUSDeCollectorCron", params, `sUSDeCollectorCron`);
 };
 

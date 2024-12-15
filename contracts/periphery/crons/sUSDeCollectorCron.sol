@@ -13,31 +13,31 @@
 
 pragma solidity 0.8.21;
 
+import {IPegStabilityModule} from "../../interfaces/core/IPegStabilityModule.sol";
 import {IOFT, MessagingFee, SendParam} from "@layerzerolabs/lz-evm-oapp-v2/contracts/oft/interfaces/IOFT.sol";
-import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC4626} from "@openzeppelin/contracts/interfaces/IERC4626.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @title sUSDeCollectorCron
  * @notice A contract that manages revenue distribution through USDC transfers, using Stargate for cross-chain messaging
- *         and optionally performing swaps via the ODOS router.
+ * and optionally performing swaps via the ODOS router.
  * @dev The contract is upgradeable and inherits `Ownable2StepUpgradeable`. It supports setting an ODOS router,
- *      defining sZAI and USDC tokens, and has functions for swapping and cross-chain revenue distribution.
+ * defining sZAI and USDC tokens, and has functions for swapping and cross-chain revenue distribution.
  */
-contract sUSDeCollectorCron is AccessControlEnumerable {
+contract sUSDeCollectorCron is Ownable {
   using SafeERC20 for IERC20;
 
-  bytes32 public immutable EXECUTOR_ROLE = keccak256("EXECUTOR_ROLE");
-  address public immutable ODOS;
   IERC4626 public immutable SZAI;
   IERC20 public immutable ZAI;
   IERC20 public immutable SUSDE;
   IOFT public immutable OFT_ADAPTER;
+  IPegStabilityModule public immutable PSM;
 
   address public remoteDestination;
   uint32 public remoteEID;
-
+  uint256 public remoteSlippage;
   address public treasury;
   address public mahaBuyback;
 
@@ -45,31 +45,42 @@ contract sUSDeCollectorCron is AccessControlEnumerable {
   event RevenueCollected(uint256 indexed amount);
   event YieldDistributed(uint256 indexed amount, uint256 zaiSupply);
 
-  constructor(address _odos, address _sZAI, address _sUSDe, address _zaiAdapter) {
+  constructor(
+    address _psm,
+    address _sZAI,
+    address _zaiAdapter,
+    address _treasury,
+    address _mahaBuybacks,
+    uint256 _remoteSlippage,
+    address _remoteAddr,
+    uint32 _dstEID
+  ) Ownable(msg.sender) {
     SZAI = IERC4626(_sZAI);
-    SUSDE = IERC20(_sUSDe);
     ZAI = IERC20(SZAI.asset());
-    ODOS = _odos;
+    PSM = IPegStabilityModule(_psm);
+    SUSDE = IERC20(PSM.collateral());
     OFT_ADAPTER = IOFT(_zaiAdapter);
 
-    SUSDE.approve(ODOS, type(uint256).max);
+    SUSDE.approve(_psm, type(uint256).max);
     ZAI.approve(_zaiAdapter, type(uint256).max);
 
-    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-    _grantRole(EXECUTOR_ROLE, msg.sender);
+    treasury = _treasury;
+    mahaBuyback = _mahaBuybacks;
+    remoteDestination = _remoteAddr;
+    remoteEID = _dstEID;
+    remoteSlippage = _remoteSlippage;
   }
 
   receive() external payable {
     // nothing to do; accept all ETH
   }
 
-  /**
-   * @notice Executes a transaction on the ODOS router, distributing revenue to sZAI and MAHA stakers, and the treasury.
-   * @param data The transaction data to be executed on the ODOS router.
-   */
-  function execute(bytes calldata data) public payable onlyRole(EXECUTOR_ROLE) {
-    (bool ok,) = ODOS.call{value: msg.value}(data);
-    require(ok, "odos call failed");
+  function execute() public payable {
+    PSM.sweepFees();
+
+    uint256 zaiToMint = PSM.mintAmountIn(SUSDE.balanceOf(address(this)));
+    require(zaiToMint > 0, "No revenue to collect");
+    PSM.mint(address(this), zaiToMint);
 
     uint256 balance = ZAI.balanceOf(address(this));
     emit RevenueCollected(balance);
@@ -99,9 +110,14 @@ contract sUSDeCollectorCron is AccessControlEnumerable {
   /**
    * @notice Sets the destination addresses for cross-chain transfers.
    */
-  function setDestinationAddresses(address _treasury, address _mahaBuybacks) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function setDestinationAddresses(
+    address _treasury,
+    address _mahaBuybacks,
+    uint256 _remoteSlippage
+  ) external onlyOwner {
     treasury = _treasury;
     mahaBuyback = _mahaBuybacks;
+    remoteSlippage = _remoteSlippage;
   }
 
   /**
@@ -109,7 +125,7 @@ contract sUSDeCollectorCron is AccessControlEnumerable {
    * @param _remoteAddr The destination address on the remote chain.
    * @param _dstEID The destination EID on the remote chain.
    */
-  function setLayerZeroDestination(address _remoteAddr, uint32 _dstEID) external onlyRole(DEFAULT_ADMIN_ROLE) {
+  function setLayerZeroDestination(address _remoteAddr, uint32 _dstEID) external onlyOwner {
     remoteDestination = _remoteAddr;
     remoteEID = _dstEID;
   }
@@ -119,8 +135,12 @@ contract sUSDeCollectorCron is AccessControlEnumerable {
    * @dev Only callable by owner of the contract
    * @param token The ERC20 token to be refunded.
    */
-  function refund(IERC20 token) external onlyRole(DEFAULT_ADMIN_ROLE) {
-    token.safeTransfer(msg.sender, token.balanceOf(address(this)));
+  function refund(IERC20 token) external onlyOwner {
+    if (token == IERC20(address(0))) {
+      payable(msg.sender).transfer(address(this).balance);
+    } else {
+      token.safeTransfer(msg.sender, token.balanceOf(address(this)));
+    }
   }
 
   /**
@@ -145,7 +165,7 @@ contract sUSDeCollectorCron is AccessControlEnumerable {
       dstEid: remoteEID,
       to: _addressToBytes32(remoteDestination),
       amountLD: _amount,
-      minAmountLD: _amount,
+      minAmountLD: _amount * remoteSlippage / 1000, // 0.3% slippage
       extraOptions: new bytes(0),
       composeMsg: new bytes(0),
       oftCmd: ""
