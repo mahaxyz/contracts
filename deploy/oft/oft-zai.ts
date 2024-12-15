@@ -4,7 +4,7 @@ import { config } from "../../tasks/layerzero/config";
 import assert from "assert";
 
 async function main(hre: HardhatRuntimeEnvironment) {
-  const [deployer] = await hre.ethers.getSigners();
+  const [, deployer] = await hre.ethers.getSigners();
   assert(
     deployer.address.toLowerCase() ==
       "0x35b6e5db7ccc13ce934763067cb4a86ab41e7665",
@@ -18,7 +18,8 @@ async function main(hre: HardhatRuntimeEnvironment) {
     hre,
     "ZaiOFTWithRestaking",
     [config[hre.network.name].libraries.endpoint, mahaDeployer],
-    "ZaiStablecoinOFT"
+    "ZaiStablecoinOFT",
+    "0x35b6e5db7ccc13ce934763067cb4a86ab41e7665"
   );
 
   const zai = await hre.ethers.getContractAt(
@@ -28,6 +29,10 @@ async function main(hre: HardhatRuntimeEnvironment) {
 
   if (!(await hre.deployments.getOrNull("ZaiStablecoin"))) {
     await hre.deployments.save("ZaiStablecoin", {
+      abi: zai.interface.format(true),
+      address: contract.address,
+    });
+    await hre.deployments.save("ZAI", {
       abi: zai.interface.format(true),
       address: contract.address,
     });

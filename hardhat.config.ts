@@ -83,7 +83,7 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 100,
+        runs: 1000,
       },
     },
   },
@@ -102,6 +102,7 @@ const config: HardhatUserConfig = {
     bsc: _network("https://bsc-dataseed1.bnbchain.org"),
     blast: _network("https://rpc.blast.io"),
     linea: _network("https://rpc.linea.build"),
+    sonic: _network("https://rpc.soniclabs.com"),
     mainnet: _network("https://rpc.ankr.com/eth"),
     zircuit: _network("https://zircuit-mainnet.drpc.org"),
     optimism: _network("https://mainnet.optimism.io"),
@@ -124,6 +125,7 @@ const config: HardhatUserConfig = {
       linea: process.env.LINEASCAN_KEY || "",
       optimisticEthereum: process.env.OP_ETHERSCAN_KEY || "",
       scroll: process.env.SCROLLSCAN_KEY || "",
+      sonic: process.env.SONICSCAN_KEY || "",
       arbitrumOne: process.env.ARBISCAN_KEY || "",
       xlayer: "test",
     },
@@ -135,6 +137,14 @@ const config: HardhatUserConfig = {
           apiURL:
             "https://www.oklink.com/api/v5/explorer/contract/verify-source-code-plugin/XLAYER",
           browserURL: "https://www.oklink.com/xlayer",
+        },
+      },
+      {
+        network: "sonic",
+        chainId: 146,
+        urls: {
+          apiURL: "https://api.lineascan.build/api",
+          browserURL: "https://lineascan.build",
         },
       },
       {

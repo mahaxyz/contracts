@@ -1,0 +1,95 @@
+{
+  "address": "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "Deploy",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "bytecode",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_salt",
+          "type": "uint256"
+        }
+      ],
+      "name": "deploy",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "bytecode",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_salt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "target",
+          "type": "address"
+        }
+      ],
+      "name": "deployWithAssert",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xb3f6b106abaa86677bf305cfbcf2529d1289c23e98c5cd91aa92bd96cd8f222f",
+  "receipt": {
+    "to": null,
+    "from": "0x1F09Ec21d7fd0A21879b919bf0f9C46e6b85CA8b",
+    "contractAddress": "0x21F0F750E2d576AD5d01cFDDcF2095e8DA5b0fb0",
+    "transactionIndex": 0,
+    "gasUsed": "218494",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x505144fc34729ab8dd0d383c2c6ae728229fc9312b86c2939ffc65bb72af78dc",
+    "transactionHash": "0xb3f6b106abaa86677bf305cfbcf2529d1289c23e98c5cd91aa92bd96cd8f222f",
+    "logs": [],
+    "blockNumber": 437644,
+    "cumulativeGasUsed": "218494",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "cb87a5233ae0b9139a8c1f3a584c970c",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.21+commit.d9974bed\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"Deploy\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"bytecode\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"_salt\",\"type\":\"uint256\"}],\"name\":\"deploy\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"bytecode\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"_salt\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"deployWithAssert\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/Deployer.sol\":\"Deployer\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":100},\"remappings\":[]},\"sources\":{\"contracts/Deployer.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0\\n\\n// \\u2588\\u2588\\u2588\\u2557   \\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2557  \\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2588\\u2588\\u2557 \\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2557\\n// \\u2588\\u2588\\u2554\\u2588\\u2588\\u2588\\u2588\\u2554\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551\\u255a\\u2588\\u2588\\u2554\\u255d\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\u2588\\u2588\\u2554\\u2550\\u2550\\u2588\\u2588\\u2551\\n// \\u2588\\u2588\\u2551 \\u255a\\u2550\\u255d \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\u2588\\u2588\\u2551  \\u2588\\u2588\\u2551\\n// \\u255a\\u2550\\u255d     \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\u255a\\u2550\\u255d  \\u255a\\u2550\\u255d\\n\\n// Website: https://maha.xyz\\n// Discord: https://discord.gg/mahadao\\n// Twitter: https://twitter.com/mahaxyz_\\n\\npragma solidity 0.8.21;\\n\\ncontract Deployer {\\n  event Deploy(address addr);\\n\\n  function deploy(bytes memory bytecode, uint256 _salt) external {\\n    address addr;\\n    assembly {\\n      addr := create2(0, add(bytecode, 0x20), mload(bytecode), _salt)\\n      if iszero(extcodesize(addr)) { revert(0, 0) }\\n    }\\n\\n    emit Deploy(addr);\\n  }\\n\\n  function deployWithAssert(bytes memory bytecode, uint256 _salt, address target) external {\\n    address addr;\\n    assembly {\\n      addr := create2(0, add(bytecode, 0x20), mload(bytecode), _salt)\\n      if iszero(extcodesize(addr)) { revert(0, 0) }\\n    }\\n\\n    require(addr == target, \\\"Deployer: INVALID_TARGET\\\");\\n\\n    emit Deploy(addr);\\n  }\\n}\\n\",\"keccak256\":\"0xd9894bd002bbe7a70eb73cf093f04e8c182ac10c51a7f0b5c8b796c1224323fd\",\"license\":\"GPL-3.0\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506102fd806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c806337a43add1461003b5780639c4ae2d014610050575b600080fd5b61004e61004936600461021b565b610063565b005b61004e61005e366004610282565b61011e565b6000828451602086016000f59050803b61007c57600080fd5b816001600160a01b0316816001600160a01b0316146100dc5760405162461bcd60e51b815260206004820152601860248201527711195c1b1bde595c8e881253959053125117d5105491d15560421b604482015260640160405180910390fd5b6040516001600160a01b03821681527f55ea6c6b31543d8e2ec6a72f71a79c0f4b72ed0d4757172b043d8f4f4cd848489060200160405180910390a150505050565b6000818351602085016000f59050803b61013757600080fd5b6040516001600160a01b03821681527f55ea6c6b31543d8e2ec6a72f71a79c0f4b72ed0d4757172b043d8f4f4cd848489060200160405180910390a1505050565b634e487b7160e01b600052604160045260246000fd5b600082601f83011261019f57600080fd5b813567ffffffffffffffff808211156101ba576101ba610178565b604051601f8301601f19908116603f011681019082821181831017156101e2576101e2610178565b816040528381528660208588010111156101fb57600080fd5b836020870160208301376000602085830101528094505050505092915050565b60008060006060848603121561023057600080fd5b833567ffffffffffffffff81111561024757600080fd5b6102538682870161018e565b9350506020840135915060408401356001600160a01b038116811461027757600080fd5b809150509250925092565b6000806040838503121561029557600080fd5b823567ffffffffffffffff8111156102ac57600080fd5b6102b88582860161018e565b9560209490940135945050505056fea2646970667358221220ca045847760f901631d09db0cc4a571bedd853b378359b50b13fc62d60c255e064736f6c63430008150033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100365760003560e01c806337a43add1461003b5780639c4ae2d014610050575b600080fd5b61004e61004936600461021b565b610063565b005b61004e61005e366004610282565b61011e565b6000828451602086016000f59050803b61007c57600080fd5b816001600160a01b0316816001600160a01b0316146100dc5760405162461bcd60e51b815260206004820152601860248201527711195c1b1bde595c8e881253959053125117d5105491d15560421b604482015260640160405180910390fd5b6040516001600160a01b03821681527f55ea6c6b31543d8e2ec6a72f71a79c0f4b72ed0d4757172b043d8f4f4cd848489060200160405180910390a150505050565b6000818351602085016000f59050803b61013757600080fd5b6040516001600160a01b03821681527f55ea6c6b31543d8e2ec6a72f71a79c0f4b72ed0d4757172b043d8f4f4cd848489060200160405180910390a1505050565b634e487b7160e01b600052604160045260246000fd5b600082601f83011261019f57600080fd5b813567ffffffffffffffff808211156101ba576101ba610178565b604051601f8301601f19908116603f011681019082821181831017156101e2576101e2610178565b816040528381528660208588010111156101fb57600080fd5b836020870160208301376000602085830101528094505050505092915050565b60008060006060848603121561023057600080fd5b833567ffffffffffffffff81111561024757600080fd5b6102538682870161018e565b9350506020840135915060408401356001600160a01b038116811461027757600080fd5b809150509250925092565b6000806040838503121561029557600080fd5b823567ffffffffffffffff8111156102ac57600080fd5b6102b88582860161018e565b9560209490940135945050505056fea2646970667358221220ca045847760f901631d09db0cc4a571bedd853b378359b50b13fc62d60c255e064736f6c63430008150033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
