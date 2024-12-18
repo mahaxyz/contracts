@@ -41,9 +41,12 @@ cache-zk
 coverage
 dist
 docs/
+forge-build
 generated-abi
+guess-pk.ts
 hardhat-dependency-compiler/
 jspm_packages/
+lcov.info
 lerna-debug.log*
 lib-cov
 logs
@@ -55,11 +58,9 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 scripts/*.json
 scripts/data/*.json
 solcInputs
+tx*.json
 typechain-types/
 types
 typings/
 yarn-debug.log*
 yarn-error.log*
-lcov.info
-forge-build
-guess-pk.ts

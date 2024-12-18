@@ -143,8 +143,8 @@ const config: HardhatUserConfig = {
         network: "sonic",
         chainId: 146,
         urls: {
-          apiURL: "https://api.lineascan.build/api",
-          browserURL: "https://lineascan.build",
+          apiURL: "https://api.sonicscan.org/api",
+          browserURL: "https://sonicscan.org",
         },
       },
       {
