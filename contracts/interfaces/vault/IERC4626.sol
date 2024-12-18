@@ -9,6 +9,7 @@
 // Discord: https://discord.gg/mahadao
 // Twitter: https://twitter.com/mahaxyz_
 pragma solidity 0.8.21;
+
 interface IERC4626 {
   event Deposit(address indexed sender, address indexed owner, uint256 assets, uint256 shares);
   event Withdraw(
@@ -20,6 +21,7 @@ interface IERC4626 {
    * - MUST be an ERC-20 token contract.
    * - MUST NOT revert.
    */
+
   function asset() external view returns (address assetTokenAddress);
   /**
    * @dev Returns the total amount of the underlying asset that is “managed” by Vault.
@@ -42,9 +44,9 @@ interface IERC4626 {
   //    * “average-user’s” price-per-share, meaning what the average user should expect to see when exchanging to and
   //    * from.
   //    */
-  //   function convertToShares(
-  //     uint256 assets
-  //   ) external view returns (uint256 shares);
+  function convertToShares(
+    uint256 assets
+  ) external view returns (uint256 shares);
   //   /**
   //    * @dev Returns the amount of assets that the Vault would exchange for the amount of shares provided, in an ideal
   //    * scenario where all the conditions are met.
@@ -58,9 +60,9 @@ interface IERC4626 {
   //    * “average-user’s” price-per-share, meaning what the average user should expect to see when exchanging to and
   //    * from.
   //    */
-  //   function convertToAssets(
-  //     uint256 shares
-  //   ) external view returns (uint256 assets);
+  function convertToAssets(
+    uint256 shares
+  ) external view returns (uint256 assets);
   //   /**
   //    * @dev Returns the maximum amount of the underlying asset that can be deposited into the Vault for the receiver,
   //    * through a deposit call.
