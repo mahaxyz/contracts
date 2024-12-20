@@ -17,8 +17,12 @@ import {Ownable2StepUpgradeable} from "@openzeppelin/contracts-upgradeable/acces
 import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import {IERC20, SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+import {console} from "lib/forge-std/src/console.sol";
+
 interface StableSwap {
   function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) external;
+  function get_dy(int128 i, int128 j, uint256 dx) external view returns (uint256);
+  function get_dx(int128 i, int128 j, uint256 dy) external view returns (uint256);
 }
 
 contract USDCVault is ERC20Upgradeable, Ownable2StepUpgradeable, IERC4626 {
@@ -79,39 +83,34 @@ contract USDCVault is ERC20Upgradeable, Ownable2StepUpgradeable, IERC4626 {
     USDC.safeTransferFrom(msg.sender, address(this), assets);
 
     // 2. Convert USDC to USDe
-    uint256 balanceUSDC = USDC.balanceOf(address(this));
-    require(balanceUSDC > 0, "No USDC");
-
-    uint256 balanceUSDe = _swapUSDCtoUSDe(balanceUSDC);
+    uint256 balanceUSDe = _swapUSDCtoUSDe(assets);
+    console.log("USDe balance this contract have after swap", balanceUSDe);
 
     // 3. Deposit the USDe into SUSDe Vault
     USDE.approve(address(SUSDE), balanceUSDe);
     uint256 susdeShares = SUSDE.deposit(balanceUSDe, address(this));
-
+    console.log("After depositing in sUSDe vault get shares", susdeShares);
     // 4. Zap into SZAI from SUSDe shares
     uint256 SZAIBalanceBefore = IERC20(address(SZAI)).balanceOf(address(this)); // Before Zap
     IERC20(address(SUSDE)).approve(address(zapContract), susdeShares);
     zapContract.zapIntoSafetyPool(PSM, susdeShares);
     uint256 SZAIBalanceAfter = IERC20(address(SZAI)).balanceOf(address(this)); // After Zap
-
+    console.log("After Zap we get SZAI", SZAIBalanceAfter);
     require(SZAIBalanceAfter > SZAIBalanceBefore, "Zap Failed");
 
+    uint256 sZAIMinted = SZAIBalanceAfter - SZAIBalanceBefore;
+
+    console.log("SZAI Minted : ", sZAIMinted);
     // 5. Calculate the number of shares to mint for the receiver based on the assets
-    uint256 sharesToMint = convertToShares(SZAIBalanceAfter - SZAIBalanceBefore);
+    uint256 sharesToMint = previewDeposit(sZAIMinted);
+
+    console.log("Shares to Mint", sharesToMint);
 
     // 6. Mint the calculated number of shares to the receiver
     _mint(receiver, sharesToMint);
 
     return sharesToMint;
   }
-
-  /**
-   * @dev Mints new shares for the receiver (not implemented in this contract).
-   * @param shares The number of shares to mint.
-   * @param receiver The address that will receive the minted shares.
-   * @return assets The number of assets corresponding to the minted shares.
-   */
-  function mint(uint256 shares, address receiver) external returns (uint256 assets) {}
 
   /**
    * @dev Withdraws assets (SZAI) from the vault by burning the user's shares.
@@ -122,74 +121,38 @@ contract USDCVault is ERC20Upgradeable, Ownable2StepUpgradeable, IERC4626 {
    */
   function withdraw(uint256 assets, address receiver, address owner) external returns (uint256 shares) {
     // 1. Calculate the number of shares the user needs to burn to withdraw the requested assets (SZAI)
-    shares = convertToShares(assets);
-
-    // 2. Ensure the owner has enough shares to burn
-    uint256 ownerShares = balanceOf(owner);
-    require(ownerShares >= shares, "Insufficient shares to withdraw");
+    shares = previewWithdraw(assets);
+    console.log("Shares to Burn", shares);
 
     // 3. Check if the vault has enough SZAI for the withdrawal
     uint256 vaultSZAI = IERC20(address(SZAI)).balanceOf(address(this));
+    console.log("SZAI Balance in Vault: ", vaultSZAI);
     require(vaultSZAI >= assets, "Insufficient SZAI in vault for withdrawal");
 
     // 4. Transfer the SZAI to the receiver
-    IERC20(address(SZAI)).safeTransfer(receiver, assets);
+    IERC20(address(SZAI)).safeTransfer(receiver, shares);
 
     // 5. Burn the shares from the owner's balance
-    _burn(owner, shares);
+    _burn(owner, assets);
 
     return shares; // Return the number of shares burned
   }
-
-  /**
-   * @dev Allows for the redemption of shares for assets (not implemented in this contract).
-   * @param shares The number of shares to redeem.
-   * @param receiver The address to receive the redeemed assets.
-   * @param owner The owner of the shares to redeem.
-   * @return assets The amount of assets redeemed.
-   */
-  function redeem(uint256 shares, address receiver, address owner) external returns (uint256 assets) {}
-
   /**
    * @dev Converts a given amount of assets into the equivalent number of shares.
    * @param assets The amount of assets to convert.
    * @return shares The equivalent number of shares.
    */
-  function convertToShares(
+
+  function previewDeposit(
     uint256 assets
   ) public view returns (uint256 shares) {
-    uint256 totalAssetsInVault = totalAssets(); // The total assets held by the vault (SZAI)
-    uint256 totalSupplyVault = totalSupply(); // The total number of shares in circulation
-
-    // Handle the edge case where no shares exist (empty vault)
-    if (totalAssetsInVault == 0 || totalSupplyVault == 0) {
-      // If the vault is empty, the first deposit should mint exactly the number of shares as the amount of assets
-      return assets;
-    }
-
-    // Convert assets to shares (based on the ratio of totalAssets / totalSupply)
-    return (assets * totalSupplyVault) / totalAssetsInVault;
+    return _convertSZAIToUSDC(assets);
   }
 
-  /**
-   * @dev Converts a given number of shares into the equivalent amount of assets.
-   * @param shares The number of shares to convert.
-   * @return assets The equivalent amount of assets.
-   */
-  function convertToAssets(
-    uint256 shares
-  ) public view returns (uint256 assets) {
-    uint256 totalAssetsInVault = totalAssets(); // The total assets held by the vault (SZAI)
-    uint256 totalSupplyVault = totalSupply(); // The total number of shares in circulation
-
-    // Handle the edge case where no shares exist (empty vault)
-    if (totalAssetsInVault == 0 || totalSupplyVault == 0) {
-      // If the vault is empty, the first deposit should mint exactly the number of shares as the amount of assets
-      return shares;
-    }
-
-    // Convert shares to assets (based on the ratio of totalAssets / totalSupply)
-    return (shares * totalAssetsInVault) / totalSupplyVault;
+  function previewWithdraw(
+    uint256 assets
+  ) public view returns (uint256 shares) {
+    return _convertUSDCToSZAI(assets);
   }
 
   /**
@@ -200,12 +163,45 @@ contract USDCVault is ERC20Upgradeable, Ownable2StepUpgradeable, IERC4626 {
     return address(USDC);
   }
 
-  /**
-   * @dev Returns the total assets held by the vault (SZAI).
-   * @return The total assets in the vault.
-   */
-  function totalAssets() public view returns (uint256) {
-    return IERC20(address(SZAI)).balanceOf(address(this));
+  function _convertSZAIToUSDC(
+    uint256 assets
+  ) internal view returns (uint256) {
+    int128 indexTokenIn = 1; // USDC
+    int128 indexTokenOut = 0; // USDe
+    uint256 SzaiBalance = IERC20(address(SZAI)).balanceOf(address(this));
+    console.log("SZAI Balance in contract", SzaiBalance);
+    // convert SZAI to ZAI First
+    uint256 ZaiBalance = SZAI.previewWithdraw(SzaiBalance);
+    console.log("ZAI Assets", ZaiBalance);
+    // Convert ZAI to SUSDe
+    uint256 sUsdeBalance = PSM.toCollateralAmount(ZaiBalance);
+    console.log("SUSDE Balance", sUsdeBalance);
+    // Convert SUSDE to USDe
+    uint256 usdeBalance = SUSDE.previewWithdraw(sUsdeBalance);
+    console.log("USDE Balance", usdeBalance);
+    // Convert USDE to USDC
+    uint256 usdcBalance = stableSwap.get_dx(indexTokenIn, indexTokenOut, usdeBalance);
+    return usdcBalance;
+  }
+
+  function _convertUSDCToSZAI(
+    uint256 shares
+  ) internal view returns (uint256) {
+    int128 indexTokenIn = 1; // USDC
+    int128 indexTokenOut = 0; // USDe
+    // USDC to USDe
+    uint256 usdeAfterSwap = stableSwap.get_dy(indexTokenIn, indexTokenOut, shares);
+    console.log("USDE Swap Balance", usdeAfterSwap);
+    // USDe to SUSDe
+    uint256 susdeAfterDeposit = SUSDE.previewDeposit(usdeAfterSwap);
+    console.log("SUSDE shares after deposit", susdeAfterDeposit);
+    // Call PSM to get the ZAI Mint Amount
+    uint256 zaiToMint = PSM.mintAmountIn(susdeAfterDeposit);
+    console.log("ZAI to mint", zaiToMint);
+    // Call preview deposit to get SZAI
+    uint256 sZaiAfterDeposit = SZAI.previewDeposit(zaiToMint);
+    console.log("SZAI After Deposit", sZaiAfterDeposit);
+    return sZaiAfterDeposit;
   }
 
   /**

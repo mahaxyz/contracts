@@ -47,35 +47,36 @@ contract USDCVaultFork is Test {
   function testInitValuesVault() external view {
     address vaultAddress = vault.asset();
     assertEq(vaultAddress, address(USDC));
-    assertEq(vault.totalAssets(), 0);
   }
 
   function testVaultDeposit() external {
-    // Need the whale USDC address
+    // Define the addresses for the whale and the recipient
     address USDCWHALE = 0x412Dd3F282b1FA20d3232d86aE060dEC644249f6;
     address bob = makeAddr("1");
+    uint256 depositAmount = 100_000_000; // USDC to deposit
+    // Start the prank for the whale (USDCWHALE)
     vm.startPrank(USDCWHALE);
-    // Approve Vault
-    USDC.approve(address(vault), 100_000_000);
-    // deposit 100 USDC in the vault
-    vault.deposit(100_000_000, bob);
+    // Approve Vault to transfer USDC
+    USDC.approve(address(vault), depositAmount);
+    // Perform the deposit of 100 million USDC into the vault for 'bob'
+    vault.deposit(depositAmount, bob);
     vm.stopPrank();
   }
 
-  function testVaultWithdraw() external {
+  function testWithdrawVault() external {
+    // Define the addresses for the whale and the recipient
     address USDCWHALE = 0x412Dd3F282b1FA20d3232d86aE060dEC644249f6;
     address bob = makeAddr("1");
-    uint256 depositAmount = 100_000_000;
-    uint256 withdrawAmount = 5_000_000;
+    address alice = makeAddr("2");
+    uint256 depositAmount = 100_000_000; // USDC to deposit
+    uint256 withdrawAmount = 50_000_000;
+    // Start the prank for the whale (USDCWHALE)
     vm.startPrank(USDCWHALE);
-    // Approve Vault
+    // Approve Vault to transfer USDC
     USDC.approve(address(vault), depositAmount);
-    // deposit 100 USDC in the vault
+    // Perform the deposit of 100 million USDC into the vault for 'bob'
     vault.deposit(depositAmount, bob);
-    vm.stopPrank();
-
-    vm.startPrank(bob);
-    vault.withdraw(withdrawAmount, address(this), bob);
+    vault.withdraw(withdrawAmount, alice, bob);
     vm.stopPrank();
   }
 }
