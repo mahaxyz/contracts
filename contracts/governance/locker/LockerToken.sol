@@ -24,9 +24,10 @@ contract LockerToken is BaseLocker {
   /// @param _id The lock id
   /// @param _startDate The new start date
   /// @dev This function can only be called by the staking contract
-  function updateLockStartDate(uint256 _id, uint256 _startDate) external {
+  function updateLockDates(uint256 _id, uint256 _startDate, uint256 _endDate) external {
     require(msg.sender == address(staking), "!_staking");
     _locked[_id].start = _startDate;
+    _locked[_id].end = _endDate;
     _locked[_id].power = _calculatePower(_locked[_id]);
   }
 }

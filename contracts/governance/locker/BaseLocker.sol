@@ -62,19 +62,18 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
 
   /// @dev Interface identification is specified in ERC-165.
   /// @param _interfaceID Id of the interface
-  function supportsInterface(bytes4 _interfaceID)
-    public
-    view
-    override (ERC721EnumerableUpgradeable, IERC165)
-    returns (bool)
-  {
+  function supportsInterface(
+    bytes4 _interfaceID
+  ) public view override (ERC721EnumerableUpgradeable, IERC165) returns (bool) {
     return ERC721EnumerableUpgradeable.supportsInterface(_interfaceID);
   }
 
   /// @notice Get timestamp when `_tokenId`'s lock finishes
   /// @param _tokenId User NFT
   /// @return Epoch time of the lock end
-  function lockedEnd(uint256 _tokenId) external view returns (uint256) {
+  function lockedEnd(
+    uint256 _tokenId
+  ) external view returns (uint256) {
     return _locked[_tokenId].end;
   }
 
@@ -82,21 +81,27 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
     return _underlying;
   }
 
-  function locked(uint256 _tokenId) external view returns (LockedBalance memory) {
+  function locked(
+    uint256 _tokenId
+  ) external view returns (LockedBalance memory) {
     return _locked[_tokenId];
   }
 
   /// @dev Returns the voting power of the `_owner`.
   ///      Throws if `_owner` is the zero address. NFTs assigned to the zero address are considered invalid.
   /// @param _owner Address for whom to query the voting power of.
-  function votingPowerOf(address _owner) external view returns (uint256 _power) {
+  function votingPowerOf(
+    address _owner
+  ) external view returns (uint256 _power) {
     for (uint256 index = 0; index < balanceOf(_owner); index++) {
       uint256 _tokenId = tokenOfOwnerByIndex(_owner, index);
       _power += balanceOfNFT(_tokenId);
     }
   }
 
-  function _calculatePower(LockedBalance memory lock) internal view returns (uint256 power) {
+  function _calculatePower(
+    LockedBalance memory lock
+  ) internal view returns (uint256 power) {
     power = ((lock.end - lock.start) * lock.amount) / MAXTIME;
   }
 
@@ -214,7 +219,9 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
 
   /// @notice Withdraw all tokens for `_tokenId`
   /// @dev Only possible if the lock has expired
-  function withdraw(uint256 _tokenId) public virtual nonReentrant {
+  function withdraw(
+    uint256 _tokenId
+  ) public virtual nonReentrant {
     require(_isAuthorized(ownerOf(_tokenId), msg.sender, _tokenId), "caller is not owner nor approved");
     LockedBalance memory __locked = _locked[_tokenId];
     require(block.timestamp >= __locked.end, "The lock didn't expire");
@@ -230,7 +237,9 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
     emit Supply(supplyBefore, supplyBefore - value);
   }
 
-  function withdraw(uint256[] calldata _tokenIds) external nonReentrant {
+  function withdraw(
+    uint256[] calldata _tokenIds
+  ) external nonReentrant {
     uint256 nftCount = _tokenIds.length;
     for (uint256 i = 0; i < nftCount;) {
       withdraw(_tokenIds[i]);
@@ -240,7 +249,9 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
     }
   }
 
-  function withdraw(address _user) external nonReentrant {
+  function withdraw(
+    address _user
+  ) external nonReentrant {
     uint256 nftCount = balanceOf(_user);
     for (uint256 i = 0; i < nftCount;) {
       uint256 tokenId_ = tokenOfOwnerByIndex(_user, i);
@@ -276,11 +287,15 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
     return _tokenId;
   }
 
-  function balanceOfNFT(uint256 _tokenId) public view returns (uint256) {
+  function balanceOfNFT(
+    uint256 _tokenId
+  ) public view returns (uint256) {
     return _locked[_tokenId].power;
   }
 
-  function tokenURI(uint256) public view virtual override returns (string memory) {
+  function tokenURI(
+    uint256
+  ) public view virtual override returns (string memory) {
     // todo
     return "";
   }

@@ -1,5 +1,7 @@
+import hre from "hardhat";
 import { ZeroAddress } from "ethers";
 import { ethers, network, run } from "hardhat";
+import { deployContract, waitForTx } from "../utils";
 
 async function main() {
   const SAFE = "0x7427E82f5abCbcA2a45cAfE6e65cBC1FADf9ad9D";
@@ -7,96 +9,62 @@ async function main() {
   const WETH_BASE = "0x4200000000000000000000000000000000000006";
   const REWARD_DURATION = 86400 * 7; // 7 Days
 
-  const TransparentProxy = await ethers.getContractFactory(
-    "TransparentUpgradeableProxy"
-  );
-  const LockerToken = await ethers.getContractFactory("LockerToken");
-  const OmnichainStakingToken = await ethers.getContractFactory(
-    "OmnichainStakingToken"
-  );
+  const [deployer] = await ethers.getSigners();
+
+  const proxyAdminD = await hre.deployments.get("ProxyAdmin");
 
   // Deploy the implementations
-  const omnichainStakingTokenImpl = await OmnichainStakingToken.deploy();
-  const lockerTokenImpl = await LockerToken.deploy();
-
-  await omnichainStakingTokenImpl.waitForDeployment();
-  await lockerTokenImpl.waitForDeployment();
-
-  console.log(
-    `Omnichain Staking Implementation: ${await omnichainStakingTokenImpl.getAddress()}`
+  const omnichainStakingTokenImpl = await deployContract(
+    hre,
+    "OmnichainStakingToken",
+    [],
+    "OmnichainStakingTokenImpl"
   );
-  console.log(
-    `Locker Token Implementation: ${await lockerTokenImpl.getAddress()}`
+  const lockerTokenImpl = await deployContract(
+    hre,
+    "LockerToken",
+    [],
+    "LockerTokenImpl"
   );
 
   // Deploy proxies
-  const omnichainStakingTokenProxy = await TransparentProxy.deploy(
-    await omnichainStakingTokenImpl.getAddress(),
-    SAFE,
-    "0x"
+  const omnichainStakingTokenProxyD = await deployContract(
+    hre,
+    "TransparentUpgradeableProxy",
+    [omnichainStakingTokenImpl.address, proxyAdminD.address, "0x"],
+    "OmnichainStakingToken"
   );
-  const lockerTokenProxy = await TransparentProxy.deploy(
-    await lockerTokenImpl.getAddress(),
-    SAFE,
-    "0x"
+  const lockerTokenProxyD = await deployContract(
+    hre,
+    "TransparentUpgradeableProxy",
+    [lockerTokenImpl.address, proxyAdminD.address, "0x"],
+    "LockerToken"
   );
 
-  await omnichainStakingTokenProxy.waitForDeployment();
-  await lockerTokenProxy.waitForDeployment();
-
-  console.log(
-    `Omnichain Staking Proxy: ${await omnichainStakingTokenProxy.getAddress()}`
-  );
-  console.log(`Locker Token Proxy: ${await lockerTokenProxy.getAddress()}`);
-
-  // Interacting through proxies
-  const omnichainStakingToken = await ethers.getContractAt(
+  const omnichainStakingToken = await hre.ethers.getContractAt(
     "OmnichainStakingToken",
-    await omnichainStakingTokenProxy.getAddress()
+    omnichainStakingTokenProxyD.address
   );
-
-  const lockerToken = await ethers.getContractAt(
+  const lockerToken = await hre.ethers.getContractAt(
     "LockerToken",
-    await lockerTokenProxy.getAddress()
+    lockerTokenProxyD.address
   );
 
   // Initialize the contracts
-  await lockerToken.init(
-    MAHA_BASE,
-    await omnichainStakingToken.getAddress(),
-    ZeroAddress
+  await waitForTx(
+    await lockerToken.initialize(MAHA_BASE, omnichainStakingToken.target)
   );
-
-  await omnichainStakingToken.init(
-    await lockerToken.getAddress(),
-    WETH_BASE,
-    MAHA_BASE,
-    REWARD_DURATION,
-    SAFE,
-    ZeroAddress
+  await waitForTx(
+    await omnichainStakingToken.initialize(
+      lockerToken.target,
+      WETH_BASE,
+      [MAHA_BASE, WETH_BASE],
+      REWARD_DURATION,
+      deployer.address,
+      ZeroAddress
+    )
   );
-
-  if (network.name !== "hardhat") {
-    // Verify the implementations
-    await run("verify:verify", { address: await lockerTokenImpl.getAddress() });
-    await run("verify:verify", {
-      address: await omnichainStakingTokenImpl.getAddress(),
-    });
-
-    // Verify the proxies
-    await run("verify:verify", {
-      address: await lockerTokenProxy.getAddress(),
-      constructorArguments: [await lockerTokenImpl.getAddress(), SAFE, "0x"],
-    });
-    await run("verify:verify", {
-      address: await omnichainStakingTokenProxy.getAddress(),
-      constructorArguments: [
-        await omnichainStakingTokenImpl.getAddress(),
-        SAFE,
-        "0x",
-      ],
-    });
-  }
+  await waitForTx(await omnichainStakingToken.setMigrator(deployer.address));
 }
 
 main().catch((err) => {

@@ -15,14 +15,15 @@ pragma solidity 0.8.21;
 
 import {IAggregatorV3Interface} from "../../../interfaces/governance/IAggregatorV3Interface.sol";
 import {ILPOracle} from "../../../interfaces/governance/ILPOracle.sol";
-import {OmnichainStakingBase} from "./OmnichainStakingBase.sol";
+import {IERC20, OmnichainStakingBase} from "./OmnichainStakingBase.sol";
 
 interface ILockerWithUpdate {
-  function updateLockStartDate(uint256 _id, uint256 _startDate) external;
+  function updateLockDates(uint256 _id, uint256 _startDate, uint256 _endDate) external;
 }
 
 contract OmnichainStakingToken is OmnichainStakingBase {
   address public migrator;
+  mapping(uint256 => bool) public migratedLockId;
 
   function initialize(
     address _locker,
@@ -39,21 +40,33 @@ contract OmnichainStakingToken is OmnichainStakingBase {
     _transferOwnership(_owner);
   }
 
-  function _getTokenPower(uint256 amount) internal pure override returns (uint256 power) {
+  function _getTokenPower(
+    uint256 amount
+  ) internal pure override returns (uint256 power) {
     power = amount;
   }
 
-  function setMigrator(address _migrator) external onlyOwner {
+  function setMigrator(
+    address _migrator
+  ) external onlyOwner {
     migrator = _migrator;
   }
 
-  function migrate(uint256 _value, uint256 _startDate, uint256 _endDate, address _who) external {
+  function migrate(uint256 id, uint256 _value, uint256 _startDate, uint256 _endDate, address _who) external {
     require(msg.sender == migrator, "!migrator");
+    require(!migratedLockId[id], "migrated");
+    migratedLockId[id] = true;
 
-    uint256 _duration = _endDate < block.timestamp ? 2 weeks : _endDate - block.timestamp;
-    uint256 id = locker.createLockFor(_value, _duration, _who, true);
+    IERC20 maha = locker.underlying();
+    maha.transferFrom(msg.sender, address(this), _value);
 
-    ILockerWithUpdate(address(locker)).updateLockStartDate(id, _startDate);
-    _updateVotingPower(msg.sender, id);
+    uint256 newId = locker.createLockFor(_value, 2 weeks, _who, true);
+
+    ILockerWithUpdate(address(locker)).updateLockDates(newId, _startDate, _endDate);
+    _updateVotingPower(_who, newId);
+  }
+
+  function moveLockOwnership(uint256 _id, address _to) external onlyOwner {
+    // todo
   }
 }

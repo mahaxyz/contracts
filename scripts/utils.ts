@@ -99,6 +99,7 @@ export async function deployContract(
   name: string,
   sender?: string
 ) {
+  console.log("deploying contract", name);
   const { deploy } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
 
