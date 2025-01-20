@@ -40,7 +40,7 @@ async function main() {
     .on("end", async () => {
       // migrate all the nfts
       let txs: ContractTransaction[] = [];
-      for (let index = 310; index < results.length; index++) {
+      for (let index = 0; index < results.length; index++) {
         const result = results[index];
         const amount = parseInt(result.amount);
         const owner =
@@ -77,7 +77,7 @@ async function main() {
           )
         );
 
-        if (index % 10 == 0 && txs.length > 0) {
+        if (index % 1 == 0 && txs.length > 0) {
           let nonce = await deployer.getNonce();
           const receipt = txs.map((r) =>
             deployer.sendTransaction({ ...r, nonce: nonce++ })
