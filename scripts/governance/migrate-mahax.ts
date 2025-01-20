@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import csv from "csv-parser";
 import { waitForTx } from "../utils";
-import { MaxUint256 } from "ethers";
+import { ContractTransaction, MaxUint256 } from "ethers";
 
 async function main() {
   const stakingD = await hre.deployments.get("OmnichainStakingToken");
@@ -39,7 +39,8 @@ async function main() {
     .on("data", (data) => results.push(data))
     .on("end", async () => {
       // migrate all the nfts
-      for (let index = 200; index < results.length; index++) {
+      let txs: ContractTransaction[] = [];
+      for (let index = 310; index < results.length; index++) {
         const result = results[index];
         const amount = parseInt(result.amount);
         const owner =
@@ -63,8 +64,8 @@ async function main() {
         );
 
         const e18 = 10n ** 18n;
-        await waitForTx(
-          await staking.migrate(
+        txs.push(
+          await staking.migrate.populateTransaction(
             result.token,
             BigInt(amount) * e18,
             start,
@@ -75,6 +76,16 @@ async function main() {
             }
           )
         );
+
+        if (index % 10 == 0 && txs.length > 0) {
+          let nonce = await deployer.getNonce();
+          const receipt = txs.map((r) =>
+            deployer.sendTransaction({ ...r, nonce: nonce++ })
+          );
+          const results = await Promise.all(receipt);
+          await waitForTx(results[results.length - 1]);
+          txs = [];
+        }
       }
     });
 }
