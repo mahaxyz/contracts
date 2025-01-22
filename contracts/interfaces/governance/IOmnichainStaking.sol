@@ -85,6 +85,13 @@ interface IOmnichainStaking is IMultiTokenRewards, IVotes {
   function unstakeToken(uint256 tokenId) external;
 
   /**
+   * @notice A single withdraw function to unstake NFT, transfer it back to
+   * the user, and also withdraw all tokens for `tokenId` from the locker.
+   * @param tokenId The ID of the regular token NFT to unstake and withdraw.
+   */
+  function unstakeAndWithdraw(uint256 tokenId) external;
+
+  /**
    * @notice Updates the lock duration for a specific NFT.
    * @param tokenId The ID of the NFT for which to update the lock duration.
    * @param newLockDuration The new lock duration in seconds.
