@@ -36,7 +36,7 @@ contract PegStabilityModuleYield is PegStabilityModuleBase {
     uint256 _mintFeeBps,
     uint256 _redeemFeeBps,
     address _feeDestination
-  ) external reinitializer(1) {
+  ) external reinitializer(4) {
     __PegStabilityModule_init(
       _zai, _collateral, _governance, _supplyCap, _debtCap, _mintFeeBps, _redeemFeeBps, _feeDestination
     );
@@ -62,5 +62,12 @@ contract PegStabilityModuleYield is PegStabilityModuleBase {
     uint256 balance = collateral.balanceOf(address(this)); // sUSDE
     require(balance > expectedCollateral, "no yield to transfer");
     yield = balance - expectedCollateral; // sUSDE
+  }
+
+  function emergencyPull(
+    address dest
+  ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    collateral.safeTransfer(dest, collateral.balanceOf(address(this)));
+    _pause();
   }
 }
