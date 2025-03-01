@@ -58,7 +58,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 scripts/*.json
 scripts/data/*.json
 solcInputs
-tx*.json
+execute/*.json
 typechain-types/
 types
 typings/

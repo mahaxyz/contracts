@@ -24,27 +24,13 @@ const yellowLog = (text: string) => console.log(`\x1b[33m${text}\x1b[0m`);
 const _fetchAndSortDVNS = (
   conf: IL0Config,
   dvns: string[] = [],
-  remoteDvns: string[] = [],
-  currentDvs: string[] = [],
+  remoteDVNs: string[] = [],
   limit: number = 5
 ) => {
-  const commonDVNs = _.intersection(dvns, remoteDvns);
-
-  if (currentDvs.length > 0) {
-    const keys = Object.keys(conf.dvns);
-    const currentDvsToNames = currentDvs
-      .map((dvn) =>
-        keys.find((k) => conf.dvns[k].toLowerCase() === dvn.toLowerCase())
-      )
-      .sort()
-      .filter((d) => !!d) as string[];
-
-    const existingDvns = _.intersection(currentDvsToNames, commonDVNs);
-    if (existingDvns.length == limit)
-      return existingDvns.map((dvn) => conf.dvns[dvn]).sort();
-  }
-
-  return _.first(commonDVNs.map((dvn) => conf.dvns[dvn]).sort(), limit);
+  const commonDVNs = _.intersection(dvns, remoteDVNs);
+  const sortedDVNs = _.first(commonDVNs.sort(), limit);
+  console.log("sortedDVNs", sortedDVNs);
+  return sortedDVNs.map((dvn) => conf.dvns[dvn]);
 };
 
 const _fetchOptionalDVNs = (conf: IL0Config) => {
@@ -102,16 +88,13 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
     const delegate = await endpoint.delegates(oft.target);
     const shouldMock =
       delegate.toLowerCase() !== deployer.address.toLowerCase();
-    const pendingTxs: ContractTransaction[] = [];
+    const pendingTxs: { tx: ContractTransaction; timelock: boolean }[] = [];
 
-    if (
-      shouldMock &&
-      delegate.toLowerCase() !== timelock.address.toLowerCase()
-    ) {
+    if (shouldMock && delegate.toLowerCase() !== safe.address.toLowerCase()) {
       console.log("setting delegate to", timelock.address);
       const tx = await oft.setDelegate.populateTransaction(timelock.address);
       yellowLog(">> setDelegate tx added");
-      pendingTxs.push(tx);
+      pendingTxs.push({ tx, timelock: true });
     }
 
     // taken from https://docs.layerzero.network/v2/developers/evm/protocol-gas-settings/default-config#setting-send-config
@@ -141,22 +124,12 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
         2
       );
 
-      const data = encoder.decode([ulnConfigStructType], currentUlnSend)[0];
-      const currentDvnsReq = data[4];
-      const currentDvnsOptional = data[5];
-
-      const requiredDVNs = _fetchAndSortDVNS(
-        c,
-        c.requiredDVNs,
-        r.requiredDVNs,
-        currentDvnsReq
-      );
+      const requiredDVNs = _fetchAndSortDVNS(c, c.requiredDVNs, r.requiredDVNs);
       const optionalDVNs = _fetchAndSortDVNS(
         c,
         _fetchOptionalDVNs(c),
         _fetchOptionalDVNs(r),
-        currentDvnsOptional,
-        3
+        5
       );
 
       const remoteContractName = `${contractNameToken}${r.contract}`;
@@ -172,7 +145,7 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
         if (shouldMock) {
           const tx = await oft.setPeer.populateTransaction(r.eid, remoteOft);
           yellowLog(">> setPeer tx added");
-          pendingTxs.push(tx);
+          pendingTxs.push({ tx, timelock: false });
         } else await waitForTx(await oft.setPeer(r.eid, remoteOft));
       }
 
@@ -240,7 +213,7 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
             c.libraries.sendLib302,
             [setConfigParamUlnSend, setConfigParamExecutor]
           );
-          pendingTxs.push(tx);
+          pendingTxs.push({ tx, timelock: false });
           yellowLog(">> setConfig send tx added");
         } else
           await waitForTx(
@@ -261,7 +234,7 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
             c.libraries.receiveLib302,
             [setConfigParamUlnRecv]
           );
-          pendingTxs.push(tx);
+          pendingTxs.push({ tx, timelock: false });
           yellowLog(">> setConfig recv tx added");
         } else
           await waitForTx(
@@ -287,19 +260,40 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
             enforcedOptions
           );
           yellowLog(">> setEnforcedOptions tx added");
-          pendingTxs.push(tx);
+          pendingTxs.push({ tx, timelock: true });
         } else await waitForTx(await oft.setEnforcedOptions(enforcedOptions));
       } else console.log("enforced options already set");
     }
 
     if (shouldMock) {
-      const tx = await prepareTimelockData(
-        hre,
-        safe.address,
-        pendingTxs,
-        timelock.address
-      );
-      _writeGnosisSafeTransaction("tx-schedule.json", [tx.schedule]);
-      _writeGnosisSafeTransaction("tx-execute.json", [tx.execute]);
+      const timelockTxs = pendingTxs.filter((t) => t.timelock).map((t) => t.tx);
+      const safeTxs = pendingTxs.filter((t) => !t.timelock).map((t) => t.tx);
+
+      if (timelockTxs.length > 0) {
+        const tx = await prepareTimelockData(
+          hre,
+          safe.address,
+          timelockTxs,
+          timelock.address
+        );
+        console.log("writing timelock txs for schedule");
+        _writeGnosisSafeTransaction(
+          `execute/tx-timelock-${hre.network.name}-${token}-schedule.json`,
+          [tx.schedule]
+        );
+        console.log("writing timelock txs for execute");
+        _writeGnosisSafeTransaction(
+          `execute/tx-timelock-${hre.network.name}-${token}-execute.json`,
+          [tx.execute]
+        );
+      }
+
+      if (safeTxs.length > 0) {
+        console.log("writing safe txs");
+        _writeGnosisSafeTransaction(
+          `execute/tx-safe-${hre.network.name}-${token}-execute.json`,
+          safeTxs
+        );
+      }
     }
   });
