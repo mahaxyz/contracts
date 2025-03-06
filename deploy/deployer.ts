@@ -1,15 +1,8 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { deployContract } from "../scripts/utils";
 
 async function main(hre: HardhatRuntimeEnvironment) {
-  const { deploy } = hre.deployments;
-  const { deployer } = await hre.getNamedAccounts();
-
-  await deploy("Deployer", {
-    from: deployer,
-    contract: "Deployer",
-    autoMine: true,
-    log: true,
-  });
+  await deployContract(hre, "Deployer", [], "Deployer");
 }
 
 main.tags = ["Deployer"];

@@ -25,7 +25,7 @@ export type IL0ConfigKey =
   | "bsc"
   | "linea"
   | "mainnet"
-  // | "optimism"
+  | "unichain"
   // | "scroll"
   | "xlayer";
 
@@ -74,12 +74,21 @@ export const config: IL0ConfigMapping = {
     dvns: pluckDVNs("linea", blacklist),
     requiredDVNs: ["LayerZero_Labs"],
   },
+  unichain: {
+    eid: pluckEid("Unichain-Mainnet"),
+    contract: "OFT",
+    confirmations: 15,
+    optionalDVNThreshold: 2,
+    libraries: pluckLibraries("Unichain-Mainnet"),
+    dvns: pluckDVNs("unichain", blacklist),
+    requiredDVNs: ["LayerZero_Labs"],
+  },
   sonic: {
-    eid: pluckEid("Sonic"),
+    eid: pluckEid("Sonic-Mainnet"),
     contract: "OFT",
     confirmations: 15,
     optionalDVNThreshold: 1,
-    libraries: pluckLibraries("Sonic"),
+    libraries: pluckLibraries("Sonic-Mainnet"),
     dvns: pluckDVNs("sonic", blacklist),
     requiredDVNs: ["LayerZero_Labs"],
   },
@@ -111,11 +120,11 @@ export const config: IL0ConfigMapping = {
     requiredDVNs: ["LayerZero_Labs"],
   },
   bsc: {
-    eid: pluckEid("Binance-Smart-Chain-Mainnet"),
+    eid: pluckEid("BNB-Smart-Chain-Mainnet"),
     contract: "OFT",
     confirmations: 15,
     optionalDVNThreshold: 2,
-    libraries: pluckLibraries("Binance-Smart-Chain-Mainnet"),
+    libraries: pluckLibraries("BNB-Smart-Chain-Mainnet"),
     dvns: pluckDVNs("bsc", blacklist),
     requiredDVNs: ["LayerZero_Labs"],
   },

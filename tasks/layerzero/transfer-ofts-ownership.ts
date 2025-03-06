@@ -8,6 +8,8 @@
   npx hardhat transfer-ofts-ownership --network linea --token maha
   npx hardhat transfer-ofts-ownership --network mainnet --token maha
   npx hardhat transfer-ofts-ownership --network optimism --token maha
+  npx hardhat transfer-ofts-ownership --network sonic --token maha
+  npx hardhat transfer-ofts-ownership --network unichain --token maha
  */
 import _ from "underscore";
 import { config } from "./config";

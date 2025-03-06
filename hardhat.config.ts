@@ -103,6 +103,7 @@ const config: HardhatUserConfig = {
     blast: _network("https://rpc.blast.io"),
     linea: _network("https://rpc.linea.build"),
     sonic: _network("https://rpc.soniclabs.com"),
+    unichain: _network("https://mainnet.unichain.org"),
     mainnet: _network("https://rpc.ankr.com/eth"),
     zircuit: _network("https://zircuit-mainnet.drpc.org"),
     optimism: _network("https://mainnet.optimism.io"),
@@ -125,6 +126,7 @@ const config: HardhatUserConfig = {
       linea: process.env.LINEASCAN_KEY || "",
       optimisticEthereum: process.env.OP_ETHERSCAN_KEY || "",
       scroll: process.env.SCROLLSCAN_KEY || "",
+      unichain: process.env.UNISCAN_KEY || "",
       sonic: process.env.SONICSCAN_KEY || "",
       arbitrumOne: process.env.ARBISCAN_KEY || "",
       xlayer: "test",
@@ -169,6 +171,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://api.scrollscan.com/api",
           browserURL: "https://scrollscan.com",
+        },
+      },
+      {
+        network: "unichain",
+        chainId: 130,
+        urls: {
+          apiURL: "https://api.uniscan.xyz/api",
+          browserURL: "https://uniscan.xyz",
         },
       },
     ],
