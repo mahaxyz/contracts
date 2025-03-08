@@ -1,12 +1,19 @@
 /**
   Script to setup OFTs for the token on the various networks.
 
-  npx hardhat setup-oft-all --network arbitrum
   npx hardhat setup-oft-all --network base
-  npx hardhat setup-oft-all --network bsc
-  npx hardhat setup-oft-all --network xlayer
   npx hardhat setup-oft-all --network linea
   npx hardhat setup-oft-all --network mainnet
+  npx hardhat setup-oft-all --network sonic
+  npx hardhat setup-oft-all --network bsc
+  npx hardhat setup-oft-all --network unichain
+  npx hardhat setup-oft-all --network xlayer
+
+  // these chains we don't want to get connected with
+  npx hardhat setup-oft-all --network arbitrum
+  npx hardhat setup-oft-all --network blast
+  npx hardhat setup-oft-all --network optimism
+  npx hardhat setup-oft-all --network scroll
  */
 import { config } from "./config";
 import { task } from "hardhat/config";

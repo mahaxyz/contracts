@@ -21,12 +21,14 @@ export interface IL0Config {
 export type IL0ConfigKey =
   | "arbitrum"
   | "base"
-  | "sonic"
+  | "blast"
   | "bsc"
   | "linea"
   | "mainnet"
+  | "optimism"
+  | "scroll"
+  | "sonic"
   | "unichain"
-  // | "scroll"
   | "xlayer";
 
 export type IL0ConfigMapping = {
@@ -72,6 +74,33 @@ export const config: IL0ConfigMapping = {
     optionalDVNThreshold: 2,
     libraries: pluckLibraries("Linea-Mainnet"),
     dvns: pluckDVNs("linea", blacklist),
+    requiredDVNs: ["LayerZero_Labs"],
+  },
+  blast: {
+    eid: pluckEid("Blast-Mainnet"),
+    contract: "OFT",
+    confirmations: 15,
+    optionalDVNThreshold: 2,
+    libraries: pluckLibraries("Blast-Mainnet"),
+    dvns: pluckDVNs("blast", blacklist),
+    requiredDVNs: ["LayerZero_Labs"],
+  },
+  scroll: {
+    eid: pluckEid("Scroll-Mainnet"),
+    contract: "OFT",
+    confirmations: 15,
+    optionalDVNThreshold: 2,
+    libraries: pluckLibraries("Scroll-Mainnet"),
+    dvns: pluckDVNs("scroll", blacklist),
+    requiredDVNs: ["LayerZero_Labs"],
+  },
+  optimism: {
+    eid: pluckEid("Optimism-Mainnet"),
+    contract: "OFT",
+    confirmations: 15,
+    optionalDVNThreshold: 2,
+    libraries: pluckLibraries("Optimism-Mainnet"),
+    dvns: pluckDVNs("optimism", blacklist),
     requiredDVNs: ["LayerZero_Labs"],
   },
   unichain: {

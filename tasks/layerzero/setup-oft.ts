@@ -14,10 +14,9 @@ import { EnforcedOptionParamStruct } from "../../types/@layerzerolabs/lz-evm-oap
 import { Options } from "@layerzerolabs/lz-v2-utilities";
 import { task } from "hardhat/config";
 import { waitForTx } from "../../scripts/utils";
-import { get } from "../../scripts/helpers";
-import { ContractTransaction, zeroPadValue } from "ethers";
+import { existsD, get } from "../../scripts/helpers";
+import { ContractTransaction, ZeroAddress, zeroPadValue } from "ethers";
 import { _writeGnosisSafeTransaction } from "./utils";
-import { prepareTimelockData } from "../../scripts/prepare-timelock";
 
 const yellowLog = (text: string) => console.log(`\x1b[33m${text}\x1b[0m`);
 
@@ -60,6 +59,15 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
     const contractNameToken = token === "zai" ? "ZaiStablecoin" : "MAHA";
     const contractName = `${contractNameToken}${c.contract}`;
 
+    if (!(await hre.deployments.getOrNull(contractName))) {
+      console.log(
+        token,
+        hre.network.name,
+        "contract not deployed on this network, skipping"
+      );
+      return [];
+    }
+
     const timelock = await hre.deployments.get("MAHATimelockController");
     const safe = await hre.deployments.get("GnosisSafe");
     const oftD = await hre.deployments.get(contractName);
@@ -90,13 +98,24 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
       delegate.toLowerCase() !== deployer.address.toLowerCase();
     const pendingTxs: { tx: ContractTransaction; timelock: boolean }[] = [];
 
-    if (shouldMock && delegate.toLowerCase() !== safe.address.toLowerCase()) {
+    // temporary fix to set the delegate to the deployer wallet for the timebeing
+    if (
+      shouldMock &&
+      delegate.toLowerCase() !== deployer.address.toLowerCase()
+    ) {
       console.log("current delegate is", delegate);
-      console.log("setting delegate to", safe.address);
-      const tx = await oft.setDelegate.populateTransaction(safe.address);
+      console.log("setting delegate to", deployer.address);
+      const tx = await oft.setDelegate.populateTransaction(deployer.address);
       yellowLog(">> setDelegate tx added");
       pendingTxs.push({ tx, timelock: true });
     }
+    // if (shouldMock && delegate.toLowerCase() !== safe.address.toLowerCase()) {
+    //   console.log("current delegate is", delegate);
+    //   console.log("setting delegate to", safe.address);
+    //   const tx = await oft.setDelegate.populateTransaction(safe.address);
+    //   yellowLog(">> setDelegate tx added");
+    //   pendingTxs.push({ tx, timelock: true });
+    // }
 
     // taken from https://docs.layerzero.network/v2/developers/evm/protocol-gas-settings/default-config#setting-send-config
     for (let index = 0; index < remoteConnections.length; index++) {
@@ -134,11 +153,27 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
       );
 
       const remoteContractName = `${contractNameToken}${r.contract}`;
+      const peer = await oft.peers(r.eid);
+
+      if (!(await existsD(remoteContractName, remoteNetwork))) {
+        console.log(
+          token,
+          "contract not deployed on remote network, checking peer"
+        );
+        const zeroPeer = zeroPadValue(ZeroAddress, 32);
+        if (peer.toLowerCase() != zeroPeer.toLowerCase()) {
+          console.log("unsetting peer for", remoteNetwork);
+          if (shouldMock) {
+            const tx = await oft.setPeer.populateTransaction(r.eid, zeroPeer);
+            yellowLog(">> setPeer removal tx added");
+            pendingTxs.push({ tx, timelock: true });
+          } else await waitForTx(await oft.setPeer(r.eid, zeroPeer));
+        } else console.log("peer already unset", peer.toLowerCase());
+        continue;
+      }
 
       const remoteD = get(remoteContractName, remoteNetwork);
       const remoteOft = zeroPadValue(remoteD, 32);
-
-      const peer = await oft.peers(r.eid);
 
       if (peer.toLowerCase() != remoteOft.toLowerCase()) {
         // if we can set the peer, we will set it here
