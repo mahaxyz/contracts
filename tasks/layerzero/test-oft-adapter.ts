@@ -21,6 +21,7 @@ import {
   MessagingFeeStruct,
   SendParamStruct,
 } from "../../types/@layerzerolabs/lz-evm-oapp-v2/contracts/oft/OFT";
+import { createTenderlySimulateTransaction } from "./utils";
 
 task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
   .addParam("token", "either zai or maha")
@@ -89,12 +90,35 @@ task(`test-oft-adapter`, `Tests the mainnet OFT adapter`)
       await waitForTx(await erc20.approve(oftAdapter.target, MaxUint256));
     }
 
+    console.log(
+      "tenderly",
+      await createTenderlySimulateTransaction(
+        await oftAdapter.quoteSend.populateTransaction(params, false),
+        8453,
+        deployer.address,
+        "enamakel"
+      )
+    );
+
     const [nativeFee] = await oftAdapter.quoteSend(params, false);
 
     const fee: MessagingFeeStruct = {
       nativeFee,
       lzTokenFee: 0n,
     };
+
+    console.log("fee", fee);
+
+    const txPopuplate = await oftAdapter.send.populateTransaction(
+      params,
+      fee,
+      deployer.address,
+      {
+        value: nativeFee,
+      }
+    );
+
+    console.log("txPopuplate", txPopuplate);
 
     await waitForTx(
       await oftAdapter.send(params, fee, deployer.address, {

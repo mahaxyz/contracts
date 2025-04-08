@@ -104,7 +104,7 @@ const config: HardhatUserConfig = {
     linea: _network("https://rpc.linea.build"),
     sonic: _network("https://rpc.soniclabs.com"),
     unichain: _network("https://mainnet.unichain.org"),
-    mainnet: _network("https://rpc.ankr.com/eth"),
+    mainnet: _network("https://eth.merkle.io"),
     zircuit: _network("https://zircuit-mainnet.drpc.org"),
     optimism: _network("https://mainnet.optimism.io"),
     scroll: _network("https://rpc.ankr.com/scroll", 1100000000),

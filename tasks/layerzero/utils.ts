@@ -53,3 +53,16 @@ export const _writeGnosisSafeTransaction = (
     )
   );
 };
+
+export const createTenderlySimulateTransaction = (
+  tx: ContractTransaction,
+  chainId: number,
+  from: string,
+  projectId: string
+) =>
+  `https://dashboard.tenderly.co/${projectId}/project/simulator/new?block=&` +
+  `blockIndex=0&from=${from}&gas=8000000&gasPrice=0&value=${
+    tx.value || 0
+  }&contractAddress=${tx.to}&rawFunctionInput=${
+    tx.data
+  }&network=${chainId}&headerBlockNumber=&headerTimestamp=`;

@@ -35,7 +35,7 @@ export type IL0ConfigMapping = {
   [key in IL0ConfigKey]: IL0Config;
 };
 
-const pluckDVNs = (network: string, blacklist: string[] = []) => {
+const pluckDVNs = (network: string, whitelist: string[] = []) => {
   const _dvns: {
     [name: string]: string;
   } = {};
@@ -44,7 +44,7 @@ const pluckDVNs = (network: string, blacklist: string[] = []) => {
     const provider = providers[index];
     if (
       !!dvns[provider][network] &&
-      !blacklist.includes(provider) &&
+      whitelist.includes(provider) &&
       !provider.includes("lzRead")
     )
       _dvns[provider] = dvns[provider][network];
@@ -64,7 +64,15 @@ const pluckLibraries = (network: string) => {
 
 const pluckEid = (network: string) => deployments[network].eid;
 
-const blacklist = ["BCW_Group"];
+const whitelist = [
+  "LayerZero_Labs",
+  "BWare",
+  "Google_Cloud",
+  "Horizen",
+  "Nethermind",
+  "Stargate",
+  "BitGo",
+];
 
 export const config: IL0ConfigMapping = {
   linea: {
@@ -73,7 +81,7 @@ export const config: IL0ConfigMapping = {
     confirmations: 15,
     optionalDVNThreshold: 2,
     libraries: pluckLibraries("Linea-Mainnet"),
-    dvns: pluckDVNs("linea", blacklist),
+    dvns: pluckDVNs("linea", whitelist),
     requiredDVNs: ["LayerZero_Labs"],
   },
   blast: {
@@ -82,7 +90,7 @@ export const config: IL0ConfigMapping = {
     confirmations: 15,
     optionalDVNThreshold: 2,
     libraries: pluckLibraries("Blast-Mainnet"),
-    dvns: pluckDVNs("blast", blacklist),
+    dvns: pluckDVNs("blast", whitelist),
     requiredDVNs: ["LayerZero_Labs"],
   },
   scroll: {
@@ -91,7 +99,7 @@ export const config: IL0ConfigMapping = {
     confirmations: 15,
     optionalDVNThreshold: 2,
     libraries: pluckLibraries("Scroll-Mainnet"),
-    dvns: pluckDVNs("scroll", blacklist),
+    dvns: pluckDVNs("scroll", whitelist),
     requiredDVNs: ["LayerZero_Labs"],
   },
   optimism: {
@@ -100,7 +108,7 @@ export const config: IL0ConfigMapping = {
     confirmations: 15,
     optionalDVNThreshold: 2,
     libraries: pluckLibraries("Optimism-Mainnet"),
-    dvns: pluckDVNs("optimism", blacklist),
+    dvns: pluckDVNs("optimism", whitelist),
     requiredDVNs: ["LayerZero_Labs"],
   },
   unichain: {
@@ -109,7 +117,7 @@ export const config: IL0ConfigMapping = {
     confirmations: 15,
     optionalDVNThreshold: 2,
     libraries: pluckLibraries("Unichain-Mainnet"),
-    dvns: pluckDVNs("unichain", blacklist),
+    dvns: pluckDVNs("unichain", whitelist),
     requiredDVNs: ["LayerZero_Labs"],
   },
   sonic: {
@@ -118,7 +126,7 @@ export const config: IL0ConfigMapping = {
     confirmations: 15,
     optionalDVNThreshold: 1,
     libraries: pluckLibraries("Sonic-Mainnet"),
-    dvns: pluckDVNs("sonic", blacklist),
+    dvns: pluckDVNs("sonic", whitelist),
     requiredDVNs: ["LayerZero_Labs"],
   },
   arbitrum: {
@@ -127,7 +135,7 @@ export const config: IL0ConfigMapping = {
     confirmations: 15,
     optionalDVNThreshold: 2,
     libraries: pluckLibraries("Arbitrum-Mainnet"),
-    dvns: pluckDVNs("arbitrum", blacklist),
+    dvns: pluckDVNs("arbitrum", whitelist),
     requiredDVNs: ["LayerZero_Labs"],
   },
   mainnet: {
@@ -136,7 +144,7 @@ export const config: IL0ConfigMapping = {
     confirmations: 5,
     optionalDVNThreshold: 2,
     libraries: pluckLibraries("Ethereum-Mainnet"),
-    dvns: pluckDVNs("ethereum", blacklist),
+    dvns: pluckDVNs("ethereum", whitelist),
     requiredDVNs: ["LayerZero_Labs"],
   },
   base: {
@@ -145,7 +153,7 @@ export const config: IL0ConfigMapping = {
     confirmations: 15,
     optionalDVNThreshold: 2,
     libraries: pluckLibraries("Base-Mainnet"),
-    dvns: pluckDVNs("base", blacklist),
+    dvns: pluckDVNs("base", whitelist),
     requiredDVNs: ["LayerZero_Labs"],
   },
   bsc: {
@@ -154,7 +162,7 @@ export const config: IL0ConfigMapping = {
     confirmations: 15,
     optionalDVNThreshold: 2,
     libraries: pluckLibraries("BNB-Smart-Chain-Mainnet"),
-    dvns: pluckDVNs("bsc", blacklist),
+    dvns: pluckDVNs("bsc", whitelist),
     requiredDVNs: ["LayerZero_Labs"],
   },
   xlayer: {
@@ -163,7 +171,7 @@ export const config: IL0ConfigMapping = {
     confirmations: 15,
     optionalDVNThreshold: 2,
     libraries: pluckLibraries("X-Layer-Mainnet"),
-    dvns: pluckDVNs("xlayer", blacklist),
+    dvns: pluckDVNs("xlayer", whitelist),
     requiredDVNs: ["LayerZero_Labs"],
   },
 };

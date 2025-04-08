@@ -26,8 +26,8 @@ task(`setup-oft-all`, `Sets up the OFT with the right DVNs`).setAction(
     if (!c) throw new Error("cannot find connection");
 
     const pendingTxs1 = await hre.run("setup-oft", { token: "maha" });
-    const pendingTxs2 = await hre.run("setup-oft", { token: "zai" });
-    const pendingTxs = [...pendingTxs1, ...pendingTxs2];
+    // const pendingTxs2 = await hre.run("setup-oft", { token: "zai" });
+    const pendingTxs = [...pendingTxs1];
 
     const timelockTxs = pendingTxs.filter((t) => t.timelock).map((t) => t.tx);
     const safeTxs = pendingTxs.filter((t) => !t.timelock).map((t) => t.tx);
