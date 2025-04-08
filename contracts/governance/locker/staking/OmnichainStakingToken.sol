@@ -32,7 +32,7 @@ contract OmnichainStakingToken is OmnichainStakingBase {
     uint256 _rewardsDuration,
     address _owner,
     address _distributor
-  ) external reinitializer(1) {
+  ) external reinitializer(2) {
     super.__OmnichainStakingBase_init(
       "MAHA Voting Power", "MAHAvp", _locker, _weth, _rewardTokens, _rewardsDuration, _distributor
     );
@@ -46,27 +46,22 @@ contract OmnichainStakingToken is OmnichainStakingBase {
     power = amount;
   }
 
-  function setMigrator(
-    address _migrator
-  ) external onlyOwner {
-    migrator = _migrator;
-  }
-
-  function migrate(uint256 id, uint256 _value, uint256 _startDate, uint256 _endDate, address _who) external {
-    require(msg.sender == migrator, "!migrator");
-    require(!migratedLockId[id], "migrated");
-    migratedLockId[id] = true;
-
-    IERC20 maha = locker.underlying();
-    maha.transferFrom(msg.sender, address(this), _value);
-
-    uint256 newId = locker.createLockFor(_value, 2 weeks, _who, true);
-
-    ILockerWithUpdate(address(locker)).updateLockDates(newId, _startDate, _endDate);
-    _updateVotingPower(_who, newId);
-  }
-
   function moveLockOwnership(uint256 _id, address _to) external onlyOwner {
-    // todo
+    require(_to != address(0), "Invalid recipient");
+    address from = lockedByToken[_id];
+    require(from != address(0), "Token not locked");
+
+    lockedByToken[_id] = _to;
+
+    lockedTokenIdNfts[from] = _deleteAnElement(lockedTokenIdNfts[from], _id);
+    lockedTokenIdNfts[_to].push(_id);
+
+    // reset and burn voting power
+    _burn(from, power[_id]);
+    _mint(_to, power[_id]);
+
+    emit LockOwnershipTransferred(_id, from, _to);
   }
+
+  event LockOwnershipTransferred(uint256 indexed id, address indexed from, address indexed to);
 }
