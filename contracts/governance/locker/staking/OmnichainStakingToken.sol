@@ -17,10 +17,6 @@ import {IAggregatorV3Interface} from "../../../interfaces/governance/IAggregator
 import {ILPOracle} from "../../../interfaces/governance/ILPOracle.sol";
 import {IERC20, OmnichainStakingBase} from "./OmnichainStakingBase.sol";
 
-interface ILockerWithUpdate {
-  function updateLockDates(uint256 _id, uint256 _startDate, uint256 _endDate) external;
-}
-
 contract OmnichainStakingToken is OmnichainStakingBase {
   address public migrator;
   mapping(uint256 => bool) public migratedLockId;

@@ -68,6 +68,7 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
       return [];
     }
 
+    const zeroPeer = zeroPadValue(ZeroAddress, 32);
     const timelock = await hre.deployments.get("MAHATimelockController");
     const safe = await hre.deployments.get("GnosisSafe");
     const oftD = await hre.deployments.get(contractName);
@@ -94,28 +95,27 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
       .toString();
 
     const delegate = await endpoint.delegates(oft.target);
-    const shouldMock =
-      delegate.toLowerCase() !== deployer.address.toLowerCase();
+    const shouldMock = delegate.toLowerCase() !== safe.address.toLowerCase();
     const pendingTxs: { tx: ContractTransaction; timelock: boolean }[] = [];
 
-    // temporary fix to set the delegate to the deployer wallet for the timebeing
-    if (
-      shouldMock &&
-      delegate.toLowerCase() !== deployer.address.toLowerCase()
-    ) {
-      console.log("current delegate is", delegate);
-      console.log("setting delegate to", deployer.address);
-      const tx = await oft.setDelegate.populateTransaction(deployer.address);
-      yellowLog(">> setDelegate tx added");
-      pendingTxs.push({ tx, timelock: true });
-    }
-    // if (shouldMock && delegate.toLowerCase() !== safe.address.toLowerCase()) {
+    // // temporary fix to set the delegate to the deployer wallet for the timebeing
+    // if (
+    //   shouldMock &&
+    //   delegate.toLowerCase() !== deployer.address.toLowerCase()
+    // ) {
     //   console.log("current delegate is", delegate);
-    //   console.log("setting delegate to", safe.address);
-    //   const tx = await oft.setDelegate.populateTransaction(safe.address);
+    //   console.log("setting delegate to", deployer.address);
+    //   const tx = await oft.setDelegate.populateTransaction(deployer.address);
     //   yellowLog(">> setDelegate tx added");
     //   pendingTxs.push({ tx, timelock: true });
     // }
+    console.log("current delegate is", delegate);
+    if (shouldMock && delegate.toLowerCase() !== safe.address.toLowerCase()) {
+      console.log("setting delegate to", safe.address);
+      const tx = await oft.setDelegate.populateTransaction(safe.address);
+      yellowLog(">> setDelegate tx added");
+      pendingTxs.push({ tx, timelock: true });
+    }
 
     // taken from https://docs.layerzero.network/v2/developers/evm/protocol-gas-settings/default-config#setting-send-config
     for (let index = 0; index < remoteConnections.length; index++) {
@@ -155,20 +155,26 @@ task(`setup-oft`, `Sets up the OFT with the right DVNs`)
       const remoteContractName = `${contractNameToken}${r.contract}`;
       const peer = await oft.peers(r.eid);
 
-      if (!(await existsD(remoteContractName, remoteNetwork))) {
-        console.log(
-          token,
-          "contract not deployed on remote network, checking peer"
-        );
-        const zeroPeer = zeroPadValue(ZeroAddress, 32);
-        if (peer.toLowerCase() != zeroPeer.toLowerCase()) {
+      const isPeerZero = peer.toLowerCase() == zeroPeer.toLowerCase();
+      const isDestinationNotMainnet = c.eid !== 30101 && r.eid !== 30101;
+      const deploymentExists = await existsD(remoteContractName, remoteNetwork);
+
+      // if the peer is not zero or the destination is not mainnet, we should remove the peer
+      const shouldRemovePeer = !deploymentExists;
+
+      if (shouldRemovePeer) {
+        if (isPeerZero) {
+          console.log("peer already zero, skipping");
+          continue;
+        } else {
           console.log("unsetting peer for", remoteNetwork);
           if (shouldMock) {
             const tx = await oft.setPeer.populateTransaction(r.eid, zeroPeer);
             yellowLog(">> setPeer removal tx added");
             pendingTxs.push({ tx, timelock: true });
           } else await waitForTx(await oft.setPeer(r.eid, zeroPeer));
-        } else console.log("peer already unset", peer.toLowerCase());
+        }
+
         continue;
       }
 

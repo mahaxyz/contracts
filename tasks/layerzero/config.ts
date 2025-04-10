@@ -62,7 +62,7 @@ const pluckLibraries = (network: string) => {
   };
 };
 
-const pluckEid = (network: string) => deployments[network].eid;
+const pluckEid = (network: string) => Number(deployments[network].eid);
 
 const whitelist = [
   "LayerZero_Labs",
