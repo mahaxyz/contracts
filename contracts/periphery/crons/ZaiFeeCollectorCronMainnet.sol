@@ -14,29 +14,16 @@
 pragma solidity 0.8.21;
 
 import {IMultiStakingRewardsERC4626} from "../../interfaces/core/IMultiStakingRewardsERC4626.sol";
-import {IWETH} from "../../interfaces/governance/IWETH.sol";
+import {ZaiFeeCollectorCronBase} from "./ZaiFeeCollectorCronBase.sol";
 
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
-
-contract ZaiFeeCollectorCron is OwnableUpgradeable {
+contract ZaiFeeCollectorCronMainnet is ZaiFeeCollectorCronBase {
   address public collector;
-  address public gelatoooooo;
-  address public odos;
-  address[] public tokens;
 
   IMultiStakingRewardsERC4626 public safetyPoolZai;
   IMultiStakingRewardsERC4626 public stakerMahaZai;
   IMultiStakingRewardsERC4626 public stakerUsdcZai;
 
-  IWETH public weth;
-  IERC20 public rewardToken;
   address public treasury;
-
-  event RevenueCollected(uint256 indexed amount);
-  event EthCollected(uint256 indexed amount);
-  event RevenueDistributed(address indexed to, uint256 indexed amount);
 
   function init(
     address _rewardToken,
@@ -49,53 +36,15 @@ contract ZaiFeeCollectorCron is OwnableUpgradeable {
     address _safetyPoolZai,
     address _governance
   ) public reinitializer(1) {
-    __Ownable_init(msg.sender);
+    __ZaiFeeCollectorCronBase_init(_rewardToken, _weth, _odos, _tokens, _gelatoooooo, _governance);
 
-    weth = IWETH(_weth);
-    rewardToken = IERC20(_rewardToken);
-    gelatoooooo = _gelatoooooo;
     safetyPoolZai = IMultiStakingRewardsERC4626(_safetyPoolZai);
     stakerMahaZai = IMultiStakingRewardsERC4626(_stakerMahaZai);
     stakerUsdcZai = IMultiStakingRewardsERC4626(_stakerUsdcZai);
 
-    setTokens(_tokens);
-    setOdos(_odos);
-
     rewardToken.approve(_stakerMahaZai, type(uint256).max);
     rewardToken.approve(_stakerUsdcZai, type(uint256).max);
     rewardToken.approve(_safetyPoolZai, type(uint256).max);
-
-    _transferOwnership(_governance);
-  }
-
-  receive() external payable {
-    weth.deposit{value: msg.value}();
-    emit EthCollected(msg.value);
-  }
-
-  function setOdos(address _odos) public onlyOwner {
-    odos = _odos;
-  }
-
-  function balances() public view returns (uint256[] memory, address[] memory) {
-    uint256[] memory amounts = new uint256[](tokens.length);
-
-    for (uint256 i = 0; i < tokens.length; i++) {
-      amounts[i] = IERC20(tokens[i]).balanceOf(address(this));
-    }
-
-    return (amounts, tokens);
-  }
-
-  function setTokens(address[] memory _tokens) public onlyOwner {
-    tokens = _tokens;
-    approve();
-  }
-
-  function approve() public {
-    for (uint256 i = 0; i < tokens.length; i++) {
-      IERC20(tokens[i]).approve(odos, type(uint256).max);
-    }
   }
 
   function swap(bytes memory data) public {
@@ -124,9 +73,5 @@ contract ZaiFeeCollectorCron is OwnableUpgradeable {
     emit RevenueDistributed(address(stakerMahaZai), zaiMahaAmt);
     emit RevenueDistributed(address(safetyPoolZai), zaiSafetyPoolAmt);
     emit RevenueDistributed(address(stakerUsdcZai), zaiUsdcAmt);
-  }
-
-  function refund(IERC20 token) public onlyOwner {
-    token.transfer(msg.sender, token.balanceOf(address(this)));
   }
 }
