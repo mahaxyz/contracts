@@ -156,25 +156,23 @@ abstract contract OmnichainStakingBase is
 
   /// @inheritdoc IOmnichainStaking
   function unstakeToken(uint256 tokenId) external {
-    _updateRewardsAll(msg.sender);
-    require(lockedByToken[tokenId] != address(0), "!tokenId");
-    address lockedBy_ = lockedByToken[tokenId];
-    if (_msgSender() != lockedBy_) {
-      revert InvalidUnstaker(_msgSender(), lockedBy_);
-    }
-
-    delete lockedByToken[tokenId];
-    lockedTokenIdNfts[_msgSender()] = _deleteAnElement(lockedTokenIdNfts[_msgSender()], tokenId);
-
-    // reset and burn voting power
-    _burn(msg.sender, power[tokenId]);
-    power[tokenId] = 0;
-
+    _unstakeToken(tokenId);
     locker.safeTransferFrom(address(this), msg.sender, tokenId);
   }
 
   /// @inheritdoc IOmnichainStaking
-  function increaseLockDuration(uint256 tokenId, uint256 newLockDuration) external {
+  function unstakeAndWithdraw(uint256 tokenId) external nonReentrant {
+    _unstakeToken(tokenId);
+    uint256 lockedAmount = locker.locked(tokenId).amount;
+    locker.withdraw(tokenId);
+    assert(locker.underlying().transfer(msg.sender, lockedAmount));
+  }
+
+  /// @inheritdoc IOmnichainStaking
+  function increaseLockDuration(
+    uint256 tokenId,
+    uint256 newLockDuration
+  ) external {
     require(newLockDuration > 0, "!newLockAmount");
 
     require(msg.sender == lockedByToken[tokenId], "!tokenId");
@@ -377,6 +375,24 @@ abstract contract OmnichainStakingBase is
     }
 
     return updatedArray;
+  }
+
+  function _unstakeToken(uint256 tokenId) internal {
+    _updateRewardsAll(msg.sender);
+    require(lockedByToken[tokenId] != address(0), "!tokenId");
+    address lockedBy_ = lockedByToken[tokenId];
+    if (_msgSender() != lockedBy_) {
+      revert InvalidUnstaker(_msgSender(), lockedBy_);
+    }
+
+    delete lockedByToken[tokenId];
+    lockedTokenIdNfts[_msgSender()] = _deleteAnElement(
+      lockedTokenIdNfts[_msgSender()],
+      tokenId
+    );
+    // reset and burn voting power
+    _burn(msg.sender, power[tokenId]);
+    power[tokenId] = 0;
   }
 
   /**
