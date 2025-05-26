@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.19.0](https://github.com/mahaxyz/contracts/compare/v1.18.0...v1.19.0) (2025-05-26)
+
+
+### Features
+
+* added zai deployment for sonic ([992a18b](https://github.com/mahaxyz/contracts/commit/992a18bee18589b38d55c60f29f8cb7d94f7c49c))
+* added zap for zai and szai ([b0551bb](https://github.com/mahaxyz/contracts/commit/b0551bbb1645bb50994c6c753876a32545e18d26))
+* fixed mahax staking ([119c8ce](https://github.com/mahaxyz/contracts/commit/119c8ce802764ac0914848c00715dfd78b954757))
+
 ## [1.18.0](https://github.com/mahaxyz/contracts/compare/v1.17.0...v1.18.0) (2024-12-14)
 
 
