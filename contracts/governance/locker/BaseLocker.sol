@@ -21,6 +21,7 @@ import {
 } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 /**
  * @title Voting Escrow
@@ -28,7 +29,7 @@ import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
  * @notice Votes have a weight depending on time, so that users are
  * committed to the future of (whatever they are voting for)
  */
-abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgradeable, ILocker {
+abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgradeable, ILocker, OwnableUpgradeable {
   uint256 internal WEEK;
   uint256 internal MAXTIME;
   uint256 public supply;
@@ -51,6 +52,7 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
   ) internal {
     __ERC721_init(_name, _symbol);
     __ReentrancyGuard_init();
+    __Ownable_init(msg.sender);
     version = "1.0.0";
     decimals = 18;
     WEEK = 1 weeks;
@@ -299,4 +301,48 @@ abstract contract BaseLocker is ReentrancyGuardUpgradeable, ERC721EnumerableUpgr
     // todo
     return "";
   }
+
+  function migrateLock(
+    uint256 _tokenId,
+    uint256 _value,
+    uint256 _start,
+    uint256 _end,
+    address _who,
+    bool _stakeNFT
+  ) public onlyOwner returns (uint256) {
+    require(_value > 0, "value = 0");
+    require(_end > _start && _start > 0, "Invalid duration");
+
+    tokenId = _tokenId;
+    supply += _value;
+    LockedBalance memory lock = _locked[_tokenId];
+    lock.amount += _value;
+    lock.end = _end;
+    lock.start = _start;
+    lock.power = _calculatePower(lock);
+    _locked[_tokenId] = lock;
+
+    if (_stakeNFT) {
+      _mint(address(this), _tokenId);
+      bytes memory data = abi.encode(_stakeNFT, _who, _end-_start);
+      this.safeTransferFrom(address(this), address(staking), _tokenId, data);
+    } else {
+      _mint(_who, _tokenId);
+    }
+    return _tokenId;
+  }
+
+  function migrateLocks(
+    uint256[] memory _tokenId,
+    uint256[] memory _value,
+    uint256[] memory _start,
+    uint256[] memory _end,
+    address[] memory _who,
+    bool[] memory _stakeNFT
+  ) external onlyOwner {
+    for (uint256 i = 0; i < _value.length; i++) {
+      migrateLock(_tokenId[i], _value[i], _start[i], _end[i], _who[i], _stakeNFT[i]);
+    }
+  }
+  
 }

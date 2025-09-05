@@ -92,6 +92,51 @@ export async function deployProxy(
   return proxy;
 }
 
+export async function upgradeProxy(
+  hre: HardhatRuntimeEnvironment,
+  proxyAddress: string,
+  implementation: string,
+  proxyAdmin: string,
+  sender?: string,
+  skipInit = true,
+  initArgs: any[] = []
+) {
+  const { deploy } = hre.deployments;
+  const { deployer } = await hre.getNamedAccounts();
+
+  // 1) Deploy or fetch the new implementation
+  const implementationD = await deploy(`${implementation}-Impl`, {
+    from: deployer,
+    contract: implementation,
+    skipIfAlreadyDeployed: true,
+    autoMine: true,
+    log: true,
+  });
+
+  // 2) Encode optional initializer call
+  const implContract = await hre.ethers.getContractAt(
+    implementation,
+    implementationD.address
+  );
+  const initData = skipInit
+    ? "0x"
+    : implContract.interface.encodeFunctionData("initialize", initArgs);
+
+  // 3) Perform upgrade via ProxyAdmin
+  const signer = await hre.ethers.getSigner(sender || deployer);
+  const proxyAdminC = await hre.ethers.getContractAt(
+    "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
+    proxyAdmin,
+    signer
+  );
+
+  await waitForTx(
+    await proxyAdminC.upgradeAndCall(proxyAddress, implementationD.address, initData)
+  );
+
+  return implementationD;
+}
+
 export async function deployContract(
   hre: HardhatRuntimeEnvironment,
   implementation: string,

@@ -1,5 +1,4 @@
 import hre from "hardhat";
-import { ZeroAddress } from "ethers";
 import { ethers, network, run } from "hardhat";
 import { deployContract, waitForTx } from "../utils";
 
@@ -61,10 +60,9 @@ async function main() {
       [MAHA_BASE, WETH_BASE],
       REWARD_DURATION,
       deployer.address,
-      ZeroAddress
+      deployer.address
     )
   );
-  await waitForTx(await omnichainStakingToken.setMigrator(deployer.address));
 }
 
 main().catch((err) => {
